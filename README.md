@@ -30,6 +30,8 @@ Program examples from our Solana Bytes video content (coming soon).
 - [] Example: Building a Twitter backend
 - [] Example: Building a Shopping Cart backend
 - [] Example: Building a SQL SDK for Solana PDAs (this one would be so cool)
+- ### Comparing Ethereum to Solana
+- [] Visual: ??
 - ### Solana development updates
 - [] Visual: QUIC
 - [] Visual: Stake-weighted QoS
