@@ -21,10 +21,10 @@ Program examples from our Solana Bytes video content (coming soon).
 - ### Comparing Native to Anchor
 - [] Test: Building a large program in native vs. Anchor
 - ### dApp development with other languages/frameworks
-- ExpressJS
-- Python/Flask
-- Java/Spring Boot
-- Rust/Actix
+- [] ExpressJS
+- [] Python/Flask
+- [] Java/Spring Boot
+- [] Rust/Actix
 - ### Web2 to Web3 on Solana
 - *This section should focus on common Web2 demos being turned into their Web3 counterparts to embolden the account model.*
 - [] Example: Building a Twitter backend
