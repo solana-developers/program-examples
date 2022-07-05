@@ -1,8 +1,6 @@
 # Program Examples
 
-:warning: May change this repo to `solana-developers/byte-videos`
-
-Program examples from our Solana Bytes video content (coming soon).
+Program examples to get you up & running quickly on Solana.
 
 ## To-Do:
 - ### Basics
