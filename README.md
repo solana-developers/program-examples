@@ -39,6 +39,7 @@ Each example contains two folders:
 - `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
 
 How to build & run:
+- Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
 - `native` - Use `cicd.sh` to build & deploy the program. Run `npm run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
