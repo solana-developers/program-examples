@@ -1,0 +1,12 @@
+.template
+
+**/*/node_modules
+**/*/package-lock.json
+**/*/Cargo.lock
+
+**/*/.anchor
+**/*/.DS_Store
+**/*/target
+**/*.rs.bk
+**/*/test-ledger
+**/*/yarn.lock
