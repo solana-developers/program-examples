@@ -1,5 +1,7 @@
 # Program Examples
 
+:warning: May change this repo to `solana-developers/byte-videos`
+
 Program examples from our Solana Bytes video content (coming soon).
 
 ## Videos:
@@ -16,6 +18,15 @@ Program examples from our Solana Bytes video content (coming soon).
 - ### Writing your own program
 - [] Example: Writing a counter program
 - [] Example: Writing a ?????????
+- ### Comparing Native to Anchor
+- [] Test: Building a large program in native vs. Anchor
+- ### dApp development with other languages/frameworks
+- ExpressJS
+- Python/Flask
+- Java/Spring Boot
+- Rust/Actix
 - ### Web2 to Web3 on Solana
-- * This section should focus on common Web2 demos being turned into their Web3 counterparts to embolden the account model. *
-- [] Example: Writing a Twitter backend
+- *This section should focus on common Web2 demos being turned into their Web3 counterparts to embolden the account model.*
+- [] Example: Building a Twitter backend
+- [] Example: Building a Shopping Cart backend
+- [] Example: Building a ??? backend
