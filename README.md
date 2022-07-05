@@ -29,4 +29,4 @@ Program examples from our Solana Bytes video content (coming soon).
 - *This section should focus on common Web2 demos being turned into their Web3 counterparts to embolden the account model.*
 - [] Example: Building a Twitter backend
 - [] Example: Building a Shopping Cart backend
-- [] Example: Building a ??? backend
+- [] Example: Building a SQL SDK for Solana PDAs (this one would be so cool)
