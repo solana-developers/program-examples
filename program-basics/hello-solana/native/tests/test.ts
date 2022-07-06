@@ -2,7 +2,6 @@ import {
     Connection,
     Keypair,
     sendAndConfirmTransaction,
-    SystemProgram,
     Transaction,
     TransactionInstruction,
 } from '@solana/web3.js';
@@ -28,8 +27,7 @@ describe("hello-solana", () => {
         //
         let ix = new TransactionInstruction({
             keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true},
-                {pubkey: SystemProgram.programId, isSigner: false, isWritable: false},
+                {pubkey: payer.publicKey, isSigner: true, isWritable: true}
             ],
             programId: program.publicKey,
             data: Buffer.alloc(0), // No data

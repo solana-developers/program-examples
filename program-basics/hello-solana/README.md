@@ -29,6 +29,3 @@ program_id: xxx
 accounts: [ aaa, aaa ]
 instruction_data: b[]
 ```
-
->[!Note]
-> You can

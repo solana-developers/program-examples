@@ -1,0 +1,18 @@
+use anchor_lang::prelude::*;
+
+declare_id!("2nYa9FRtxLnaGa5agENEE1ehy6Tr2HnyziwG7ynnyhPC");
+
+#[program]
+pub mod hello_solana {
+    use super::*;
+
+    pub fn hello(ctx: Context<Hello>) -> Result<()> {
+        
+        msg!("Hello, Solana!");
+        
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Hello {}
