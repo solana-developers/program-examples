@@ -40,16 +40,17 @@ Each example contains two folders:
 
 How to build & run:
 - Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
-- `native` - Use `cicd.sh` to build & deploy the program. Run `npm run test` to test it.
+- `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
 ## To-Do:
 **Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
 - ### Program Basics
-- [] 1. Processing an instruction
-- [] 2. Custom instruction data
-- [] 3. Recommended program layout
-- [] 4. Custom instruction data expanded
+- [x] 1. Hello Solana
+- [x] 2. Custom instruction data
+- [] 3. Instruction accounts
+- [] 4. Recommended program layout
+- [] 5. Custom instruction data expanded
 - ### Accounts
 - [] 1. Creating a system account
 - [] 2. Modifying an account's data
