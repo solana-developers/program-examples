@@ -47,27 +47,27 @@ How to build & run:
 **Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
 - ### Program Basics
 - [x] 1. Processing an instruction (Hello Solana)
-- [] 2. Custom instruction data
-- [] 3. Recommended program layout
-- [] 4. Custom instruction data expanded
+- [ ] 2. Custom instruction data
+- [ ] 3. Recommended program layout
+- [ ] 4. Custom instruction data expanded
 - ### Accounts
-- [] 1. Creating a system account
-- [] 2. Modifying an account's data
-- [] 3. Transferring SOL
-- [] 4. Transferring an account's ownership
-- [] 5. Destroying an account
+- [ ] 1. Creating a system account
+- [ ] 2. Modifying an account's data
+- [ ] 3. Transferring SOL
+- [ ] 4. Transferring an account's ownership
+- [ ] 5. Destroying an account
 - ### Tokens
-- [] 1. Creating an SPL Token
-- [] 2. Transferring tokens
+- [ ] 1. Creating an SPL Token
+- [ ] 2. Transferring tokens
 - ### NFTs
-- [] 1. Creating an NFT
-- [] 2. Transferring an NFT
-- [] 3. Adding metadata to an NFT
-- [] 4. NFT metadata expanded
+- [ ] 1. Creating an NFT
+- [ ] 2. Transferring an NFT
+- [ ] 3. Adding metadata to an NFT
+- [ ] 4. NFT metadata expanded
 - ### PDAs
-- [] 1. A simple PDA
-- [] 2. Dynamic PDA creation
+- [ ] 1. A simple PDA
+- [ ] 2. Dynamic PDA creation
 - ### PDA Programming Model
-- [] 1. Twitter
-- [] 2. Amazon
-- [] 3. OpenSea
+- [ ] 1. Twitter
+- [ ] 2. Amazon
+- [ ] 3. OpenSea
