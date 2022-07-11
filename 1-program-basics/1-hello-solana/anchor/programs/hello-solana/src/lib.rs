@@ -9,6 +9,8 @@ pub mod hello_solana {
     pub fn hello(ctx: Context<Hello>) -> Result<()> {
         
         msg!("Hello, Solana!");
+
+        msg!("Our program's Program ID: {}", &id());
         
         Ok(())
     }

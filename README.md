@@ -48,9 +48,8 @@ How to build & run:
 - ### Program Basics
 - [x] 1. Hello Solana
 - [x] 2. Custom instruction data
-- [] 3. Instruction accounts
-- [] 4. Recommended program layout
-- [] 5. Custom instruction data expanded
+- [x] 3. Recommended program layout
+- [x] 4. Custom instruction data expanded
 - ### Accounts
 - [ ] 1. Creating a system account
 - [ ] 2. Modifying an account's data

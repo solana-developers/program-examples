@@ -25,5 +25,7 @@ fn process_instruction(
     
     msg!("Hello, Solana!");
 
+    msg!("Our program's Program ID: {}", &program_id);
+
     Ok(())
 }
