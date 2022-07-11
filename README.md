@@ -2,7 +2,7 @@
 
 ### :space_invader: Welcome, Solana Developer. :space_invader:   
    
-Do you ever look at a bunch of examples of doing things on Solana and think to yourself: *"OK, but how do I do this on-chain?"*   
+Do you ever think to yourself: *"OK, but how do I do this on-chain?"*   
    
 Or maybe you're in a hackathon right now, the clock's ticking, and you need to get a program off the ground *fast*.   
    
@@ -49,7 +49,7 @@ How to build & run:
 - [x] 1. Hello Solana
 - [x] 2. Custom instruction data
 - [x] 3. Recommended program layout
-- [x] 4. Custom instruction data expanded
+- [ ] 4. Custom instruction data expanded
 - ### Accounts
 - [ ] 1. Creating a system account
 - [ ] 2. Modifying an account's data
