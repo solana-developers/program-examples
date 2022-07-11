@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.localnet]
+carnival = "8t94SEJh9jVjDwV7cbiuT6BvEsHo4YHP9x9a5rYH1NpP"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

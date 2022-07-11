@@ -1,8 +1,7 @@
 
-// For setting up modules & lib configs
+// For setting up modules & configs
 
-pub mod entrypoint;
 pub mod error;
-pub mod instruction;
+pub mod instructions;
 pub mod processor;
 pub mod state;
