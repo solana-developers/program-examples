@@ -7,10 +7,11 @@ use {
         entrypoint, 
         entrypoint::ProgramResult, 
         msg, 
-        native_token::LAMPORTS_PER_SOL,
         program::invoke,
         pubkey::Pubkey,
+        rent::Rent,
         system_instruction,
+        sysvar::Sysvar,
     },
     spl_token::{
         instruction as token_instruction,
@@ -30,6 +31,8 @@ fn process_instruction(
     instruction_data: &[u8],
 ) -> ProgramResult {
 
+    const MINT_SIZE: u64 = 82;
+
     let accounts_iter = &mut accounts.iter();
 
     let mint_account = next_account_info(accounts_iter)?;
@@ -48,8 +51,8 @@ fn process_instruction(
         &system_instruction::create_account(
             &mint_authority.key,
             &mint_account.key,
-            LAMPORTS_PER_SOL,
-            82,
+            (Rent::get()?).minimum_balance(MINT_SIZE as usize),
+            MINT_SIZE,
             &token_program.key,
         ),
         &[
@@ -67,7 +70,7 @@ fn process_instruction(
             &mint_account.key,
             &mint_authority.key,
             Some(&mint_authority.key),
-            9,
+            9,                              // 9 Decimals
         )?,
         &[
             mint_account.clone(),
@@ -81,21 +84,21 @@ fn process_instruction(
     msg!("Metadata account address: {}", metadata_account.key);
     invoke(
         &mpl_instruction::create_metadata_accounts_v2(
-            *token_metadata_program.key, 
-            *metadata_account.key, 
-            *mint_account.key, 
-            *mint_authority.key, 
-            *mint_authority.key, 
-            *mint_authority.key, 
-            token_metadata.title,
-            token_metadata.symbol,
-            token_metadata.uri,
-            None,
-            1,
-            true, 
-            false, 
-            None, 
-            None,
+            *token_metadata_program.key,    // Program ID (the Token Metadata Program)
+            *metadata_account.key,          // Metadata Account
+            *mint_account.key,              // Mint Account
+            *mint_authority.key,            // Mint Authority
+            *mint_authority.key,            // Payer
+            *mint_authority.key,            // Update Authority
+            token_metadata.title,           // Name
+            token_metadata.symbol,          // Symbol
+            token_metadata.uri,             // URI
+            None,                           // Creators
+            0,                              // Seller fee basis points
+            true,                           // Update authority is signer
+            false,                          // Is mutable
+            None,                           // Collection
+            None,                           // Uses
         ),
         &[
             metadata_account.clone(),

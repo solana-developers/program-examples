@@ -5,10 +5,7 @@ use {
         system_program,
     },
     anchor_spl::token,
-    mpl_token_metadata::{
-        ID as TOKEN_METADATA_ID,
-        instruction as mpl_instruction,
-    },
+    mpl_token_metadata::instruction as mpl_instruction,
 };
 
 
@@ -26,6 +23,8 @@ pub mod mint_token {
         metadata_uri: String,
     ) -> Result<()> {
 
+        const MINT_SIZE: u64 = 82;
+
         msg!("Creating mint account...");
         msg!("Mint: {}", &ctx.accounts.mint_account.key());
         system_program::create_account(
@@ -36,8 +35,8 @@ pub mod mint_token {
                     to: ctx.accounts.mint_account.to_account_info(),
                 },
             ),
-            10000000,
-            82,
+            (Rent::get()?).minimum_balance(MINT_SIZE as usize),
+            MINT_SIZE,
             &ctx.accounts.token_program.key(),
         )?;
 
@@ -51,7 +50,7 @@ pub mod mint_token {
                     rent: ctx.accounts.rent.to_account_info(),
                 },
             ),
-            9,
+            9,                                              // 9 Decimals
             &ctx.accounts.mint_authority.key(),
             Some(&ctx.accounts.mint_authority.key()),
         )?;
@@ -60,21 +59,21 @@ pub mod mint_token {
         msg!("Metadata account address: {}", &ctx.accounts.metadata_account.key());
         invoke(
             &mpl_instruction::create_metadata_accounts_v2(
-                TOKEN_METADATA_ID, 
-                ctx.accounts.metadata_account.key(), 
-                ctx.accounts.mint_account.key(), 
-                ctx.accounts.mint_authority.key(), 
-                ctx.accounts.mint_authority.key(), 
-                ctx.accounts.mint_authority.key(), 
-                metadata_title, 
-                metadata_symbol, 
-                metadata_uri, 
-                None,
-                1,
-                true, 
-                false, 
-                None, 
-                None,
+                ctx.accounts.token_metadata_program.key(),      // Program ID (the Token Metadata Program)
+                ctx.accounts.metadata_account.key(),            // Metadata account
+                ctx.accounts.mint_account.key(),                // Mint account
+                ctx.accounts.mint_authority.key(),              // Mint authority
+                ctx.accounts.mint_authority.key(),              // Payer
+                ctx.accounts.mint_authority.key(),              // Update authority
+                metadata_title,                                 // Name
+                metadata_symbol,                                // Symbol
+                metadata_uri,                                   // URI
+                None,                                           // Creators
+                0,                                              // Seller fee basis points
+                true,                                           // Update authority is signer
+                false,                                          // Is mutable
+                None,                                           // Collection
+                None,                                           // Uses
             ),
             &[
                 ctx.accounts.metadata_account.to_account_info(),
