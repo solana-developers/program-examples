@@ -26,7 +26,7 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 
 ## Navigating this Repo
 
-This collection is organized into the following sections:
+:blue_book: This collection is organized into the following sections:
 - `program-basics` - The basics of writing Solana programs in Rust.
 - `accounts`- Examples of creating & modifying accounts from on-chain.
 - `tokens` - Examples of working with SPL Tokens from on-chain.
@@ -34,24 +34,24 @@ This collection is organized into the following sections:
 - `pdas` - Everything you need to know about working with Program Derived Addresses & program-owned accounts.
 - `advanced-pdas` - Common Web2 design patterns implemented with PDAs on Solana.
 
-Each example contains two folders:
+:file_folder: Each example contains two folders:
 - `native` - Written using Solana's native Rust crates and vanilla Rust.
 - `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
 
-How to build & run:
+:wrench: How to build & run:
 - Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
 - `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
 ## To-Do:
-**Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
+:mag: *Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
 - ### [x] Program Basics
 - [x] 1. Hello Solana
 - [x] 2. Custom instruction data
 - [x] 3. Recommended program layout
 - ### [ ] Accounts
 - [x] 1. Creating a system account
-- [ ] 2. Rent
+- [x] 2. Rent
 - [ ] 3. Transferring SOL
 - [ ] 4. Transferring an account's ownership
 - [ ] 5. Destroying an account
@@ -61,8 +61,9 @@ How to build & run:
 - ### [ ] NFTs
 - [ ] 1. Creating an NFT
 - [ ] 2. Transferring an NFT
-- [ ] 3. Adding metadata to an NFT
-- [ ] 4. NFT metadata expanded
+- [ ] 3. Selling an NFT
+- [ ] 4. Adding metadata to an NFT
+- [ ] 5. NFT metadata expanded
 - ### [ ] PDAs
 - [ ] 1. A simple PDA
 - [ ] 2. Dynamic PDA creation

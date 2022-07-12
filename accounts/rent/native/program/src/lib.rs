@@ -1,13 +1,16 @@
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{AccountInfo, next_account_info}, 
     entrypoint, 
     entrypoint::ProgramResult, 
     msg, 
-    native_token::LAMPORTS_PER_SOL,
     program::invoke,
+    program_error::ProgramError,
     pubkey::Pubkey,
+    rent::Rent,
     system_instruction,
     system_program,
+    sysvar::Sysvar,
 };
 
 
@@ -27,20 +30,39 @@ fn process_instruction(
     
     msg!("Program invoked. Creating a system account...");
     msg!("  New public key will be: {}", &new_account.key.to_string());
+
+    // Determine the necessary minimum rent by calculating the account's size
+    //
+    let account_span = instruction_data
+        .get(..8)
+        .and_then(|slice| slice.try_into().ok())
+        .map(AddressData::from_le_bytes)
+        .ok_or(ProgramError::InvalidAccountData)?;
+
+    let lamports_required = (Rent::get()?).minimum_balance(account_span as usize);
     
     invoke(
         &system_instruction::create_account(
-            &payer.key,             // From pubkey
-            &new_account.key,       // To pubkey
-            LAMPORTS_PER_SOL,       // Lamports (1 SOL)
-            32,                     // Space
-            &system_program::ID,    // Owner
+            &payer.key,
+            &new_account.key,
+            lamports_required,
+            account_span,
+            &system_program::ID,
         ),
         &[
-            payer.clone(), new_account.clone(), system_program.clone()  // Accounts involved
+            payer.clone(), new_account.clone(), system_program.clone()
         ]
     )?;
 
     msg!("Account created succesfully.");
     Ok(())
+}
+
+
+// Say this is the data structure we intend our account to have
+//
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct AddressData {
+    name: String,
+    address: String,
 }
