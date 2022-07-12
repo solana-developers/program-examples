@@ -1,5 +1,5 @@
 use solana_program::{
-    account_info::AccountInfo, 
+    account_info::{AccountInfo, next_account_info}, 
     entrypoint, 
     entrypoint::ProgramResult, 
     msg, 
@@ -15,26 +15,30 @@ entrypoint!(process_instruction);
 
 
 fn process_instruction(
-    program_id: &Pubkey,
+    _program_id: &Pubkey,
     accounts: &[AccountInfo],
-    instruction_data: &[u8],
+    _instruction_data: &[u8],
 ) -> ProgramResult {
 
     let accounts_iter = &mut accounts.iter();
     let payer = next_account_info(accounts_iter)?;
+    let new_account = next_account_info(accounts_iter)?;
+    let system_program = next_account_info(accounts_iter)?;
     
     msg!("Program invoked. Creating a system account...");
-    msg!("New public key will be: {}", &new_pubkey);
+    msg!("  New public key will be: {}", &new_account.key.to_string());
     
     invoke(
         &system_instruction::create_account(
-            &payer,                 // From pubkey
-            &new_pubkey,            // To pubkey
+            &payer.key,             // From pubkey
+            &new_account.key,       // To pubkey
             LAMPORTS_PER_SOL,       // Lamports
             32,                     // Space
             &system_program::ID,    // Owner
         ),
-        &[payer]                // Signers
+        &[
+            payer.clone(), new_account.clone(), system_program.clone()  // Accounts involved
+        ]
     )?;
 
     msg!("Account created succesfully.");

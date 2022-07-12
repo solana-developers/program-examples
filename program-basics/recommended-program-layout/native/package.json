@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "test": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./test.ts"
+    "test": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.47.3"
+    "@solana/web3.js": "^1.47.3",
+    "fs": "^0.0.1-security"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",

@@ -32,7 +32,7 @@ This collection is organized into the following sections:
 - `tokens` - Examples of working with SPL Tokens from on-chain.
 - `nfts` - Examples for various NFT use cases (including MetaPlex).
 - `pdas` - Everything you need to know about working with Program Derived Addresses & program-owned accounts.
-- `pda-programming-model` - Common Web2 design patterns implemented with PDAs on Solana.
+- `advanced-pdas` - Common Web2 design patterns implemented with PDAs on Solana.
 
 Each example contains two folders:
 - `native` - Written using Solana's native Rust crates and vanilla Rust.
@@ -45,29 +45,28 @@ How to build & run:
 
 ## To-Do:
 **Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
-- ### Program Basics
+- ### [x] Program Basics
 - [x] 1. Hello Solana
 - [x] 2. Custom instruction data
 - [x] 3. Recommended program layout
-- [ ] 4. Custom instruction data expanded
-- ### Accounts
-- [ ] 1. Creating a system account
-- [ ] 2. Modifying an account's data
+- ### [ ] Accounts
+- [x] 1. Creating a system account
+- [ ] 2. Rent
 - [ ] 3. Transferring SOL
 - [ ] 4. Transferring an account's ownership
 - [ ] 5. Destroying an account
-- ### Tokens
+- ### [ ] Tokens
 - [ ] 1. Creating an SPL Token
 - [ ] 2. Transferring tokens
-- ### NFTs
+- ### [ ] NFTs
 - [ ] 1. Creating an NFT
 - [ ] 2. Transferring an NFT
 - [ ] 3. Adding metadata to an NFT
 - [ ] 4. NFT metadata expanded
-- ### PDAs
+- ### [ ] PDAs
 - [ ] 1. A simple PDA
 - [ ] 2. Dynamic PDA creation
-- ### PDA Programming Model
+- ### [ ] Advanced PDAs
 - [ ] 1. Twitter
 - [ ] 2. Amazon
 - [ ] 3. OpenSea
