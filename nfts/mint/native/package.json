@@ -3,7 +3,10 @@
     "test": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "^1.47.3",
+    "borsh": "^0.7.0",
+    "buffer": "^6.0.3",
     "fs": "^0.0.1-security"
   },
   "devDependencies": {

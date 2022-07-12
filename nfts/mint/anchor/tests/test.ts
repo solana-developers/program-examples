@@ -1,22 +1,52 @@
 import * as anchor from "@project-serum/anchor";
-import { HelloSolana } from "../target/types/hello_solana";
+import { MintNft } from "../target/types/mint_nft";
 
-describe("hello-solana", () => {
+
+const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
+  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+);
+
+
+describe("mint-NFT", () => {
   
-  // Configure the Anchor provider & load the program IDL
-  // The IDL gives you a typescript module
-  //
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
-  const program = anchor.workspace.HelloSolana as anchor.Program<HelloSolana>;
+  const payer = provider.wallet as anchor.Wallet;
+  const program = anchor.workspace.MintNft as anchor.Program<MintNft>;
 
-  it("Say hello!", async () => {
-    
-    // Just run Anchor's IDL method to build a transaction!
+  it("Mint!", async () => {
+
+    const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+    console.log(`New token: ${mintKeypair.publicKey}`);
+
+    // Derive the metadata account's address and set the metadata
     //
-    await program.methods.hello()
-    .accounts({})
-    .rpc();
+    const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from("metadata"),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID
+    ))[0];
+    const testNftTitle = "Solana Platinum NFT";
+    const testNftSymbol = "SOLP";
+    const testNftUri = "https://raw.githubusercontent.com/solana-developers/program-examples/main/nfts/mint/anchor/assets/token_metadata.json";
 
+    // Transact with the "mint_token" function in our on-chain program
+    //
+    await program.methods.mintToken(
+      testNftTitle, testNftSymbol, testNftUri
+    )
+    .accounts({
+      metadataAccount: metadataAddress,
+      mintAccount: mintKeypair.publicKey,
+      mintAuthority: payer.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+    })
+    .signers([payer.payer, mintKeypair])
+    .rpc();
   });
 });

@@ -1,10 +1,22 @@
 import {
     Connection,
     Keypair,
-    sendAndConfirmTransaction,
-    Transaction,
+    PublicKey,
+    SystemProgram,
+    SYSVAR_RENT_PUBKEY,
     TransactionInstruction,
+    Transaction,
+    sendAndConfirmTransaction,
 } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import * as borsh from "borsh";
+import { Buffer } from "buffer";
+
+
+const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
+    "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+);
+
 
 function createKeypairFromFile(path: string): Keypair {
     return Keypair.fromSecretKey(
@@ -13,32 +25,114 @@ function createKeypairFromFile(path: string): Keypair {
 };
 
 
-describe("hello-solana", () => {
+describe("mint-token", () => {
 
-    // Loading these from local files for development
-    //
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
+    const connection = new Connection(`http://api.devnet.solana.com/`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
     const program = createKeypairFromFile('./program/target/so/program-keypair.json');
-  
-    it("Say hello!", async () => {
 
-        // We set up our instruction first.
+    class Assignable {
+        constructor(properties) {
+            Object.keys(properties).map((key) => {
+                return (this[key] = properties[key]);
+            });
+        };
+    };
+
+    class TokenMetadata extends Assignable {
+        toBuffer() {
+            return Buffer.from(borsh.serialize(TokenMetadataSchema, this));
+        }
+    };
+
+    const TokenMetadataSchema = new Map([
+        [
+            TokenMetadata, {
+                kind: 'struct',
+                fields: [
+                    ['title', 'string'],
+                    ['symbol', 'string'],
+                    ['uri', 'string'],
+                ]
+            }
+        ]
+    ]);
+  
+    it("Mint!", async () => {
+
+        const mintKeypair: Keypair = Keypair.generate();
+        console.log(`New token: ${mintKeypair.publicKey}`);
+
+        // Derive the metadata account's address and set the metadata
+        //
+        const metadataAddress = (await PublicKey.findProgramAddress(
+            [
+              Buffer.from("metadata"),
+              TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+              mintKeypair.publicKey.toBuffer(),
+            ],
+            TOKEN_METADATA_PROGRAM_ID
+        ))[0];
+        const metadata = new TokenMetadata({
+            title: "Solana PLatinum NFT",
+            symbol: "SOLP",
+            uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/nfts/mint/native/assets/token_metadata.json",
+        });
+
+        // Transact with the "mint_token" function in our on-chain program
         //
         let ix = new TransactionInstruction({
             keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true}
+                // Mint account
+                {
+                    pubkey: mintKeypair.publicKey,
+                    isSigner: true,
+                    isWritable: true,
+                },
+                // Metadata account
+                {
+                    pubkey: metadataAddress,
+                    isSigner: false,
+                    isWritable: true,
+                },
+                // Mint Authority
+                {
+                    pubkey: payer.publicKey,
+                    isSigner: true,
+                    isWritable: false,
+                },
+                // Rent account
+                {
+                    pubkey: SYSVAR_RENT_PUBKEY,
+                    isSigner: false,
+                    isWritable: false,
+                },
+                // System program
+                {
+                    pubkey: SystemProgram.programId,
+                    isSigner: false,
+                    isWritable: false,
+                },
+                // Token program
+                {
+                    pubkey: TOKEN_PROGRAM_ID,
+                    isSigner: false,
+                    isWritable: false,
+                },
+                {
+                    pubkey: TOKEN_METADATA_PROGRAM_ID,
+                    isSigner: false,
+                    isWritable: false,
+                },
             ],
             programId: program.publicKey,
-            data: Buffer.alloc(0), // No data
+            data: metadata.toBuffer(),
         });
 
-        // Now we send the transaction over RPC
-        //
         await sendAndConfirmTransaction(
             connection, 
-            new Transaction().add(ix), // Add our instruction (you can add more than one)
-            [payer]
+            new Transaction().add(ix),
+            [payer, mintKeypair]
         );
     });
   });

@@ -56,10 +56,10 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - [ ] 4. Transferring an account's ownership
 - [ ] 5. Destroying an account
 - ### [ ] Tokens
-- [ ] 1. Creating an SPL Token
+- [x] 1. Creating an SPL Token
 - [ ] 2. Transferring tokens
 - ### [ ] NFTs
-- [ ] 1. Creating an NFT
+- [x] 1. Creating an NFT
 - [ ] 2. Transferring an NFT
 - [ ] 3. Selling an NFT
 - [ ] 4. Adding metadata to an NFT

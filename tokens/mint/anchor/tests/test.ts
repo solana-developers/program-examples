@@ -29,14 +29,14 @@ describe("mint-token", () => {
       ],
       TOKEN_METADATA_PROGRAM_ID
     ))[0];
-    const testNftTitle = "Solana Gold";
-    const testNftSymbol = "GOLDSOL";
-    const testNftUri = "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/mint/native/assets/token_metadata.json";
+    const testTokenTitle = "Solana Gold";
+    const testTokenSymbol = "GOLDSOL";
+    const testTokenUri = "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/mint/native/assets/token_metadata.json";
 
     // Transact with the "mint_token" function in our on-chain program
     //
     await program.methods.mintToken(
-      testNftTitle, testNftSymbol, testNftUri
+      testTokenTitle, testTokenSymbol, testTokenUri
     )
     .accounts({
       metadataAccount: metadataAddress,
