@@ -58,6 +58,9 @@ describe("Create a system account", async () => {
             address: "123 Main St. San Francisco, CA"
         });
 
+        // We're just going to serialize our object here so we can check
+        //  the size on the client side against the program logs
+        //
         const addressDataBuffer = addressData.toBuffer();
         console.log(`Address data buffer length: ${addressDataBuffer.length}`)
 

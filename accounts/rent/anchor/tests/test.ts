@@ -18,6 +18,9 @@ describe("Create a system account", () => {
       address: "123 Main St. San Francisco, CA"
     };
 
+    // We're just going to serialize our object here so we can check
+    //  the size on the client side against the program logs
+    //
     const addressDataBuffer = new anchor.BorshCoder(IDL).types.encode("AddressData", addressData);
     console.log(`Address data buffer length: ${addressDataBuffer.length}`);
     
