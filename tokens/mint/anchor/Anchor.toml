@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.devnet]
+mint_token = "3hmFGLkjJc7TfSLdEYYYwGAz6KsrD8anYwtSkF6TYjBU"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
