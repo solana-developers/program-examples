@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { CreateSystemAccount } from "../target/types/create_system_account";
+import { RentExample, IDL } from "../target/types/rent_example";
 
 
 describe("Create a system account", () => {
@@ -7,13 +7,21 @@ describe("Create a system account", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const wallet = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.CreateSystemAccount as anchor.Program<CreateSystemAccount>;
+  const program = anchor.workspace.RentExample as anchor.Program<RentExample>;
 
   it("Create the account", async () => {
 
     const newKeypair = anchor.web3.Keypair.generate();
+
+    const addressData: anchor.IdlTypes<RentExample>["AddressData"] = {
+      name: "Marcus",
+      address: "123 Main St. San Francisco, CA"
+    };
+
+    const addressDataBuffer = new anchor.BorshCoder(IDL).types.encode("AddressData", addressData);
+    console.log(`Address data buffer length: ${addressDataBuffer.length}`);
     
-    await program.methods.createSystemAccount()
+    await program.methods.createSystemAccount(addressData)
     .accounts({
       payer: wallet.publicKey,
       newAccount: newKeypair.publicKey,

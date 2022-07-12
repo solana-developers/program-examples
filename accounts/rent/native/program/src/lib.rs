@@ -43,7 +43,7 @@ fn process_instruction(
             &payer.key,
             &new_account.key,
             lamports_required,
-            instruction_data.len() as u64,
+            account_span as u64,
             &system_program::ID,
         ),
         &[

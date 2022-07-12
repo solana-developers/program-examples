@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-rent_example = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+rent_example = "ED6f4gweAE7hWPQPXMt4kWxzDJne8VQEm9zkb1tMpFNB"
 
 [registry]
 url = "https://anchor.projectserum.com"

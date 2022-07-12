@@ -59,7 +59,6 @@ describe("Create a system account", async () => {
         });
 
         const addressDataBuffer = addressData.toBuffer();
-
         console.log(`Address data buffer length: ${addressDataBuffer.length}`)
 
         let ix = new TransactionInstruction({
