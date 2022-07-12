@@ -51,7 +51,7 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - [x] 3. Recommended program layout
 - ### [ ] Accounts
 - [x] 1. Creating a system account
-- [ ] 2. Rent
+- [x] 2. Rent
 - [x] 3. Transferring SOL
 - [ ] 4. Transferring an account's ownership
 - [ ] 5. Destroying an account

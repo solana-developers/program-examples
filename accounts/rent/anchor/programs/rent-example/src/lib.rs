@@ -2,12 +2,11 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
 
-declare_id!("6gUwvaZPvC8ZxKuC1h5aKz4mRd7pFyEfUZckiEsBZSbk");
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
-const LAMPORTS_PER_SOL: u64 = 1000000000;
 
 #[program]
-pub mod create_system_account {
+pub mod rent_example {
     use super::*;
 
     pub fn create_system_account(ctx: Context<CreateSystemAccount>) -> Result<()> {
@@ -15,17 +14,25 @@ pub mod create_system_account {
         msg!("Program invoked. Creating a system account...");
         msg!("  New public key will be: {}", &ctx.accounts.new_account.key().to_string());
 
+        // Determine the necessary minimum rent by calculating the account's size
+        //
+        let account_span = amount as usize;
+        let lamports_required = (Rent::get()?).minimum_balance(account_span);
+
+        msg!("Account span: {}", &account_span);
+        msg!("Lamports required: {}", &lamports_required);
+
         system_program::create_account(
             CpiContext::new(
                 ctx.accounts.system_program.to_account_info(),
                 system_program::CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),         // From pubkey
-                    to: ctx.accounts.new_account.to_account_info(),     // To pubkey
+                    from: ctx.accounts.payer.to_account_info(),
+                    to: ctx.accounts.new_account.to_account_info(),
                 },
             ),
-            LAMPORTS_PER_SOL,                           // Lamports (1 SOL)
-            32,                                         // Space
-            &ctx.accounts.system_program.key(),         // Owner
+            lamports_required,
+            account_span,
+            &ctx.accounts.system_program.key(),
         )?;
 
         msg!("Account created succesfully.");

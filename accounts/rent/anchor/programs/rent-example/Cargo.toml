@@ -1,12 +1,12 @@
 [package]
-name = "create-system-account"
+name = "rent-example"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "create_system_account"
+name = "rent_example"
 
 [features]
 no-entrypoint = []
