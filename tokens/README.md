@@ -10,7 +10,7 @@ Tokens on Solana are - like everything else on Solana - accounts! They:
 - have an associated Mint Authority - the only account that can mint new tokens (by calling the Token program)
 
 How they work:   
-:apple: `Mint Account` - stores information about the token.
-:handbag: `Associated Token Account` - stores a specific balance of the Mint Account (this is essentially a counter).
+- :apple: `Mint Account` - stores information about the token.
+- :handbag: `Associated Token Account` - stores a specific balance of the Mint Account (this is essentially a counter).
 
 > You can read all about tokens in [Solana's official SPL Token documentation](https://spl.solana.com/token).
