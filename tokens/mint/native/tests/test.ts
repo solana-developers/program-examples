@@ -119,6 +119,7 @@ describe("mint-token", () => {
                     isSigner: false,
                     isWritable: false,
                 },
+                // Token metadata program
                 {
                     pubkey: TOKEN_METADATA_PROGRAM_ID,
                     isSigner: false,

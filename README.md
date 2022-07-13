@@ -57,13 +57,13 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - [ ] 5. Destroying an account
 - ### [ ] Tokens
 - [x] 1. Creating an SPL Token
-- [ ] 2. Transferring tokens
+- [x] 2. Mint tokens to a wallet
+- [ ] 3. Transferring tokens between wallets
 - ### [ ] NFTs
 - [x] 1. Creating an NFT
 - [ ] 2. Transferring an NFT
 - [ ] 3. Selling an NFT
-- [ ] 4. Adding metadata to an NFT
-- [ ] 5. NFT metadata expanded
+- [ ] 4. NFT metadata expanded
 - ### [ ] PDAs
 - [ ] 1. A simple PDA
 - [ ] 2. Dynamic PDA creation
