@@ -76,7 +76,7 @@ describe("mint-token", () => {
         const metadata = new TokenMetadata({
             title: "Solana Gold",
             symbol: "GOLDSOL",
-            uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/mint/native/assets/token_metadata.json",
+            uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/token_metadata.json",
         });
 
         // Transact with the "mint_token" function in our on-chain program

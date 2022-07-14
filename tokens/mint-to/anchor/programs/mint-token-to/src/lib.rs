@@ -5,7 +5,7 @@ pub mod instructions;
 use instructions::*;
 
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("DDvuxbzPh3aSb67Kc7kvxb7SsU6bNmPBfqsqvQFHcqWu");
 
 
 #[program]
@@ -19,7 +19,7 @@ pub mod mint_token_to {
         metadata_uri: String,
     ) -> Result<()> {
 
-        instructions::create_token_mint::create_token_mint(
+        create_token_mint::create_token_mint(
             ctx, 
             metadata_title, 
             metadata_symbol, 
@@ -32,6 +32,6 @@ pub mod mint_token_to {
         amount: u64,
     ) -> Result<()> {
 
-        instructions::mint_to_wallet::mint_to_wallet(ctx, amount)
+        mint_to_wallet::mint_to_wallet(ctx, amount)
     }
 }

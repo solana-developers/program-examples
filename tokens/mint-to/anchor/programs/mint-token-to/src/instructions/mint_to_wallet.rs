@@ -41,7 +41,7 @@ pub fn mint_to_wallet(
                 authority: ctx.accounts.mint_authority.to_account_info(),
             },
         ),
-        1,
+        amount,
     )?;
 
     msg!("Token minted to wallet successfully.");
