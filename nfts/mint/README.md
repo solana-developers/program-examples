@@ -1,9 +1,12 @@
-# Create a New NFT Mint
+# Create a New SPL Token Mint
 
-:notebook_with_decorative_cover: Note: This example is built off of [Mint Token](../../tokens/mint/README.md) and [Mint Token To](../../tokens/mint-to/README.md). If you get stuck, check out those examples.   
+This example demonstrates how to create an SPl Token on Solana with some metadata such as a token symbol and icon.
 
-___
+### :key: Keys:
 
-An NFT is obviously just a token on Solana! So, the process is the same for creating an NFT. There's just a few additional steps:
-- Decimals are set to 0
-- Minting must be disabled after one token is minted (ie. cap the supply at 1).
+- SPL Tokens by default have **9 decimals**, and **NFTs have 0 decimals**. "Decimals" here means the number of decimal; ie. a token with 3 decimals will be tracked in increments of 0.001.   
+- You can use [Metaplex's Token Metadata Program](https://docs.metaplex.com/) to create metadata for your token.
+- Steps:
+    1. Create an account for the Mint.
+    2. Initialize that account as a Mint Account.
+    3. Create a metadata account associated with that Mint Account.

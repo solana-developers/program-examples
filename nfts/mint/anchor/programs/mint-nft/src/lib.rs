@@ -4,12 +4,16 @@ use {
         solana_program::program::invoke,
         system_program,
     },
-    anchor_spl::token,
+    anchor_spl::{
+        token,
+        associated_token,
+    },
     mpl_token_metadata::instruction as mpl_instruction,
+    spl_token::instruction::AuthorityType,
 };
 
 
-declare_id!("4Bg2L3bHNk2wPszETtqE76hJHVXmnw2pqeUuumSSx7in");
+declare_id!("AaWo2HWYXs5YtZoV4mPN1ZA8e8gb3wHqrXxQRxTWBJBC");
 
 
 #[program]
@@ -17,13 +21,11 @@ pub mod mint_nft {
     use super::*;
 
     pub fn mint_token(
-        ctx: Context<MintNft>, 
+        ctx: Context<MintToken>, 
         metadata_title: String, 
         metadata_symbol: String, 
         metadata_uri: String,
     ) -> Result<()> {
-
-        const MINT_SIZE: u64 = 82;
 
         msg!("Creating mint account...");
         msg!("Mint: {}", &ctx.accounts.mint_account.key());
@@ -35,8 +37,8 @@ pub mod mint_nft {
                     to: ctx.accounts.mint_account.to_account_info(),
                 },
             ),
-            (Rent::get()?).minimum_balance(MINT_SIZE as usize),
-            MINT_SIZE,
+            (Rent::get()?).minimum_balance(token::Mint::LEN),
+            token::Mint::LEN as u64,
             &ctx.accounts.token_program.key(),
         )?;
 
@@ -50,7 +52,7 @@ pub mod mint_nft {
                     rent: ctx.accounts.rent.to_account_info(),
                 },
             ),
-            0,                                              // 0 Decimals
+            0,                                              // 0 Decimals (NFT)
             &ctx.accounts.mint_authority.key(),
             Some(&ctx.accounts.mint_authority.key()),
         )?;
@@ -84,7 +86,58 @@ pub mod mint_nft {
             ],
         )?;
 
-        msg!("Token mint process completed successfully.");
+        msg!("NFT mint created successfully.");
+
+        msg!("Creating token account...");
+        msg!("Token Address: {}", &ctx.accounts.token_account.key());    
+        associated_token::create(
+            CpiContext::new(
+                ctx.accounts.associated_token_program.to_account_info(),
+                associated_token::Create {
+                    payer: ctx.accounts.mint_authority.to_account_info(),
+                    associated_token: ctx.accounts.token_account.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                    mint: ctx.accounts.mint_account.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    token_program: ctx.accounts.token_program.to_account_info(),
+                    rent: ctx.accounts.rent.to_account_info(),
+                },
+            ),
+        )?;
+
+        msg!("Minting NFT to token account...");
+        msg!("NFT Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
+        msg!("Token Address: {}", &ctx.accounts.token_account.key());     
+        token::mint_to(
+            CpiContext::new(
+                ctx.accounts.token_program.to_account_info(),
+                token::MintTo {
+                    mint: ctx.accounts.mint_account.to_account_info(),
+                    to: ctx.accounts.token_account.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                },
+            ),
+            1,
+        )?;
+
+        msg!("NFT minted to wallet successfully.");
+
+        msg!("Disabling future minting...");
+        msg!("NFT Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
+        token::set_authority(
+            CpiContext::new(
+                ctx.accounts.token_program.to_account_info(),
+                token::SetAuthority {
+                    current_authority: ctx.accounts.mint_authority.to_account_info(),
+                    account_or_mint: ctx.accounts.mint_account.to_account_info(),
+                },
+            ),
+            AuthorityType::MintTokens,
+            None
+        )?;
+
+        msg!("NFT minting disabled successfully.");
+        msg!("NFT mint process completed successfully.");
 
         Ok(())
     }
@@ -92,17 +145,21 @@ pub mod mint_nft {
 
 
 #[derive(Accounts)]
-pub struct MintNft<'info> {
+pub struct MintToken<'info> {
     /// CHECK: We're about to create this with Metaplex
     #[account(mut)]
     pub metadata_account: UncheckedAccount<'info>,
     #[account(mut)]
     pub mint_account: Signer<'info>,
+    /// CHECK: We're about to create this with Anchor
+    #[account(mut)]
+    pub token_account: UncheckedAccount<'info>,
     #[account(mut)]
     pub mint_authority: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
+    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
     /// CHECK: Metaplex will check this
     pub token_metadata_program: UncheckedAccount<'info>,
 }

@@ -8,7 +8,11 @@ import {
     Transaction,
     sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { 
+    ASSOCIATED_TOKEN_PROGRAM_ID, 
+    TOKEN_PROGRAM_ID, 
+    getAssociatedTokenAddress 
+} from '@solana/spl-token';
 import * as borsh from "borsh";
 import { Buffer } from "buffer";
 
@@ -57,14 +61,19 @@ describe("mint-token", () => {
             }
         ]
     ]);
+
+
+    const mintKeypair: Keypair = Keypair.generate();
+    console.log(`New token: ${mintKeypair.publicKey}`);
+
+    const metadata = new TokenMetadata({
+        title: "Solana Gold",
+        symbol: "GOLDSOL",
+        uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/nfts/nft_metadata.json",
+    });
   
     it("Mint!", async () => {
 
-        const mintKeypair: Keypair = Keypair.generate();
-        console.log(`New token: ${mintKeypair.publicKey}`);
-
-        // Derive the metadata account's address and set the metadata
-        //
         const metadataAddress = (await PublicKey.findProgramAddress(
             [
               Buffer.from("metadata"),
@@ -73,25 +82,29 @@ describe("mint-token", () => {
             ],
             TOKEN_METADATA_PROGRAM_ID
         ))[0];
-        const metadata = new TokenMetadata({
-            title: "Solana PLatinum NFT",
-            symbol: "SOLP",
-            uri: "https://raw.githubusercontent.com/solana-developers/program-examples/main/nfts/mint/native/assets/token_metadata.json",
-        });
 
-        // Transact with the "mint_token" function in our on-chain program
-        //
+        const tokenAddress = await getAssociatedTokenAddress(
+            mintKeypair.publicKey,
+            payer.publicKey
+        );
+
         let ix = new TransactionInstruction({
             keys: [
+                // Metadata account
+                {
+                    pubkey: metadataAddress,
+                    isSigner: false,
+                    isWritable: true,
+                },
                 // Mint account
                 {
                     pubkey: mintKeypair.publicKey,
                     isSigner: true,
                     isWritable: true,
                 },
-                // Metadata account
+                // Associated token account
                 {
-                    pubkey: metadataAddress,
+                    pubkey: tokenAddress,
                     isSigner: false,
                     isWritable: true,
                 },
@@ -116,6 +129,12 @@ describe("mint-token", () => {
                 // Token program
                 {
                     pubkey: TOKEN_PROGRAM_ID,
+                    isSigner: false,
+                    isWritable: false,
+                },
+                // Associated program
+                {
+                    pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
                     isSigner: false,
                     isWritable: false,
                 },
