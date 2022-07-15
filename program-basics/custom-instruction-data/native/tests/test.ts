@@ -30,7 +30,11 @@ describe("custom-instruction-data", () => {
         };
     };
 
-    class InstructionData extends Assignable {};
+    class InstructionData extends Assignable {
+        toBuffer() {
+            return Buffer.from(borsh.serialize(InstructionDataSchema, this));
+        }
+    };
 
     const InstructionDataSchema = new Map([
         [
@@ -56,21 +60,17 @@ describe("custom-instruction-data", () => {
             height: 10
         });
 
-        function toBuffer(obj: InstructionData): Buffer {
-            return Buffer.from(borsh.serialize(InstructionDataSchema, obj));
-        }
-
         let ix1 = new TransactionInstruction({
             keys: [
                 {pubkey: payer.publicKey, isSigner: true, isWritable: true}
             ],
             programId: program.publicKey,
-            data: toBuffer(jimmy),
+            data: jimmy.toBuffer(),
         });
 
         let ix2 = new TransactionInstruction({
             ...ix1,
-            data: toBuffer(mary),
+            data: mary.toBuffer(),
         });
 
         await sendAndConfirmTransaction(

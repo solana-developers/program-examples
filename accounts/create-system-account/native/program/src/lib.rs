@@ -33,7 +33,7 @@ fn process_instruction(
             &payer.key,             // From pubkey
             &new_account.key,       // To pubkey
             LAMPORTS_PER_SOL,       // Lamports (1 SOL)
-            32,                     // Space
+            0,                      // Space
             &system_program::ID,    // Owner
         ),
         &[
