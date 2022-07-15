@@ -23,8 +23,8 @@ pub mod create_system_account {
                     to: ctx.accounts.new_account.to_account_info(),     // To pubkey
                 },
             ),
-            LAMPORTS_PER_SOL,                           // Lamports (1 SOL)
-            32,                                         // Space
+            1 * LAMPORTS_PER_SOL,                           // Lamports (1 SOL)
+            0,                                         // Space
             &ctx.accounts.system_program.key(),         // Owner
         )?;
 
