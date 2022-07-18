@@ -56,9 +56,9 @@ pub fn create_token_mint(
             ctx.accounts.token_metadata_program.key(),      // Program ID (the Token Metadata Program)
             ctx.accounts.metadata_account.key(),            // Metadata account
             ctx.accounts.mint_account.key(),                // Mint account
-            mint_authority.key(),              // Mint authority
-            ctx.accounts.payer.key(),              // Payer
-            mint_authority.key(),              // Update authority
+            mint_authority.key(),                   // Mint authority
+            ctx.accounts.payer.key(),               // Payer
+            mint_authority.key(),                   // Update authority
             metadata_title,                                 // Name
             metadata_symbol,                                // Symbol
             metadata_uri,                                   // URI
