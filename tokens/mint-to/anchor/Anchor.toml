@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.devnet]
-mint_token_to = "DDvuxbzPh3aSb67Kc7kvxb7SsU6bNmPBfqsqvQFHcqWu"
+mint_token_to = "86NFhnnuV8SNEuHdqNtjCFeGCknpjDXEbV7b3zBefJ11"
 
 [registry]
 url = "https://anchor.projectserum.com"

@@ -14,14 +14,24 @@ describe("mint-token", () => {
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.MintTokenTo as anchor.Program<MintTokenTo>;
 
-  const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  console.log(`New token: ${mintKeypair.publicKey}`);
-
-  const testTokenTitle = "Solana Gold";
+  const testTokenTitle = "Solana Gold G";
   const testTokenSymbol = "GOLDSOL";
   const testTokenUri = "https://raw.githubusercontent.com/solana-developers/program-examples/main/tokens/token_metadata.json";
 
-  it("Mint!", async () => {
+  const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+  console.log(`New token: ${mintKeypair.publicKey}`);
+
+  it("Create the mint", async () => {
+
+    const [mintAuthorityPda, mintAuthorityPdaBump] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from("mint_authority_"),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      program.programId,
+    );
+    console.log(`PDA: ${mintAuthorityPda}`);
+    console.log(`Bump: ${mintAuthorityPdaBump}`);
 
     const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
       [
@@ -32,24 +42,34 @@ describe("mint-token", () => {
       TOKEN_METADATA_PROGRAM_ID
     ))[0];
 
-    // Transact with the "create_token_mint" function in our on-chain program
-    //
     await program.methods.createTokenMint(
-      testTokenTitle, testTokenSymbol, testTokenUri
+      testTokenTitle, testTokenSymbol, testTokenUri, mintAuthorityPdaBump
     )
     .accounts({
       metadataAccount: metadataAddress,
       mintAccount: mintKeypair.publicKey,
-      mintAuthority: payer.publicKey,
+      mintAuthority: mintAuthorityPda,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       systemProgram: anchor.web3.SystemProgram.programId,
       tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
       tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
     })
-    .signers([payer.payer, mintKeypair])
+    .signers([mintKeypair, payer.payer])
     .rpc();
   });
 
   it("Mint to a wallet!", async () => {
+
+    const [mintAuthorityPda, mintAuthorityPdaBump] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from("mint_authority_"),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      program.programId,
+    );
+    console.log(`PDA: ${mintAuthorityPda}`);
+    console.log(`Bump: ${mintAuthorityPdaBump}`);
 
     const amountToMint = 1;
 
@@ -57,19 +77,22 @@ describe("mint-token", () => {
         mint: mintKeypair.publicKey,
         owner: payer.publicKey
     });
+    console.log(`Token Address: ${tokenAddress}`);
 
-    // Transact with the "mint_to_wallet" function in our on-chain program
-    //
-    await program.methods.mintToWallet(new anchor.BN(amountToMint))
+    await program.methods.mintToWallet(
+      new anchor.BN(amountToMint), mintAuthorityPdaBump
+    )
     .accounts({
       mintAccount: mintKeypair.publicKey,
+      mintAuthority: mintAuthorityPda,
       tokenAccount: tokenAddress,
-      mintAuthority: payer.publicKey,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       systemProgram: anchor.web3.SystemProgram.programId,
       tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
       associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
     })
-    .signers([payer.payer, mintKeypair])
+    // .signers([payer.payer])
     .rpc();
-});
+  });
 });
