@@ -33,14 +33,14 @@ describe("mint-token", () => {
     console.log(`PDA: ${mintAuthorityPda}`);
     console.log(`Bump: ${mintAuthorityPdaBump}`);
 
-    const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
+    const [metadataAddress, metadataBump] = await anchor.web3.PublicKey.findProgramAddress(
       [
         Buffer.from("metadata"),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
         mintKeypair.publicKey.toBuffer(),
       ],
       TOKEN_METADATA_PROGRAM_ID
-    ))[0];
+    );
 
     await program.methods.createTokenMint(
       testTokenTitle, testTokenSymbol, testTokenUri, mintAuthorityPdaBump

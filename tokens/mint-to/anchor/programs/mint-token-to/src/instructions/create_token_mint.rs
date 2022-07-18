@@ -5,7 +5,10 @@ use {
         system_program,
     },
     anchor_spl::token,
-    mpl_token_metadata::instruction as mpl_instruction,
+    mpl_token_metadata::{
+        instruction as mpl_instruction,
+        state::Metadata,
+    },
 };
 
 
@@ -18,36 +21,6 @@ pub fn create_token_mint(
 ) -> Result<()> {
 
     let mint_authority = &mut ctx.accounts.mint_authority;
-
-    msg!("Creating mint account...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.key());
-    system_program::create_account(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            system_program::CreateAccount {
-                from: ctx.accounts.payer.to_account_info(),
-                to: ctx.accounts.mint_account.to_account_info(),
-            },
-        ),
-        (Rent::get()?).minimum_balance(token::Mint::LEN),
-        token::Mint::LEN as u64,
-        &ctx.accounts.token_program.key(),
-    )?;
-
-    msg!("Initializing mint account...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.key());
-    token::initialize_mint(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            token::InitializeMint {
-                mint: ctx.accounts.mint_account.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
-            },
-        ),
-        9,                                              // 9 Decimals
-        &mint_authority.key(),
-        Some(&mint_authority.key()),
-    )?;
 
     msg!("Creating metadata account...");
     msg!("Metadata account address: {}", &ctx.accounts.metadata_account.key());
@@ -96,13 +69,22 @@ pub struct CreateTokenMint<'info> {
     /// CHECK: We're about to create this with Metaplex
     #[account(mut)]
     pub metadata_account: UncheckedAccount<'info>,
-    #[account(mut)]
-    pub mint_account: Signer<'info>,
+    #[account(
+        init,
+        payer = payer,
+        mint::decimals = 9,
+        mint::authority = mint_authority.key(),
+        owner = token_program.key(),
+    )]
+    pub mint_account: Account<'info, token::Mint>,
     #[account(
         init, 
         payer = payer,
         space = 8 + 32,
-        seeds = [b"mint_authority_", mint_account.key().as_ref()],
+        seeds = [
+            b"mint_authority_", 
+            mint_account.key().as_ref(),
+        ],
         bump
     )]
     pub mint_authority: Account<'info, MintAuthorityPda>,
