@@ -73,6 +73,7 @@ describe("mint-token", () => {
         mint: mintKeypair.publicKey,
         owner: payer.publicKey
     });
+    console.log(`Token Address: ${tokenAddress}`);
 
     await program.methods.mintToWallet(
       new anchor.BN(amountToMint), mintAuthorityPdaBump
@@ -105,10 +106,12 @@ describe("mint-token", () => {
         mint: mintKeypair.publicKey,
         owner: payer.publicKey
     });
+    console.log(`Owner Token Address: ${ownerTokenAddress}`);
     const recipientTokenAddress = await anchor.utils.token.associatedAddress({
         mint: mintKeypair.publicKey,
         owner: recipientWallet.publicKey
     });
+    console.log(`Recipient Token Address: ${recipientTokenAddress}`);
 
     await program.methods.transferToWallet(
       new anchor.BN(amountToTransfer)
