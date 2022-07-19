@@ -20,7 +20,8 @@ How they work:
 All examples in this folder demonstrate the following:
 - How to create a new token mint.
 - How to mint some amount of this token to a wallet.
-- How to transfer this token to a wallet.
+- How to transfer this token to a wallet.   
+
 Each example differs in a few key aspects:
 - `mint-1` - The **Mint** and the **Mint Authority** are generated keypairs.
 - `mint-2` - The **Mint** is a generated keypair. The **Mint Authority** is a Program Derived Address (PDA).
