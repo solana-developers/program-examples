@@ -55,18 +55,20 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - [x] 3. Transferring SOL
 - [ ] 4. Transferring an account's ownership
 - [ ] 5. Destroying an account
-- ### [ ] Tokens
-- [x] 1. Creating an SPL Token
-- [x] 2. Mint tokens to a wallet
-- [ ] 3. Transferring tokens between wallets
-- ### [ ] NFTs
-- [x] 1. Creating an NFT
-- [ ] 2. Transferring an NFT
-- [ ] 3. Selling an NFT
-- [ ] 4. NFT metadata expanded
 - ### [ ] PDAs
 - [ ] 1. A simple PDA
 - [ ] 2. Dynamic PDA creation
+- ### [ ] Tokens
+- *Each example shows creating mint, minting to, and transferring*
+- [ ] 1. Mint and Mint Authority as keypairs
+- [x] 2. Mint as keypair and Mint Authority as PDA
+- [ ] 3. Mint and Mint Authority as PDAs
+- ### [ ] NFTs
+- *Each example shows creating mint, minting to, and transferring*
+- [ ] 1. Mint and Mint Authority as keypairs
+- [ ] 2. Mint as keypair and Mint Authority as PDA
+- [ ] 3. Mint and Mint Authority as PDAs
+- [ ] 4. NFT metadata expanded
 - ### [ ] Advanced PDAs
 - [ ] 1. Twitter
 - [ ] 2. Amazon
