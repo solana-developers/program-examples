@@ -2,13 +2,9 @@ use {
     anchor_lang::{
         prelude::*,
         solana_program::program::invoke_signed,
-        system_program,
     },
     anchor_spl::token,
-    mpl_token_metadata::{
-        instruction as mpl_instruction,
-        state::Metadata,
-    },
+    mpl_token_metadata::instruction as mpl_instruction,
 };
 
 
@@ -20,8 +16,6 @@ pub fn create_token_mint(
     mint_authority_pda_bump: u8,
 ) -> Result<()> {
 
-    let mint_authority = &mut ctx.accounts.mint_authority;
-
     msg!("Creating metadata account...");
     msg!("Metadata account address: {}", &ctx.accounts.metadata_account.key());
     invoke_signed(
@@ -29,9 +23,9 @@ pub fn create_token_mint(
             ctx.accounts.token_metadata_program.key(),      // Program ID (the Token Metadata Program)
             ctx.accounts.metadata_account.key(),            // Metadata account
             ctx.accounts.mint_account.key(),                // Mint account
-            mint_authority.key(),                   // Mint authority
-            ctx.accounts.payer.key(),               // Payer
-            mint_authority.key(),                   // Update authority
+            ctx.accounts.mint_authority.key(),              // Mint authority
+            ctx.accounts.payer.key(),                       // Payer
+            ctx.accounts.mint_authority.key(),              // Update authority
             metadata_title,                                 // Name
             metadata_symbol,                                // Symbol
             metadata_uri,                                   // URI
@@ -45,17 +39,19 @@ pub fn create_token_mint(
         &[
             ctx.accounts.metadata_account.to_account_info(),
             ctx.accounts.mint_account.to_account_info(),
-            mint_authority.to_account_info(),
+            ctx.accounts.mint_authority.to_account_info(),
             ctx.accounts.payer.to_account_info(),
-            mint_authority.to_account_info(),
+            ctx.accounts.mint_authority.to_account_info(),
             ctx.accounts.token_metadata_program.to_account_info(),
             ctx.accounts.rent.to_account_info(),
         ],
-        &[&[
-            b"mint_authority_", 
-            ctx.accounts.mint_account.key().as_ref(),
-            &[mint_authority_pda_bump],
-        ]]
+        &[
+            &[
+                b"mint_authority_", 
+                ctx.accounts.mint_account.key().as_ref(),
+                &[mint_authority_pda_bump],
+            ]
+        ]
     )?;
 
     msg!("Token mint created successfully.");
@@ -74,7 +70,6 @@ pub struct CreateTokenMint<'info> {
         payer = payer,
         mint::decimals = 9,
         mint::authority = mint_authority.key(),
-        owner = token_program.key(),
     )]
     pub mint_account: Account<'info, token::Mint>,
     #[account(
