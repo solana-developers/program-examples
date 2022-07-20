@@ -26,14 +26,6 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 
 ## Navigating this Repo
 
-:blue_book: This collection is organized into the following sections:
-- `program-basics` - The basics of writing Solana programs in Rust.
-- `accounts`- Examples of creating & modifying accounts from on-chain.
-- `tokens` - Examples of working with SPL Tokens from on-chain.
-- `nfts` - Examples for various NFT use cases (including MetaPlex).
-- `pdas` - Everything you need to know about working with Program Derived Addresses & program-owned accounts.
-- `advanced-pdas` - Common Web2 design patterns implemented with PDAs on Solana.
-
 :file_folder: Each example contains two folders:
 - `native` - Written using Solana's native Rust crates and vanilla Rust.
 - `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
@@ -43,33 +35,38 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
-## To-Do:
 :mag: *Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
-- ### [x] Program Basics
-- [x] 1. Hello Solana
-- [x] 2. Custom instruction data
-- [x] 3. Recommended program layout
-- ### [ ] Accounts
-- [x] 1. Creating a system account
-- [x] 2. Rent
-- [x] 3. Transferring SOL
-- [ ] 4. Transferring an account's ownership
-- [ ] 5. Destroying an account
-- ### [ ] PDAs
-- [ ] 1. A simple PDA
-- [ ] 2. Dynamic PDA creation
-- ### [ ] Tokens
-- *Each example shows creating mint, minting to, and transferring*
-- [ ] 1. Mint and Mint Authority as keypairs
-- [x] 2. Mint as keypair and Mint Authority as PDA
-- [ ] 3. Mint and Mint Authority as PDAs
-- ### [ ] NFTs
-- *Each example shows creating mint, minting to, and transferring*
-- [ ] 1. Mint and Mint Authority as keypairs
-- [ ] 2. Mint as keypair and Mint Authority as PDA
-- [ ] 3. Mint and Mint Authority as PDAs
-- [ ] 4. NFT metadata expanded
-- ### [ ] Advanced PDAs
-- [ ] 1. Twitter
-- [ ] 2. Amazon
-- [ ] 3. OpenSea
+* ### [ ] Basics
+    * [x] Hello Solana
+    * [x] Processing Instructions
+    * [x] Repository Layout
+    * [ ] Checking Accounts
+    * [x] Create an Account
+    * [x] Rent
+    * [x] Transfer SOL
+    * [ ] Stake SOL with a Validator
+    * [ ] Assign Data to an Account
+    * [ ] Reallocate an Account's Data
+    * [ ] Transfer an Account's Ownership
+    * [ ] Destroy an Account
+    * [ ] Create a Simple PDA
+    * [ ] PDAs Expanded
+    * [ ] PDAs as a Database
+* ### [ ] Tokens
+    * [ ] Create an SPL Token
+    * [ ] Token Metadata
+    * [ ] Minting Tokens
+    * [ ] Mint Authority
+    * [ ] Transferring Tokens
+    * [ ] Selling Tokens
+    * [ ] Controlling Token Supply
+    * [ ] Disabling Token Minting
+    * [ ] Freezing Token Accounts
+* ### [ ] NFTs
+    * [ ] Create an NFT
+    * [ ] NFT Metadata
+    * [ ] Master Edition NFT
+    * [ ] Other Edition NFT
+    * [ ] NFT Collections
+    * [ ] NFT Royalties & Features
+    * [ ] NFT Utilities
