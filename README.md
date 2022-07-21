@@ -42,13 +42,13 @@ Regardless of what you may want to add on top of existing Solana programs, the n
     * [x] Repository Layout
     * [ ] Checking Accounts
     * [x] Create an Account
-    * [x] Rent
-    * [x] Transfer SOL
-    * [ ] Stake SOL with a Validator
     * [ ] Assign Data to an Account
+    * [x] Rent
     * [ ] Reallocate an Account's Data
     * [ ] Transfer an Account's Ownership
     * [ ] Destroy an Account
+    * [x] Transfer SOL
+    * [ ] Stake SOL with a Validator
     * [ ] Create a Simple PDA
     * [ ] PDAs Expanded
     * [ ] PDAs as a Database
