@@ -1,12 +1,12 @@
 import * as anchor from "@project-serum/anchor";
-import { CustomInstructionData } from "../target/types/custom_instruction_data";
+import { ProcessingInstructions } from "../target/types/processing_instructions";
 
 
 describe("custom-instruction-data", () => {
 
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
-  const program = anchor.workspace.CustomInstructionData as anchor.Program<CustomInstructionData>;
+  const program = anchor.workspace.ProcessingInstructions as anchor.Program<ProcessingInstructions>;
 
   it("Go to the park!", async () => {
     

@@ -29,25 +29,38 @@ pub mod mint_2 {
         )
     }
 
-    pub fn mint_to_wallet(
-        ctx: Context<MintToWallet>, 
+    pub fn mint_to_your_wallet(
+        ctx: Context<MintToYourWallet>, 
         amount: u64,
         mint_authority_pda_bump: u8,
     ) -> Result<()> {
 
-        mint_to_wallet::mint_to_wallet(
+        mint_to_your_wallet::mint_to_your_wallet(
             ctx, 
             amount,
             mint_authority_pda_bump,
         )
     }
 
-    pub fn transfer_to_wallet(
-        ctx: Context<TransferToWallet>, 
+    pub fn mint_to_another_wallet(
+        ctx: Context<MintToAnotherWallet>, 
+        amount: u64,
+        mint_authority_pda_bump: u8,
+    ) -> Result<()> {
+
+        mint_to_another_wallet::mint_to_another_wallet(
+            ctx, 
+            amount,
+            mint_authority_pda_bump,
+        )
+    }
+
+    pub fn transfer_to_another_wallet(
+        ctx: Context<TransferToAnotherWallet>, 
         amount: u64,
     ) -> Result<()> {
 
-        transfer_to_wallet::transfer_to_wallet(
+        transfer_to_another_wallet::transfer_to_another_wallet(
             ctx, 
             amount,
         )

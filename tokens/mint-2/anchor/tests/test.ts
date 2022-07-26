@@ -57,7 +57,7 @@ describe("mint-token", () => {
     .rpc();
   });
 
-  it("Mint to a wallet!", async () => {
+  it("Mint to your wallet!", async () => {
 
     const [mintAuthorityPda, mintAuthorityPdaBump] = await anchor.web3.PublicKey.findProgramAddress(
       [
@@ -75,7 +75,7 @@ describe("mint-token", () => {
     });
     console.log(`Token Address: ${tokenAddress}`);
 
-    await program.methods.mintToWallet(
+    await program.methods.mintToYourWallet(
       new anchor.BN(amountToMint), mintAuthorityPdaBump
     )
     .accounts({
@@ -92,7 +92,49 @@ describe("mint-token", () => {
     .rpc();
   });
 
-  it("Transfer to a wallet!", async () => {
+  it("Mint to another person's wallet (airdrop)!", async () => {
+
+    const recipientKeypair = anchor.web3.Keypair.generate();
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(recipientKeypair.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL)
+    );
+    console.log(`Recipient pubkey: ${recipientKeypair.publicKey}`);
+
+    const [mintAuthorityPda, mintAuthorityPdaBump] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from("mint_authority_"),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      program.programId,
+    );
+
+    const amountToMint = 1;
+
+    const tokenAddress = await anchor.utils.token.associatedAddress({
+        mint: mintKeypair.publicKey,
+        owner: recipientKeypair.publicKey
+    });
+    console.log(`Token Address: ${tokenAddress}`);
+
+    await program.methods.mintToAnotherWallet(
+      new anchor.BN(amountToMint), mintAuthorityPdaBump
+    )
+    .accounts({
+      mintAccount: mintKeypair.publicKey,
+      mintAuthority: mintAuthorityPda,
+      recipient: recipientKeypair.publicKey,
+      tokenAccount: tokenAddress,
+      payer: payer.publicKey,
+      rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      systemProgram: anchor.web3.SystemProgram.programId,
+      tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+      associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
+    })
+    .signers([payer.payer])
+    .rpc();
+  });
+
+  it("Transfer to another person's wallet!", async () => {
 
     const recipientWallet = anchor.web3.Keypair.generate();
     await provider.connection.confirmTransaction(
@@ -113,7 +155,7 @@ describe("mint-token", () => {
     });
     console.log(`Recipient Token Address: ${recipientTokenAddress}`);
 
-    await program.methods.transferToWallet(
+    await program.methods.transferToAnotherWallet(
       new anchor.BN(amountToTransfer)
     )
     .accounts({
@@ -127,7 +169,7 @@ describe("mint-token", () => {
       tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
       associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
     })
-    .signers([payer.payer, recipientWallet])
+    .signers([payer.payer])
     .rpc();
   });
 });

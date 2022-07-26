@@ -7,8 +7,8 @@ use {
 };
 
 
-pub fn transfer_to_wallet(
-    ctx: Context<TransferToWallet>, 
+pub fn transfer_to_another_wallet(
+    ctx: Context<TransferToAnotherWallet>, 
     amount: u64,
 ) -> Result<()> {
 
@@ -35,7 +35,7 @@ pub fn transfer_to_wallet(
 
 
 #[derive(Accounts)]
-pub struct TransferToWallet<'info> {
+pub struct TransferToAnotherWallet<'info> {
     #[account(mut)]
     pub mint_account: Account<'info, token::Mint>,
     #[account(
@@ -46,15 +46,15 @@ pub struct TransferToWallet<'info> {
     pub owner_token_account: Account<'info, token::TokenAccount>,
     #[account(
         init,
-        payer = recipient,
+        payer = owner,
         associated_token::mint = mint_account,
         associated_token::authority = recipient,
     )]
     pub recipient_token_account: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub owner: Signer<'info>,
-    #[account(mut)]
-    pub recipient: Signer<'info>,
+    /// CHECK: Crediting not Debiting
+    pub recipient: UncheckedAccount<'info>,
     pub rent: Sysvar<'info, Rent>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,

@@ -8,8 +8,8 @@ use {
 use crate::create_token_mint::MintAuthorityPda;
 
 
-pub fn mint_to_wallet(
-    ctx: Context<MintToWallet>, 
+pub fn mint_to_another_wallet(
+    ctx: Context<MintToAnotherWallet>, 
     amount: u64,
     mint_authority_pda_bump: u8,
 ) -> Result<()> {
@@ -42,7 +42,7 @@ pub fn mint_to_wallet(
 
 #[derive(Accounts)]
 #[instruction(amount: u64, mint_authority_pda_bump: u8)]
-pub struct MintToWallet<'info> {
+pub struct MintToAnotherWallet<'info> {
     #[account(
         mut,
         mint::decimals = 9,
@@ -58,11 +58,13 @@ pub struct MintToWallet<'info> {
         bump = mint_authority_pda_bump
     )]
     pub mint_authority: Account<'info, MintAuthorityPda>,
+    /// CHECK: This is for airdrops
+    pub recipient: UncheckedAccount<'info>,
     #[account(
         init,
         payer = payer,
         associated_token::mint = mint_account,
-        associated_token::authority = payer,
+        associated_token::authority = recipient,
     )]
     pub token_account: Account<'info, token::TokenAccount>,
     #[account(mut)]

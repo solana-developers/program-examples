@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-custom_instruction_data = "DgoL5J44aspizyUs9fcnpGEUJjWTLJRCfx8eYtUMYczf"
+processing_instructions = "DgoL5J44aspizyUs9fcnpGEUJjWTLJRCfx8eYtUMYczf"
 
 [registry]
 url = "https://anchor.projectserum.com"

@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 declare_id!("DgoL5J44aspizyUs9fcnpGEUJjWTLJRCfx8eYtUMYczf");
 
 #[program]
-pub mod custom_instruction_data {
+pub mod processing_instructions {
     use super::*;
 
     // With Anchor, we just put instruction data in the function signature!

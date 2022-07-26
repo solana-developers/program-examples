@@ -42,7 +42,6 @@ pub fn create_token_mint(
             ctx.accounts.mint_authority.to_account_info(),
             ctx.accounts.payer.to_account_info(),
             ctx.accounts.mint_authority.to_account_info(),
-            ctx.accounts.token_metadata_program.to_account_info(),
             ctx.accounts.rent.to_account_info(),
         ],
         &[
