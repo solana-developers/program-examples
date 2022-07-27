@@ -49,7 +49,7 @@ Regardless of what you may want to add on top of existing Solana programs, the n
     * [ ] Destroy an Account
     * [x] Transfer SOL
     * [ ] Stake SOL with a Validator
-    * [ ] Cross-program Invocation
+    * [x] Cross-program Invocation
     * [ ] Create a Simple PDA
     * [ ] PDAs Expanded
     * [ ] PDAs as a Database
