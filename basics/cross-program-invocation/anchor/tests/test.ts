@@ -2,7 +2,7 @@ import * as anchor from "@project-serum/anchor";
 import { Hand } from "../target/types/hand";
 import { Lever } from "../target/types/lever";
 
-describe("hello-solana", () => {
+describe("CPI Example", () => {
   
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);

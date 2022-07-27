@@ -16,6 +16,28 @@ In the above steps, we can't create a metadata account without first creating a 
 
 Let's say we decided it was essential to have our mint (operation 1) and our "mint to user" (operation 4) tasks on-chain. We would have no choice but to also include the other two operations, since we can't do operation #1, pause the program while we do #2 & #3 from the client, and then resume the program for #4.
 
+#### Notes on Native setup:
+
+With the `native` implementation, you have to do a little bit of lifting to import one crate into another within your Cargo workspace.   
+
+Add the `no-entrypoint` feature to Cargo.toml:
+```toml
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+```
+Then use the import just like we did in the `anchor` example:
+```toml
+[dependencies]
+...
+lever = { path = "../lever", features = [ "cpi" ] }
+```
+Lastly, add this annotation over the `entrypoint!` macro that you wish to disable on import (the child program):
+```rust
+#[cfg(not(feature = "no-entrypoint"))]
+entrypoint!(process_instruction);
+```
+
 ### Let's switch the power on and off using a CPI!   
 
 <img src="istockphoto-1303616086-612x612.jpeg" alt="lever" width="128" align="center"/>

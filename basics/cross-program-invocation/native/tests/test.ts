@@ -2,9 +2,12 @@ import {
     Connection,
     Keypair,
     sendAndConfirmTransaction,
+    SystemProgram,
     Transaction,
     TransactionInstruction,
 } from '@solana/web3.js';
+import * as borsh from "borsh";
+import { Buffer } from "buffer";
 
 function createKeypairFromFile(path: string): Keypair {
     return Keypair.fromSecretKey(
@@ -13,33 +16,90 @@ function createKeypairFromFile(path: string): Keypair {
 };
 
 
-describe("hello-solana", () => {
-
-    // Loading these from local files for development
-    //
+describe("CPI Example", () => {
+  
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
-  
-    it("Say hello!", async () => {
+    const hand = createKeypairFromFile('./target/so/hand-keypair.json');
+    const lever = createKeypairFromFile('./target/so/lever-keypair.json');
 
-        // We set up our instruction first.
-        //
+    class Assignable {
+        constructor(properties) {
+            Object.keys(properties).map((key) => {
+                return (this[key] = properties[key]);
+            });
+        };
+    };
+
+    class PowerStatus extends Assignable {
+        toBuffer() { return Buffer.from(borsh.serialize(PowerStatusSchema, this)) }
+    };
+    const PowerStatusSchema = new Map([[ PowerStatus, { kind: 'struct', fields: [ ['is_on', 'u8'] ]} ]]);
+    
+    class SetPowerStatus extends Assignable {
+        toBuffer() { return Buffer.from(borsh.serialize(SetPowerStatusSchema, this)) }
+    };
+    const SetPowerStatusSchema = new Map([[ SetPowerStatus, { kind: 'struct', fields: [ ['name', 'string'] ]} ]]);
+  
+    const powerAccount = Keypair.generate();
+  
+    it("Initialize the lever!", async () => {
+
         let ix = new TransactionInstruction({
             keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true}
+                {pubkey: powerAccount.publicKey, isSigner: true, isWritable: true},
+                {pubkey: payer.publicKey, isSigner: true, isWritable: true},
+                {pubkey: SystemProgram.programId, isSigner: false, isWritable: false}
             ],
-            programId: program.publicKey,
-            data: Buffer.alloc(0), // No data
+            programId: lever.publicKey,
+            data: (new PowerStatus({is_on: true})).toBuffer(),
         });
 
-        // Now we send the transaction over RPC
-        //
         await sendAndConfirmTransaction(
             connection, 
-            new Transaction().add(ix), // Add our instruction (you can add more than one)
+            new Transaction().add(ix),
+            [payer, powerAccount]
+        );
+  
+    });
+  
+    it("Pull the lever!", async () => {
+
+        let ix = new TransactionInstruction({
+            keys: [
+                {pubkey: powerAccount.publicKey, isSigner: false, isWritable: true},
+                {pubkey: lever.publicKey, isSigner: false, isWritable: false},
+            ],
+            programId: hand.publicKey,
+            data: new SetPowerStatus({name: "Chris"}).toBuffer(),
+        });
+
+        await sendAndConfirmTransaction(
+            connection, 
+            new Transaction().add(ix),
             [payer]
         );
+  
     });
-  });
+  
+    it("Pull it again!", async () => {
+  
+        let ix = new TransactionInstruction({
+            keys: [
+                {pubkey: powerAccount.publicKey, isSigner: false, isWritable: true},
+                {pubkey: lever.publicKey, isSigner: false, isWritable: false},
+            ],
+            programId: hand.publicKey,
+            data: new SetPowerStatus({name: "Ashley"}).toBuffer(),
+        });
+
+        await sendAndConfirmTransaction(
+            connection, 
+            new Transaction().add(ix),
+            [payer]
+        );
+  
+    });
+});
+  
   
