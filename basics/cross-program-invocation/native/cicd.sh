@@ -9,6 +9,3 @@ echo "Hand:"
 solana program deploy ./target/so/hand.so | grep "Program Id:"
 echo "Lever:"
 solana program deploy ./target/so/lever.so | grep "Program Id:"
-
-# D2E39tDWxnndmW3QvYVzmm2gU2kvr9Zv2ywBLAmq8Fw3
-# 9qprjFZKZbBeRGNT3vgPW5xpPFqXjNxKZWybUy7mYNBw
