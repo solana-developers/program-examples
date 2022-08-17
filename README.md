@@ -40,7 +40,7 @@ Regardless of what you may want to add on top of existing Solana programs, the n
     * [x] Hello Solana
     * [x] Processing Instructions
     * [x] Repository Layout
-    * [ ] Checking Accounts
+    * [x] Checking Accounts
     * [x] Create an Account
     * [ ] Assign Data to an Account
     * [x] Rent
