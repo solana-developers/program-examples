@@ -12,18 +12,6 @@ use solana_program::{
 entrypoint!(process_instruction);
 
 
-fn print_account_info(account_info: AccountInfo) {
-    msg!("  key: {:?}", account_info.key);
-    msg!("  is_signer: {:?}", account_info.is_signer);
-    msg!("  is_writable: {:?}", account_info.is_writable);
-    msg!("  lamports: {:?}", account_info.lamports());
-    msg!("  data: {:?}", account_info.data);
-    msg!("  owner: {:?}", account_info.owner);
-    msg!("  executable: {:?}", account_info.executable);
-    msg!("  rent_epoch: {:?}", account_info.rent_epoch);
-}
-
-
 fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -55,7 +43,6 @@ fn process_instruction(
     // You can make sure an account has NOT been initialized.
     
     msg!("New account: {}", account_to_create.key);
-    print_account_info(account_to_create.clone());
     if account_to_create.lamports() != 0 {
         msg!("The program expected the account to create to not yet be initialized.");
         return Err(ProgramError::AccountAlreadyInitialized)
@@ -64,7 +51,6 @@ fn process_instruction(
 
     // You can also make sure an account has been initialized.
     msg!("Account to change: {}", account_to_change.key);
-    print_account_info(account_to_change.clone());
     if account_to_change.lamports() == 0 {
         msg!("The program expected the account to change to be initialized.");
         return Err(ProgramError::UninitializedAccount)
