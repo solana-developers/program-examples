@@ -22,7 +22,7 @@ describe("Checking accounts", async () => {
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
     
     const PROGRAM_ID: PublicKey = new PublicKey(
-        "AE653DEBtNWr2VcU3FhVtFPc7rUf4z2Km8s5TnSwiiaW"
+        ""
     );
 
     // We'll create this ahead of time.
