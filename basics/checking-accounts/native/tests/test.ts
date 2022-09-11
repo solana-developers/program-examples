@@ -20,9 +20,10 @@ describe("Checking accounts", async () => {
 
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    
+    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
+
     const PROGRAM_ID: PublicKey = new PublicKey(
-        ""
+        program.publicKey
     );
 
     // We'll create this ahead of time.
