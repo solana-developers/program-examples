@@ -3,10 +3,6 @@ name = "hand"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-no-entrypoint = []
-cpi = ["no-entrypoint"]
-
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.9.1"
