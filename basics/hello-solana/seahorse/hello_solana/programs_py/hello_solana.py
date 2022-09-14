@@ -1,13 +1,32 @@
-# hello_solana
-# Built with Seahorse v0.1.5
-
 from seahorse.prelude import *
 
 declare_id('Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS')
 
+class Counter(Account):
+    authority: Pubkey
+    value: u8
+
 
 @instruction
-def hello(signer: Signer):
+def initialize(
+    authority: Signer, 
+    counter: Empty[Counter]
+):
+    # Initialize the counter and set the authority
+    counter = counter.init(
+        payer = authority,
+        seeds = ['new_delhi_hh', authority]
+    )
+
+    counter.authority = authority.key()
+    counter.value = 0
+    
     print("Hello, Solana from Seahorse!")
 
-    print(f"This is the public key of the signer: {signer.key()}")
+
+@instruction
+def increment(
+    authority: Signer, 
+    counter: Counter
+):
+    counter.value += 1

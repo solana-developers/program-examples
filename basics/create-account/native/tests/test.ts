@@ -1,6 +1,7 @@
 import {
     Connection,
     Keypair,
+    PublicKey,
     sendAndConfirmTransaction,
     SystemProgram,
     Transaction,
@@ -19,7 +20,10 @@ describe("Create a system account", async () => {
 
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
+    
+    const PROGRAM_ID: PublicKey = new PublicKey(
+        "Au21huMZuDQrbzu2Ec5ohpW5CKRqhcGV6qLawfydStGs"
+    );
   
     it("Create the account", async () => {
 
@@ -31,7 +35,7 @@ describe("Create a system account", async () => {
                 {pubkey: newKeypair.publicKey, isSigner: true, isWritable: true},
                 {pubkey: SystemProgram.programId, isSigner: false, isWritable: false}
             ],
-            programId: program.publicKey,
+            programId: PROGRAM_ID,
             data: Buffer.alloc(0),
         });
 
