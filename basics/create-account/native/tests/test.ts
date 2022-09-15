@@ -1,6 +1,7 @@
 import {
     Connection,
     Keypair,
+    LAMPORTS_PER_SOL,
     PublicKey,
     sendAndConfirmTransaction,
     SystemProgram,
@@ -25,7 +26,7 @@ describe("Create a system account", async () => {
         "Au21huMZuDQrbzu2Ec5ohpW5CKRqhcGV6qLawfydStGs"
     );
   
-    it("Create the account", async () => {
+    it("Create the account via a cross program invocation", async () => {
 
         const newKeypair = Keypair.generate();
 
@@ -44,6 +45,23 @@ describe("Create a system account", async () => {
             new Transaction().add(ix),
             [payer, newKeypair]
         );
+    });
+
+    it("Create the account via direct call to system program", async () => {
+
+        const newKeypair = Keypair.generate();
+
+        const ix = SystemProgram.createAccount({
+            fromPubkey: payer.publicKey,
+            newAccountPubkey: newKeypair.publicKey,
+            lamports: LAMPORTS_PER_SOL,
+            space: 0,
+            programId: SystemProgram.programId
+        })
+
+        await sendAndConfirmTransaction(connection,
+            new Transaction().add(ix),
+            [payer, newKeypair]);
     });
   });
   
