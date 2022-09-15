@@ -38,21 +38,20 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 :mag: *Got something you want to see here? Add it to the list. Or better yet, write one & create a PR!*
 * ### [ ] Basics
     * [x] Hello Solana
-    * [x] Processing Instructions
-    * [x] Repository Layout
     * [x] Checking Accounts
     * [x] Create an Account
-    * [ ] Assign Data to an Account
+    * [x] Assign Data to an Account
     * [x] Rent
     * [ ] Reallocate an Account's Data
     * [ ] Transfer an Account's Ownership
     * [ ] Destroy an Account
+    * [x] Processing Instructions
+    * [x] Create a Simple PDA
+    * [ ] PDAs Expanded
+    * [x] Repository Layout
     * [x] Transfer SOL
     * [ ] Stake SOL with a Validator
     * [x] Cross-program Invocation
-    * [ ] Create a Simple PDA
-    * [ ] PDAs Expanded
-    * [ ] PDAs as a Database
 * ### [ ] Tokens
     * [ ] Create an SPL Token
     * [ ] Token Metadata

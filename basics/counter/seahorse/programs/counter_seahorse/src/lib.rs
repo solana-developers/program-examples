@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program;
+use anchor_spl::associated_token;
 use anchor_spl::token;
 use std::convert::TryFrom;
 
@@ -8,62 +9,52 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 #[derive(Debug)]
 #[account]
 pub struct Counter {
-    authority: Pubkey,
-    value: u8,
+    count: u64,
 }
 
-pub fn initialize_handler(mut ctx: Context<Initialize>) -> Result<()> {
-    let mut authority = &mut ctx.accounts.authority;
+pub fn initialize_counter_handler(mut ctx: Context<InitializeCounter>, mut seed: u8) -> Result<()> {
     let mut counter = &mut ctx.accounts.counter;
-    let mut counter = counter;
-
-    counter.authority = authority.key();
-
-    counter.value = 0;
-
-    msg!("{}", "Hello, Solana from Seahorse!");
+    let mut payer = &mut ctx.accounts.payer;
 
     Ok(())
 }
 
 pub fn increment_handler(mut ctx: Context<Increment>) -> Result<()> {
-    let mut authority = &mut ctx.accounts.authority;
     let mut counter = &mut ctx.accounts.counter;
 
-    counter.value += 1;
+    counter.count += 1;
 
     Ok(())
 }
 
 #[derive(Accounts)]
-pub struct Initialize<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
+# [instruction (seed : u8)]
+pub struct InitializeCounter<'info> {
     #[account(
         init,
-        payer = authority,
-        seeds = ["new_delhi_hh".as_bytes().as_ref(), authority.key().as_ref()],
+        payer = payer,
+        seeds = [seed.to_le_bytes().as_ref()],
         bump,
         space = 8 + std::mem::size_of::<Counter>()
     )]
     pub counter: Box<Account<'info, Counter>>,
+    #[account(mut)]
+    pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct Increment<'info> {
     #[account(mut)]
-    pub authority: Signer<'info>,
-    #[account(mut)]
     pub counter: Box<Account<'info, Counter>>,
 }
 
 #[program]
-pub mod hello_solana {
+pub mod counter_seahorse {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize_handler(ctx)
+    pub fn initialize_counter(ctx: Context<InitializeCounter>, seed: u8) -> Result<()> {
+        initialize_counter_handler(ctx, seed)
     }
 
     pub fn increment(ctx: Context<Increment>) -> Result<()> {

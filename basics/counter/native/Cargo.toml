@@ -1,0 +1,16 @@
+[package]
+name = "counter-solana-native"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+borsh = "0.9"
+solana-program = "1.10.38"

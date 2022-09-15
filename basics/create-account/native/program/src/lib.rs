@@ -30,14 +30,14 @@ fn process_instruction(
     
     invoke(
         &system_instruction::create_account(
-            &payer.key,             // From pubkey
-            &new_account.key,       // To pubkey
-            1 * LAMPORTS_PER_SOL,   // Lamports (1 SOL)
-            0,                      // Space
-            &system_program::ID,    // Owner
+            &payer.key,
+            &new_account.key,
+            1 * LAMPORTS_PER_SOL,
+            0,
+            &system_program::ID,
         ),
         &[
-            payer.clone(), new_account.clone(), system_program.clone()  // Accounts involved
+            payer.clone(), new_account.clone(), system_program.clone()
         ]
     )?;
 
