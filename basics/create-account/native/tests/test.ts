@@ -1,6 +1,7 @@
 import {
     Connection,
-    Keypair, LAMPORTS_PER_SOL,
+    Keypair,
+    PublicKey,
     sendAndConfirmTransaction,
     SystemProgram,
     Transaction,
@@ -19,9 +20,12 @@ describe("Create a system account", async () => {
 
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
+    
+    const PROGRAM_ID: PublicKey = new PublicKey(
+        "Au21huMZuDQrbzu2Ec5ohpW5CKRqhcGV6qLawfydStGs"
+    );
   
-    it("Create the account via a cross program invocation", async () => {
+    it("Create the account", async () => {
 
         const newKeypair = Keypair.generate();
 
@@ -31,7 +35,7 @@ describe("Create a system account", async () => {
                 {pubkey: newKeypair.publicKey, isSigner: true, isWritable: true},
                 {pubkey: SystemProgram.programId, isSigner: false, isWritable: false}
             ],
-            programId: program.publicKey,
+            programId: PROGRAM_ID,
             data: Buffer.alloc(0),
         });
 
@@ -40,24 +44,6 @@ describe("Create a system account", async () => {
             new Transaction().add(ix),
             [payer, newKeypair]
         );
-    });
-
-    it("Create the account via direct call to system program", async () => {
-
-        const newKeypair = Keypair.generate();
-
-        const ix = SystemProgram.createAccount({
-            fromPubkey: payer.publicKey,
-            newAccountPubkey: newKeypair.publicKey,
-            lamports: LAMPORTS_PER_SOL,
-            space: 0,
-            programId: SystemProgram.programId
-        })
-
-
-        await sendAndConfirmTransaction(connection,
-            new Transaction().add(ix),
-            [payer, newKeypair]);
     });
   });
   
