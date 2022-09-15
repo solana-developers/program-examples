@@ -1,5 +1,7 @@
 .template
 
+test-ledger/
+
 **/*/node_modules
 **/*/package-lock.json
 **/*/Cargo.lock
