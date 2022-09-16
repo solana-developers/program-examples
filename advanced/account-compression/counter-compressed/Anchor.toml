@@ -1,0 +1,26 @@
+[features]
+seeds = true
+skip-lint = false
+
+[programs.localnet]
+counter_compressed = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+
+# SPL No Op
+[[test.genesis]]
+address = "WRAPYChf58WFCnyjXKJHtrPgzKXgHp6MD9aVDqJBbGh"
+program = "target/deploy/WRAPYChf58WFCnyjXKJHtrPgzKXgHp6MD9aVDqJBbGh.so"
+
+# SPL Account Compression
+[[test.genesis]]
+address = "GRoLLzvxpxxu2PGNJMMeZPyMxjAUH9pKqxGXV9DGiceU"
+program = "target/deploy/GRoLLzvxpxxu2PGNJMMeZPyMxjAUH9pKqxGXV9DGiceU.so"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/noahgundotra/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+solana-test-validator -r --bpf-program GRoLLzvxpxxu2PGNJMMeZPyMxjAUH9pKqxGXV9DGiceU target/deploy/GRoLLzvxpxxu2PGNJMMeZPyMxjAUH9pKqxGXV9DGiceU.so --bpf-program WRAPYChf58WFCnyjXKJHtrPgzKXgHp6MD9aVDqJBbGh target/deploy/WRAPYChf58WFCnyjXKJHtrPgzKXgHp6MD9aVDqJBbGh.so --bpf-program Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS target/deploy/counter_compressed.so 
