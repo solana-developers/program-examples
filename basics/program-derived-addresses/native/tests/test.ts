@@ -22,9 +22,10 @@ describe("PDAs", () => {
 
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const PROGRAM_ID: PublicKey = new PublicKey(
-        "BCw7MQWBugruuYgno5crGUGFNufqGJbPpzZevhRRRQAu"
-    );
+    const program = createKeypairFromFile('./program/target/so/program-keypair.json')
+
+    const PROGRAM_ID: PublicKey = program.publicKey;
+
 
     class Assignable {
         constructor(properties) {
@@ -63,8 +64,8 @@ describe("PDAs", () => {
     it("Create a test user", async () => {
         let ix = SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
-            lamports: await connection.getMinimumBalanceForRentExemption(0),
             newAccountPubkey: testUser.publicKey,
+            lamports: await connection.getMinimumBalanceForRentExemption(0),
             programId: SystemProgram.programId,
             space: 0,
         });
