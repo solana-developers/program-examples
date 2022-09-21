@@ -47,7 +47,6 @@ Regardless of what you may want to add on top of existing Solana programs, the n
     * [ ] Destroy an Account
     * [x] Processing Instructions
     * [x] Create a Simple PDA
-    * [ ] PDAs Expanded
     * [x] Repository Layout
     * [x] Transfer SOL
     * [ ] Stake SOL with a Validator
