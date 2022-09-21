@@ -1,17 +1,18 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
+
 declare_id!("4fQVnLWKKKYxtxgGn7Haw8v2g2Hzbu8K61JvWKvqAi7W");
+
 
 #[program]
 pub mod transfer_sol {
     use super::*;
 
-    pub fn transfer_sol(ctx: Context<TransferSol>, amount: u64) -> Result<()> {
-        
-        msg!("Received request to transfer {:?} lamports from {:?} to {:?}.", 
-            amount, &ctx.accounts.payer.key(), &ctx.accounts.recipient.key());
-        msg!("  Processing transfer...");
+    pub fn transfer_sol_with_cpi(
+        ctx: Context<TransferSolWithCpi>, 
+        amount: u64
+    ) -> Result<()> {
 
         system_program::transfer(
             CpiContext::new(
@@ -23,18 +24,42 @@ pub mod transfer_sol {
             ),
             amount,
         )?;
+
+        Ok(())
+    }
+
+    pub fn transfer_sol_with_program(
+        ctx: Context<TransferSolWithProgram>, 
+        amount: u64
+    ) -> Result<()> {
+
+        **ctx.accounts.payer
+            .to_account_info()
+            .try_borrow_mut_lamports()? -= amount;
+        **ctx.accounts.recipient
+            .to_account_info()
+            .try_borrow_mut_lamports()? += amount;
         
-        msg!("Transfer completed successfully.");
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct TransferSol<'info> {
-    /// CHECK: We're initializing this account via the transfer
+pub struct TransferSolWithCpi<'info> {
     #[account(mut)]
-    recipient: AccountInfo<'info>,
+    recipient: SystemAccount<'info>,
     #[account(mut)]
     payer: Signer<'info>,
+    system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct TransferSolWithProgram<'info> {
+    /// CHECK: This is just an example, not checking data
+    #[account(mut)]
+    recipient: UncheckedAccount<'info>,
+    /// CHECK: This is just an example, not checking data
+    #[account(mut)]
+    payer: UncheckedAccount<'info>,
     system_program: Program<'info, System>,
 }
