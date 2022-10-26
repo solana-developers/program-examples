@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
 
-declare_id!("6gUwvaZPvC8ZxKuC1h5aKz4mRd7pFyEfUZckiEsBZSbk");
+declare_id!("DWEwCUTsoA9g4G8ivb6eF4GBUjkLGKLDpnfBZWfcYLA");
 
 const LAMPORTS_PER_SOL: u64 = 1000000000;
 

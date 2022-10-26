@@ -15,6 +15,7 @@ describe("counter_anchor", () => {
   it("Test increment", async () => {
     const counterKeypair = Keypair.generate();
     const counter = counterKeypair.publicKey;
+    console.log(program.programId.toBase58());
 
     // Initialize counter
     await program.methods
@@ -23,6 +24,7 @@ describe("counter_anchor", () => {
       .signers([counterKeypair])
       .rpc({ skipPreflight: true, commitment: "confirmed" });
     let currentCount = (await program.account.counter.fetch(counter, "confirmed")).count.toNumber();
+    console.log(0, currentCount);
     assert(currentCount === 0, "Expected initialized count to be 0");
 
     // Increment counter
@@ -31,6 +33,7 @@ describe("counter_anchor", () => {
       .accounts({ counter })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
     currentCount = (await program.account.counter.fetch(counter, "confirmed")).count.toNumber();
+    console.log(1, currentCount);
     assert(currentCount === 1, "Expected count to be 1");
 
     // Increment counter
@@ -39,6 +42,7 @@ describe("counter_anchor", () => {
       .accounts({ counter })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
     currentCount = (await program.account.counter.fetch(counter, "confirmed")).count.toNumber();
+    console.log(2, currentCount);
     assert(currentCount === 2, "Expected count to be 2");
   });
 });
