@@ -20,23 +20,34 @@ Let's say we decided it was essential to have our mint (operation 1) and our "mi
 
 With the `native` implementation, you have to do a little bit of lifting to import one crate into another within your Cargo workspace.   
 
-Add the `no-entrypoint` feature to Cargo.toml:
+This is because a Solana Program needs to have a single entry point. This means a Solana Program that depends on
+other Solana Programs needs a way to disable the other entry points. This is done using `[features]` in Cargo. 
+
+Add the `no-entrypoint` feature to Cargo.toml of the `lever` crate:
 ```toml
 [features]
 no-entrypoint = []
-cpi = ["no-entrypoint"]
 ```
-Then use the import just like we did in the `anchor` example:
+Then, in the `hand` crate, use the import just like we did in the `anchor` example:
 ```toml
 [dependencies]
 ...
-lever = { path = "../lever", features = [ "cpi" ] }
+lever = { path = "../lever", features = [ "no-entrypoint" ] }
 ```
 Lastly, add this annotation over the `entrypoint!` macro that you wish to disable on import (the child program):
 ```rust
 #[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);
 ```
+
+The above configuration defines `no-entrypoint` as a _feature_ in the `lever` crate. This controls whether the line
+`entrypoint!(process_instruction)` gets compiled or not depending on how the `lever` crate is included as a dependency. 
+
+When adding `lever` as a dependency in the Cargo.tml of `hand` crate, we configure it with `features = [ "no-entrypoint" ]` 
+this makes sure that the `entrypoint!(process_instruction)` line is not part of the compilation. This ensures that only
+the `entrypoint!(process_instruction)` from the `hand` crate is part of the compilation.
+
+For more about how `[features]` see [Features chapter in the Rust Book](https://doc.rust-lang.org/cargo/reference/features.html)
 
 ### Let's switch the power on and off using a CPI!   
 
