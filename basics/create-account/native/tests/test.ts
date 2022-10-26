@@ -61,6 +61,8 @@ describe("Create a system account", async () => {
         await sendAndConfirmTransaction(connection,
             new Transaction().add(ix),
             [payer, newKeypair]);
+
+        console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
     });
   });
   
