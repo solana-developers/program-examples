@@ -21,10 +21,9 @@ describe("Create a system account", async () => {
 
     const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    
-    const PROGRAM_ID: PublicKey = new PublicKey(
-        "Au21huMZuDQrbzu2Ec5ohpW5CKRqhcGV6qLawfydStGs"
-    );
+    const program = createKeypairFromFile('./program/target/so/program-keypair.json')
+
+    const PROGRAM_ID: PublicKey = program.publicKey;
   
     it("Create the account via a cross program invocation", async () => {
 
