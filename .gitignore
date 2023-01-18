@@ -12,4 +12,5 @@ test-ledger/
 **/*/target
 **/*.rs.bk
 **/*/test-ledger
+**/*/yarn-error.log
 **/*/yarn.lock
