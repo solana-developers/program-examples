@@ -230,11 +230,13 @@ describe("mint-token", async () => {
             data: transferToInstructionData.toBuffer(),
         });
 
-        await sendAndConfirmTransaction(
+        const sx = await sendAndConfirmTransaction(
             connection, 
             new Transaction().add(ix),
             [payer, recipientWallet]
         );
+
+        console.log(`SIGNATURE: ${sx}`);
     });
   });
   
