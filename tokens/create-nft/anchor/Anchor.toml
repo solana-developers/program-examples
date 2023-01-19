@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-create_token = "8KA4k3czQPARFR1jA9Syc51ZPnJEbTyb8EMNRNdrHWce"
+create_nft = "6UxmhKzsfC71xdSX4TdaZQTRnPeKFsimR6tTWGNjpJSw"
 
 [registry]
 url = "https://anchor.projectserum.com"

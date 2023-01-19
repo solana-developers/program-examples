@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { CreateToken } from "../target/types/create_token";
+import { CreateNft } from "../target/types/create_nft";
 
 
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
@@ -7,12 +7,12 @@ const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
 );
 
 
-describe("Create an SPL Token", () => {
+describe("Create an NFT", () => {
   
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.CreateToken as anchor.Program<CreateToken>;
+  const program = anchor.workspace.CreateNft as anchor.Program<CreateNft>;
 
   const tokenTitle = "Solana Gold";
   const tokenSymbol = "GOLDSOL";

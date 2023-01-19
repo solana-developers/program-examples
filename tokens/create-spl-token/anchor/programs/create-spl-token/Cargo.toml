@@ -1,12 +1,12 @@
 [package]
-name = "mint-2"
+name = "create-token"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "mint_2"
+name = "create_token"
 
 [features]
 no-entrypoint = []
