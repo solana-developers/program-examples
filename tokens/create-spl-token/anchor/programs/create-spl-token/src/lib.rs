@@ -8,7 +8,7 @@ use {
 };
 
 
-declare_id!("8KA4k3czQPARFR1jA9Syc51ZPnJEbTyb8EMNRNdrHWce");
+declare_id!("2kPgnE1vA3LLJWwAW7MpVWw25mH5bc893FmfPH92ka1K");
 
 
 #[program]

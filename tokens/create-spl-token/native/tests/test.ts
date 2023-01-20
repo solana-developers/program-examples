@@ -54,10 +54,10 @@ const CreateTokenArgsSchema = new Map([
 
 describe("Create an SPL Token!", async () => {
 
-    // const connection = new Connection(`https://api.devnet.solana.com/`, 'confirmed');
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
+    // const connection = new Connection(`http://localhost:8899`, 'confirmed');
+    const connection = new Connection(`https://api.devnet.solana.com/`, 'confirmed');
     const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
+    const program = createKeypairFromFile('./program/target/deploy/program-keypair.json');
 
     const mintKeypair: Keypair = Keypair.generate();
     console.log(`New token: ${mintKeypair.publicKey}`);

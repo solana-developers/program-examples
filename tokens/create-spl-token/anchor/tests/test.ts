@@ -1,10 +1,8 @@
+import { 
+  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
+} from '@metaplex-foundation/mpl-token-metadata';
 import * as anchor from "@project-serum/anchor";
 import { CreateToken } from "../target/types/create_token";
-
-
-const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
-);
 
 
 describe("Create an SPL Token", () => {
@@ -23,14 +21,6 @@ describe("Create an SPL Token", () => {
 
   it("Create!", async () => {
 
-    const [mintAuthorityPda, mintAuthorityPdaBump] = await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from("mint_authority_"),
-        mintKeypair.publicKey.toBuffer(),
-      ],
-      program.programId,
-    );
-
     const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
       [
         Buffer.from("metadata"),
@@ -46,7 +36,7 @@ describe("Create an SPL Token", () => {
       .accounts({
         metadataAccount: metadataAddress,
         mintAccount: mintKeypair.publicKey,
-        mintAuthority: mintAuthorityPda,
+        mintAuthority: payer.publicKey,
         payer: payer.publicKey,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         systemProgram: anchor.web3.SystemProgram.programId,
