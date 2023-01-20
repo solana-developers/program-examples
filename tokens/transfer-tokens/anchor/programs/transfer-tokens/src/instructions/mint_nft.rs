@@ -12,8 +12,8 @@ use {
 };
 
 
-pub fn mint_to(
-    ctx: Context<MintTo>, 
+pub fn mint_nft(
+    ctx: Context<MintNft>, 
 ) -> Result<()> {
 
     // Mint the NFT to the user's wallet
@@ -95,7 +95,7 @@ pub fn mint_to(
 
 
 #[derive(Accounts)]
-pub struct MintTo<'info> {
+pub struct MintNft<'info> {
     /// CHECK: Metaplex will check this
     #[account(mut)]
     pub edition_account: UncheckedAccount<'info>,

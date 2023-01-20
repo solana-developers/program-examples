@@ -51,7 +51,7 @@ describe("NFT Minter", () => {
         console.log(`   Tx Signature: ${sx}`);
   });
 
-  it("Mint some tokens to your wallet!", async () => {
+  it("Mint the NFT to your wallet!", async () => {
 
     const metadataAddress = (anchor.web3.PublicKey.findProgramAddressSync(
         [
@@ -92,7 +92,7 @@ describe("NFT Minter", () => {
         tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
       })
       .signers([payer.payer])
-      .rpc({skipPreflight: true});
+      .rpc();
 
       console.log("Success!");
       console.log(`   ATA Address: ${associatedTokenAccountAddress}`);

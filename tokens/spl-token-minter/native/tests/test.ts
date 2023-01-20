@@ -115,7 +115,6 @@ describe("SPL Token Minter", async () => {
             connection, 
             new Transaction().add(ix),
             [payer],
-            {skipPreflight: true}
         );
 
         console.log("Success!");

@@ -7,8 +7,8 @@ use {
 };
 
 
-pub fn mint_to(
-    ctx: Context<MintTo>, 
+pub fn mint_spl(
+    ctx: Context<MintSpl>, 
     quantity: u64,
 ) -> Result<()> {
 
@@ -34,7 +34,7 @@ pub fn mint_to(
 
 
 #[derive(Accounts)]
-pub struct MintTo<'info> {
+pub struct MintSpl<'info> {
     #[account(
         mut,
         mint::decimals = 9,
