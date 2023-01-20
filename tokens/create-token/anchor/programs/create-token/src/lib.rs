@@ -26,7 +26,7 @@ pub mod create_token {
         msg!("Creating metadata account...");
         msg!("Metadata account address: {}", &ctx.accounts.metadata_account.key());
         invoke(
-            &mpl_instruction::create_metadata_accounts_v2(
+            &mpl_instruction::create_metadata_accounts_v3(
                 ctx.accounts.token_metadata_program.key(),      // Program ID (the Token Metadata Program)
                 ctx.accounts.metadata_account.key(),            // Metadata account
                 ctx.accounts.mint_account.key(),                // Mint account
@@ -42,6 +42,7 @@ pub mod create_token {
                 false,                                          // Is mutable
                 None,                                           // Collection
                 None,                                           // Uses
+                None,                                           // Collection Details
             ),
             &[
                 ctx.accounts.metadata_account.to_account_info(),

@@ -1,0 +1,86 @@
+use {
+    borsh::{ 
+        BorshDeserialize, 
+        BorshSerialize, 
+    },
+    solana_program::{
+        account_info::{next_account_info, AccountInfo},
+        entrypoint::ProgramResult, 
+        msg, 
+        program::invoke,
+    },
+    spl_token::{
+        instruction as token_instruction,
+    },
+    spl_associated_token_account::{
+        instruction as associated_token_account_instruction,
+    },
+};
+
+
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct MintToArgs {
+    pub quantity: u64,
+}
+
+
+pub fn mint_to(
+    accounts: &[AccountInfo],
+    args: MintToArgs,
+) -> ProgramResult {
+
+    let accounts_iter = &mut accounts.iter();
+
+    let mint_account = next_account_info(accounts_iter)?;
+    let mint_authority = next_account_info(accounts_iter)?;
+    let associated_token_account = next_account_info(accounts_iter)?;
+    let payer = next_account_info(accounts_iter)?;
+    let _rent = next_account_info(accounts_iter)?;
+    let _system_program = next_account_info(accounts_iter)?;
+    let token_program = next_account_info(accounts_iter)?;
+    let associated_token_program = next_account_info(accounts_iter)?;
+
+    if associated_token_account.lamports() == 0 {
+        msg!("Creating associated token account...");
+        invoke(
+            &associated_token_account_instruction::create_associated_token_account(
+                &payer.key,
+                &payer.key,
+                &mint_account.key,
+            ),
+            &[
+                mint_account.clone(),
+                associated_token_account.clone(),
+                payer.clone(),
+                token_program.clone(),
+                associated_token_program.clone(),
+            ]
+        )?;
+    } else {
+        msg!("Associated token account exists.");
+    }
+    msg!("Associated Token Address: {}", associated_token_account.key);
+
+    msg!("Minting {} tokens to associated token account...", args.quantity);
+    invoke(
+        &token_instruction::mint_to(
+            &token_program.key,
+            &mint_account.key,
+            &associated_token_account.key,
+            &mint_authority.key,
+            &[&mint_authority.key],
+            args.quantity,
+        )?,
+        &[
+            mint_account.clone(),
+            mint_authority.clone(),
+            associated_token_account.clone(),
+            token_program.clone(),
+        ],
+    )?;
+
+    msg!("Tokens minted to wallet successfully.");
+
+    Ok(())
+}
+

@@ -1,16 +1,14 @@
 use {
     borsh::{ 
+        BorshDeserialize, 
         BorshSerialize, 
-        BorshDeserialize 
     },
     solana_program::{
         account_info::{next_account_info, AccountInfo}, 
-        entrypoint,
         entrypoint::ProgramResult, 
         msg, 
         program::invoke,
         program_pack::Pack,
-        pubkey::Pubkey,
         rent::Rent,
         system_instruction,
         sysvar::Sysvar,
@@ -30,20 +28,13 @@ pub struct CreateTokenArgs {
     pub token_title: String,
     pub token_symbol: String,
     pub token_uri: String,
-    pub token_decimals: u8,
 }
 
 
-entrypoint!(process_instruction);
-
-
-fn process_instruction(
-    _program_id: &Pubkey,
+pub fn create_token(
     accounts: &[AccountInfo],
-    instruction_data: &[u8],
+    args: CreateTokenArgs,
 ) -> ProgramResult {
-
-    let args = CreateTokenArgs::try_from_slice(instruction_data)?;
 
     let accounts_iter = &mut accounts.iter();
 
@@ -86,7 +77,7 @@ fn process_instruction(
             &mint_account.key,
             &mint_authority.key,
             Some(&mint_authority.key),
-            args.token_decimals,
+            9,                          // 9 Decimals for the default SPL Token standard
         )?,
         &[
             mint_account.clone(),
@@ -101,7 +92,7 @@ fn process_instruction(
     msg!("Creating metadata account...");
     msg!("Metadata account address: {}", metadata_account.key);
     invoke(
-        &mpl_instruction::create_metadata_accounts_v3(
+        &mpl_instruction::create_metadata_accounts_v2(
             *token_metadata_program.key,
             *metadata_account.key,
             *mint_account.key,
@@ -115,7 +106,6 @@ fn process_instruction(
             0,
             true,
             false,
-            None,
             None,
             None,
         ),
