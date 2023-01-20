@@ -20,9 +20,8 @@ import { Buffer } from "buffer";
 import { 
     CreateTokenArgs,
     MintToArgs,
-    SplMinterInstruction,
+    NftMinterInstruction,
 } from './instructions';
-import { BN } from 'bn.js';
 
 
 function createKeypairFromFile(path: string): Keypair {
@@ -32,7 +31,7 @@ function createKeypairFromFile(path: string): Keypair {
 };
 
 
-describe("SPL Token Minter", async () => {
+describe("NFT Minter", async () => {
 
     // const connection = new Connection(`http://localhost:8899`, 'confirmed');
     const connection = new Connection(`https://api.devnet.solana.com/`, 'confirmed');
@@ -41,7 +40,7 @@ describe("SPL Token Minter", async () => {
 
     const mintKeypair: Keypair = Keypair.generate();
 
-    it("Create an SPL Token!", async () => {
+    it("Create an NFT!", async () => {
 
         const metadataAddress = (PublicKey.findProgramAddressSync(
             [
@@ -53,10 +52,10 @@ describe("SPL Token Minter", async () => {
         ))[0];
         
         const instructionData = new CreateTokenArgs({
-            instruction: SplMinterInstruction.Create,
-            token_title: "Solana Gold",
-            token_symbol: "GOLDSOL",
-            token_uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+            instruction: NftMinterInstruction.Create,
+            nft_title: "Homer NFT",
+            nft_symbol: "HOMR",
+            nft_uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
         });
 
         let ix = new TransactionInstruction({
@@ -85,7 +84,26 @@ describe("SPL Token Minter", async () => {
         console.log(`   Tx Signature: ${sx}`);
     });
 
-    it("Mint some tokens to your wallet!", async () => {
+    it("Mint the NFT to your wallet!", async () => {
+
+        const metadataAddress = (PublicKey.findProgramAddressSync(
+            [
+              Buffer.from("metadata"),
+              TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+              mintKeypair.publicKey.toBuffer(),
+            ],
+            TOKEN_METADATA_PROGRAM_ID
+        ))[0];
+
+        const editionAddress = (PublicKey.findProgramAddressSync(
+            [
+              Buffer.from("metadata"),
+              TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+              mintKeypair.publicKey.toBuffer(),
+              Buffer.from("edition"),
+            ],
+            TOKEN_METADATA_PROGRAM_ID
+        ))[0];
 
         const associatedTokenAccountAddress = await getAssociatedTokenAddress(
             mintKeypair.publicKey,
@@ -93,19 +111,22 @@ describe("SPL Token Minter", async () => {
         );
         
         const instructionData = new MintToArgs({
-            instruction: SplMinterInstruction.Mint,
-            quantity: new BN(150),
+            instruction: NftMinterInstruction.Mint,
         });
 
         let ix = new TransactionInstruction({
             keys: [
                 { pubkey: mintKeypair.publicKey, isSigner: false, isWritable: true },           // Mint account
+                { pubkey: metadataAddress, isSigner: false, isWritable: true },                 // Metadata account
+                { pubkey: editionAddress, isSigner: false, isWritable: true },                  // Edition account
                 { pubkey: payer.publicKey, isSigner: false, isWritable: true },                 // Mint authority account
                 { pubkey: associatedTokenAccountAddress, isSigner: false, isWritable: true },   // ATA
                 { pubkey: payer.publicKey, isSigner: true, isWritable: true },                  // Payer
-                { pubkey: SystemProgram.programId, isSigner: false, isWritable: true },                  // System program
+                { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },             // Rent account
+                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },        // System program
                 { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },               // Token program
-                { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },    // Token metadata program
+                { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },    // Associated token program
+                { pubkey: TOKEN_METADATA_PROGRAM_ID, isSigner: false, isWritable: false },      // Token metadata program
             ],
             programId: program.publicKey,
             data: instructionData.toBuffer(),

@@ -25,9 +25,9 @@ use {
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct CreateTokenArgs {
-    pub token_title: String,
-    pub token_symbol: String,
-    pub token_uri: String,
+    pub nft_title: String,
+    pub nft_symbol: String,
+    pub nft_uri: String,
 }
 
 
@@ -77,7 +77,7 @@ pub fn create_token(
             &mint_account.key,
             &mint_authority.key,
             Some(&mint_authority.key),
-            9,                          // 9 Decimals for the default SPL Token standard
+            0,                          // 0 Decimals for the NFT standard
         )?,
         &[
             mint_account.clone(),
@@ -99,9 +99,9 @@ pub fn create_token(
             *mint_authority.key,
             *payer.key,
             *mint_authority.key,
-            args.token_title,
-            args.token_symbol,
-            args.token_uri,
+            args.nft_title,
+            args.nft_symbol,
+            args.nft_uri,
             None,
             0,
             true,

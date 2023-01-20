@@ -4,8 +4,8 @@
   },
   "dependencies": {
     "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
-    "@solana/spl-token": "^0.2.0",
-    "@solana/web3.js": "^1.47.3",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "^1.73.0",
     "borsh": "^0.7.0",
     "buffer": "^6.0.3",
     "fs": "^0.0.1-security"

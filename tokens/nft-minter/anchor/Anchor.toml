@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.devnet]
+nft_minter = "A6itasS5iqANkC9yrzP1HJPBnJxj9tC8G5TmJzQGogGG"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

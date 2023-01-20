@@ -43,7 +43,7 @@ pub struct MintTo<'info> {
     pub mint_account: Account<'info, token::Mint>,
     pub mint_authority: SystemAccount<'info>,
     #[account(
-        init,
+        init_if_needed,
         payer = payer,
         associated_token::mint = mint_account,
         associated_token::authority = payer,

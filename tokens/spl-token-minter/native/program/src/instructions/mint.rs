@@ -35,8 +35,7 @@ pub fn mint_to(
     let mint_authority = next_account_info(accounts_iter)?;
     let associated_token_account = next_account_info(accounts_iter)?;
     let payer = next_account_info(accounts_iter)?;
-    let _rent = next_account_info(accounts_iter)?;
-    let _system_program = next_account_info(accounts_iter)?;
+    let system_program = next_account_info(accounts_iter)?;
     let token_program = next_account_info(accounts_iter)?;
     let associated_token_program = next_account_info(accounts_iter)?;
 
@@ -52,6 +51,7 @@ pub fn mint_to(
                 mint_account.clone(),
                 associated_token_account.clone(),
                 payer.clone(),
+                system_program.clone(),
                 token_program.clone(),
                 associated_token_program.clone(),
             ]
