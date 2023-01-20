@@ -8,7 +8,7 @@ use {
 };
 
 
-declare_id!("2kPgnE1vA3LLJWwAW7MpVWw25mH5bc893FmfPH92ka1K");
+declare_id!("5yRmjtx87UJMJF4NEeqjpmgAu7MBJZACW6ksiCYqQxVh");
 
 
 #[program]
@@ -20,6 +20,7 @@ pub mod create_token {
         token_title: String, 
         token_symbol: String, 
         token_uri: String,
+        _token_decimals: u8,
     ) -> Result<()> {
     
         msg!("Creating metadata account...");
@@ -64,6 +65,12 @@ pub mod create_token {
 //      We just have to do the metadata
 //
 #[derive(Accounts)]
+#[instruction(
+    token_title: String, 
+    token_symbol: String, 
+    token_uri: String,
+    token_decimals: u8,
+)]
 pub struct CreateTokenMint<'info> {
     /// CHECK: We're about to create this with Metaplex
     #[account(mut)]
@@ -71,7 +78,7 @@ pub struct CreateTokenMint<'info> {
     #[account(
         init,
         payer = payer,
-        mint::decimals = 9,         // 9 decimals for the default SPL Token standard
+        mint::decimals = token_decimals,
         mint::authority = mint_authority.key(),
     )]
     pub mint_account: Account<'info, token::Mint>,

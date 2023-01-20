@@ -30,6 +30,7 @@ pub struct CreateTokenArgs {
     pub token_title: String,
     pub token_symbol: String,
     pub token_uri: String,
+    pub token_decimals: u8,
 }
 
 
@@ -85,7 +86,7 @@ fn process_instruction(
             &mint_account.key,
             &mint_authority.key,
             Some(&mint_authority.key),
-            9,                          // 9 Decimals for the default SPL Token standard
+            args.token_decimals,
         )?,
         &[
             mint_account.clone(),

@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.devnet]
-create_token = "2kPgnE1vA3LLJWwAW7MpVWw25mH5bc893FmfPH92ka1K"
+create_token = "5yRmjtx87UJMJF4NEeqjpmgAu7MBJZACW6ksiCYqQxVh"
 
 [registry]
 url = "https://anchor.projectserum.com"
