@@ -17,9 +17,7 @@ describe("anchor", () => {
   const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
     "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
   );
-  const payer = loadKeypairFromFile(
-    require("os").homedir() + "/.config/solana/id.json"
-  );
+  const payer = anchor.web3.Keypair.generate();
   const ATA_PROGRAM_ID = new anchor.web3.PublicKey(
     "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
   );
@@ -42,9 +40,7 @@ describe("anchor", () => {
     ATA_PROGRAM_ID
   );
 
-  const receiver = loadKeypairFromFile(
-    require("os").homedir() + "/.config/solana/testkeypair1.json"
-  );
+  const receiver = anchor.web3.Keypair.generate();
 
   connection.requestAirdrop(receiver.publicKey, 1000000000);
 
@@ -103,6 +99,7 @@ describe("anchor", () => {
   });
 
   /*
+  // Comment out because we use init in the transfer instruction
   it("Initialize receiver ATA", async () => {
     const tx = new anchor.web3.Transaction();
 
