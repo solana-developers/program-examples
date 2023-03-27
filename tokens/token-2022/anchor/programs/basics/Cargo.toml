@@ -1,0 +1,23 @@
+[package]
+name = "anchor"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "anchor"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-spl = "0.27.0"
+anchor-lang = { version = "0.27.0", features= ["init-if-needed"]}
+spl-token = { version = "3.1.1", features = ["no-entrypoint"] }
+spl-token-2022 = { version = "0.5.0", features = ["no-entrypoint"] }
+
