@@ -2,12 +2,6 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Anchor } from "../target/types/anchor";
 
-const loadKeypairFromFile = (path: string): anchor.web3.Keypair => {
-  return anchor.web3.Keypair.fromSecretKey(
-    Buffer.from(JSON.parse(require("fs").readFileSync(path, "utf-8")))
-  );
-};
-
 describe("anchor", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
@@ -42,8 +36,6 @@ describe("anchor", () => {
 
   const receiver = anchor.web3.Keypair.generate();
 
-  connection.requestAirdrop(receiver.publicKey, 1000000000);
-
   const [receiverATA] = anchor.web3.PublicKey.findProgramAddressSync(
     [
       receiver.publicKey.toBytes(),
@@ -54,6 +46,8 @@ describe("anchor", () => {
   );
 
   it("Create Token-2022 Token", async () => {
+    await connection.requestAirdrop(receiver.publicKey, 1000000000);
+    await connection.requestAirdrop(payer.publicKey, 1000000000);
     const tx = new anchor.web3.Transaction();
 
     const ix = await program.methods
@@ -99,10 +93,9 @@ describe("anchor", () => {
   });
 
   /*
-  // Comment out because we use init in the transfer instruction
+  // This instruction is included only as a reference, but is not required to run this test, because we are using "init" in the program's transfer instruction. The create_associated_token_account instruction on the program is provided as a reference as well.
   it("Initialize receiver ATA", async () => {
     const tx = new anchor.web3.Transaction();
-
     const ix = await program.methods
       .createAssociatedTokenAccount()
       .accounts({
@@ -114,9 +107,7 @@ describe("anchor", () => {
       })
       .signers([receiver])
       .instruction();
-
     tx.add(ix);
-
     const sig = await anchor.web3.sendAndConfirmTransaction(
       program.provider.connection,
       tx,
@@ -150,7 +141,7 @@ describe("anchor", () => {
     console.log("Your transaction signature", sig);
   });
 
-  // init_if_needed not working with Token 22 ATA
+  // Using init in the transfer instruction, as init if needed is bot working with Token 2022 yet.
   it("Transfer Token", async () => {
     const tx = new anchor.web3.Transaction();
 
