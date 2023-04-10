@@ -1,4 +1,7 @@
+mod eat_food;
+mod get_on_ride;
+mod play_game;
 
-pub mod eat_food;
-pub mod play_game;
-pub mod get_on_ride;
+pub use eat_food::*;
+pub use get_on_ride::*;
+pub use play_game::*;

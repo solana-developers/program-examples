@@ -1,7 +1,7 @@
-pub mod create;
-pub mod mint_nft;
-pub mod mint_spl;
-pub mod transfer;
+mod create;
+mod mint_nft;
+mod mint_spl;
+mod transfer;
 
 pub use create::*;
 pub use mint_nft::*;

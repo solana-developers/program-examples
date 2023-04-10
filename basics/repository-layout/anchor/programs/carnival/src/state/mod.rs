@@ -1,4 +1,7 @@
+mod food;
+mod game;
+mod ride;
 
-pub mod food;
-pub mod game;
-pub mod ride;
+pub use food::*;
+pub use game::*;
+pub use ride::*;
