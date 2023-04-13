@@ -1,0 +1,22 @@
+[package]
+name = "nft-minter"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "nft_minter"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { version="0.25.0", features=["init-if-needed"] }
+anchor-spl = "0.25.0"
+mpl-token-metadata = { version="1.2.5", features = [ "no-entrypoint" ] }
+spl-token = "3.3.0"
