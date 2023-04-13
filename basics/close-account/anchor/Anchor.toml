@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-destroy_an_account = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+close_account_program = "9SWqhEABWnKXTPvSLc4aQAJyESVxtRvYBvwF2WuBy7jf"
 
 [registry]
 url = "https://api.apr.dev"

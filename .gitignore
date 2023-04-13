@@ -1,5 +1,6 @@
 .template
 .idea
+.DS_Store
 
 test-ledger/
 

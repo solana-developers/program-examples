@@ -1,12 +1,12 @@
 [package]
-name = "destroy-an-account"
+name = "close-account-program"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "destroy_an_account"
+name = "close_account_program"
 
 [features]
 no-entrypoint = []
