@@ -20,7 +20,7 @@ So, you'll notice that these operations are in fact conducting what's called a *
 Deciding when to use cross-program invocation instead of invoking the programs directly from the client is completely up to you as the builder. It depends on how your application is designed.
 - Maybe you want to add some checks - such as minimum balance required, allowed ownership, etc.
 - Maybe you want to assert that an account has a certain data type.
-- Perhaps you want to send only one transaction from your client for a handful of sequential operations.
+- Perhaps you want to send only one instruction from your client for a handful of sequential operations.
 - The list goes on.
 Regardless of what you may want to add on top of existing Solana programs, the number one use case for writing your own program is for using accounts with a **Program Derived Address (PDA)**. Crack open the `pdas` folder to see why.
 
@@ -34,3 +34,19 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 - Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
 - `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
+
+## Examples We'd Love to See!
+
+* Examples needed for Native:
+    * Token2022
+* New examples needed for both Anchor & Native:
+    * Token lending
+    * Token swapping
+    * Escrow
+    * Staking
+    * Wrapped tokens
+    * Pyth
+    * Clockwork
+    * VRF
+    * Any oracle
+    * Merkle trees (compression)
