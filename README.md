@@ -39,6 +39,8 @@ Regardless of what you may want to add on top of existing Solana programs, the n
 
 * Examples needed for Native:
     * Token2022
+* Examples needed for Anchor:
+    * Additional Accounts & Resolving Accounts
 * New examples needed for both Anchor & Native:
     * Token lending
     * Token swapping
