@@ -1,0 +1,15 @@
+[features]
+seeds = false
+skip-lint = false
+[programs.devnet]
+cnft_vault = "CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Devnet"
+wallet = "../AndYPfCmbSSHpe2yukLXDT9N29twa7kJDk3yrRMQW7SN.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
