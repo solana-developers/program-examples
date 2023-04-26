@@ -9,7 +9,7 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "Devnet"
-wallet = "../AndYPfCmbSSHpe2yukLXDT9N29twa7kJDk3yrRMQW7SN.json"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

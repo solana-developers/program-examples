@@ -16,6 +16,10 @@ impl anchor_lang::Id for MplBubblegum {
     }
 }
 
+// first 8 bytes of SHA256("global:transfer")   
+const TRANSFER_DISCRIMINATOR: &'static [u8;8] = &[163, 52, 200, 231, 140, 3, 69, 186];
+
+
 #[program]
 pub mod cnft_vault {
 
@@ -57,13 +61,9 @@ pub mod cnft_vault {
             AccountMeta::new_readonly(ctx.accounts.compression_program.key(), false),
             AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
         ];
-
-        // first 8 bytes of SHA256("global:transfer")   
-        let transfer_discriminator: [u8;8] = [163, 52, 200, 231, 140, 3, 69, 186];//hex::decode("a334c8e78c0345ba").expect("hex decode fail"); 
-        //msg!("{:?}", transfer_discriminator);
         
         let mut data: Vec<u8> = vec![];
-        data.extend(transfer_discriminator);
+        data.extend(TRANSFER_DISCRIMINATOR);
         data.extend(root);
         data.extend(data_hash);
         data.extend(creator_hash);
@@ -145,17 +145,15 @@ pub mod cnft_vault {
             AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
         ];
 
-        let transfer_discriminator: [u8;8] = [163, 52, 200, 231, 140, 3, 69, 186];
-
         let mut data1: Vec<u8> = vec![];
-        data1.extend(&transfer_discriminator);
+        data1.extend(TRANSFER_DISCRIMINATOR);
         data1.extend(root1);
         data1.extend(data_hash1);
         data1.extend(creator_hash1);
         data1.extend(nonce1.to_le_bytes());
         data1.extend(index1.to_le_bytes());
         let mut data2: Vec<u8> = vec![];
-        data2.extend(&transfer_discriminator);
+        data2.extend(TRANSFER_DISCRIMINATOR);
         data2.extend(root2);
         data2.extend(data_hash2);
         data2.extend(creator_hash2);
