@@ -41,7 +41,7 @@ pub mod cnft_vault {
         //         mpl_bubblegum::cpi::accounts::Transfer{
         //             tree_authority: ctx.accounts.tree_authority.to_account_info(),
         //             leaf_owner: ctx.accounts.leaf_owner.to_account_info(),
-        //             leaf_delegate: ctx.accounts.leaf_delegate.to_account_info(),
+        //             leaf_delegate: ctx.accounts.leaf_owner.to_account_info(),
         //             new_leaf_owner: ctx.accounts.new_leaf_owner.to_account_info(),
         //             merkle_tree: ctx.accounts.merkle_tree.to_account_info(),
         //             log_wrapper: ctx.accounts.log_wrapper.to_account_info(),
@@ -54,7 +54,7 @@ pub mod cnft_vault {
         let mut accounts:  Vec<solana_program::instruction::AccountMeta> = vec![
             AccountMeta::new_readonly(ctx.accounts.tree_authority.key(), false),
             AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), true),
-            AccountMeta::new_readonly(ctx.accounts.leaf_delegate.key(), false),
+            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), false),
             AccountMeta::new_readonly(ctx.accounts.new_leaf_owner.key(), false),
             AccountMeta::new(ctx.accounts.merkle_tree.key(), false),
             AccountMeta::new_readonly(ctx.accounts.log_wrapper.key(), false),
@@ -73,7 +73,7 @@ pub mod cnft_vault {
         let mut account_infos: Vec<AccountInfo> = vec![
             ctx.accounts.tree_authority.to_account_info(),
             ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.leaf_delegate.to_account_info(),
+            ctx.accounts.leaf_owner.to_account_info(),
             ctx.accounts.new_leaf_owner.to_account_info(),
             ctx.accounts.merkle_tree.to_account_info(),
             ctx.accounts.log_wrapper.to_account_info(),
@@ -238,8 +238,6 @@ pub struct Withdraw<'info> {
     )]
     /// CHECK: This account doesnt even exist (it is just the pda to sign)
     pub leaf_owner: UncheckedAccount<'info>, // sender (the vault in our case)
-    /// CHECK: This account is chekced in the instruction
-    pub leaf_delegate: UncheckedAccount<'info>, // we could actually remove this and just use leaf_owner instead
     /// CHECK: This account is neither written to nor read from.
     pub new_leaf_owner: UncheckedAccount<'info>, // receiver
     #[account(mut)]
