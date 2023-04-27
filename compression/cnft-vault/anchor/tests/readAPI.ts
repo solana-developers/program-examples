@@ -4,10 +4,10 @@
 
 import axios from "axios";
 
-// TODO change to your API key (this is mine on free-tier)
-const HELIUS_RPC = "https://rpc-devnet.helius.xyz/?api-key=30536abf-e8e7-444f-a255-18e9a0c27e8b";
+ // you might want to change that to your custom RPC
+const RPC_PATH = "https://rpc-devnet.aws.metaplex.com/";
 
-export async function getAsset(assetId: any, rpcUrl = HELIUS_RPC): Promise<any> {
+export async function getAsset(assetId: any, rpcUrl = RPC_PATH): Promise<any> {
   try {
     const axiosInstance = axios.create({
       baseURL: rpcUrl,
@@ -27,7 +27,7 @@ export async function getAsset(assetId: any, rpcUrl = HELIUS_RPC): Promise<any> 
 }
 
 
-export async function getAssetProof(assetId: any, rpcUrl = HELIUS_RPC): Promise<any> {
+export async function getAssetProof(assetId: any, rpcUrl = RPC_PATH): Promise<any> {
   try {
 
     const axiosInstance = axios.create({
