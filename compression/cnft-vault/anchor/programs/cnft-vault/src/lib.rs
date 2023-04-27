@@ -33,24 +33,6 @@ pub mod cnft_vault {
         index: u32,) -> Result<()> {
         msg!("attempting to send nft {} from tree {}", index, ctx.accounts.merkle_tree.key());
 
-        // CPI to bubblegum
-        // //attempt 1
-        // mpl_bubblegum::cpi::transfer(
-        //     CpiContext::new_with_signer(
-        //         ctx.accounts.bubblegum_program.to_account_info(), 
-        //         mpl_bubblegum::cpi::accounts::Transfer{
-        //             tree_authority: ctx.accounts.tree_authority.to_account_info(),
-        //             leaf_owner: ctx.accounts.leaf_owner.to_account_info(),
-        //             leaf_delegate: ctx.accounts.leaf_owner.to_account_info(),
-        //             new_leaf_owner: ctx.accounts.new_leaf_owner.to_account_info(),
-        //             merkle_tree: ctx.accounts.merkle_tree.to_account_info(),
-        //             log_wrapper: ctx.accounts.log_wrapper.to_account_info(),
-        //             compression_program: ctx.accounts.compression_program.to_account_info(),
-        //             system_program: ctx.accounts.system_program.to_account_info(),
-        //         }, &[&[b"cNFT-vault", &[*ctx.bumps.get("vault").unwrap()]]]),
-        //         root, data_hash, creator_hash, nonce, index)
-        
-        //attempt 2
         let mut accounts:  Vec<solana_program::instruction::AccountMeta> = vec![
             AccountMeta::new_readonly(ctx.accounts.tree_authority.key(), false),
             AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), true),
@@ -98,10 +80,8 @@ pub mod cnft_vault {
         &[&[b"cNFT-vault", &[*ctx.bumps.get("leaf_owner").unwrap()]]])
         .map_err(Into::into)
 
-        
     }
 
-    
     pub fn withdraw_two_cnfts<'info>(ctx: Context<'_, '_, '_, 'info, WithdrawTwo<'info>>,
         root1: [u8; 32],
         data_hash1: [u8; 32],
@@ -120,8 +100,9 @@ pub mod cnft_vault {
         let merkle_tree2 = ctx.accounts.merkle_tree2.key();
         msg!("attempting to send nfts from trees {} and {}", merkle_tree1, merkle_tree2);
         
-        // TODO check if nft transfers are even valid (correct NFT, correct authority)
-        // in this example anyone can withdraw any NFT from the vault
+        
+        // Note: in this example anyone can withdraw any NFT from the vault
+        // in productions you should check if nft transfers are valid (correct NFT, correct authority)
 
         let mut accounts1:  Vec<solana_program::instruction::AccountMeta> = vec![
             AccountMeta::new_readonly(ctx.accounts.tree_authority1.key(), false),
@@ -181,7 +162,6 @@ pub mod cnft_vault {
             ctx.accounts.system_program.to_account_info(),
         ];
         
-        // add "accounts" (hashes) that make up the merkle proof
         let mut i = 0u8;
         for acc in ctx.remaining_accounts.iter() {
             if i < proof_1_length {
@@ -217,7 +197,6 @@ pub mod cnft_vault {
         msg!("successfully sent cNFTs");
         Ok(())
 
-        
     }
 
 }
