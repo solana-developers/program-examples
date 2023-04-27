@@ -1,10 +1,10 @@
 import * as anchor from "@project-serum/anchor";
-import { CnftVault } from "../target/types/cnft_vault";
-import { loadWalletKey, decode, mapProof } from "./utils";
-import { IDL } from "../target/types/cnft_vault"
+import { CnftVault } from "../../target/types/cnft_vault";
+import { loadWalletKey, decode, mapProof } from "../utils";
+import { IDL } from "../../target/types/cnft_vault"
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
 import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from "@solana/spl-account-compression";
-import { getAsset, getAssetProof } from "./readAPI";
+import { getAsset, getAssetProof } from "../readAPI";
 import { AccountMeta, AddressLookupTableProgram, PublicKey, SystemProgram, Transaction, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
 
 
