@@ -2,9 +2,15 @@
 
 This repo contains example code of how you can work with Metaplex compressed NFTs inside of Solana Anchor programs.
 
+The basic idea is to allow for transfering cNFTs that are owned by a PDA account. So our program will have a vault (this PDA) that you can send cNFTs to manually and then withdraw them using the program instructions.
+
+There are two instructions: one simple transfer that can withdraw one cNFT, and one instructions that can withdraw two cNFTs at the same time.
+
+This program can be used as an inspiration on how to work with cNFTs in Solana programs.
+
 ## Components
 
-The Anchor program can be found in the *programs* folder and *app* some typescript node scripts to interact with the program from client side.
+The Anchor program can be found in the *programs* folder and *tests* some clientside tests. There are also some typescript node scripts in *tests/scripts* to run them individually (plus there is one called *withdrawWithLookup.ts* which demonstrates the use of the program with account lookup tables). 
 
 ## Deployment
 
