@@ -1,19 +1,12 @@
 import * as anchor from "@project-serum/anchor";
-import { CnftVault } from "../../target/types/cnft_vault";
-import { loadWalletKey, decode, mapProof } from "../utils";
-import { IDL } from "../../target/types/cnft_vault"
+import { decode, mapProof } from "../utils";
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
 import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from "@solana/spl-account-compression";
 import { getAsset, getAssetProof } from "../readAPI";
 import { AccountMeta } from "@solana/web3.js";
 
+import { program, programID } from "./constants";
 
-const connection = new anchor.web3.Connection("https://api.devnet.solana.com");
-const keypair = loadWalletKey("../AndYPfCmbSSHpe2yukLXDT9N29twa7kJDk3yrRMQW7SN.json");
-const wallet = new anchor.Wallet(keypair);
-const provider = new anchor.AnchorProvider(connection, wallet, {});
-const programID = new anchor.web3.PublicKey("CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk")
-const program = new anchor.Program<CnftVault>(IDL, programID, provider);
 async function main() {
 
   // TODO change all of these to your values
