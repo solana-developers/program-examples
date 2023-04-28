@@ -1,0 +1,22 @@
+[package]
+name = "cnft-vault"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "cnft_vault"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.26.0"
+solana-program = "*"
+spl-account-compression = { version="0.1.8", features = ["cpi"] }
+mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] } 
