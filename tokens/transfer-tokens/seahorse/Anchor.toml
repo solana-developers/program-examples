@@ -12,4 +12,4 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "python3 tests/seahorse.py"
+test = "python3 tests/test.py"
