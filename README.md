@@ -1,16 +1,45 @@
 # Program Examples
 
-### :space_invader: Welcome, Solana Developer. :space_invader:   
-   
-Do you ever think to yourself: *"OK, but how do I do this on-chain?"*   
-   
-Or maybe you're in a hackathon right now, the clock's ticking, and you need to get a program off the ground *fast*.   
-   
-We present to you this list of curated examples for a wide range of use cases implemented using **on-chain programs**.   
-   
-### :link: All on-chain. :crab: All Rust. :muscle: All the time. 
+### :crab: Rust. :snake: Python. :link: All on-chain. 
 
-## Some Basic Concepts to Know
+> **New:** Python examples using Seahorse and Anchor Py!
+
+## Navigating this Repo
+
+:file_folder: Each example contains two folders:
+- `native` - Written using Solana's native Rust crates and vanilla Rust.
+- `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
+- `seahorse` - Written using the Python framework Seahorse, which converts your Python code to Anchor Rust.
+
+:wrench: How to build & run:
+- Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
+- `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
+- `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
+- `seahorse` - Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
+
+## Examples We'd Love to See!
+
+* Examples needed for Native:
+    * Token2022
+* Examples needed for Anchor:
+    * Additional Accounts & Resolving Accounts
+* Examples needed for Seahorse
+    * Any existing example missing a `seahorse` folder
+* New examples needed for Anchor, Native & Seahorse:
+    * Token lending
+    * Token swapping
+    * Escrow
+    * Staking
+    * Wrapped tokens
+    * Pyth
+    * Clockwork
+    * VRF
+    * Any oracle
+    * Merkle trees (compression)
+
+---
+
+## If You're New To Solana Please Read
 Most system-level operations on Solana involve already-existing Solana programs.   
    
 For example, to create a **system account** you use the **system program** and to create a **token mint** you use the **token program**.   
@@ -23,32 +52,3 @@ Deciding when to use cross-program invocation instead of invoking the programs d
 - Perhaps you want to send only one instruction from your client for a handful of sequential operations.
 - The list goes on.
 Regardless of what you may want to add on top of existing Solana programs, the number one use case for writing your own program is for using accounts with a **Program Derived Address (PDA)**. Crack open the `pdas` folder to see why.
-
-## Navigating this Repo
-
-:file_folder: Each example contains two folders:
-- `native` - Written using Solana's native Rust crates and vanilla Rust.
-- `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
-
-:wrench: How to build & run:
-- Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
-- `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
-- `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
-
-## Examples We'd Love to See!
-
-* Examples needed for Native:
-    * Token2022
-* Examples needed for Anchor:
-    * Additional Accounts & Resolving Accounts
-* New examples needed for both Anchor & Native:
-    * Token lending
-    * Token swapping
-    * Escrow
-    * Staking
-    * Wrapped tokens
-    * Pyth
-    * Clockwork
-    * VRF
-    * Any oracle
-    * Merkle trees (compression)
