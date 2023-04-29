@@ -36,7 +36,10 @@ pub fn mint_token_handler<'info>(
                 to: recipient.clone().to_account_info(),
             },
         ),
-        (amount * <u64 as TryFrom<_>>::try_from(10).unwrap().pow(6)),
+        (amount
+            * <u64 as TryFrom<_>>::try_from(10)
+                .unwrap()
+                .pow(<u32 as TryFrom<_>>::try_from(mint.decimals.clone()).unwrap())),
     )
     .unwrap();
 }
@@ -46,7 +49,12 @@ pub fn transfer_handler<'info>(
     mut recipient: SeahorseAccount<'info, '_, TokenAccount>,
     mut signer: SeahorseSigner<'info, '_>,
     mut amount: u64,
+    mut mint: SeahorseAccount<'info, '_, Mint>,
 ) -> () {
+    if !(signer_token_account.mint == mint.key()) {
+        panic!("Mint is not the token account mint");
+    }
+
     token::transfer(
         CpiContext::new(
             signer_token_account.programs.get("token_program"),
@@ -56,7 +64,10 @@ pub fn transfer_handler<'info>(
                 to: recipient.clone().to_account_info(),
             },
         ),
-        (amount * <u64 as TryFrom<_>>::try_from(10).unwrap().pow(6)),
+        (amount
+            * <u64 as TryFrom<_>>::try_from(10)
+                .unwrap()
+                .pow(<u32 as TryFrom<_>>::try_from(mint.decimals.clone()).unwrap())),
     )
     .unwrap();
 }

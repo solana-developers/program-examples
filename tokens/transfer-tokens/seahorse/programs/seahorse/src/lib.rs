@@ -323,6 +323,8 @@ mod seahorse {
         pub recipient: Box<Account<'info, TokenAccount>>,
         #[account(mut)]
         pub signer: Signer<'info>,
+        #[account(mut)]
+        pub mint: Box<Account<'info, Mint>>,
         pub token_program: Program<'info, Token>,
     }
 
@@ -350,11 +352,17 @@ mod seahorse {
             programs: &programs_map,
         };
 
+        let mint = SeahorseAccount {
+            account: &ctx.accounts.mint,
+            programs: &programs_map,
+        };
+
         transfer_handler(
             signer_token_account.clone(),
             recipient.clone(),
             signer.clone(),
             amount,
+            mint.clone(),
         );
 
         return Ok(());

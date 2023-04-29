@@ -26,7 +26,7 @@ def mint_token(
   mint.mint(
     authority = signer,
     to = recipient,
-    amount = amount * u64(10) ** 6
+    amount = amount * u64(10) ** u32(mint.decimals)
   )
 
 
@@ -48,10 +48,12 @@ def transfer(
   signer_token_account: TokenAccount,
   recipient: TokenAccount,
   signer: Signer,
-  amount: u64
+  amount: u64,
+  mint: TokenMint
 ):
+  assert signer_token_account.mint() == mint.key(), 'Mint is not the token account mint'
   signer_token_account.transfer(
     authority = signer,
     to = recipient,
-    amount = amount * u64(10) ** 6
+    amount = amount * u64(10) ** u32(mint.decimals)
   )

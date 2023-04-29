@@ -66,6 +66,7 @@ async def main():
         "system_program": SYS_PROGRAM_ID,
         "rent": RENT,
         "token_program": TOKEN_PROGRAM_ID,
+        "mint": mint.pubkey()
     }, signers=[program.provider.wallet.payer]))
 
     print("Transfer signature: ", transfer)
