@@ -1,0 +1,15 @@
+[features]
+seeds = true
+skip-lint = false
+[programs.localnet]
+seahorse = "5KCV219sxBAZMfXWP5EZ57D6K9568krgPKGe1Lq2nkxH"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "python3 tests/test.py"
