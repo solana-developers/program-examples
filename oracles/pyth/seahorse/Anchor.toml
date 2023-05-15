@@ -1,0 +1,21 @@
+[features]
+seeds = true
+skip-lint = false
+[programs.localnet]
+seahorse = "9USP8f9ooxUxWTyqrQSDfyiXE1FP7Wfsg34NfAbdK1ur"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[[test.validator.clone]]
+address = "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG"
