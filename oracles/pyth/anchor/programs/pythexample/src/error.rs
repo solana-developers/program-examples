@@ -2,10 +2,10 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum ErrorCode {
-    #[msg("PythError")]
+    #[msg("Could not load price account")]
     PythError,
-    #[msg("TryToSerializePriceAccount")]
+    #[msg("Failed to serialize price account")]
     TryToSerializePriceAccount,
-    #[msg("InvalidArgument")]
+    #[msg("Invalid argument provided")]
     InvalidArgument,
 }
