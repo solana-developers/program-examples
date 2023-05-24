@@ -42,7 +42,7 @@ const CreateTokenArgsSchema = new Map([
   ],
 ]);
 
-describe("Create Tokens!", async () => {
+describe("Create Token", async () => {
   const connection = new Connection(
     `https://api.devnet.solana.com/`,
     "confirmed"
