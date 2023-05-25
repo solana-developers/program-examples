@@ -11,10 +11,7 @@ use {
         system_instruction,
         sysvar::Sysvar,
     },
-    spl_token_2022::{
-        extension::ExtensionType, instruction as token_instruction, state::AccountState,
-        state::Mint,
-    },
+    spl_token_2022::{extension::ExtensionType, instruction as token_instruction, state::Mint},
 };
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
