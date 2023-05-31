@@ -1,5 +1,3 @@
-# seahorse
+## Transfer SOL with Seahorse
 
-This project was created by Seahorse 0.2.7.
-
-To get started, just add your code to **programs_py/seahorse.py** and run `seahorse build`.
+Sadly, you can't send SOL(lamports) to another SystemAccount (Public Key) with Seahorse. That's why this Seahorse example looks a little different than the Anchor and Native ones. Here, we initialize a Mock PDA account where we send SOL to using transferLamports, which invokes a CPI with the System Program.
