@@ -19,7 +19,7 @@ def init_mock_account(signer: Signer, mock_account: Empty[MockAccount]):
     account.mock_value = u8(0)
 
 @instruction
-def transfer(sender: Signer, recipient: MockAccount, amount: u64):
+def transfer_sol_with_cpi(sender: Signer, recipient: MockAccount, amount: u64):
     sender.transfer_lamports(
         to = recipient,
         amount = amount,

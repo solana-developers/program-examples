@@ -27,7 +27,7 @@ describe("seahorse", () => {
     // Convert to lamport.
     const lamports: number = anchor.web3.LAMPORTS_PER_SOL * amount;
     const tx = await program.methods
-      .transfer(new anchor.BN(lamports))
+      .transferSolWithCpi(new anchor.BN(lamports))
       .accounts({
         recipient: mockAccount[0],
         sender: program.provider.publicKey,

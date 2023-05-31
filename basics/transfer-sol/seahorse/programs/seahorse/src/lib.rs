@@ -5,6 +5,10 @@
 pub mod dot;
 
 use anchor_lang::prelude::*;
+use anchor_spl::{
+    associated_token::{self, AssociatedToken},
+    token::{self, Mint, Token, TokenAccount},
+};
 
 use dot::program::*;
 use std::{cell::RefCell, rc::Rc};
@@ -202,7 +206,7 @@ mod seahorse {
 
     #[derive(Accounts)]
     # [instruction (amount : u64)]
-    pub struct Transfer<'info> {
+    pub struct TransferSolWithCpi<'info> {
         #[account(mut)]
         pub sender: Signer<'info>,
         #[account(mut)]
@@ -210,7 +214,7 @@ mod seahorse {
         pub system_program: Program<'info, System>,
     }
 
-    pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
+    pub fn transfer_sol_with_cpi(ctx: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
         let mut programs = HashMap::new();
 
         programs.insert(
@@ -226,7 +230,7 @@ mod seahorse {
 
         let recipient = dot::program::MockAccount::load(&mut ctx.accounts.recipient, &programs_map);
 
-        transfer_handler(sender.clone(), recipient.clone(), amount);
+        transfer_sol_with_cpi_handler(sender.clone(), recipient.clone(), amount);
 
         dot::program::MockAccount::store(recipient);
 

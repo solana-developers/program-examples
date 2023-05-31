@@ -3,6 +3,7 @@
 #![allow(unused_mut)]
 use crate::{id, seahorse_util::*};
 use anchor_lang::{prelude::*, solana_program};
+use anchor_spl::token::{self, Mint, Token, TokenAccount};
 use std::{cell::RefCell, rc::Rc};
 
 #[account]
@@ -52,7 +53,7 @@ pub fn init_mock_account_handler<'info>(
     );
 }
 
-pub fn transfer_handler<'info>(
+pub fn transfer_sol_with_cpi_handler<'info>(
     mut sender: SeahorseSigner<'info, '_>,
     mut recipient: Mutable<LoadedMockAccount<'info, '_>>,
     mut amount: u64,
