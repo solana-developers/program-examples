@@ -61,6 +61,8 @@ fn process_instruction(
         ],
     )?;
 
+    // This needs to be done before the Mint is initialized
+
     // Initialize the Non Transferable Mint Extension
     invoke(
         &token_instruction::initialize_non_transferable_mint(token_program.key, mint_account.key)

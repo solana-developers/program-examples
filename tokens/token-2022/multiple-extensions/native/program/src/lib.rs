@@ -65,7 +65,7 @@ fn process_instruction(
         ],
     )?;
 
-    // Here, let's enable two extensions for the Mint.
+    // Here, let's enable two extensions for the Mint. This needs to be done before the Mint is initialized
 
     // Initialize the Mint close authority Extension
     invoke(

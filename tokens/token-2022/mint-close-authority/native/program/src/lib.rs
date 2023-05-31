@@ -62,6 +62,8 @@ fn process_instruction(
         ],
     )?;
 
+    // This needs to be done before the Mint is initialized
+
     // Initialize the Mint close authority Extension
     invoke(
         &token_instruction::initialize_mint_close_authority(

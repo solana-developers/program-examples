@@ -54,6 +54,7 @@ fn process_instruction(
     let rent_required = Rent::get()?.minimum_balance(space);
 
     // Create the account for the Mint and allocate space
+
     msg!("Mint account address : {}", mint_account.key);
     invoke(
         &system_instruction::create_account(
@@ -70,6 +71,8 @@ fn process_instruction(
             token_program.clone(),
         ],
     )?;
+
+    // This needs to be done before the Mint is initialized
 
     // Initialize the Default Account State as Frozen
     invoke(

@@ -71,6 +71,7 @@ fn process_instruction(
     // The max fee will be 5 tokens, here we adjust it with the tokens decimals
     let max_fee = 5 * 10u64.pow(args.token_decimals as u32);
 
+    // This needs to be done before the Mint is initialized
     // Initialize the Transfer Fee config
     invoke(
         &initialize_transfer_fee_config(
