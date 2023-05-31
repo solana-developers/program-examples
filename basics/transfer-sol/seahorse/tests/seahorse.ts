@@ -8,7 +8,7 @@ describe("seahorse", () => {
 
   const program = anchor.workspace.Seahorse as Program<Seahorse>;
 
-  const mockAccount = anchor.web3.PublicKey.findProgramAddressSync(
+  const mockReceiverAccount = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("mock_account")],
     program.programId
   );
@@ -17,19 +17,19 @@ describe("seahorse", () => {
     const tx = await program.methods
       .initMockAccount()
       .accounts({
-        mockAccount: mockAccount[0],
+        mockAccount: mockReceiverAccount[0],
         signer: program.provider.publicKey,
       })
       .rpc();
   });
   it("Send SOL To Mock account", async () => {
-    const amount = 1;
+    const transferAmount = 1;
     // Convert to lamport.
-    const lamports: number = anchor.web3.LAMPORTS_PER_SOL * amount;
+    const lamports: number = anchor.web3.LAMPORTS_PER_SOL * transferAmount;
     const tx = await program.methods
       .transferSolWithCpi(new anchor.BN(lamports))
       .accounts({
-        recipient: mockAccount[0],
+        recipient: mockReceiverAccount[0],
         sender: program.provider.publicKey,
       })
       .rpc();
