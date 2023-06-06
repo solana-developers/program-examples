@@ -1,3 +1,5 @@
 # Freeze Tokens
 
-> Coming soon!
+> Disable future minting for A Token Mint
+
+TODO: native
