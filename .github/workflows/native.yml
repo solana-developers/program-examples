@@ -13,11 +13,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-18.04
-      container:
-        image: docker.io/solanadevelopers/solana-workshop-image:0.0.2
-        credentials:
-          username: solanadevelopers
-          password: ${{  secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
+    container:
+      image: docker.io/solanadevelopers/solana-workshop-image:0.0.2
+      credentials:
+        username: solanadevelopers
+        password: ${{  secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
     strategy:
       matrix:
         {
