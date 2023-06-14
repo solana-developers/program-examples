@@ -37,6 +37,17 @@ jobs:
               "basics/rent/native/program",
               "basics/repository-layout/native/program",
               "basics/transfer-sol/native/program",
+              "tokens/create-token/native/program",
+              "tokens/nft-minter/native/program",
+              "tokens/pda-mint-authority/native/program",
+              "tokens/spl-token-minter/native/program",
+              "tokens/token-2022/default-account-state/native/program",
+              "tokens/token-2022/mint-close-authority/native/program",
+              "tokens/token-2022/multiple-extensions/native/program",
+              "tokens/token-2022/non-transferable/native/program",
+              "tokens/token-2022/transfer-fees/native/program",
+              "tokens/transfer-tokens/native/program",
+              "tools/shank-and-solita/native/program",
             ],
         }
 

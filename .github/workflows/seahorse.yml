@@ -26,6 +26,7 @@ jobs:
               "basics/counter/seahorse",
               "basics/hello-solana/seahorse",
               "basics/transfer-sol/seahorse",
+              "oracles/pyth/seahorse",
             ],
         }
 
