@@ -12,12 +12,8 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-18.04
     container:
-      image: docker.io/solanadevelopers/solana-workshop-image-anchor:0.0.1
-      credentials:
-        username: solanadevelopers
-        password: ${{  secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
+      image: solanadevelopers/solana-workshop-image-anchor:0.0.1
     strategy:
       matrix:
         {
