@@ -1,0 +1,33 @@
+name: Native Programs
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build
+    runs-on: solanadevelopers/solana-workshop-image-seahorse
+    strategy:
+      matrix:
+        {
+          dir:
+            [
+              "basics/counter/seahorse",
+              "basics/hello-solana/seahorse",
+              "basics/transfer-sol/seahorse",
+            ],
+        }
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build program
+        working-directory: ${{ matrix.dir }}
+        run: cargo build-sbf --verbose

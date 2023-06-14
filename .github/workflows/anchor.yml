@@ -1,0 +1,29 @@
+name: Anchor Programs
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build
+    runs-on: solanadevelopers/solana-workshop-image-anchor
+    strategy:
+      matrix:
+        {
+          dir:
+            ["basics/account-data/anchor", "basics/checking-accounts/anchor"],
+        }
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build program
+        working-directory: ${{ matrix.dir }}
+        run: anchor build

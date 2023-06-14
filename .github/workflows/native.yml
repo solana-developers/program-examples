@@ -12,7 +12,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: solanadevelopers/solana-workshop-image
+    runs-on: solanadevelopers/solana-workshop-image:0.0.2
     strategy:
       matrix:
         {
@@ -20,6 +20,18 @@ jobs:
             [
               "basics/account-data/native/program",
               "basics/checking-accounts/native/program",
+              "basics/close-account/native/program",
+              "basics/counter/native",
+              "basics/create-account/native/program",
+              "basics/cross-program-invocation/native/program",
+              "basics/hello-solana/native/program",
+              "basics/pda-rent-payer/native/program",
+              "basics/processing-instructions/native/program",
+              "basics/program-derived-addresses/native/program",
+              "basics/realloc/native/program",
+              "basics/rent/native/program",
+              "basics/repository-layout/native/program",
+              "basics/transfer-sol/native/program",
             ],
         }
 
