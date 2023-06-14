@@ -12,7 +12,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: solanadevelopers/solana-workshop-image:0.0.2
+    runs-on: docker.io/solanadevelopers/solana-workshop-image:0.0.2
     strategy:
       matrix:
         {

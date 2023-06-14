@@ -1,4 +1,4 @@
-name: Native Programs
+name: Seahorse Programs
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
 jobs:
   build:
     name: Build
-    runs-on: solanadevelopers/solana-workshop-image-seahorse
+    runs-on: docker.io/solanadevelopers/solana-workshop-image-seahorse
     strategy:
       matrix:
         {
