@@ -6,11 +6,12 @@ import {CreateMetadataAccountArgsV3} from "@metaplex-foundation/mpl-token-metada
 
 async function setup() {
     const rpc = "https://api.devnet.solana.com"
-    // const connection = new WrapperConnection(rpc, "confirmed");
     const connection = new Connection(rpc, "confirmed")
 
-    // Authority over collection
+    // Collection auth and treeCreator
     const payer = loadOrGenerateKeypair("payer");
+
+    // Airdrop
     await connection.requestAirdrop(payer.publicKey, 1 * 10**9);
     console.log("Payer address:", payer.publicKey.toBase58());
 
@@ -21,9 +22,9 @@ async function setup() {
     };
     const canopyDepth = maxDepthSizePair.maxDepth - 5;
     const tree = await createTree(connection, payer, treeKeypair, maxDepthSizePair, canopyDepth);
+
     // locally save the addresses for demo
     savePublicKeyToFile("treeAddress", tree.treeAddress);
-    // savePublicKeyToFile("treeAuthority", tree.treeAuthority);
 
     const collectionMetadataV3: CreateMetadataAccountArgsV3 = {
         data: {
@@ -38,7 +39,7 @@ async function setup() {
                     verified: false,
                     share: 100,
                 },
-            ], // or set to `null`
+            ],
             collection: null,
             uses: null,
         },

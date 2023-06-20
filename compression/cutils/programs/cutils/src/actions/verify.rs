@@ -8,15 +8,10 @@ use spl_account_compression::{
 #[derive(Accounts)]
 #[instruction(params: VerifyParams)]
 pub struct Verify<'info> {
-    /// CHECK: This account doesnt even exist (it is just the pda to sign)
-    pub leaf_owner: UncheckedAccount<'info>,
+    pub leaf_owner: Signer<'info>,
 
     /// CHECK: This account is neither written to nor read from.
     pub leaf_delegate: AccountInfo<'info>,
-
-    // leaf owner
-    #[account(constraint = leaf_owner.key() == buyer.key())]
-    pub buyer: Signer<'info>, // Auth of buyer_token_account, mut for being payer
 
     /// CHECK: unsafe
     pub merkle_tree: UncheckedAccount<'info>,
@@ -43,7 +38,6 @@ impl Verify<'_> {
     }
 
     pub fn actuate<'info>(ctx: Context<'_, '_, '_, 'info, Verify<'info>>, params: &VerifyParams) -> Result<()> {
-        msg!(">>> Claim prize");
         let asset_id = get_asset_id(&ctx.accounts.merkle_tree.key(), params.nonce);
         let leaf = LeafSchema::new_v0(
             asset_id,

@@ -10,7 +10,6 @@ use mpl_bubblegum::{
     }
 };
 
-
 #[derive(Accounts)]
 #[instruction(params: MintParams)]
 pub struct Mint<'info> {
@@ -64,7 +63,6 @@ pub struct Mint<'info> {
     pub compression_program: Program<'info, SplAccountCompression>,
     pub token_metadata_program: Program<'info, MplTokenMetadata>,
     pub bubblegum_program: Program<'info, MplBubblegum>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -72,7 +70,6 @@ pub struct Mint<'info> {
 pub struct MintParams {
     uri: String,
 }
-
 
 impl Mint<'_> {
     pub fn validate(
@@ -87,8 +84,6 @@ impl Mint<'_> {
         ctx: Context<'_, '_, '_, 'info, Mint<'info>>,
         params: MintParams
     ) -> Result<()> {
-        msg!("minting");
-
         mpl_bubblegum::cpi::mint_to_collection_v1(
             CpiContext::new(
                 ctx.accounts.bubblegum_program.to_account_info(),

@@ -4,8 +4,8 @@
 
 import axios from "axios";
 
-// const RPC_PATH = "https://rpc-devnet.aws.metaplex.com/";
-const RPC_PATH = "hhttps://api.devnet.solana.com";
+//TODO insert
+const RPC_PATH = "";
 
 export async function getAsset(assetId: any, rpcUrl = RPC_PATH): Promise<any> {
   try {
