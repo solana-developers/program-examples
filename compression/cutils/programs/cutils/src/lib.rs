@@ -1,6 +1,9 @@
 pub mod actions;
 pub use actions::*;
 
+pub mod state;
+pub use state::*;
+
 use anchor_lang::prelude::*;
 use solana_program::{pubkey::Pubkey};
 use spl_account_compression::{

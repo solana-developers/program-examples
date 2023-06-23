@@ -13,6 +13,20 @@ use mpl_bubblegum::{
 #[derive(Accounts)]
 #[instruction(params: MintParams)]
 pub struct Mint<'info> {
+    // #[account(
+    //     init,
+    //     seeds = [
+    //         SEED_DATA,
+    //         data.tree,
+    //         data.tree_nonce
+    //         // assetId directly?
+    //     ],
+    //     bump,
+    //     payer = payer,
+    //     space = Data::LEN,
+    // )]
+    // pub data: Account<'info, Data>,
+
     pub payer: Signer<'info>,
 
     // Bubblegum cNFT stuff MintToCollectionV1
