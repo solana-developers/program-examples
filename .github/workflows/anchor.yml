@@ -32,6 +32,8 @@ jobs:
         with:
           node-version: 16.14.2
           cache: "npm"
+    
+      - run: npm install
 
       - name: Install dependencies
         run: |
