@@ -12,41 +12,45 @@ env:
 jobs:
   build:
     name: Build
-    container:
-      image: solanadevelopers/solana-workshop-image-anchor:0.0.1
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        {
-          dir:
-            [
-              "basics/account-data/anchor",
-              "basics/checking-accounts/anchor",
-              "basics/close-account/anchor",
-              "basics/counter/anchor",
-              "basics/create-account/anchor",
-              "basics/cross-program-invocation/anchor",
-              "basics/hello-solana/anchor",
-              "basics/pda-rent-payer/anchor",
-              "basics/processing-instructions/anchor",
-              "basics/program-derived-addresses/anchor",
-              "basics/realloc/anchor",
-              "basics/rent/anchor",
-              "basics/repository-layout/anchor",
-              "basics/transfer-sol/anchor",
-              "compression/cnft-vault/anchor",
-              "oracles/pyth/anchor",
-              "tokens/create-token/anchor",
-              "tokens/nft-minter/anchor",
-              "tokens/pda-mint-authority/anchor",
-              "tokens/spl-token-minter/anchor",
-              "tokens/token-2022/basics/anchor",
-              "tokens/transfer-tokens/anchor",
-            ],
-        }
+        dir:
+          [
+            "basics/account-data/anchor",
+            "basics/checking-accounts/anchor",
+            "basics/close-account/anchor",
+            "basics/counter/anchor",
+            "basics/create-account/anchor",
+            "basics/cross-program-invocation/anchor",
+            "basics/hello-solana/anchor",
+            "basics/pda-rent-payer/anchor",
+            "basics/processing-instructions/anchor",
+            "basics/program-derived-addresses/anchor",
+            "basics/realloc/anchor",
+            "basics/rent/anchor",
+            "basics/repository-layout/anchor",
+            "basics/transfer-sol/anchor",
+            "compression/cnft-vault/anchor",
+            "oracles/pyth/anchor",
+            "tokens/create-token/anchor",
+            "tokens/nft-minter/anchor",
+            "tokens/pda-mint-authority/anchor",
+            "tokens/spl-token-minter/anchor",
+            "tokens/token-2022/basics/anchor",
+            "tokens/transfer-tokens/anchor",
+          ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+          avm install latest
+          avm use latest
 
       - name: Build program
         working-directory: ${{ matrix.dir }}
