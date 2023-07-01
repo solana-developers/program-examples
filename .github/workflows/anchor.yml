@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          npm i -g @project-serum/anchor-cli@$ANCHOR_VERSION ts-mocha typescript
+          npm i -g @project-serum/anchor-cli ts-mocha typescript
         shell: bash
         
           
