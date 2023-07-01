@@ -45,6 +45,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Cache cargo registry
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache target
+        uses: actions/cache@v2
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install dependencies
         run: |
           sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
