@@ -27,13 +27,21 @@ jobs:
         with:
           path: target
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
+          
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: "npm"
 
       - name: Install dependencies
         run: |
           sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
           cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+          sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev
           avm install latest
           avm use latest
+        shell: bash
+        
 
   build:
     needs: setup
@@ -85,6 +93,9 @@ jobs:
         run: |
           echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          npm i -g @project-serum/anchor-cli@$ANCHOR_VERSION ts-mocha typescript
+        shell: bash
+        
           
 
       - name: Build program
