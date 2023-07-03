@@ -69,6 +69,7 @@ jobs:
             "tokens/token-2022/basics/anchor",
             "tokens/transfer-tokens/anchor",
           ]
+          
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
