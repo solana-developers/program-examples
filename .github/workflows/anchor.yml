@@ -69,7 +69,6 @@ jobs:
             "tokens/token-2022/basics/anchor",
             "tokens/transfer-tokens/anchor",
           ]
-          
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -86,15 +85,14 @@ jobs:
           path: target
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
           
-      - name: Set up Node.js environment
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          
-      -name: Install Anchor
+      - name: Set environment variables
         run: |
-          npm install -g @coral-xyz/anchor
+          echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+          echo "/home/runner/.cargo/bin" >> $GITHUB_PATH
+        shell: bash
+        
           
+
       - name: Build program
         working-directory: ${{ matrix.dir }}
         run: anchor build
