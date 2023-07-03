@@ -15,30 +15,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Cache cargo registry
-        uses: actions/cache@v2
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache target
-        uses: actions/cache@v2
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
-          
-
+        
       - name: Install dependencies
         run: |
           sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
           sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
           avm install latest
           avm use latest
         shell: bash
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.local/share/solana/install
+            ~/.local/share/solana/install/active_release
+            ~/.local/share/solana/active_release
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/Cargo.lock') }}
         
-
   build:
     needs: setup
     runs-on: ubuntu-latest
@@ -73,24 +68,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Cache cargo registry
+      - name: Load dependencies from cache
         uses: actions/cache@v2
         with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Cache target
-        uses: actions/cache@v2
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin
+            ~/.local/share/solana/install
+            ~/.local/share/solana/active_release
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/Cargo.lock') }}
           
-      - name: Install minimal nightly
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-        
+        - name: Add dependencies to PATH
+        run: |
+          echo "${HOME}/.cargo/bin" >> $GITHUB_PATH
+          echo "${HOME}/.local/share/solana/active_release" >> $GITHUB_PATH
+          echo "${HOME}/.local/share/solana/install/active_release" >> $GITHUB_PATH
+          echo "${HOME}/.local/share/solana/install" >> $GITHUB_PATH
+
       - name: Build program
         working-directory: ${{ matrix.dir }}
         run: anchor build
