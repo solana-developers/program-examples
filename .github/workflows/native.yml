@@ -24,7 +24,6 @@ jobs:
       - name: Build Solana Programs
         run: |
           declare -a StringArray=(
-            [
             "basics/account-data/native/program"
             "basics/checking-accounts/native/program"
             "basics/close-account/native/program"
@@ -50,7 +49,6 @@ jobs:
             "tokens/token-2022/transfer-fees/native/program"
             "tokens/transfer-tokens/native/program"
             "tools/shank-and-solita/native/program"
-          ]
           )
           for val in "${StringArray[@]}"; do
              echo "Building $val..."
