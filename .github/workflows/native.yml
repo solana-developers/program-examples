@@ -18,7 +18,6 @@ jobs:
           export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
           solana -V
           rustc -V
-          sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev
         shell: bash
 
       - name: Build Solana Programs
@@ -53,6 +52,6 @@ jobs:
           for val in "${StringArray[@]}"; do
              echo "Building $val..."
              cd $val
-             cargo build-sbf --verbose
+             cargo-build-sbf --verbose
              cd - > /dev/null
           done
