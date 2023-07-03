@@ -87,8 +87,8 @@ jobs:
           
       - name: Set environment variables
         run: |
-          echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          echo "/home/runner/.cargo/bin" >> $GITHUB_PATH
+            echo "::add-path::/home/runner/.local/share/solana/install/active_release/bin"
+            echo "::add-path::/home/runner/.cargo/bin"
         shell: bash
         
           
