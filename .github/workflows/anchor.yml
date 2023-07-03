@@ -89,6 +89,7 @@ jobs:
         run: |
             echo "::add-path::/home/runner/.local/share/solana/install/active_release/bin"
             echo "::add-path::/home/runner/.cargo/bin"
+            echo "::add-path::/home/runner/.avm/bin"
         shell: bash
         
           
