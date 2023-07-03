@@ -85,15 +85,14 @@ jobs:
           path: target
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
           
-      - name: Set environment variables
-        run: |
-            echo "::add-path::/home/runner/.local/share/solana/install/active_release/bin"
-            echo "::add-path::/home/runner/.cargo/bin"
-            echo "::add-path::/home/runner/.avm/bin"
-        shell: bash
+      - name: Install latest nightly
+      - uses: actions/checkout@v2
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+            override: true
+            components: rustfmt, clippy
         
-          
-
       - name: Build program
         working-directory: ${{ matrix.dir }}
         run: anchor build
