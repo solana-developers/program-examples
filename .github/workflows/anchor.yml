@@ -27,7 +27,6 @@ jobs:
       
       - name: Install dependencies
         run: |
-          npm ci
           npm install -g @project-serum/anchor
 
       - name: Build Solana Programs
