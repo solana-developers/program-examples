@@ -14,13 +14,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          rm -rf ~/.cache/solana/v1.37
-          rm -rf ~/.cache/solana/v1.18
-          rm -rf ~/.cache/solana/v1.12
-          sh -c "$(curl -sSfL https://release.solana.com/v1.16.2/install)"
-          rm -rf ~/.cache/solana/v1.37
-          rm -rf ~/.cache/solana/v1.18
-          rm -rf ~/.cache/solana/v1.12
+          sh -c "$(curl -sSfL https://release.solana.com/beta/install)"
           export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
           solana -V
           rustc -V
