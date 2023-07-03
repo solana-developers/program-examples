@@ -22,10 +22,6 @@ jobs:
           cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
           avm install latest
           avm use latest
-        shell: bash
-
-      - name: Build Solana Programs
-        run: |
           declare -a StringArray=(
             "basics/account-data/anchor"
             "basics/checking-accounts/anchor"
@@ -56,3 +52,4 @@ jobs:
              anchor build
              cd - > /dev/null
           done
+        shell: bash
