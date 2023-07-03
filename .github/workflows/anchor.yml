@@ -85,13 +85,11 @@ jobs:
           path: target
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
           
-      - name: Install latest nightly
-      - uses: actions/checkout@v2
+      - name: Install minimal nightly
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: nightly
-            override: true
-            components: rustfmt, clippy
+          profile: minimal
+          toolchain: nightly
         
       - name: Build program
         working-directory: ${{ matrix.dir }}
