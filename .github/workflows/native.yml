@@ -17,8 +17,6 @@ jobs:
           sh -c "$(curl -sSfL https://release.solana.com/v1.16.2/install)"
           export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
           solana -V
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          source "$HOME/.cargo/env"
           rustc -V
           declare -a StringArray=(
             "basics/account-data/native/program"
