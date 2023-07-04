@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 
 use crate::state::AddressInfo;
 
-
 pub fn create_address_info(
     ctx: Context<CreateAddressInfo>,
     name: String,
@@ -10,21 +9,15 @@ pub fn create_address_info(
     street: String,
     city: String,
 ) -> Result<()> {
-
-    let address_info = AddressInfo::new(
-        name,
-        house_number,
-        street,
-        city,
-    );
+    let address_info = AddressInfo::new(name, house_number, street, city);
 
     let account_span = (address_info.try_to_vec()?).len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
-    system_program::create_account(
+    anchor_lang::system_program::create_account(
         CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
-            system_program::CreateAccount {
+            anchor_lang::system_program::CreateAccount {
                 from: ctx.accounts.payer.to_account_info(),
                 to: ctx.accounts.address_info.to_account_info(),
             },
