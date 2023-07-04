@@ -6,10 +6,13 @@ edition = "2021"
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.9.1"
-solana-program = "1.10.26"
 spl-token = { version="3.3.0", features = [ "no-entrypoint" ] }
 spl-associated-token-account = { version="1.0.5", features = [ "no-entrypoint" ] }
 mpl-token-metadata = { version="1.2.5", features = [ "no-entrypoint" ] }
+winnow = "=0.4.1"
+getrandom = { version = "0.2.9", features = ["custom"] }
+solana-program = "=1.14.17"
+toml_datetime="=0.6.1"
 
 [lib]
 crate-type = ["cdylib", "lib"]
