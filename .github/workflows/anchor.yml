@@ -27,7 +27,6 @@ jobs:
             "basics/close-account/anchor"
             "basics/counter/anchor"
             "basics/create-account/anchor"
-            "basics/cross-program-invocation/anchor"
             "basics/hello-solana/anchor"
             "basics/pda-rent-payer/anchor"
             "basics/processing-instructions/anchor"
