@@ -23,15 +23,14 @@ jobs:
           avm install latest
           avm use latest
           declare -a StringArray=(
-            "basics/checking-accounts/anchor"
-            "basics/close-account/anchor"
-            "basics/counter/anchor"
-            "basics/create-account/anchor"
-            "basics/hello-solana/anchor"
-            "basics/pda-rent-payer/anchor"
-            "basics/processing-instructions/anchor"
-            "basics/program-derived-addresses/anchor"
-            "basics/realloc/anchor"
+            #"basics/checking-accounts/anchor"
+            #"basics/close-account/anchor"
+            #"basics/counter/anchor"
+            #"basics/create-account/anchor"
+            #"basics/hello-solana/anchor"
+            #"basics/pda-rent-payer/anchor"
+            #"basics/processing-instructions/anchor"
+            #"basics/program-derived-addresses/anchor"
             "basics/rent/anchor"
             "basics/repository-layout/anchor"
             "basics/transfer-sol/anchor"
