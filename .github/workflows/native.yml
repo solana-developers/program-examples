@@ -1,60 +1,52 @@
-name: Native Programs
+name: Native Build
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
-env:
-  CARGO_TERM_COLOR: always
+  schedule:
+    - cron: '0 0 1 * *'
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
-    container:
-      image: docker.io/solanadevelopers/solana-workshop-image:0.0.2
-      credentials:
-        username: solanadevelopers
-        password: ${{  secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
-    strategy:
-      matrix:
-        {
-          dir:
-            [
-              "basics/account-data/native/program",
-              "basics/checking-accounts/native/program",
-              "basics/close-account/native/program",
-              "basics/counter/native",
-              "basics/create-account/native/program",
-              "basics/cross-program-invocation/native/program",
-              "basics/hello-solana/native/program",
-              "basics/pda-rent-payer/native/program",
-              "basics/processing-instructions/native/program",
-              "basics/program-derived-addresses/native/program",
-              "basics/realloc/native/program",
-              "basics/rent/native/program",
-              "basics/repository-layout/native/program",
-              "basics/transfer-sol/native/program",
-              "tokens/create-token/native/program",
-              "tokens/nft-minter/native/program",
-              "tokens/pda-mint-authority/native/program",
-              "tokens/spl-token-minter/native/program",
-              "tokens/token-2022/default-account-state/native/program",
-              "tokens/token-2022/mint-close-authority/native/program",
-              "tokens/token-2022/multiple-extensions/native/program",
-              "tokens/token-2022/non-transferable/native/program",
-              "tokens/token-2022/transfer-fees/native/program",
-              "tokens/transfer-tokens/native/program",
-              "tools/shank-and-solita/native/program",
-            ],
-        }
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Build program
-        working-directory: ${{ matrix.dir }}
-        run: cargo build-sbf --verbose
+      - uses: actions/checkout@v2
+      
+      - name: Install dependencies
+        run: |
+          sh -c "$(curl -sSfL https://release.solana.com/beta/install)"
+          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
+          solana -V
+          rustc -V
+          declare -a StringArray=(
+            "basics/account-data/native/program"
+            "basics/checking-accounts/native/program"
+            "basics/close-account/native/program"
+            "basics/counter/native"
+            "basics/create-account/native/program"
+            "basics/hello-solana/native/program"
+            "basics/pda-rent-payer/native/program"
+            "basics/processing-instructions/native/program"
+            "basics/program-derived-addresses/native/program"
+            "basics/realloc/native/program"
+            "basics/rent/native/program"
+            "basics/repository-layout/native/program"
+            "basics/transfer-sol/native/program"
+            "tokens/nft-minter/native/program"
+            "tokens/pda-mint-authority/native/program"
+            "tokens/spl-token-minter/native/program"
+            "tokens/token-2022/default-account-state/native/program"
+            "tokens/token-2022/mint-close-authority/native/program"
+            "tokens/token-2022/multiple-extensions/native/program"
+            "tokens/token-2022/non-transferable/native/program"
+            "tokens/token-2022/transfer-fees/native/program"
+            "tokens/transfer-tokens/native/program"
+            "tools/shank-and-solita/native/program"
+            "tokens/create-token/native/program"
+          )
+          for val in "${StringArray[@]}"; do
+             echo "Building $val..."
+             cd $val
+             cargo-build-sbf --verbose
+             cd - > /dev/null
+          done
+        shell: bash
