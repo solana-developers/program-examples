@@ -29,15 +29,12 @@ describe("rent", () => {
     const newAccount = anchor.web3.Keypair.generate()
     // Number of bytes of space to allocate for the account
     const space = 100
-    // Get the minimum balance required for the account for the given space
-    const lamports = await connection.getMinimumBalanceForRentExemption(space)
 
     // Create a new account via a Cross Program Invocation to the system program
     const tx = await program.methods
       .createSystemAccount(
         wallet.publicKey, // payer
         newAccount.publicKey, // new account
-        new anchor.BN(lamports), // lamports
         new anchor.BN(space) // space
       )
       .accounts({ dataAccount: dataAccount.publicKey })
