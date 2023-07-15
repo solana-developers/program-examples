@@ -3,7 +3,7 @@
 contract processing_instructions {
 
     @payer(payer) // payer for the data account, required by Solang but not used in this example
-    constructor(address payer) {}
+    constructor() {}
 
     function goToPark(string name, uint32 height) public pure {
         // Print messages to the program logs

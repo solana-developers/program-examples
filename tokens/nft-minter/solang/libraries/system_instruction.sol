@@ -34,7 +34,7 @@ library SystemInstruction {
     /// @param lamports amount of lamports to be transfered to the new account
     /// @param space the size in bytes that is going to be made available for the account
     /// @param owner public key for the program that will own the account being created
-    function create_account(address from, address to, uint64 lamports, uint64 space, address owner) internal view {
+    function create_account(address from, address to, uint64 lamports, uint64 space, address owner) internal {
         AccountMeta[2] metas = [
             AccountMeta({pubkey: from, is_signer: true, is_writable: true}),
             AccountMeta({pubkey: to, is_signer: true, is_writable: true})
@@ -54,7 +54,7 @@ library SystemInstruction {
     /// @param lamports amount of lamports to be transfered to the new account
     /// @param space the size in bytes that is going to be made available for the account
     /// @param owner public key for the program that will own the account being created
-    function create_account_with_seed(address from, address to, address base, string seed, uint64 lamports, uint64 space, address owner) internal view {
+    function create_account_with_seed(address from, address to, address base, string seed, uint64 lamports, uint64 space, address owner) internal {
         AccountMeta[3] metas = [
             AccountMeta({pubkey: from, is_signer: true, is_writable: true}),
             AccountMeta({pubkey: to, is_signer: false, is_writable: true}),
@@ -81,7 +81,7 @@ library SystemInstruction {
     ///
     /// @param pubkey the public key for the account whose owner is going to be reassigned
     /// @param owner the public key for the new account owner
-    function assign(address pubkey, address owner) internal view {
+    function assign(address pubkey, address owner) internal {
         AccountMeta[1] meta = [
             AccountMeta({pubkey: pubkey, is_signer: true, is_writable: true})
         ];
@@ -96,7 +96,7 @@ library SystemInstruction {
     /// @param base the base address that derived the 'addr' key using the seed
     /// @param seed the string utilized to created the 'addr' public key
     /// @param owner the public key for the new program owner
-    function assign_with_seed(address addr, address base, string seed, address owner) internal view {
+    function assign_with_seed(address addr, address base, string seed, address owner) internal {
         AccountMeta[2] metas = [
             AccountMeta({pubkey: addr, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: base, is_signer: true, is_writable: false})
@@ -119,7 +119,7 @@ library SystemInstruction {
     /// @param from public key for the funding account
     /// @param to public key for the recipient account
     /// @param lamports amount of lamports to transfer
-    function transfer(address from, address to, uint64 lamports) internal view {
+    function transfer(address from, address to, uint64 lamports) internal {
         AccountMeta[2] metas = [
             AccountMeta({pubkey: from, is_signer: true, is_writable: true}),
             AccountMeta({pubkey: to, is_signer: false, is_writable: true})
@@ -138,7 +138,7 @@ library SystemInstruction {
     /// @param from_owner owner to use to derive the funding account address
     /// @param to_pubkey the public key for the recipient account
     /// @param lamports amount of lamports to transfer
-    function transfer_with_seed(address from_pubkey, address from_base, string seed, address from_owner, address to_pubkey, uint64 lamports) internal view {
+    function transfer_with_seed(address from_pubkey, address from_base, string seed, address from_owner, address to_pubkey, uint64 lamports) internal {
         AccountMeta[3] metas = [
             AccountMeta({pubkey: from_pubkey, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: from_base, is_signer: true, is_writable: false}),
@@ -160,7 +160,7 @@ library SystemInstruction {
     ///
     /// @param pub_key account for which to allocate space
     /// @param space number of bytes of memory to allocate
-    function allocate(address pub_key, uint64 space) internal view {
+    function allocate(address pub_key, uint64 space) internal {
         AccountMeta[1] meta = [
             AccountMeta({pubkey: pub_key, is_signer: true, is_writable: true})
         ];
@@ -177,7 +177,7 @@ library SystemInstruction {
     /// @param seed the string utilized to create the 'addr' public key
     /// @param space number of bytes of memory to allocate
     /// @param owner owner to use to derive the 'addr' account address
-    function allocate_with_seed(address addr, address base, string seed, uint64 space, address owner) internal view {
+    function allocate_with_seed(address addr, address base, string seed, uint64 space, address owner) internal {
         AccountMeta[2] metas = [
             AccountMeta({pubkey: addr, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: base, is_signer: true, is_writable: false})
@@ -204,7 +204,7 @@ library SystemInstruction {
     /// @param seed the string utilized to create the 'addr' public key
     /// @param authority The entity authorized to execute nonce instructions on the account
     /// @param lamports amount of lamports to be transfered to the new account
-    function create_nonce_account_with_seed(address from, address nonce, address base, string seed, address authority, uint64 lamports) internal view {
+    function create_nonce_account_with_seed(address from, address nonce, address base, string seed, address authority, uint64 lamports) internal {
         create_account_with_seed(from, nonce, base, seed, lamports, state_size, systemAddress);
 
         AccountMeta[3] metas = [
@@ -223,7 +223,7 @@ library SystemInstruction {
     /// @param nonce the public key for the nonce account to be created
     /// @param authority The entity authorized to execute nonce instructions on the account
     /// @param lamports amount of lamports to be transfered to the new account
-    function create_nonce_account(address from, address nonce, address authority, uint64 lamports) internal view {
+    function create_nonce_account(address from, address nonce, address authority, uint64 lamports) internal {
         create_account(from, nonce, lamports, state_size, systemAddress);
 
         AccountMeta[3] metas = [
@@ -240,7 +240,7 @@ library SystemInstruction {
     ///
     /// @param nonce_pubkey the public key for the nonce account
     /// @param authorized_pubkey the publick key for the entity authorized to execute instructins on the account
-    function advance_nonce_account(address nonce_pubkey, address authorized_pubkey) internal view {
+    function advance_nonce_account(address nonce_pubkey, address authorized_pubkey) internal {
         AccountMeta[3] metas = [
             AccountMeta({pubkey: nonce_pubkey, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: recentBlockHashes, is_signer: false, is_writable: false}),
@@ -257,7 +257,7 @@ library SystemInstruction {
     /// @param authorized_pubkey the public key for the entity authorized to execute instructins on the account
     /// @param to_pubkey the recipient account
     /// @param lamports the number of lamports to withdraw
-    function withdraw_nonce_account(address nonce_pubkey, address authorized_pubkey, address to_pubkey, uint64 lamports) internal view {
+    function withdraw_nonce_account(address nonce_pubkey, address authorized_pubkey, address to_pubkey, uint64 lamports) internal {
         AccountMeta[5] metas = [
             AccountMeta({pubkey: nonce_pubkey, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: to_pubkey, is_signer: false, is_writable: true}),
@@ -275,7 +275,7 @@ library SystemInstruction {
     /// @param nonce_pubkey the public key for the nonce account
     /// @param authorized_pubkey the public key for the entity authorized to execute instructins on the account
     /// @param new_authority
-    function authorize_nonce_account(address nonce_pubkey, address authorized_pubkey, address new_authority) internal view {
+    function authorize_nonce_account(address nonce_pubkey, address authorized_pubkey, address new_authority) internal {
         AccountMeta[2] metas = [
             AccountMeta({pubkey: nonce_pubkey, is_signer: false, is_writable: true}),
             AccountMeta({pubkey: authorized_pubkey, is_signer: true, is_writable: false})
@@ -289,7 +289,7 @@ library SystemInstruction {
     ///
     /// @param nonce the public key for the nonce account
     // This is not available on Solana v1.9.15
-    function upgrade_nonce_account(address nonce) internal view {
+    function upgrade_nonce_account(address nonce) internal {
         AccountMeta[1] meta = [
             AccountMeta({pubkey: nonce, is_signer: false, is_writable: true})
         ];

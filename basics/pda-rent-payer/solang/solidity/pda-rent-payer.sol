@@ -1,14 +1,12 @@
 
-import "./system_instruction.sol";
+import "../libraries/system_instruction.sol";
 
 @program_id("F1ipperKF9EfD821ZbbYjS319LXYiBmjhzkkf5a26rC")
 contract pda_rent_payer {
-    bool private value = true;
 
     @payer(payer) // "payer" is the account that pays for creating the account
     @seed("rent_vault") // hardcoded seed
-    @bump(bump) // bump seed to derive the pda
-    constructor(address payer, bytes1 bump, uint64 fundLamports) {
+    constructor(@bump bytes1 bump, uint64 fundLamports) {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["rent_vault"], type(pda_rent_payer).program_id);
 
@@ -18,7 +16,7 @@ contract pda_rent_payer {
 
         // Fund the pda account with additional lamports
         SystemInstruction.transfer(
-            payer, // from
+            tx.accounts.payer.key, // from
             address(this), // to (the address of the account being created)
             fundLamports // amount of lamports to transfer
         );
@@ -30,8 +28,9 @@ contract pda_rent_payer {
 
         print("From: {:}".format(from.key));
         print("To: {:}".format(to.key));
-
-        from.lamports -= lamports;
-        to.lamports += lamports;
+        
+        // // Not working with Solang 0.3.1
+        // from.lamports -= lamports;
+        // to.lamports += lamports;
     }
 }

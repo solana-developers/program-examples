@@ -77,7 +77,7 @@ library MplMetadata {
 		string name,
 		string symbol,
 		string uri
-	) public view {
+	) public {
         // // Example of how to add a Creator[] array to the DataV2 struct
 		// Creator[] memory creators = new Creator[](1);
         // creators[0] = Creator({

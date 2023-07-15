@@ -5,7 +5,7 @@ contract lever {
     bool private isOn = true;
 
     @payer(payer) // payer for the data account
-    constructor(address payer) {}
+    constructor() {}
 
     // Switch the power on or off
     function switchPower(string name) public {

@@ -1,45 +1,45 @@
-import * as anchor from "@coral-xyz/anchor"
-import { Program } from "@coral-xyz/anchor"
-import { CreateToken } from "../target/types/create_token"
-import { Metaplex } from "@metaplex-foundation/js"
-import { SYSVAR_RENT_PUBKEY, SystemProgram, PublicKey } from "@solana/web3.js"
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { CreateToken } from "../target/types/create_token";
+import { Metaplex } from "@metaplex-foundation/js";
+import { SYSVAR_RENT_PUBKEY, SystemProgram, PublicKey } from "@solana/web3.js";
 
 describe("create-token", () => {
-  const provider = anchor.AnchorProvider.env()
-  anchor.setProvider(provider)
-  const program = anchor.workspace.CreateToken as Program<CreateToken>
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
+  const program = anchor.workspace.CreateToken as Program<CreateToken>;
 
   // Generate new keypair to use as data account
-  const dataAccount = anchor.web3.Keypair.generate()
-  const wallet = provider.wallet
-  const connection = provider.connection
+  const dataAccount = anchor.web3.Keypair.generate();
+  const wallet = provider.wallet;
+  const connection = provider.connection;
 
   // Metadata for the token
-  const tokenTitle = "Solana Gold"
-  const tokenSymbol = "GOLDSOL"
+  const tokenTitle = "Solana Gold";
+  const tokenSymbol = "GOLDSOL";
   const tokenUri =
-    "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json"
+    "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json";
 
   it("Is initialized!", async () => {
     // Initialize data account for the program, which is required by Solang
     const tx = await program.methods
-      .new(wallet.publicKey)
+      .new()
       .accounts({ dataAccount: dataAccount.publicKey })
       .signers([dataAccount])
-      .rpc()
-    console.log("Your transaction signature", tx)
-  })
+      .rpc();
+    console.log("Your transaction signature", tx);
+  });
 
   it("Create an SPL Token!", async () => {
     // Generate a new keypair for the mint
-    const mintKeypair = anchor.web3.Keypair.generate()
+    const mintKeypair = anchor.web3.Keypair.generate();
 
     // Get the metadata address for the mint
-    const metaplex = Metaplex.make(connection)
+    const metaplex = Metaplex.make(connection);
     const metadataAddress = await metaplex
       .nfts()
       .pdas()
-      .metadata({ mint: mintKeypair.publicKey })
+      .metadata({ mint: mintKeypair.publicKey });
 
     const tx = await program.methods
       .createTokenMint(
@@ -71,20 +71,20 @@ describe("create-token", () => {
         { pubkey: SYSVAR_RENT_PUBKEY, isWritable: false, isSigner: false },
       ])
       .signers([mintKeypair])
-      .rpc({ skipPreflight: true })
-    console.log("Your transaction signature", tx)
-  })
+      .rpc({ skipPreflight: true });
+    console.log("Your transaction signature", tx);
+  });
 
   it("Create an NFT!", async () => {
     // Generate a new keypair for the mint
-    const mintKeypair = anchor.web3.Keypair.generate()
+    const mintKeypair = anchor.web3.Keypair.generate();
 
     // Get the metadata address for the mint
-    const metaplex = Metaplex.make(connection)
+    const metaplex = Metaplex.make(connection);
     const metadataAddress = await metaplex
       .nfts()
       .pdas()
-      .metadata({ mint: mintKeypair.publicKey })
+      .metadata({ mint: mintKeypair.publicKey });
 
     const tx = await program.methods
       .createTokenMint(
@@ -116,7 +116,7 @@ describe("create-token", () => {
         { pubkey: SYSVAR_RENT_PUBKEY, isWritable: false, isSigner: false },
       ])
       .signers([mintKeypair])
-      .rpc({ skipPreflight: true })
-    console.log("Your transaction signature", tx)
-  })
-})
+      .rpc({ skipPreflight: true });
+    console.log("Your transaction signature", tx);
+  });
+});

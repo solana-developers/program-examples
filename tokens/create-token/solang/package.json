@@ -5,7 +5,8 @@
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.28.0",
-        "@metaplex-foundation/js": "^0.19.4"
+        "@metaplex-foundation/js": "^0.19.4",
+        "@project-serum/anchor": "^0.26.0"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.0",

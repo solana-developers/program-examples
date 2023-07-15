@@ -6,7 +6,7 @@ contract checking_accounts {
 
     // The dataAccount is unused in this example, but is a required account when using Solang
     @payer(payer) // "payer" is the account that pays to create the dataAccount
-    constructor(address payer) {}
+    constructor() {}
 
     function checkAccounts(address accountToChange, address accountToCreate) public view {
         print("Number of Accounts Provided: {:}".format(tx.accounts.length));

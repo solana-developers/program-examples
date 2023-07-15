@@ -17,11 +17,12 @@ contract program_derived_addresses {
     // The seeds, bump, and programId are used to derive a unique and deterministic pda (program derived address) to use as the account address
     @payer(payer) // "payer" is the account that pays for creating the account
     @seed("page_visits") // hardcoded seed
-    @seed(abi.encode(payer)) // additional seed using the payer address
-    @bump(bump) // bump seed to derive the pda
-    constructor(address payer, bytes1 bump) {
+    constructor(
+        @seed bytes payer, // additional seed using the payer address
+        @bump bytes1 bump // bump seed to derive the pda
+    ) {
         // Independently derive the PDA address from the seeds, bump, and programId
-        (address pda, bytes1 _bump) = try_find_program_address(["page_visits", abi.encode(payer)], type(program_derived_addresses).program_id);
+        (address pda, bytes1 _bump) = try_find_program_address(["page_visits", payer], type(program_derived_addresses).program_id);
 
         // Verify that the bump passed to the constructor matches the bump derived from the seeds and programId
         // This ensures that only the canonical pda address can be used to create the account (first bump that generates a valid pda address)
