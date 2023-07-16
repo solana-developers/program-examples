@@ -23,9 +23,8 @@ contract transfer_sol {
 
         print("From: {:}".format(from.key));
         print("To: {:}".format(to.key));
-        
-        // // // Not working with Solang 0.3.1
-        // from.lamports -= lamports;
-        // to.lamports += lamports;
+
+        from.lamports -= lamports;
+        to.lamports += lamports;
     }
 }
