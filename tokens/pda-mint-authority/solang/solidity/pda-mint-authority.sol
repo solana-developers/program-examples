@@ -1,5 +1,5 @@
 
-import "./spl_token.sol";
+import "../libraries/spl_token.sol";
 import "solana";
 
 @program_id("J2eUKE878XKXJZaP7vXwxgWnWnNQMqHSkMPoRFQwa86b")
@@ -8,8 +8,9 @@ contract pda_mint_authority {
 
     @payer(payer)
     @seed("mint_authority") // hard-coded seed
-    @bump(_bump) // bump for the pda address
-    constructor(address payer, bytes1 _bump) {
+    constructor(
+        @bump bytes1 _bump  // bump for the pda address
+    ) {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 pdaBump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
 
@@ -30,7 +31,7 @@ contract pda_mint_authority {
         string name, // name for the metadata account
         string symbol, // symbol for the metadata account
         string uri // uri for the metadata account
-    ) public view {
+    ) public {
         // Invoke System Program to create a new account for the mint account and,
         // Invoke Token Program to initialize the mint account
         // Set mint authority, freeze authority, and decimals for the mint account
@@ -65,7 +66,7 @@ contract pda_mint_authority {
 		string name, // token name
 		string symbol, // token symbol
 		string uri // token uri
-    ) private view {
+    ) private {
         // // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
 
@@ -119,7 +120,7 @@ contract pda_mint_authority {
         bool usesPresent; // To handle Rust Option<> in Solidity
     }
 
-    function mintTo(address payer, address tokenAccount, address mint, address owner) public view {
+    function mintTo(address payer, address tokenAccount, address mint, address owner) public {
         // Create an associated token account for the owner to receive the minted token
         SplToken.create_associated_token_account(
             payer, // payer account
@@ -142,7 +143,7 @@ contract pda_mint_authority {
     }
 
     // Invoke the token program to mint tokens to a token account, using a PDA as the mint authority
-    function _mintTo(address mint, address account, uint64 amount) private view {
+    function _mintTo(address mint, address account, uint64 amount) private {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
         require(address(this) == pda, 'INVALID_PDA');
@@ -150,7 +151,7 @@ contract pda_mint_authority {
         // Prepare instruction data
         bytes instructionData = new bytes(9);
         instructionData[0] = uint8(7); // MintTo instruction index
-        instructionData.writeUint64LE(1, 1); // Amount to mint
+        instructionData.writeUint64LE(amount, 1); // Amount to mint
 
         // Prepare accounts required by instruction
         AccountMeta[3] metas = [
@@ -163,7 +164,7 @@ contract pda_mint_authority {
         SplToken.tokenProgramId.call{accounts: metas, seeds: [["mint_authority", abi.encode(_bump)]]}(instructionData);
     }
 
-    function _removeMintAuthority(address mintAccount) private view {
+    function _removeMintAuthority(address mintAccount) private {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
         require(address(this) == pda, 'INVALID_PDA');

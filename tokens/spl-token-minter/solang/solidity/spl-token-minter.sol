@@ -1,11 +1,11 @@
 
-import "./spl_token.sol";
-import "./mpl_metadata.sol";
+import "../libraries/spl_token.sol";
+import "../libraries/mpl_metadata.sol";
 
 @program_id("F1ipperKF9EfD821ZbbYjS319LXYiBmjhzkkf5a26rC")
 contract spl_token_minter {
     @payer(payer)
-    constructor(address payer) {}
+    constructor() {}
 
     function createTokenMint(
         address payer, // payer account
@@ -17,7 +17,7 @@ contract spl_token_minter {
         string name, // name for the metadata account
         string symbol, // symbol for the metadata account
         string uri // uri for the metadata account
-    ) public view {
+    ) public {
         // Invoke System Program to create a new account for the mint account and,
         // Invoke Token Program to initialize the mint account
         // Set mint authority, freeze authority, and decimals for the mint account
@@ -42,12 +42,12 @@ contract spl_token_minter {
         );
     }
 
-    function mintTo(address payer, address tokenAccount, address mint, address owner, uint64 amount) public view {
+    function mintTo(address mintAuthority, address tokenAccount, address mint, uint64 amount) public {
         // Mint tokens to the token account
         SplToken.mint_to(
             mint, // mint account
             tokenAccount, // token account
-            payer, // mint authority
+            mintAuthority, // mint authority
             amount // amount
         );
     }

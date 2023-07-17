@@ -1,6 +1,6 @@
 
-import "./spl_token.sol";
-import "./mpl_metadata.sol";
+import "../libraries/spl_token.sol";
+import "../libraries/mpl_metadata.sol";
 
 @program_id("8eZPhSaXfHqbcrfskVThtCG68kq8MfVHqmtm6wYf4TLb")
 contract create_token {
@@ -8,7 +8,7 @@ contract create_token {
     // Creating a dataAccount is required by Solang
     // The account is unused in this example
     @payer(payer) // payer account
-    constructor(address payer) {}
+    constructor() {}
 
     function createTokenMint(
         address payer, // payer account
@@ -20,7 +20,7 @@ contract create_token {
         string name, // name for the metadata account
         string symbol, // symbol for the metadata account
         string uri // uri for the metadata account
-    ) public view {
+    ) public {
         // Invoke System Program to create a new account for the mint account and,
         // Invoke Token Program to initialize the mint account
         // Set mint authority, freeze authority, and decimals for the mint account

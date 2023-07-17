@@ -13,7 +13,7 @@ contract hand {
     // Creating a data account is required by Solang, but the account is not used in this example.
     // We only interact with the lever program.
     @payer(payer) // payer for the data account
-    constructor(address payer) {}
+    constructor() {}
 
     // "Pull the lever" by calling the switchPower instruction on the lever program via a Cross Program Invocation.
     function pullLever(address dataAccount, string name) public {

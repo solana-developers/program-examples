@@ -1,48 +1,48 @@
-import * as anchor from "@coral-xyz/anchor"
-import { Program } from "@coral-xyz/anchor"
-import { TransferTokens } from "../target/types/transfer_tokens"
-import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js"
-import { Metaplex } from "@metaplex-foundation/js"
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { TransferTokens } from "../target/types/transfer_tokens";
+import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import { Metaplex } from "@metaplex-foundation/js";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
   getOrCreateAssociatedTokenAccount,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token"
+} from "@solana/spl-token";
 
 describe("Transfer Tokens", () => {
   // Configure the client to use the local cluster.
-  const provider = anchor.AnchorProvider.env()
-  anchor.setProvider(provider)
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-  const dataAccount = anchor.web3.Keypair.generate()
-  const mintKeypair = anchor.web3.Keypair.generate()
-  const wallet = provider.wallet as anchor.Wallet
-  const connection = provider.connection
+  const dataAccount = anchor.web3.Keypair.generate();
+  const mintKeypair = anchor.web3.Keypair.generate();
+  const wallet = provider.wallet as anchor.Wallet;
+  const connection = provider.connection;
 
-  const program = anchor.workspace.TransferTokens as Program<TransferTokens>
+  const program = anchor.workspace.TransferTokens as Program<TransferTokens>;
 
-  const nftTitle = "Homer NFT"
-  const nftSymbol = "HOMR"
+  const nftTitle = "Homer NFT";
+  const nftSymbol = "HOMR";
   const nftUri =
-    "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json"
+    "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json";
 
   it("Is initialized!", async () => {
     // Add your test here.
     const tx = await program.methods
-      .new(wallet.publicKey)
+      .new()
       .accounts({ dataAccount: dataAccount.publicKey })
       .signers([dataAccount])
-      .rpc()
-    console.log("Your transaction signature", tx)
-  })
+      .rpc();
+    console.log("Your transaction signature", tx);
+  });
 
   it("Create an SPL Token!", async () => {
-    const metaplex = Metaplex.make(connection)
+    const metaplex = Metaplex.make(connection);
     const metadataAddress = await metaplex
       .nfts()
       .pdas()
-      .metadata({ mint: mintKeypair.publicKey })
+      .metadata({ mint: mintKeypair.publicKey });
 
     // Add your test here.
     const tx = await program.methods
@@ -75,9 +75,9 @@ describe("Transfer Tokens", () => {
         { pubkey: SYSVAR_RENT_PUBKEY, isWritable: false, isSigner: false },
       ])
       .signers([mintKeypair])
-      .rpc({ skipPreflight: true })
-    console.log("Your transaction signature", tx)
-  })
+      .rpc({ skipPreflight: true });
+    console.log("Your transaction signature", tx);
+  });
 
   it("Mint some tokens to your wallet!", async () => {
     // Wallet's associated token account address for mint
@@ -86,7 +86,7 @@ describe("Transfer Tokens", () => {
       wallet.payer, // payer
       mintKeypair.publicKey, // mint
       wallet.publicKey // owner
-    )
+    );
 
     const tx = await program.methods
       .mintTo(
@@ -117,9 +117,9 @@ describe("Transfer Tokens", () => {
           isSigner: false,
         },
       ])
-      .rpc({ skipPreflight: true })
-    console.log("Your transaction signature", tx)
-  })
+      .rpc({ skipPreflight: true });
+    console.log("Your transaction signature", tx);
+  });
 
   it("Transfer some tokens to another wallet!", async () => {
     // Wallet's associated token account address for mint
@@ -128,15 +128,15 @@ describe("Transfer Tokens", () => {
       wallet.payer, // payer
       mintKeypair.publicKey, // mint
       wallet.publicKey // owner
-    )
+    );
 
-    const receipient = anchor.web3.Keypair.generate()
+    const receipient = anchor.web3.Keypair.generate();
     const receipientTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
       wallet.payer, // payer
       mintKeypair.publicKey, // mint account
       receipient.publicKey // owner account
-    )
+    );
 
     const tx = await program.methods
       .transferTokens(
@@ -167,7 +167,7 @@ describe("Transfer Tokens", () => {
           isSigner: false,
         },
       ])
-      .rpc()
-    console.log("Your transaction signature", tx)
-  })
-})
+      .rpc();
+    console.log("Your transaction signature", tx);
+  });
+});

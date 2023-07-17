@@ -1,14 +1,14 @@
 
-import "./system_instruction.sol";
-import 'minimum_balance.sol';
+import "../libraries/system_instruction.sol";
+import '../libraries/minimum_balance.sol';
 
 @program_id("F1ipperKF9EfD821ZbbYjS319LXYiBmjhzkkf5a26rC")
 contract rent {
 
     @payer(payer) // The "payer" pays for the data account creation
-    constructor(address payer) {}
+    constructor() {}
 
-    function createSystemAccount(address payer, address newAccount, uint64 space) public view {
+    function createSystemAccount(address payer, address newAccount, uint64 space) public {
         // The minimum lamports required for the amount of space allocated to the account
         uint64 lamports = minimum_balance(space);
 

@@ -17,7 +17,7 @@ describe("counter", () => {
   it("Is initialized!", async () => {
     // Initialize new Counter account
     const tx = await program.methods
-      .new(wallet.publicKey) // wallet.publicKey is the payer for the new account
+      .new() // wallet.publicKey is the payer for the new account
       .accounts({ dataAccount: dataAccount.publicKey })
       .signers([dataAccount]) // dataAccount keypair is a required signer because we're using it to create a new account
       .rpc()
