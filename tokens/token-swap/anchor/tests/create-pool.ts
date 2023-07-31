@@ -1,7 +1,7 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { AmmTutorial } from "../target/types/amm_tutorial";
+import { SwapExample } from "../target/types/swap_example";
 import { TestValues, createValues, expectRevert, mintingTokens } from "./utils";
 
 describe("Create pool", () => {
@@ -9,15 +9,12 @@ describe("Create pool", () => {
   const connection = provider.connection;
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.AmmTutorial as Program<AmmTutorial>;
+  const program = anchor.workspace.SwapExample as Program<SwapExample>;
 
   let values: TestValues;
 
-
-
   beforeEach(async () => {
     values = createValues();
-    console.log("values",values)
 
     await program.methods
       .createAmm(values.id, values.fee)

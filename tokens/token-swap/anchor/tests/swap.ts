@@ -1,6 +1,6 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
-import { AmmTutorial } from "../target/types/amm_tutorial";
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { SwapExample } from "../target/types/swap_example";
 import { expect } from "chai";
 import { TestValues, createValues, mintingTokens } from "./utils";
 import { BN } from "bn.js";

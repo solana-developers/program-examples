@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.devnet]
-amm_tutorial = "C3ti6PFK6PoYShRFx1BNNTQU3qeY1iVwjwCA6SjJhiuW"
+swap_example = "C3ti6PFK6PoYShRFx1BNNTQU3qeY1iVwjwCA6SjJhiuW"
 
 [registry]
 url = "https://api.apr.dev"
