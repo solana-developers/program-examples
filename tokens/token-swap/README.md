@@ -87,15 +87,15 @@ programs/token-swap/src/
 
 This code is entrypoint for a swap example using the **`anchor_lang`** library. The **`anchor_lang`** library provides tools for creating Solana programs using the Anchor framework. The code defines several functions:
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L1-L8
+(https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L1-L8)
 
 The above section contains the necessary imports and module declarations for the program. It imports modules from the anchor_lang library and declares local modules for the crate. The pub use instructions::*; re-exports all items from the instructions module so that they can be accessed from outside this module.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L11
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L10-L11
 
 This macro declares the program ID and associates it with the given string. This ID should match the deployed Solana program's ID to ensure the correct program is invoked when interacting with the smart contract.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L13-L45
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/lib.rs#L13-L45
 
 This section defines the program module using the **`#[program]`** attribute. Each function in this module represents an entry point to the smart contract. Each entry point function takes a **`Context`** parameter, which provides essential information for executing the function, such as the accounts involved and the transaction context.
 
@@ -115,17 +115,17 @@ The **`Amm`** struct has three fields:
 2. **`admin`**: The account that has admin authority over the AMM, represented as a **`Pubkey`**.
 3. **`fee`**: The LP fee taken on each trade, represented as a **`u16`** (unsigned 16-bit integer) in basis points.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L1-L14
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L1-L14
 
 
 The above code declares an account structure called Amm. The #[account] attribute indicates that this structure will be used as an account on the Solana blockchain. The #[derive(Default)] attribute automatically generates a default implementation of the struct with all fields set to their default values.
 
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L16-L18
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L16-L18
 
 This code implements a constant LEN for the Amm struct, which represents the size of the Amm account in bytes. The size is calculated by adding the sizes of the individual fields (id, admin, and fee). For example, Pubkey has a fixed size of 32 bytes, and u16 has a size of 2 bytes.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L20-L31
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L20-L31
 
 The code declares another account structure called **`Pool`**. As before, the **`#[account]`** attribute indicates that this struct will be used as an account on the Solana blockchain, and the **`#[derive(Default)]`** attribute generates a default implementation with all fields set to their default values.
 
@@ -135,7 +135,7 @@ The **`Pool`** struct has three fields:
 2. **`mint_a`**: The mint of token A associated with this pool, represented as a **`Pubkey`**.
 3. **`mint_b`**: The mint of token B associated with this pool, represented as a **`Pubkey`**.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L33-L35
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/state.rs#L33-L35
 
 This code implements a constant LEN for the Pool struct, which represents the size of the Pool account in bytes. Similar to the Amm struct, the size is calculated by adding the sizes of the individual fields (amm, mint_a, and mint_b). Each Pubkey has a size of 32 bytes, and the total size is 8 bytes (for padding) + 32 bytes (amm) + 32 bytes (mint_a) + 32 bytes (mint_b) = 104 bytes.
 
@@ -143,7 +143,7 @@ This code implements a constant LEN for the Pool struct, which represents the si
    
    3.1 **create amm**
 
-   https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_amm.rs#L1-L12
+   https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_amm.rs#L1-L12
 
    The above code defines a function named **`create_amm`** that is used to create an AMM account. It takes four parameters:
 
@@ -157,7 +157,7 @@ The function does the following:
 - It sets the fields of the AMM account with the provided values using **`amm.id = id;`**, **`amm.admin = ctx.accounts.admin.key();`**, and **`amm.fee = fee;`**.
 - It returns **`Ok(())`** to indicate the success of the operation.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_amm.rs#L14-L39
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_amm.rs#L14-L39
 
 This code defines a struct **`CreateAmm`** using the **`Accounts`** attribute, which serves as the accounts instruction for the **`create_amm`** function.
 
@@ -172,7 +172,7 @@ TLDR-, this code sets up the instruction structure for the **`create_amm`** func
 
   3.2 **create pool**
 
-  https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_pool.rs#L1-L20
+  https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_pool.rs#L1-L20
 
   The above code defines a function named **`create_pool`** that creates a liquidity pool. It takes a single parameter, **`ctx`**, which represents the **`Context<CreatePool>`** used to execute the function.
 
@@ -182,7 +182,7 @@ The function does the following:
 - It sets the fields of the **`Pool`** account with the keys of the associated accounts using **`pool.amm = ctx.accounts.amm.key();`**, **`pool.mint_a = ctx.accounts.mint_a.key();`**, and **`pool.mint_b = ctx.accounts.mint_b.key();`**.
 - It returns **`Ok(())`** to indicate the success of the operation.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_pool.rs#L22-L101
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_pool.rs#L22-L101
 
 This code defines a struct named **`CreatePool`**, which serves as the accounts instruction for the **`create_pool`** function.
 
@@ -203,7 +203,7 @@ TLDR, this code defines the accounts instruction structure for the **`create_poo
 
   3.3 **deposite liquidity**
 
-  https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L1-L30
+  https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L1-L30
 
 The above code defines a function named **`deposit_liquidity`** that allows depositing liquidity into the pool. It takes three parameters:
 
@@ -215,21 +215,21 @@ The function does the following:
 
 - It checks if the depositor has enough tokens for each type (A and B) before depositing and restricts the amounts to the available balances using the **`if`** conditions.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L32-L61
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L32-L61
 
 This code ensures that the amounts of tokens A and B being deposited are provided in the same proportion as the existing liquidity in the pool. If this is the first deposit (pool creation), the amounts are added as is. Otherwise, the function calculates the ratio of the existing liquidity (pool_a.amount and pool_b.amount) and adjusts the amounts being deposited accordingly.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L63-L77
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L63-L77
 
 This code calculates the amount of liquidity that is about to be deposited into the pool. It calculates the square root of the product of **`amount_a`** and **`amount_b`**, using fixed-point arithmetic to ensure precision.
 
 If this is the first deposit (pool creation), the function checks if the calculated liquidity is greater than the **`MINIMUM_LIQUIDITY`** constant (a minimum liquidity required for the pool). If it's not, the function returns an error to indicate that the deposit is too small. Additionally, it subtracts the **`MINIMUM_LIQUIDITY`** from the calculated liquidity to lock it as the initial liquidity.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L79-L101
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L79-L101
 
 This code uses the token::transfer function from the Anchor SPL token crate to transfer the deposited amounts of tokens A and B from the depositor's accounts (depositor_account_a and depositor_account_b, respectively) to the pool's accounts (pool_account_a and pool_account_b, respectively). It does this through cross-program invocation (CPI) using the token program, and the authority for the transfer is the depositor.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L102-L124
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/deposit_liquidity.rs#L102-L124
 
 This code uses the **`token::mint_to`** function from the Anchor SPL token crate to mint the liquidity tokens to the depositor. It does this through cross-program invocation (CPI) using the token program. The minting is authorized by the pool authority (**`pool_authority`**).
 
@@ -239,7 +239,7 @@ TRDR, this code implements the logic to deposit liquidity into the pool, ensurin
 
  3.4 **swap exact tokens**
 
- https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L1-L27
+ https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L1-L27
 
  This code defines a function named **`swap_exact_tokens_for_tokens`** that allows swapping tokens A for tokens B (and vice versa) in the AMM pool. It takes five parameters:
 
@@ -252,55 +252,55 @@ The function does the following:
 
 - It checks if the trader has enough tokens for the input amount of the specified token (**`swap_a`**) before proceeding with the swap. If the trader doesn't have enough tokens, it uses the available amount for the swap.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L29-L31
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L29-L31
 
 This code applies the trading fee to the input amount (input) based on the amm (AMM) account's fee value. The trading fee is subtracted from the input amount to calculate the taxed_input, which is the actual amount of tokens available for the swap after deducting the fee.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L33-L56
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L33-L56
 
 This code calculates the output amount of the swapped token based on the taxed_input, current pool balances (pool_a.amount and pool_b.amount), and whether the swap is from token A to token B or vice versa. It uses fixed-point arithmetic to ensure precise calculations. The resulting output represents the amount of tokens the trader will receive after the swap.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L58-L60
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L58-L60
 
 This code checks if the calculated **`output`** is less than the specified **`min_output_amount`**. If so, it returns an error, indicating that the output amount is too small.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L62-L63
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L62-L63
 
 This code calculates the invariant of the pool, which is the product of the current balances of token A (**`pool_a.amount`**) and token B (**`pool_b.amount`**).
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L65-L123
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L65-L123
 
 This code transfers the input and output amounts of tokens between the trader and the pool, performing the token swap. It uses the **`token::transfer`** function from the Anchor SPL token crate to transfer tokens from one account to another. The **`CpiContext`** is used for Cross-Program Invocation (CPI) to interact with the SPL token program.
 
 The code chooses the appropriate token accounts to perform the transfer based on whether the swap is from token A to token B or vice versa (**`swap_a`**). The transfer authority is specified as either **`trader`** or **`pool_authority`** based on the situation.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L124-L130
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L124-L130
 
 This code logs a message indicating the details of the trade, including the input amount, the taxed input amount, and the output amount.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L132-L141
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/swap_exact_tokens_for_tokens.rs#L132-L141
 
 This code reloads the pool token accounts (pool_account_a and pool_account_b) to get the updated balances after the swap. It then checks if the invariant still holds, ensuring that the product of the balances remains constant. If the invariant is violated, it returns an error.
 Finally, this code returns Ok(()) if all operations in the function executed successfully.
 
  3.5 **withdraw liquidity**
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L1-L11
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L1-L11
 
 The use statements import required modules and types for the function.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L13
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L13
 
 This code defines a function named **`withdraw_liquidity`** that allows a liquidity provider to withdraw their liquidity from the AMM pool. It takes two parameters:
 
 1. **`ctx`**: The **`Context<WithdrawLiquidity>`** parameter contains the context data required to execute the function.
 2. **`amount`**: The **`u64`** parameter represents the amount of liquidity tokens the provider wants to withdraw.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L14-L22
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L14-L22
 
 This code sets up the authority seeds and signer seeds required for performing token transfers and burning the liquidity tokens. The authority seeds include the AMM ID, mint keys of tokens A and B, the authority seed constant, and the authority bump seed. The signer seeds are derived from the authority seeds.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L24-L45
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L24-L45
 
 This code calculates the amount of token A to be transferred to the liquidity provider by performing the following steps:
 
@@ -308,11 +308,11 @@ This code calculates the amount of token A to be transferred to the liquidity pr
 2. Calculate the proportional amount of token A based on the pool's token A balance (**`ctx.accounts.pool_account_a.amount`**).
 3. Transfer the calculated amount of token A from the pool account to the liquidity provider's account using the **`token::transfer`** function.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L47-L67
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L47-L67
 
 This code follows the same steps as above but for token B, transferring the calculated amount of token B from the pool account to the liquidity provider's account.
 
-https://github.com/shivamsoni00/program-examples/blob/3cc5dee4db6501365fb96d781ad3461392cf34e1/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L69-L83
+https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/withdraw_liquidity.rs#L69-L83
 
 This code burns the specified amount of liquidity tokens (amount) by calling the token::burn function. The liquidity tokens are destroyed, reducing the total supply.
 Finally, this code returns Ok(()) if all operations in the function executed successfully. This indicates that the liquidity withdrawal was completed without any errors.
