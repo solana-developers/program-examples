@@ -1,22 +1,15 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::AccountInfo, 
-    entrypoint, 
-    entrypoint::ProgramResult, 
-    msg, 
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, msg, pubkey::Pubkey,
 };
-
 
 entrypoint!(process_instruction);
 
-
 fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Pubkey,
+    _accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-
     // Attempt to serialize the BPF format to our struct
     //  using Borsh
     //

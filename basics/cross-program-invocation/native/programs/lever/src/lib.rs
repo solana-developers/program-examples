@@ -1,7 +1,8 @@
 use borsh::{BorshDeserialize, BorshSerialize};
+#[cfg(not(feature = "no-entrypoint"))]
+use solana_program::entrypoint;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
-    entrypoint,
     entrypoint::ProgramResult,
     msg,
     program::invoke,
@@ -20,14 +21,12 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    match PowerStatus::try_from_slice(&instruction_data) {
-        Ok(power_status) => return initialize(program_id, accounts, power_status),
-        Err(_) => {}
+    if let Ok(power_status) = PowerStatus::try_from_slice(instruction_data) {
+        return initialize(program_id, accounts, power_status);
     }
 
-    match SetPowerStatus::try_from_slice(&instruction_data) {
-        Ok(set_power_status) => return switch_power(accounts, set_power_status.name),
-        Err(_) => {}
+    if let Ok(set_power_status) = SetPowerStatus::try_from_slice(instruction_data) {
+        return switch_power(accounts, set_power_status.name);
     }
 
     Err(ProgramError::InvalidInstructionData)

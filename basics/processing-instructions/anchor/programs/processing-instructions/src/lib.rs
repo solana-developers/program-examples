@@ -8,12 +8,7 @@ pub mod processing_instructions {
 
     // With Anchor, we just put instruction data in the function signature!
     //
-    pub fn go_to_park(
-        ctx: Context<Park>,
-        name: String,
-        height: u32,
-    ) -> Result<()> {
-        
+    pub fn go_to_park(_ctx: Context<Park>, name: String, height: u32) -> Result<()> {
         msg!("Welcome to the park, {}!", name);
         if height > 5 {
             msg!("You are tall enough to ride this ride. Congratulations.");
