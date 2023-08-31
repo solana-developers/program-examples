@@ -6,7 +6,7 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 pub mod counter_anchor {
     use super::*;
 
-    pub fn initialize_counter(ctx: Context<InitializeCounter>) -> Result<()> {
+    pub fn initialize_counter(_ctx: Context<InitializeCounter>) -> Result<()> {
         Ok(())
     }
 

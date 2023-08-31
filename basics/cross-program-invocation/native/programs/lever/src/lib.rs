@@ -1,11 +1,9 @@
-use borsh::{ BorshDeserialize, BorshSerialize };
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::{
-        next_account_info, AccountInfo
-    },
-    entrypoint, 
-    entrypoint::ProgramResult, 
-    msg, 
+    account_info::{next_account_info, AccountInfo},
+    entrypoint,
+    entrypoint::ProgramResult,
+    msg,
     program::invoke,
     program_error::ProgramError,
     pubkey::Pubkey,
@@ -14,38 +12,32 @@ use solana_program::{
     sysvar::Sysvar,
 };
 
-
 #[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);
-
 
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-
     match PowerStatus::try_from_slice(&instruction_data) {
         Ok(power_status) => return initialize(program_id, accounts, power_status),
-        Err(_) => {},
+        Err(_) => {}
     }
 
     match SetPowerStatus::try_from_slice(&instruction_data) {
         Ok(set_power_status) => return switch_power(accounts, set_power_status.name),
-        Err(_) => {},
+        Err(_) => {}
     }
 
     Err(ProgramError::InvalidInstructionData)
 }
-
-
 
 pub fn initialize(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     power_status: PowerStatus,
 ) -> ProgramResult {
-
     let accounts_iter = &mut accounts.iter();
     let power = next_account_info(accounts_iter)?;
     let user = next_account_info(accounts_iter)?;
@@ -56,15 +48,13 @@ pub fn initialize(
 
     invoke(
         &system_instruction::create_account(
-            &user.key,
-            &power.key,
+            user.key,
+            power.key,
             lamports_required,
             account_span as u64,
             program_id,
         ),
-        &[
-            user.clone(), power.clone(), system_program.clone()
-        ]
+        &[user.clone(), power.clone(), system_program.clone()],
     )?;
 
     power_status.serialize(&mut &mut power.data.borrow_mut()[..])?;
@@ -72,14 +62,10 @@ pub fn initialize(
     Ok(())
 }
 
-pub fn switch_power(
-    accounts: &[AccountInfo],
-    name: String,
-) -> ProgramResult {
-
+pub fn switch_power(accounts: &[AccountInfo], name: String) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let power = next_account_info(accounts_iter)?;
-    
+
     let mut power_status = PowerStatus::try_from_slice(&power.data.borrow())?;
     power_status.is_on = !power_status.is_on;
     power_status.serialize(&mut &mut power.data.borrow_mut()[..])?;
@@ -93,7 +79,6 @@ pub fn switch_power(
 
     Ok(())
 }
-
 
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct SetPowerStatus {

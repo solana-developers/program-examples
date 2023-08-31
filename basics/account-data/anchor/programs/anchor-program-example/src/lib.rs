@@ -5,14 +5,13 @@ use instructions::*;
 pub mod instructions;
 pub mod state;
 
-
 declare_id!("FFKtnYFyzPj1qFjE9epkrfYHJwZMdh8CvJrB6XsKeFVz");
-
 
 #[program]
 pub mod anchor_program_example {
     use super::*;
 
+    #[allow(clippy::result_large_err)]
     pub fn create_address_info(
         ctx: Context<CreateAddressInfo>,
         name: String,
@@ -20,13 +19,6 @@ pub mod anchor_program_example {
         street: String,
         city: String,
     ) -> Result<()> {
-        
-        instructions::create::create_address_info(
-            ctx,
-            name,
-            house_number,
-            street,
-            city,
-        )
+        instructions::create::create_address_info(ctx, name, house_number, street, city)
     }
 }

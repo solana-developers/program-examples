@@ -6,12 +6,11 @@ declare_id!("2nYa9FRtxLnaGa5agENEE1ehy6Tr2HnyziwG7ynnyhPC");
 pub mod hello_solana {
     use super::*;
 
-    pub fn hello(ctx: Context<Hello>) -> Result<()> {
-        
+    pub fn hello(_ctx: Context<Hello>) -> Result<()> {
         msg!("Hello, Solana!");
 
         msg!("Our program's Program ID: {}", &id());
-        
+
         Ok(())
     }
 }

@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
+use anchor_lang::system_program;
 
 use crate::state::AddressInfo;
 
-
+#[allow(clippy::result_large_err)]
 pub fn create_address_info(
     ctx: Context<CreateAddressInfo>,
     name: String,
@@ -10,13 +11,7 @@ pub fn create_address_info(
     street: String,
     city: String,
 ) -> Result<()> {
-
-    let address_info = AddressInfo::new(
-        name,
-        house_number,
-        street,
-        city,
-    );
+    let address_info = AddressInfo::new(name, house_number, street, city);
 
     let account_span = (address_info.try_to_vec()?).len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
