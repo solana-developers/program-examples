@@ -15,7 +15,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     input: &[u8],
 ) -> ProgramResult {
-    let instruction = ReallocInstruction::try_from_slice(&input)?;
+    let instruction = ReallocInstruction::try_from_slice(input)?;
     match instruction {
         ReallocInstruction::Create(data) => create_address_info(program_id, accounts, data),
         ReallocInstruction::ReallocateWithoutZeroInit(data) => {

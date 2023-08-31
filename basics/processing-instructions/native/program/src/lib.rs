@@ -13,7 +13,7 @@ fn process_instruction(
     // Attempt to serialize the BPF format to our struct
     //  using Borsh
     //
-    let instruction_data_object = InstructionData::try_from_slice(&instruction_data)?;
+    let instruction_data_object = InstructionData::try_from_slice(instruction_data)?;
 
     msg!("Welcome to the park, {}!", instruction_data_object.name);
     if instruction_data_object.height > 5 {

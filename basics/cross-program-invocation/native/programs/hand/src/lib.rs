@@ -23,9 +23,9 @@ fn pull_lever(
     let set_power_status_instruction = SetPowerStatus::try_from_slice(instruction_data)?;
 
     let ix = Instruction::new_with_borsh(
-        lever_program.key.clone(),                        // Our lever program's ID
+        *lever_program.key,                        // Our lever program's ID
         &set_power_status_instruction,                    // Passing instructions through
-        vec![AccountMeta::new(power.key.clone(), false)], // Just the required account for the other program
+        vec![AccountMeta::new(*power.key, false)], // Just the required account for the other program
     );
 
     invoke(&ix, &[power.clone()])

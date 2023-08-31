@@ -27,7 +27,7 @@ pub fn init_rent_vault(
     let system_program = next_account_info(accounts_iter)?;
 
     let (rent_vault_pda, rent_vault_bump) =
-        Pubkey::find_program_address(&[RentVault::SEED_PREFIX.as_bytes().as_ref()], program_id);
+        Pubkey::find_program_address(&[RentVault::SEED_PREFIX.as_bytes()], program_id);
     assert!(rent_vault.key.eq(&rent_vault_pda));
 
     // Lamports for rent on the vault, plus the desired additional funding
@@ -36,17 +36,14 @@ pub fn init_rent_vault(
 
     invoke_signed(
         &system_instruction::create_account(
-            &payer.key,
-            &rent_vault.key,
+            payer.key,
+            rent_vault.key,
             lamports_required,
             0,
             program_id,
         ),
         &[payer.clone(), rent_vault.clone(), system_program.clone()],
-        &[&[
-            RentVault::SEED_PREFIX.as_bytes().as_ref(),
-            &[rent_vault_bump],
-        ]],
+        &[&[RentVault::SEED_PREFIX.as_bytes(), &[rent_vault_bump]]],
     )?;
 
     Ok(())

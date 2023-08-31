@@ -13,17 +13,13 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    match PageVisits::try_from_slice(&instruction_data) {
-        Ok(page_visits) => {
-            return instructions::create::create_page_visits(program_id, accounts, page_visits)
-        }
-        Err(_) => {}
+    if let Ok(page_visits) = PageVisits::try_from_slice(instruction_data) {
+        return instructions::create::create_page_visits(program_id, accounts, page_visits);
     };
 
-    match IncrementPageVisits::try_from_slice(&instruction_data) {
-        Ok(_) => return instructions::increment::increment_page_visits(accounts),
-        Err(_) => {}
-    };
+    if IncrementPageVisits::try_from_slice(instruction_data).is_ok() {
+        return instructions::increment::increment_page_visits(accounts);
+    }
 
     Err(ProgramError::InvalidInstructionData)
 }

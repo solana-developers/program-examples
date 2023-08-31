@@ -64,11 +64,11 @@ pub fn transfer_tokens(accounts: &[AccountInfo], args: TransferTokensArgs) -> Pr
     );
     invoke(
         &token_instruction::transfer(
-            &token_program.key,
-            &from_associated_token_account.key,
-            &to_associated_token_account.key,
-            &owner.key,
-            &[&owner.key, &recipient.key],
+            token_program.key,
+            from_associated_token_account.key,
+            to_associated_token_account.key,
+            owner.key,
+            &[owner.key, recipient.key],
             args.quantity,
         )?,
         &[

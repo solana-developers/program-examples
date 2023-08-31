@@ -26,8 +26,8 @@ pub fn create_address_info(
 
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &target_account.key,
+            payer.key,
+            target_account.key,
             lamports_required,
             account_span as u64,
             program_id,

@@ -24,7 +24,7 @@ pub fn process_instruction(
     _accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    let ix_data_object = CarnivalInstructionData::try_from_slice(&instruction_data)?;
+    let ix_data_object = CarnivalInstructionData::try_from_slice(instruction_data)?;
 
     msg!("Welcome to the carnival, {}!", ix_data_object.name);
 

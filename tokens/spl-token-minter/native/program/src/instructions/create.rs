@@ -39,11 +39,11 @@ pub fn create_token(accounts: &[AccountInfo], args: CreateTokenArgs) -> ProgramR
     msg!("Mint: {}", mint_account.key);
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &mint_account.key,
+            payer.key,
+            mint_account.key,
             (Rent::get()?).minimum_balance(Mint::LEN),
             Mint::LEN as u64,
-            &token_program.key,
+            token_program.key,
         ),
         &[
             mint_account.clone(),
@@ -59,10 +59,10 @@ pub fn create_token(accounts: &[AccountInfo], args: CreateTokenArgs) -> ProgramR
     msg!("Mint: {}", mint_account.key);
     invoke(
         &token_instruction::initialize_mint(
-            &token_program.key,
-            &mint_account.key,
-            &mint_authority.key,
-            Some(&mint_authority.key),
+            token_program.key,
+            mint_account.key,
+            mint_authority.key,
+            Some(mint_authority.key),
             9, // 9 Decimals for the default SPL Token standard
         )?,
         &[

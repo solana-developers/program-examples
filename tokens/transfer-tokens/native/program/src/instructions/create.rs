@@ -60,10 +60,10 @@ pub fn create_token(accounts: &[AccountInfo], args: CreateTokenArgs) -> ProgramR
     msg!("Mint: {}", mint_account.key);
     invoke(
         &token_instruction::initialize_mint(
-            &token_program.key,
-            &mint_account.key,
-            &mint_authority.key,
-            Some(&mint_authority.key),
+            token_program.key,
+            mint_account.key,
+            mint_authority.key,
+            Some(mint_authority.key),
             args.decimals,
         )?,
         &[

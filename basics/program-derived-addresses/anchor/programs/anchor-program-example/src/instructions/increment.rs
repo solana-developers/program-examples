@@ -13,7 +13,7 @@ pub struct IncrementPageVisits<'info> {
     #[account(
         mut,
         seeds = [
-            PageVisits::SEED_PREFIX.as_bytes().as_ref(),
+            PageVisits::SEED_PREFIX.as_bytes(),
             user.key().as_ref(),
         ],
         bump,

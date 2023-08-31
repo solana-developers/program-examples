@@ -21,9 +21,9 @@ impl Game {
 }
 
 pub fn get_games() -> Vec<Game> {
-    return vec![
+    vec![
         Game::new("Ring Toss".to_string(), 5, "teddy bear".to_string()),
         Game::new("I Got It!".to_string(), 12, "goldfish".to_string()),
         Game::new("Ladder Climb".to_string(), 1, "popcorn bucket".to_string()),
-    ];
+    ]
 }

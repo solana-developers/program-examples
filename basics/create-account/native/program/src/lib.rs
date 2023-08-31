@@ -26,9 +26,9 @@ fn process_instruction(
 
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &new_account.key,
-            1 * LAMPORTS_PER_SOL,
+            payer.key,
+            new_account.key,
+            LAMPORTS_PER_SOL,
             0,
             &system_program::ID,
         ),

@@ -59,11 +59,11 @@ pub fn mint_to(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     msg!("Minting NFT to associated token account...");
     invoke_signed(
         &token_instruction::mint_to(
-            &token_program.key,
-            &mint_account.key,
-            &associated_token_account.key,
-            &mint_authority.key,
-            &[&mint_authority.key],
+            token_program.key,
+            mint_account.key,
+            associated_token_account.key,
+            mint_authority.key,
+            &[mint_authority.key],
             1,
         )?,
         &[

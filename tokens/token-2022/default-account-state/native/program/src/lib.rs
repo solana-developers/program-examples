@@ -58,7 +58,7 @@ fn process_instruction(
     msg!("Mint account address : {}", mint_account.key);
     invoke(
         &system_instruction::create_account(
-            &payer.key,
+            payer.key,
             mint_account.key,
             rent_required,
             space as u64,
@@ -92,10 +92,10 @@ fn process_instruction(
     // Initialize the Token Mint
     invoke(
         &token_instruction::initialize_mint(
-            &token_program.key,
-            &mint_account.key,
-            &mint_authority.key,
-            Some(&mint_authority.key),
+            token_program.key,
+            mint_account.key,
+            mint_authority.key,
+            Some(mint_authority.key),
             args.token_decimals,
         )?,
         &[
@@ -112,7 +112,7 @@ fn process_instruction(
             token_program.key,
             mint_account.key,
             payer.key,
-            &[&payer.key],
+            &[payer.key],
             &AccountState::Initialized,
         )
         .unwrap(),

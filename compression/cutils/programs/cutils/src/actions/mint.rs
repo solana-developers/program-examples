@@ -1,13 +1,8 @@
 use crate::*;
-use mpl_bubblegum::{
-    state::{
-        TreeConfig,
-        COLLECTION_CPI_PREFIX,
-        metaplex_adapter::{Collection, Creator, MetadataArgs, TokenProgramVersion, TokenStandard},
-        metaplex_anchor::{
-            TokenMetadata, MplTokenMetadata
-        },
-    }
+use mpl_bubblegum::state::{
+    metaplex_adapter::{Collection, Creator, MetadataArgs, TokenProgramVersion, TokenStandard},
+    metaplex_anchor::{MplTokenMetadata, TokenMetadata},
+    TreeConfig, COLLECTION_CPI_PREFIX,
 };
 
 #[derive(Accounts)]
@@ -26,7 +21,6 @@ pub struct Mint<'info> {
     //     space = Data::LEN,
     // )]
     // pub data: Account<'info, Data>,
-
     pub payer: Signer<'info>,
 
     // Bubblegum cNFT stuff MintToCollectionV1
@@ -86,17 +80,13 @@ pub struct MintParams {
 }
 
 impl Mint<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &MintParams,
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &MintParams) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate<'info>(
         ctx: Context<'_, '_, '_, 'info, Mint<'info>>,
-        params: MintParams
+        params: MintParams,
     ) -> Result<()> {
         mpl_bubblegum::cpi::mint_to_collection_v1(
             CpiContext::new(
@@ -109,7 +99,10 @@ impl Mint<'_> {
                     payer: ctx.accounts.payer.to_account_info(),
                     tree_delegate: ctx.accounts.tree_delegate.to_account_info(),
                     collection_authority: ctx.accounts.collection_authority.to_account_info(),
-                    collection_authority_record_pda: ctx.accounts.collection_authority_record_pda.to_account_info(),
+                    collection_authority_record_pda: ctx
+                        .accounts
+                        .collection_authority_record_pda
+                        .to_account_info(),
                     collection_mint: ctx.accounts.collection_mint.to_account_info(),
                     collection_metadata: ctx.accounts.collection_metadata.to_account_info(),
                     edition_account: ctx.accounts.edition_account.to_account_info(),
@@ -118,24 +111,29 @@ impl Mint<'_> {
                     compression_program: ctx.accounts.compression_program.to_account_info(),
                     token_metadata_program: ctx.accounts.token_metadata_program.to_account_info(),
                     system_program: ctx.accounts.system_program.to_account_info(),
-                }
+                },
             ),
             MetadataArgs {
                 name: "BURGER".to_string(),
                 symbol: "BURG".to_string(),
                 uri: params.uri,
-                creators: vec![
-                    Creator {address: ctx.accounts.collection_authority.key(), verified: false, share: 100},
-                ],
+                creators: vec![Creator {
+                    address: ctx.accounts.collection_authority.key(),
+                    verified: false,
+                    share: 100,
+                }],
                 seller_fee_basis_points: 0,
                 primary_sale_happened: false,
                 is_mutable: false,
                 edition_nonce: Some(0),
                 uses: None,
-                collection: Some(Collection {verified: false, key: ctx.accounts.collection_mint.key()}),
+                collection: Some(Collection {
+                    verified: false,
+                    key: ctx.accounts.collection_mint.key(),
+                }),
                 token_program_version: TokenProgramVersion::Original,
                 token_standard: Some(TokenStandard::NonFungible),
-            }
+            },
         )?;
 
         Ok(())

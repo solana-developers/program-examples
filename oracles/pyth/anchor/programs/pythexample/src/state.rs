@@ -14,7 +14,7 @@ impl anchor_lang::Owner for PriceFeed {
     fn owner() -> Pubkey {
         // The mainnet Pyth program ID
         let oracle_addr = "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH";
-        return Pubkey::from_str(&oracle_addr).unwrap();
+        Pubkey::from_str(oracle_addr).unwrap()
     }
 }
 
@@ -24,7 +24,7 @@ impl anchor_lang::AccountDeserialize for PriceFeed {
         let zeros: [u8; 32] = [0; 32];
         let dummy_key = Pubkey::new_from_array(zeros);
         let feed = account.to_price_feed(&dummy_key);
-        return Ok(PriceFeed(feed));
+        Ok(PriceFeed(feed))
     }
 }
 

@@ -55,11 +55,11 @@ pub fn mint_spl(accounts: &[AccountInfo], args: MintSplArgs) -> ProgramResult {
     );
     invoke(
         &token_instruction::mint_to(
-            &token_program.key,
-            &mint_account.key,
-            &associated_token_account.key,
-            &mint_authority.key,
-            &[&mint_authority.key],
+            token_program.key,
+            mint_account.key,
+            associated_token_account.key,
+            mint_authority.key,
+            &[mint_authority.key],
             args.quantity,
         )?,
         &[

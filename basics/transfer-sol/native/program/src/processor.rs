@@ -15,7 +15,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     input: &[u8],
 ) -> ProgramResult {
-    let instruction = TransferInstruction::try_from_slice(&input)?;
+    let instruction = TransferInstruction::try_from_slice(input)?;
     match instruction {
         TransferInstruction::CpiTransfer(args) => transfer_sol_with_cpi(accounts, args),
         TransferInstruction::ProgramTransfer(args) => {

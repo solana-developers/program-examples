@@ -1,3 +1,5 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
@@ -24,7 +26,7 @@ pub mod create_system_account {
                     to: ctx.accounts.new_account.to_account_info(), // To pubkey
                 },
             ),
-            1 * LAMPORTS_PER_SOL,               // Lamports (1 SOL)
+            LAMPORTS_PER_SOL,                   // Lamports (1 SOL)
             0,                                  // Space
             &ctx.accounts.system_program.key(), // Owner
         )?;
