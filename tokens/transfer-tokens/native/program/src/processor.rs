@@ -1,31 +1,14 @@
 use {
-    borsh::{ 
-        BorshDeserialize, 
-        BorshSerialize, 
-    },
-    solana_program::{
-        account_info::AccountInfo, 
-        entrypoint::ProgramResult, 
-        pubkey::Pubkey,
-    },
+    borsh::{BorshDeserialize, BorshSerialize},
+    solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey},
 };
 
-use crate::instructions::{ 
-    create::{
-        CreateTokenArgs,
-        create_token,
-    }, 
+use crate::instructions::{
+    create::{create_token, CreateTokenArgs},
     mint_nft::mint_nft,
-    mint_spl::{
-        MintSplArgs,
-        mint_spl,
-    }, 
-    transfer::{
-        TransferTokensArgs,
-        transfer_tokens,
-    }
+    mint_spl::{mint_spl, MintSplArgs},
+    transfer::{transfer_tokens, TransferTokensArgs},
 };
-
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 enum MyInstruction {
@@ -35,13 +18,11 @@ enum MyInstruction {
     TransferTokens(TransferTokensArgs),
 }
 
-
 pub fn process_instruction(
     _program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-
     let instruction = MyInstruction::try_from_slice(instruction_data)?;
 
     match instruction {

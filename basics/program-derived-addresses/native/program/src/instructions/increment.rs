@@ -1,16 +1,12 @@
-use borsh::{ BorshDeserialize, BorshSerialize };
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::{ AccountInfo, next_account_info },
-    entrypoint::ProgramResult, 
+    account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
 };
 
 use crate::state::PageVisits;
 
-
-pub fn increment_page_visits(
-    accounts: &[AccountInfo],
-) -> ProgramResult {
-
+pub fn increment_page_visits(accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let page_visits_account = next_account_info(accounts_iter)?;
 

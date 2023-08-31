@@ -1,14 +1,14 @@
 [package]
-name = "program"
+name = "token-2022-mint-close-authority-program"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.9.1"
-solana-program = "1.10.26"
-spl-associated-token-account = { version="1.0.5", features = [ "no-entrypoint" ] }
-spl-token-2022 = {version = "0.6.1", features = [ "no-entrypoint" ] }
+solana-program = "1.16.10"
+spl-associated-token-account = { version="2.0.0", features = [ "no-entrypoint" ] }
+spl-token-2022 = {version = "0.7.0", features = [ "no-entrypoint" ] }
 
 [lib]
 crate-type = ["cdylib", "lib"]

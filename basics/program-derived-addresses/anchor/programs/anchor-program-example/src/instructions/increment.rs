@@ -2,11 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::PageVisits;
 
-
-pub fn increment_page_visits(
-    ctx: Context<IncrementPageVisits>
-) -> Result<()> {
-
+pub fn increment_page_visits(ctx: Context<IncrementPageVisits>) -> Result<()> {
     let page_visits = &mut ctx.accounts.page_visits;
     page_visits.increment();
     Ok(())

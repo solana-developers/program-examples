@@ -1,10 +1,6 @@
-
 pub mod instruction;
 pub mod processor;
 
-use {
-    solana_program::entrypoint,
-    crate::processor::process_instruction,
-};
+use {crate::processor::process_instruction, solana_program::entrypoint};
 
 entrypoint!(process_instruction);

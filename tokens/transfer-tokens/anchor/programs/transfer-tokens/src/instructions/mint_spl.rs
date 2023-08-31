@@ -1,20 +1,18 @@
 use {
     anchor_lang::prelude::*,
-    anchor_spl::{
-        token,
-        associated_token,
-    },
+    anchor_spl::{associated_token, token},
 };
 
-
-pub fn mint_spl(
-    ctx: Context<MintSpl>, 
-    quantity: u64,
-) -> Result<()> {
-
+pub fn mint_spl(ctx: Context<MintSpl>, quantity: u64) -> Result<()> {
     msg!("Minting token to token account...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
-    msg!("Token Address: {}", &ctx.accounts.associated_token_account.key());     
+    msg!(
+        "Mint: {}",
+        &ctx.accounts.mint_account.to_account_info().key()
+    );
+    msg!(
+        "Token Address: {}",
+        &ctx.accounts.associated_token_account.key()
+    );
     token::mint_to(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -31,7 +29,6 @@ pub fn mint_spl(
 
     Ok(())
 }
-
 
 #[derive(Accounts)]
 pub struct MintSpl<'info> {

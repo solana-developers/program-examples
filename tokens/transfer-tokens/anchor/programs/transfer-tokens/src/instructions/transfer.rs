@@ -1,21 +1,22 @@
 use {
     anchor_lang::prelude::*,
-    anchor_spl::{
-        token,
-        associated_token,
-    },
+    anchor_spl::{associated_token, token},
 };
 
-
-pub fn transfer_tokens(
-    ctx: Context<TransferTokens>, 
-    quantity: u64,
-) -> Result<()> {
-
+pub fn transfer_tokens(ctx: Context<TransferTokens>, quantity: u64) -> Result<()> {
     msg!("Transferring tokens...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
-    msg!("From Token Address: {}", &ctx.accounts.from_associated_token_account.key());     
-    msg!("To Token Address: {}", &ctx.accounts.to_associated_token_account.key());     
+    msg!(
+        "Mint: {}",
+        &ctx.accounts.mint_account.to_account_info().key()
+    );
+    msg!(
+        "From Token Address: {}",
+        &ctx.accounts.from_associated_token_account.key()
+    );
+    msg!(
+        "To Token Address: {}",
+        &ctx.accounts.to_associated_token_account.key()
+    );
     token::transfer(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -32,7 +33,6 @@ pub fn transfer_tokens(
 
     Ok(())
 }
-
 
 #[derive(Accounts)]
 pub struct TransferTokens<'info> {

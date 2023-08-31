@@ -1,4 +1,3 @@
-
 // For setting up modules & configs
 
 pub mod error;
