@@ -1,7 +1,7 @@
 use {
     anchor_lang::{prelude::*, solana_program::program::invoke},
     anchor_spl::{associated_token, token},
-    mpl_token_metadata::instructions as mpl_instruction,
+    mpl_token_metadata::instruction as mpl_instruction,
     // spl_token::instruction::AuthorityType,
 };
 

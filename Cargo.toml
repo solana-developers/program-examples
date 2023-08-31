@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    #basic
     "basics/account-data/native/program",
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
@@ -29,21 +30,17 @@ members = [
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/anchor/programs/*",
     # compression
-    # "compression/cnft-vault/anchor/programs/*",
-    # "compression/cutils/programs/*",
+    "compression/cnft-vault/anchor/programs/*",
+    "compression/cutils/programs/*",
     # oracles
     "oracles/pyth/anchor/programs/*",
     # tokens
-
-    # tools
-    # "tokens/create-token/native/program",
-    # "tokens/create-token/anchor/programs/*",
-    # "tokens/freeze-tokens/native/program",
-    # "tokens/freeze-tokens/anchor/programs/*",
-    # "tokens/nft-minter/native/program",
-    # "tokens/nft-minter/anchor/programs/*",
-    # "tokens/pda-mint-authority/native/program",
-    # "tokens/pda-mint-authority/anchor/programs/*",
+    "tokens/create-token/native/program",
+    "tokens/create-token/anchor/programs/*",
+    "tokens/nft-minter/native/program",
+    "tokens/nft-minter/anchor/programs/*",
+    "tokens/pda-mint-authority/native/program",
+    "tokens/pda-mint-authority/anchor/programs/*",
     "tokens/spl-token-minter/native/program",
     "tokens/spl-token-minter/anchor/programs/*",
     "tokens/token-2022/basics/anchor/programs/*",
@@ -55,6 +52,8 @@ members = [
     "tokens/token-swap/anchor/programs/*",
     "tokens/transfer-tokens/native/program",
     "tokens/transfer-tokens/anchor/programs/*",
+    # tools
+    # "tools/shank-and-solita/native/program",
 
 ]
 resolver = "2"

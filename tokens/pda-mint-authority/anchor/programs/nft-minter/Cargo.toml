@@ -1,5 +1,5 @@
 [package]
-name = "nft-minter"
+name = "pda-mint-authority-anchor"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
@@ -16,7 +16,7 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { version="0.25.0", features=["init-if-needed"] }
-anchor-spl = "0.25.0"
-mpl-token-metadata = { version="1.2.5", features = [ "no-entrypoint" ] }
-spl-token = "3.3.0"
+anchor-lang = { version="0.28.0", features=["init-if-needed"] }
+anchor-spl = "0.28.0"
+mpl-token-metadata = { version="1.11", features = [ "no-entrypoint" ] }
+spl-token = "4.0.0"

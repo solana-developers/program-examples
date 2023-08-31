@@ -16,7 +16,7 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.28.0"
-solana-program = "1.16.10"
+anchor-lang = "0.26.0"
+solana-program = "1.14"
 spl-account-compression = { version="0.1.8", features = ["cpi"] }
-mpl-bubblegum = { version = "0.11.0", features = ["no-entrypoint", "cpi"] }
+mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] }

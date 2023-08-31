@@ -1,7 +1,7 @@
 use {
     borsh::{
-        BorshDeserialize, 
-        BorshSerialize 
+        BorshDeserialize,
+        BorshSerialize
     },
     shank::ShankAccount,
     solana_program::pubkey::Pubkey,

@@ -36,9 +36,10 @@ pub fn mint_to(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
         msg!("Creating associated token account...");
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
-                &payer.key,
-                &payer.key,
-                &mint_account.key,
+                payer.key,
+                payer.key,
+                mint_account.key,
+                token_program.key,
             ),
             &[
                 mint_account.clone(),
