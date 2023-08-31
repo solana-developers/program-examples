@@ -50,8 +50,8 @@ members = [
     # "tokens/token-2022/anchor/programs/*",
     # "tokens/token-swap/native/program",
     # "tokens/token-swap/anchor/programs/*",
-    # "tokens/transfer-tokens/native/program",
-    # "tokens/transfer-tokens/anchor/programs/*",
+    "tokens/transfer-tokens/native/program",
+    "tokens/transfer-tokens/anchor/programs/*",
 
 ]
 resolver = "2"
