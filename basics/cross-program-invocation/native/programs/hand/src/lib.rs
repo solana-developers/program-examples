@@ -24,7 +24,7 @@ fn pull_lever(
 
     let ix = Instruction::new_with_borsh(
         *lever_program.key,                        // Our lever program's ID
-        &set_power_status_instruction,                    // Passing instructions through
+        &set_power_status_instruction,             // Passing instructions through
         vec![AccountMeta::new(*power.key, false)], // Just the required account for the other program
     );
 

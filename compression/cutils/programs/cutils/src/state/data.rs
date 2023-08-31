@@ -18,7 +18,7 @@ impl Data {
         Self {
             bump,
             tree,
-            tree_nonce
+            tree_nonce,
         }
     }
 }
