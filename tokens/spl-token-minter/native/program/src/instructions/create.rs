@@ -1,27 +1,18 @@
 use {
-    borsh::{ 
-        BorshDeserialize, 
-        BorshSerialize, 
-    },
+    borsh::{BorshDeserialize, BorshSerialize},
+    mpl_token_metadata::instruction as mpl_instruction,
     solana_program::{
-        account_info::{next_account_info, AccountInfo}, 
-        entrypoint::ProgramResult, 
-        msg, 
+        account_info::{next_account_info, AccountInfo},
+        entrypoint::ProgramResult,
+        msg,
         program::invoke,
         program_pack::Pack,
         rent::Rent,
         system_instruction,
         sysvar::Sysvar,
     },
-    spl_token::{
-        instruction as token_instruction,
-        state::Mint,
-    },
-    mpl_token_metadata::{
-        instruction as mpl_instruction,
-    },
+    spl_token::{instruction as token_instruction, state::Mint},
 };
-
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct CreateTokenArgs {
@@ -30,12 +21,7 @@ pub struct CreateTokenArgs {
     pub token_uri: String,
 }
 
-
-pub fn create_token(
-    accounts: &[AccountInfo],
-    args: CreateTokenArgs,
-) -> ProgramResult {
-
+pub fn create_token(accounts: &[AccountInfo], args: CreateTokenArgs) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let mint_account = next_account_info(accounts_iter)?;
@@ -53,18 +39,18 @@ pub fn create_token(
     msg!("Mint: {}", mint_account.key);
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &mint_account.key,
+            payer.key,
+            mint_account.key,
             (Rent::get()?).minimum_balance(Mint::LEN),
             Mint::LEN as u64,
-            &token_program.key,
+            token_program.key,
         ),
         &[
             mint_account.clone(),
             payer.clone(),
             system_program.clone(),
             token_program.clone(),
-        ]
+        ],
     )?;
 
     // Now initialize that account as a Mint (standard Mint)
@@ -73,18 +59,18 @@ pub fn create_token(
     msg!("Mint: {}", mint_account.key);
     invoke(
         &token_instruction::initialize_mint(
-            &token_program.key,
-            &mint_account.key,
-            &mint_authority.key,
-            Some(&mint_authority.key),
-            9,                          // 9 Decimals for the default SPL Token standard
+            token_program.key,
+            mint_account.key,
+            mint_authority.key,
+            Some(mint_authority.key),
+            9, // 9 Decimals for the default SPL Token standard
         )?,
         &[
             mint_account.clone(),
             mint_authority.clone(),
             token_program.clone(),
             rent.clone(),
-        ]
+        ],
     )?;
 
     // Now create the account for that Mint's metadata
@@ -117,7 +103,7 @@ pub fn create_token(
             payer.clone(),
             token_metadata_program.clone(),
             rent.clone(),
-        ]
+        ],
     )?;
 
     msg!("Token mint created successfully.");

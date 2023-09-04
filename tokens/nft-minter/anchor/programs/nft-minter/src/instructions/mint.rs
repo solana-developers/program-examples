@@ -1,26 +1,22 @@
 use {
-    anchor_lang::{
-        prelude::*,
-        solana_program::program::invoke,
-    },
-    anchor_spl::{
-        token,
-        associated_token,
-    },
+    anchor_lang::{prelude::*, solana_program::program::invoke},
+    anchor_spl::{associated_token, token},
     mpl_token_metadata::instruction as mpl_instruction,
     // spl_token::instruction::AuthorityType,
 };
 
-
-pub fn mint_to(
-    ctx: Context<MintTo>, 
-) -> Result<()> {
-
+pub fn mint_to(ctx: Context<MintTo>) -> Result<()> {
     // Mint the NFT to the user's wallet
     //
     msg!("Minting NFT to associated token account...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.to_account_info().key());   
-    msg!("Token Address: {}", &ctx.accounts.associated_token_account.key());     
+    msg!(
+        "Mint: {}",
+        &ctx.accounts.mint_account.to_account_info().key()
+    );
+    msg!(
+        "Token Address: {}",
+        &ctx.accounts.associated_token_account.key()
+    );
     token::mint_to(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
@@ -38,17 +34,20 @@ pub fn mint_to(
     //      Edition Account.
     //
     msg!("Creating edition account...");
-    msg!("Edition account address: {}", ctx.accounts.edition_account.key());
+    msg!(
+        "Edition account address: {}",
+        ctx.accounts.edition_account.key()
+    );
     invoke(
         &mpl_instruction::create_master_edition_v3(
-            ctx.accounts.token_metadata_program.key(),        // Program ID
-            ctx.accounts.edition_account.key(),               // Edition
-            ctx.accounts.mint_account.key(),                  // Mint
-            ctx.accounts.mint_authority.key(),                // Update Authority
-            ctx.accounts.mint_authority.key(),                // Mint Authority
-            ctx.accounts.metadata_account.key(),              // Metadata
-            ctx.accounts.payer.key(),                         // Payer
-            Some(1),                                          // Max Supply
+            ctx.accounts.token_metadata_program.key(), // Program ID
+            ctx.accounts.edition_account.key(),        // Edition
+            ctx.accounts.mint_account.key(),           // Mint
+            ctx.accounts.mint_authority.key(),         // Update Authority
+            ctx.accounts.mint_authority.key(),         // Mint Authority
+            ctx.accounts.metadata_account.key(),       // Metadata
+            ctx.accounts.payer.key(),                  // Payer
+            Some(1),                                   // Max Supply
         ),
         &[
             ctx.accounts.edition_account.to_account_info(),
@@ -58,13 +57,13 @@ pub fn mint_to(
             ctx.accounts.payer.to_account_info(),
             ctx.accounts.token_metadata_program.to_account_info(),
             ctx.accounts.rent.to_account_info(),
-        ]
+        ],
     )?;
 
     // If we don't use Metaplex Editions, we must disable minting manually
     // -------------------------------------------------------------------
     //
-    // msg!("Disabling future minting of this NFT...");   
+    // msg!("Disabling future minting of this NFT...");
     // token::set_authority(
     //     CpiContext::new(
     //         ctx.accounts.token_program.to_account_info(),
@@ -92,7 +91,6 @@ pub fn mint_to(
 
     Ok(())
 }
-
 
 #[derive(Accounts)]
 pub struct MintTo<'info> {

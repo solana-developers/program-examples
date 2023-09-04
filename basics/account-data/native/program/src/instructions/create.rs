@@ -1,24 +1,21 @@
-use borsh::{ BorshDeserialize, BorshSerialize };
+use borsh::BorshSerialize;
 use solana_program::{
-    account_info::{ AccountInfo, next_account_info },
-    entrypoint::ProgramResult, 
+    account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
     program::invoke,
     pubkey::Pubkey,
     rent::Rent,
     system_instruction,
-    system_program,
     sysvar::Sysvar,
 };
 
 use crate::state::AddressInfo;
-
 
 pub fn create_address_info(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     address_info: AddressInfo,
 ) -> ProgramResult {
-
     let accounts_iter = &mut accounts.iter();
     let address_info_account = next_account_info(accounts_iter)?;
     let payer = next_account_info(accounts_iter)?;
@@ -29,18 +26,19 @@ pub fn create_address_info(
 
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &address_info_account.key,
+            payer.key,
+            address_info_account.key,
             lamports_required,
             account_span as u64,
             program_id,
         ),
         &[
-            payer.clone(), address_info_account.clone(), system_program.clone()
-        ]
+            payer.clone(),
+            address_info_account.clone(),
+            system_program.clone(),
+        ],
     )?;
-    
+
     address_info.serialize(&mut &mut address_info_account.data.borrow_mut()[..])?;
     Ok(())
 }
-

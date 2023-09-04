@@ -1,15 +1,15 @@
 [package]
-name = "program"
+name = "nft-minter-program"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.9.1"
-solana-program = "1.10.26"
-spl-token = { version="3.3.0", features = [ "no-entrypoint" ] }
-spl-associated-token-account = { version="1.0.5", features = [ "no-entrypoint" ] }
-mpl-token-metadata = { version="1.2.5", features = [ "no-entrypoint" ] }
+solana-program = "1.16.10"
+spl-token = { version="4.0.0", features = [ "no-entrypoint" ] }
+spl-associated-token-account = { version="2.0.0", features = [ "no-entrypoint" ] }
+mpl-token-metadata = { version="1.11" }
 
 [lib]
 crate-type = ["cdylib", "lib"]

@@ -1,25 +1,14 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
-    account_info::AccountInfo, 
-    entrypoint, 
-    entrypoint::ProgramResult, 
-    msg, 
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, msg,
+    program_error::ProgramError, pubkey::Pubkey,
 };
 
-use crate::instructions::{
-    get_on_ride,
-    play_game,
-    eat_food,
-};
-
+use crate::instructions::{eat_food, get_on_ride, play_game};
 
 // For processing everything at the entrypoint
 
-
 entrypoint!(process_instruction);
-
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct CarnivalInstructionData {
@@ -30,19 +19,16 @@ pub struct CarnivalInstructionData {
     pub attraction_name: String,
 }
 
-
 pub fn process_instruction(
     _program_id: &Pubkey,
     _accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-
-    let ix_data_object = CarnivalInstructionData::try_from_slice(&instruction_data)?;
+    let ix_data_object = CarnivalInstructionData::try_from_slice(instruction_data)?;
 
     msg!("Welcome to the carnival, {}!", ix_data_object.name);
-    
-    match ix_data_object.attraction.as_str() {
 
+    match ix_data_object.attraction.as_str() {
         "ride" => get_on_ride::get_on_ride(get_on_ride::GetOnRideInstructionData {
             rider_name: ix_data_object.name,
             rider_height: ix_data_object.height,

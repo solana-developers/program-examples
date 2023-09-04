@@ -27,8 +27,8 @@ pub fn init(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     msg!("Mint Authority: {}", &mint_authority.key);
     invoke_signed(
         &system_instruction::create_account(
-            &payer.key,
-            &mint_authority.key,
+            payer.key,
+            mint_authority.key,
             (Rent::get()?).minimum_balance(MintAuthorityPda::SIZE),
             MintAuthorityPda::SIZE as u64,
             program_id,

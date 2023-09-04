@@ -1,26 +1,16 @@
 use {
+    mpl_token_metadata::instruction as mpl_instruction,
     solana_program::{
         account_info::{next_account_info, AccountInfo},
-        entrypoint::ProgramResult, 
-        msg, 
+        entrypoint::ProgramResult,
+        msg,
         program::invoke,
     },
-    spl_token::{
-        instruction as token_instruction,
-    },
-    spl_associated_token_account::{
-        instruction as associated_token_account_instruction,
-    },
-    mpl_token_metadata::{
-        instruction as mpl_instruction,
-    },
+    spl_associated_token_account::instruction as associated_token_account_instruction,
+    spl_token::instruction as token_instruction,
 };
 
-
-pub fn mint_nft(
-    accounts: &[AccountInfo],
-) -> ProgramResult {
-
+pub fn mint_nft(accounts: &[AccountInfo]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let mint_account = next_account_info(accounts_iter)?;
@@ -39,9 +29,10 @@ pub fn mint_nft(
         msg!("Creating associated token account...");
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
-                &payer.key,
-                &payer.key,
-                &mint_account.key,
+                payer.key,
+                payer.key,
+                mint_account.key,
+                token_program.key,
             ),
             &[
                 mint_account.clone(),
@@ -49,7 +40,7 @@ pub fn mint_nft(
                 payer.clone(),
                 token_program.clone(),
                 associated_token_program.clone(),
-            ]
+            ],
         )?;
     } else {
         msg!("Associated token account exists.");
@@ -61,11 +52,11 @@ pub fn mint_nft(
     msg!("Minting NFT to associated token account...");
     invoke(
         &token_instruction::mint_to(
-            &token_program.key,
-            &mint_account.key,
-            &associated_token_account.key,
-            &mint_authority.key,
-            &[&mint_authority.key],
+            token_program.key,
+            mint_account.key,
+            associated_token_account.key,
+            mint_authority.key,
+            &[mint_authority.key],
             1,
         )?,
         &[
@@ -84,14 +75,14 @@ pub fn mint_nft(
     msg!("Edition account address: {}", edition_account.key);
     invoke(
         &mpl_instruction::create_master_edition_v3(
-            *token_metadata_program.key,        // Program ID
-            *edition_account.key,               // Edition
-            *mint_account.key,                  // Mint
-            *mint_authority.key,                // Update Authority
-            *mint_authority.key,                // Mint Authority
-            *metadata_account.key,              // Metadata
-            *payer.key,                         // Payer
-            Some(1),                            // Max Supply
+            *token_metadata_program.key, // Program ID
+            *edition_account.key,        // Edition
+            *mint_account.key,           // Mint
+            *mint_authority.key,         // Update Authority
+            *mint_authority.key,         // Mint Authority
+            *metadata_account.key,       // Metadata
+            *payer.key,                  // Payer
+            Some(1),                     // Max Supply
         ),
         &[
             edition_account.clone(),
@@ -101,7 +92,7 @@ pub fn mint_nft(
             payer.clone(),
             token_metadata_program.clone(),
             rent.clone(),
-        ]
+        ],
     )?;
 
     // If we don't use Metaplex Editions, we must disable minting manually
@@ -110,10 +101,10 @@ pub fn mint_nft(
     // msg!("Disabling future minting of this NFT...");
     // invoke(
     //     &token_instruction::set_authority(
-    //         &token_program.key, 
-    //         &mint_account.key, 
-    //         None, 
-    //         token_instruction::AuthorityType::MintTokens, 
+    //         &token_program.key,
+    //         &mint_account.key,
+    //         None,
+    //         token_instruction::AuthorityType::MintTokens,
     //         &mint_authority.key,
     //         &[&mint_authority.key],
     //     )?,
@@ -125,10 +116,10 @@ pub fn mint_nft(
     // )?;
     // invoke(
     //     &token_instruction::set_authority(
-    //         &token_program.key, 
-    //         &mint_account.key, 
-    //         None, 
-    //         token_instruction::AuthorityType::FreezeAccount, 
+    //         &token_program.key,
+    //         &mint_account.key,
+    //         None,
+    //         token_instruction::AuthorityType::FreezeAccount,
     //         &mint_authority.key,
     //         &[&mint_authority.key],
     //     )?,
@@ -143,4 +134,3 @@ pub fn mint_nft(
 
     Ok(())
 }
-

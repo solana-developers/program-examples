@@ -1,24 +1,21 @@
-use borsh::{ BorshDeserialize, BorshSerialize };
+use borsh::BorshSerialize;
 use solana_program::{
-    account_info::{ AccountInfo, next_account_info },
-    entrypoint::ProgramResult, 
-    program::{ invoke, invoke_signed },
+    account_info::{next_account_info, AccountInfo},
+    entrypoint::ProgramResult,
+    program::invoke_signed,
     pubkey::Pubkey,
     rent::Rent,
     system_instruction,
-    system_program,
     sysvar::Sysvar,
 };
 
 use crate::state::PageVisits;
-
 
 pub fn create_page_visits(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     page_visits: PageVisits,
 ) -> ProgramResult {
-
     let accounts_iter = &mut accounts.iter();
     let page_visits_account = next_account_info(accounts_iter)?;
     let user = next_account_info(accounts_iter)?;
@@ -30,22 +27,23 @@ pub fn create_page_visits(
 
     invoke_signed(
         &system_instruction::create_account(
-            &payer.key,
-            &page_visits_account.key,
+            payer.key,
+            page_visits_account.key,
             lamports_required,
             account_span as u64,
             program_id,
         ),
         &[
-            payer.clone(), page_visits_account.clone(), system_program.clone()
+            payer.clone(),
+            page_visits_account.clone(),
+            system_program.clone(),
         ],
         &[&[
-            PageVisits::SEED_PREFIX.as_bytes().as_ref(),
+            PageVisits::SEED_PREFIX.as_bytes(),
             user.key.as_ref(),
             &[page_visits.bump],
-        ]]
+        ]],
     )?;
 
     Ok(())
 }
-

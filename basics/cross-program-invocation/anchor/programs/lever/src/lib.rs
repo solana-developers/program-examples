@@ -1,8 +1,8 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 
-
 declare_id!("EnjN3cm7xYqYHNUZbQfhJYj5S5RBrSU9tc5aHwQ6LqvT");
-
 
 #[program]
 pub mod lever {
@@ -12,7 +12,6 @@ pub mod lever {
     }
 
     pub fn switch_power(ctx: Context<SetPowerStatus>, name: String) -> Result<()> {
-        
         let power = &mut ctx.accounts.power;
         power.is_on = !power.is_on;
 
@@ -26,7 +25,6 @@ pub mod lever {
         Ok(())
     }
 }
-
 
 #[derive(Accounts)]
 pub struct InitializeLever<'info> {

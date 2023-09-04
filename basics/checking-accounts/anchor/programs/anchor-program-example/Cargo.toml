@@ -1,5 +1,5 @@
 [package]
-name = "anchor-program-example"
+name = "checking-accounts-anchor-program-example"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
@@ -16,4 +16,4 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.24.2"
+anchor-lang = "0.28.0"

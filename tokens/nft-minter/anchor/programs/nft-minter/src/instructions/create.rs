@@ -1,40 +1,38 @@
 use {
-    anchor_lang::{
-        prelude::*,
-        solana_program::program::invoke,
-    },
+    anchor_lang::{prelude::*, solana_program::program::invoke},
     anchor_spl::token,
     mpl_token_metadata::instruction as mpl_instruction,
 };
 
-
 pub fn create_token(
-    ctx: Context<CreateToken>, 
-    nft_title: String, 
-    nft_symbol: String, 
+    ctx: Context<CreateToken>,
+    nft_title: String,
+    nft_symbol: String,
     nft_uri: String,
 ) -> Result<()> {
-
     msg!("Creating metadata account...");
-    msg!("Metadata account address: {}", &ctx.accounts.metadata_account.key());
+    msg!(
+        "Metadata account address: {}",
+        &ctx.accounts.metadata_account.key()
+    );
     invoke(
         &mpl_instruction::create_metadata_accounts_v3(
-            ctx.accounts.token_metadata_program.key(),      // Program ID (the Token Metadata Program)
-            ctx.accounts.metadata_account.key(),            // Metadata account
-            ctx.accounts.mint_account.key(),                // Mint account
-            ctx.accounts.mint_authority.key(),              // Mint authority
-            ctx.accounts.payer.key(),                       // Payer
-            ctx.accounts.mint_authority.key(),              // Update authority
-            nft_title,                                      // Name
-            nft_symbol,                                     // Symbol
-            nft_uri,                                        // URI
-            None,                                           // Creators
-            0,                                              // Seller fee basis points
-            true,                                           // Update authority is signer
-            false,                                          // Is mutable
-            None,                                           // Collection
-            None,                                           // Uses
-            None,                                           // Collection Details
+            ctx.accounts.token_metadata_program.key(), // Program ID (the Token Metadata Program)
+            ctx.accounts.metadata_account.key(),       // Metadata account
+            ctx.accounts.mint_account.key(),           // Mint account
+            ctx.accounts.mint_authority.key(),         // Mint authority
+            ctx.accounts.payer.key(),                  // Payer
+            ctx.accounts.mint_authority.key(),         // Update authority
+            nft_title,                                 // Name
+            nft_symbol,                                // Symbol
+            nft_uri,                                   // URI
+            None,                                      // Creators
+            0,                                         // Seller fee basis points
+            true,                                      // Update authority is signer
+            false,                                     // Is mutable
+            None,                                      // Collection
+            None,                                      // Uses
+            None,                                      // Collection Details
         ),
         &[
             ctx.accounts.metadata_account.to_account_info(),
@@ -50,7 +48,6 @@ pub fn create_token(
 
     Ok(())
 }
-
 
 #[derive(Accounts)]
 pub struct CreateToken<'info> {

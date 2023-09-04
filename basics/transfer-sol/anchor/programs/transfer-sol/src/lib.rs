@@ -1,19 +1,15 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
-
 declare_id!("4fQVnLWKKKYxtxgGn7Haw8v2g2Hzbu8K61JvWKvqAi7W");
-
 
 #[program]
 pub mod transfer_sol {
     use super::*;
 
-    pub fn transfer_sol_with_cpi(
-        ctx: Context<TransferSolWithCpi>, 
-        amount: u64
-    ) -> Result<()> {
-
+    pub fn transfer_sol_with_cpi(ctx: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
         system_program::transfer(
             CpiContext::new(
                 ctx.accounts.system_program.to_account_info(),
@@ -29,17 +25,20 @@ pub mod transfer_sol {
     }
 
     pub fn transfer_sol_with_program(
-        ctx: Context<TransferSolWithProgram>, 
-        amount: u64
+        ctx: Context<TransferSolWithProgram>,
+        amount: u64,
     ) -> Result<()> {
-
-        **ctx.accounts.payer
+        **ctx
+            .accounts
+            .payer
             .to_account_info()
             .try_borrow_mut_lamports()? -= amount;
-        **ctx.accounts.recipient
+        **ctx
+            .accounts
+            .recipient
             .to_account_info()
             .try_borrow_mut_lamports()? += amount;
-        
+
         Ok(())
     }
 }

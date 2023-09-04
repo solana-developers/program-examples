@@ -17,7 +17,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     input: &[u8],
 ) -> ProgramResult {
-    let instruction = MyInstruction::try_from_slice(&input)?;
+    let instruction = MyInstruction::try_from_slice(input)?;
     match instruction {
         MyInstruction::InitRentVault(args) => init_rent_vault(program_id, accounts, args),
         MyInstruction::CreateNewAccount => create_new_account(program_id, accounts),

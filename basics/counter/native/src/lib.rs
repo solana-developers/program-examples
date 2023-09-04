@@ -4,10 +4,8 @@ use solana_program::{
     declare_id,
     entrypoint::ProgramResult,
     msg,
-    program::{invoke, invoke_signed},
     program_error::ProgramError,
     pubkey::Pubkey,
-    system_instruction,
 };
 
 mod state;
@@ -41,7 +39,7 @@ pub fn process_instruction(
 
 pub fn process_increment_counter(
     accounts: &[AccountInfo],
-    instruction_data: &[u8],
+    _instruction_data: &[u8],
 ) -> Result<(), ProgramError> {
     let account_info_iter = &mut accounts.iter();
 

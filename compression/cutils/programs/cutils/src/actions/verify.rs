@@ -1,9 +1,7 @@
 use crate::*;
 use mpl_bubblegum::state::leaf_schema::LeafSchema;
 use mpl_bubblegum::utils::get_asset_id;
-use spl_account_compression::{
-    program::SplAccountCompression
-};
+use spl_account_compression::program::SplAccountCompression;
 
 #[derive(Accounts)]
 #[instruction(params: VerifyParams)]
@@ -29,15 +27,14 @@ pub struct VerifyParams {
 }
 
 impl Verify<'_> {
-    pub fn validate(
-        &self,
-        _ctx: &Context<Self>,
-        _params: &VerifyParams
-    ) -> Result<()> {
+    pub fn validate(&self, _ctx: &Context<Self>, _params: &VerifyParams) -> Result<()> {
         Ok(())
     }
 
-    pub fn actuate<'info>(ctx: Context<'_, '_, '_, 'info, Verify<'info>>, params: &VerifyParams) -> Result<()> {
+    pub fn actuate<'info>(
+        ctx: Context<'_, '_, '_, 'info, Verify<'info>>,
+        params: &VerifyParams,
+    ) -> Result<()> {
         let asset_id = get_asset_id(&ctx.accounts.merkle_tree.key(), params.nonce);
         let leaf = LeafSchema::new_v0(
             asset_id,
@@ -53,7 +50,8 @@ impl Verify<'_> {
             spl_account_compression::cpi::accounts::VerifyLeaf {
                 merkle_tree: ctx.accounts.merkle_tree.to_account_info(),
             },
-        ).with_remaining_accounts(ctx.remaining_accounts.to_vec());
+        )
+        .with_remaining_accounts(ctx.remaining_accounts.to_vec());
 
         spl_account_compression::cpi::verify_leaf(
             cpi_ctx,

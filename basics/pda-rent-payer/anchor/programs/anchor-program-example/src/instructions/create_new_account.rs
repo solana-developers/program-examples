@@ -31,7 +31,7 @@ pub struct CreateNewAccount<'info> {
     #[account(
         mut,
         seeds = [
-            RentVault::SEED_PREFIX.as_bytes().as_ref(),
+            RentVault::SEED_PREFIX.as_bytes(),
         ],
         bump = rent_vault.bump,
     )]

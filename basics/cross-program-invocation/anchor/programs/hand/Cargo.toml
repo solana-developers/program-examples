@@ -1,5 +1,5 @@
 [package]
-name = "hand"
+name = "cross-program-invocatio-anchor-hand"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
@@ -16,5 +16,5 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.24.2"
-lever = { path = "../lever", features = ["cpi"] }
+anchor-lang = "0.28.0"
+cross-program-invocatio-anchor-lever = { path = "../lever", features = ["cpi"] }

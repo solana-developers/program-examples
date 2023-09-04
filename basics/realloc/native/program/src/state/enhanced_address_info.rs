@@ -1,7 +1,6 @@
-use borsh::{ BorshDeserialize, BorshSerialize };
+use borsh::{BorshDeserialize, BorshSerialize};
 
 use crate::state::AddressInfo;
-
 
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct EnhancedAddressInfoExtender {
@@ -20,13 +19,7 @@ pub struct EnhancedAddressInfo {
 }
 
 impl EnhancedAddressInfo {
-
-    pub fn from_address_info(
-        address_info: AddressInfo,
-        state: String,
-        zip: u32,
-    ) -> Self {
-        
+    pub fn from_address_info(address_info: AddressInfo, state: String, zip: u32) -> Self {
         EnhancedAddressInfo {
             name: address_info.name,
             house_number: address_info.house_number,

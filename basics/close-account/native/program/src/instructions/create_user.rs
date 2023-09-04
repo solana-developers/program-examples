@@ -27,8 +27,8 @@ pub fn create_user(program_id: &Pubkey, accounts: &[AccountInfo], data: User) ->
 
     invoke_signed(
         &system_instruction::create_account(
-            &payer.key,
-            &target_account.key,
+            payer.key,
+            target_account.key,
             lamports_required,
             account_span as u64,
             program_id,

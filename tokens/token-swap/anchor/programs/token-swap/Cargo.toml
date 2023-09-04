@@ -16,12 +16,11 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { version = "0.26.0", features = ["init-if-needed"] }
-anchor-spl = { version = "0.26.0" }
+anchor-lang = { version = "0.28.0", features = ["init-if-needed"] }
+anchor-spl = { version = "0.28.0" }
 fixed = "1.23.1"
 half = "=2.2.1"
 fixed-sqrt = "0.2.5"
-solana-program = "~1.14.19"
+solana-program = "1.16.10"
 winnow = "=0.4.1"
 toml_datetime = "=0.6.1"
-

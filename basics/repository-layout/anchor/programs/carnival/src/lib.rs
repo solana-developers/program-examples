@@ -1,21 +1,16 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 
 pub mod error;
 pub mod instructions;
 pub mod state;
 
-use crate::instructions::{
-    get_on_ride,
-    play_game,
-    eat_food,
-};
-
+use crate::instructions::{eat_food, get_on_ride, play_game};
 
 // For setting up modules & configs
 
-
 declare_id!("8t94SEJh9jVjDwV7cbiuT6BvEsHo4YHP9x9a5rYH1NpP");
-
 
 #[program]
 pub mod carnival {
@@ -28,7 +23,6 @@ pub mod carnival {
         ticket_count: u32,
         ride_name: String,
     ) -> Result<()> {
-
         get_on_ride::get_on_ride(get_on_ride::GetOnRideInstructionData {
             rider_name: name,
             rider_height: height,
@@ -43,7 +37,6 @@ pub mod carnival {
         ticket_count: u32,
         game_name: String,
     ) -> Result<()> {
-
         play_game::play_game(play_game::PlayGameInstructionData {
             gamer_name: name,
             gamer_ticket_count: ticket_count,
@@ -57,7 +50,6 @@ pub mod carnival {
         ticket_count: u32,
         food_stand_name: String,
     ) -> Result<()> {
-
         eat_food::eat_food(eat_food::EatFoodInstructionData {
             eater_name: name,
             eater_ticket_count: ticket_count,

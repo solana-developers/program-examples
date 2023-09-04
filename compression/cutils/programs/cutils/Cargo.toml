@@ -17,7 +17,7 @@ default = []
 
 [dependencies]
 anchor-lang = "0.26.0"
-solana-program = "~1.14.18"
+solana-program = "1.14.18"
 spl-account-compression = { version="0.1.8", features = ["cpi"] }
 mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] }
 

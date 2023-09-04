@@ -1,34 +1,21 @@
 use {
-    borsh::{ 
-        BorshDeserialize, 
-        BorshSerialize, 
-    },
+    borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
         account_info::{next_account_info, AccountInfo},
-        entrypoint::ProgramResult, 
-        msg, 
+        entrypoint::ProgramResult,
+        msg,
         program::invoke,
     },
-    spl_token::{
-        instruction as token_instruction,
-    },
-    spl_associated_token_account::{
-        instruction as associated_token_account_instruction,
-    },
+    spl_associated_token_account::instruction as associated_token_account_instruction,
+    spl_token::instruction as token_instruction,
 };
-
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct MintSplArgs {
     pub quantity: u64,
 }
 
-
-pub fn mint_spl(
-    accounts: &[AccountInfo],
-    args: MintSplArgs,
-) -> ProgramResult {
-
+pub fn mint_spl(accounts: &[AccountInfo], args: MintSplArgs) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let mint_account = next_account_info(accounts_iter)?;
@@ -43,9 +30,10 @@ pub fn mint_spl(
         msg!("Creating associated token account...");
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
-                &payer.key,
-                &payer.key,
-                &mint_account.key,
+                payer.key,
+                payer.key,
+                mint_account.key,
+                token_program.key,
             ),
             &[
                 mint_account.clone(),
@@ -54,21 +42,24 @@ pub fn mint_spl(
                 system_program.clone(),
                 token_program.clone(),
                 associated_token_program.clone(),
-            ]
+            ],
         )?;
     } else {
         msg!("Associated token account exists.");
     }
     msg!("Associated Token Address: {}", associated_token_account.key);
 
-    msg!("Minting {} tokens to associated token account...", args.quantity);
+    msg!(
+        "Minting {} tokens to associated token account...",
+        args.quantity
+    );
     invoke(
         &token_instruction::mint_to(
-            &token_program.key,
-            &mint_account.key,
-            &associated_token_account.key,
-            &mint_authority.key,
-            &[&mint_authority.key],
+            token_program.key,
+            mint_account.key,
+            associated_token_account.key,
+            mint_authority.key,
+            &[mint_authority.key],
             args.quantity,
         )?,
         &[
@@ -83,4 +74,3 @@ pub fn mint_spl(
 
     Ok(())
 }
-

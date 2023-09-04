@@ -8,7 +8,7 @@ pub struct CloseUserContext<'info> {
     #[account(
         mut,
         seeds = [
-            User::PREFIX.as_bytes().as_ref(), 
+            User::PREFIX.as_bytes(),
             user.key().as_ref(),
         ],
         has_one = user,

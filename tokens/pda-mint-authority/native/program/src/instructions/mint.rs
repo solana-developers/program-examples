@@ -36,9 +36,10 @@ pub fn mint_to(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
         msg!("Creating associated token account...");
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
-                &payer.key,
-                &payer.key,
-                &mint_account.key,
+                payer.key,
+                payer.key,
+                mint_account.key,
+                token_program.key,
             ),
             &[
                 mint_account.clone(),
@@ -58,11 +59,11 @@ pub fn mint_to(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     msg!("Minting NFT to associated token account...");
     invoke_signed(
         &token_instruction::mint_to(
-            &token_program.key,
-            &mint_account.key,
-            &associated_token_account.key,
-            &mint_authority.key,
-            &[&mint_authority.key],
+            token_program.key,
+            mint_account.key,
+            associated_token_account.key,
+            mint_authority.key,
+            &[mint_authority.key],
             1,
         )?,
         &[

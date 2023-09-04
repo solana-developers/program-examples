@@ -15,7 +15,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     input: &[u8],
 ) -> ProgramResult {
-    let instruction = MyInstruction::try_from_slice(&input)?;
+    let instruction = MyInstruction::try_from_slice(input)?;
     match instruction {
         MyInstruction::CreateUser(data) => create_user(program_id, accounts, data),
         MyInstruction::CloseUser => close_user(accounts),

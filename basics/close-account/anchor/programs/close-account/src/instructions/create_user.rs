@@ -15,7 +15,7 @@ pub struct CreateUserContext<'info> {
         space = User::SIZE,
         payer = payer,
         seeds = [
-            User::PREFIX.as_bytes().as_ref(), 
+            User::PREFIX.as_bytes(),
             payer.key().as_ref(),
         ],
         bump

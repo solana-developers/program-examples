@@ -1,3 +1,5 @@
+#![allow(clippy::result_large_err)]
+
 use anchor_lang::prelude::*;
 
 mod constants;
@@ -5,13 +7,12 @@ mod errors;
 mod instructions;
 mod state;
 
-pub use instructions::*;
-
 // Set the correct key here
 declare_id!("C3ti6PFK6PoYShRFx1BNNTQU3qeY1iVwjwCA6SjJhiuW");
 
 #[program]
 pub mod swap_example {
+    pub use super::instructions::*;
     use super::*;
 
     pub fn create_amm(ctx: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {

@@ -1,34 +1,21 @@
 use {
-    borsh::{ 
-        BorshDeserialize, 
-        BorshSerialize, 
-    },
+    borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
         account_info::{next_account_info, AccountInfo},
-        entrypoint::ProgramResult, 
-        msg, 
+        entrypoint::ProgramResult,
+        msg,
         program::invoke,
     },
-    spl_token::{
-        instruction as token_instruction,
-    },
-    spl_associated_token_account::{
-        instruction as associated_token_account_instruction,
-    },
+    spl_associated_token_account::instruction as associated_token_account_instruction,
+    spl_token::instruction as token_instruction,
 };
-
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct TransferTokensArgs {
     pub quantity: u64,
 }
 
-
-pub fn transfer_tokens(
-    accounts: &[AccountInfo],
-    args: TransferTokensArgs,
-) -> ProgramResult {
-
+pub fn transfer_tokens(accounts: &[AccountInfo], args: TransferTokensArgs) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
 
     let mint_account = next_account_info(accounts_iter)?;
@@ -45,9 +32,10 @@ pub fn transfer_tokens(
         msg!("Creating associated token account for recipient...");
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
-                &payer.key,
-                &recipient.key,
-                &mint_account.key,
+                payer.key,
+                recipient.key,
+                mint_account.key,
+                token_program.key,
             ),
             &[
                 mint_account.clone(),
@@ -57,24 +45,30 @@ pub fn transfer_tokens(
                 system_program.clone(),
                 token_program.clone(),
                 associated_token_program.clone(),
-            ]
+            ],
         )?;
     } else {
         msg!("Associated token account exists.");
     }
-    msg!("Recipient Associated Token Address: {}", to_associated_token_account.key);
+    msg!(
+        "Recipient Associated Token Address: {}",
+        to_associated_token_account.key
+    );
 
     msg!("Transferring {} tokens...", args.quantity);
-    msg!("Mint: {}", mint_account.key);   
+    msg!("Mint: {}", mint_account.key);
     msg!("Owner Token Address: {}", from_associated_token_account.key);
-    msg!("Recipient Token Address: {}", to_associated_token_account.key);
+    msg!(
+        "Recipient Token Address: {}",
+        to_associated_token_account.key
+    );
     invoke(
         &token_instruction::transfer(
-            &token_program.key,
-            &from_associated_token_account.key,
-            &to_associated_token_account.key,
-            &owner.key,
-            &[&owner.key, &recipient.key],
+            token_program.key,
+            from_associated_token_account.key,
+            to_associated_token_account.key,
+            owner.key,
+            &[owner.key, recipient.key],
             args.quantity,
         )?,
         &[
@@ -84,11 +78,10 @@ pub fn transfer_tokens(
             owner.clone(),
             recipient.clone(),
             token_program.clone(),
-        ]
+        ],
     )?;
 
     msg!("Tokens transferred successfully.");
 
     Ok(())
 }
-

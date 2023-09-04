@@ -50,11 +50,11 @@ pub fn create_token(
     msg!("Mint: {}", mint_account.key);
     invoke(
         &system_instruction::create_account(
-            &payer.key,
-            &mint_account.key,
+            payer.key,
+            mint_account.key,
             (Rent::get()?).minimum_balance(Mint::LEN),
             Mint::LEN as u64,
-            &token_program.key,
+            token_program.key,
         ),
         &[
             mint_account.clone(),
@@ -70,10 +70,10 @@ pub fn create_token(
     msg!("Mint: {}", mint_account.key);
     invoke(
         &token_instruction::initialize_mint(
-            &token_program.key,
-            &mint_account.key,
-            &mint_authority.key,
-            Some(&mint_authority.key),
+            token_program.key,
+            mint_account.key,
+            mint_authority.key,
+            Some(mint_authority.key),
             0, // 0 Decimals for the NFT standard
         )?,
         &[
