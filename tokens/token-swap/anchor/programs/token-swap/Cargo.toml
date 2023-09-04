@@ -19,7 +19,7 @@ default = []
 anchor-lang = { version = "0.28.0", features = ["init-if-needed"] }
 anchor-spl = { version = "0.28.0" }
 fixed = "1.23.1"
-half = "=2.2.1"
+half = "=2.3.1"
 fixed-sqrt = "0.2.5"
 solana-program = "1.16.10"
 winnow = "=0.4.1"
