@@ -907,7 +907,7 @@ dependencies = [
  "anchor-lang 0.26.0",
  "mpl-bubblegum",
  "solana-program",
- "spl-account-compression",
+ "spl-account-compression 0.1.10",
 ]
 
 [[package]]
@@ -989,7 +989,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.28.0",
  "anchor-spl",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
 ]
 
 [[package]]
@@ -998,7 +998,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "solana-program",
  "spl-associated-token-account 2.0.0",
  "spl-token 4.0.0",
@@ -1138,7 +1138,7 @@ dependencies = [
  "getrandom 0.2.10",
  "mpl-bubblegum",
  "solana-program",
- "spl-account-compression",
+ "spl-account-compression 0.1.10",
  "toml_datetime",
  "winnow",
 ]
@@ -1660,26 +1660,28 @@ dependencies = [
 
 [[package]]
 name = "mpl-bubblegum"
-version = "0.7.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b751e0658d7414a801b2fee9802d884f508724fdc1d8645405f69e604d348bc1"
+checksum = "1758cc8620b67f4de682ba8f341648c2a43488493dfb465f7003549e7d802956"
 dependencies = [
- "anchor-lang 0.26.0",
+ "anchor-lang 0.28.0",
+ "anchor-spl",
  "bytemuck",
- "mpl-token-metadata",
+ "mpl-token-metadata 2.0.0-beta.1",
+ "num-traits",
  "solana-program",
- "spl-account-compression",
- "spl-associated-token-account 1.1.3",
- "spl-token 3.5.0",
+ "spl-account-compression 0.2.0",
+ "spl-associated-token-account 2.0.0",
+ "spl-token 4.0.0",
 ]
 
 [[package]]
 name = "mpl-token-auth-rules"
-version = "1.4.3-beta.1"
+version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81a34d740606a10a9dac7507d0c9025d72e0ce311c68ae85b6634982cf69a9c6"
+checksum = "66b1ec5ee0570f688cc84ff4624c5c50732f1a2bfc789f6b34af5b563428d971"
 dependencies = [
- "borsh 0.9.3",
+ "borsh 0.10.3",
  "bytemuck",
  "mpl-token-metadata-context-derive 0.2.1",
  "num-derive",
@@ -1694,15 +1696,35 @@ dependencies = [
 
 [[package]]
 name = "mpl-token-metadata"
-version = "1.13.2"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "654976568c99887549e1291e7b7e55ae31a70732e56ebb25cb1cdfc08c018333"
+checksum = "84e73b5df66f4e6f98606e3fb327cbc6a0dba8df11085246f2e766949acb96bb"
 dependencies = [
  "arrayref",
  "borsh 0.9.3",
  "mpl-token-auth-rules",
  "mpl-token-metadata-context-derive 0.3.0",
- "mpl-utils",
+ "mpl-utils 0.2.0",
+ "num-derive",
+ "num-traits",
+ "shank 0.0.11",
+ "solana-program",
+ "spl-associated-token-account 1.1.3",
+ "spl-token 3.5.0",
+ "thiserror",
+]
+
+[[package]]
+name = "mpl-token-metadata"
+version = "2.0.0-beta.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3545bd5fe73416f6514cd93899612e0e138619e72df8bc7d19906a12688c69e"
+dependencies = [
+ "arrayref",
+ "borsh 0.10.3",
+ "mpl-token-auth-rules",
+ "mpl-token-metadata-context-derive 0.3.0",
+ "mpl-utils 0.3.1",
  "num-derive",
  "num-traits",
  "shank 0.0.11",
@@ -1734,6 +1756,18 @@ dependencies = [
 
 [[package]]
 name = "mpl-utils"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "822133b6cba8f9a43e5e0e189813be63dd795858f54155c729833be472ffdb51"
+dependencies = [
+ "arrayref",
+ "borsh 0.9.3",
+ "solana-program",
+ "spl-token 3.5.0",
+]
+
+[[package]]
+name = "mpl-utils"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f2e4f92aec317d5853c0cc4c03c55f5178511c45bb3dbb441aea63117bf3dc9"
@@ -1749,7 +1783,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.28.0",
  "anchor-spl",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "spl-token 4.0.0",
 ]
 
@@ -1759,7 +1793,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "solana-program",
  "spl-associated-token-account 2.0.0",
  "spl-token 4.0.0",
@@ -1923,7 +1957,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.28.0",
  "anchor-spl",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "spl-token 4.0.0",
 ]
 
@@ -1933,7 +1967,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "solana-program",
  "spl-associated-token-account 2.0.0",
  "spl-token 4.0.0",
@@ -2784,8 +2818,20 @@ checksum = "f7a5417eae3c924553b872de5f1bca5945334a235f8d94841bd44c6dd7c6358c"
 dependencies = [
  "anchor-lang 0.26.0",
  "bytemuck",
- "spl-concurrent-merkle-tree",
- "spl-noop",
+ "spl-concurrent-merkle-tree 0.1.3",
+ "spl-noop 0.1.3",
+]
+
+[[package]]
+name = "spl-account-compression"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df052fd79e45c75c84ef20f5f2dcf037aeed230d0f2400bf68fa388cc0ece240"
+dependencies = [
+ "anchor-lang 0.28.0",
+ "bytemuck",
+ "spl-concurrent-merkle-tree 0.2.0",
+ "spl-noop 0.2.0",
 ]
 
 [[package]]
@@ -2825,6 +2871,17 @@ name = "spl-concurrent-merkle-tree"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26dd605d33bdc8d2522a9f55207c3eac06737b2e8310f602e252b510e3db1210"
+dependencies = [
+ "bytemuck",
+ "solana-program",
+ "thiserror",
+]
+
+[[package]]
+name = "spl-concurrent-merkle-tree"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "141eaea58588beae81b71d101373a53f096737739873de42d6b1368bc2b8fc30"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2880,6 +2937,15 @@ name = "spl-noop"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "558536c75b5aed018113bfca39cddb414cd7ca77da7658d668e751d977830cda"
+dependencies = [
+ "solana-program",
+]
+
+[[package]]
+name = "spl-noop"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dd67ea3d0070a12ff141f5da46f9695f49384a03bce1203a5608f5739437950"
 dependencies = [
  "solana-program",
 ]
@@ -2994,7 +3060,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.28.0",
  "anchor-spl",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
 ]
 
 [[package]]
@@ -3003,7 +3069,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "solana-program",
  "spl-associated-token-account 2.0.0",
  "spl-token 4.0.0",
@@ -3249,7 +3315,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.28.0",
  "anchor-spl",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
 ]
 
 [[package]]
@@ -3258,7 +3324,7 @@ version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
- "mpl-token-metadata",
+ "mpl-token-metadata 1.13.1",
  "solana-program",
  "spl-associated-token-account 2.0.0",
  "spl-token 4.0.0",
