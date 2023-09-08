@@ -45,7 +45,7 @@ pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
                 authority: ctx.accounts.mint_authority.to_account_info(),
             },
         ),
-        amount * 10u64.pow(ctx.accounts.mint_account.decimals as u32), // Mint tokens, adjust for decimals
+        amount * 10u64.pow(ctx.accounts.mint_account.decimals as u32), // Mint tokens
     )?;
 
     msg!("Token minted successfully.");

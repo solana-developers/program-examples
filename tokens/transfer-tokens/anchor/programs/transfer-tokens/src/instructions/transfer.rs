@@ -1,9 +1,39 @@
 use {
     anchor_lang::prelude::*,
-    anchor_spl::{associated_token, token},
+    anchor_spl::{
+        associated_token::AssociatedToken,
+        token::{transfer, Mint, Token, TokenAccount, Transfer},
+    },
 };
 
-pub fn transfer_tokens(ctx: Context<TransferTokens>, quantity: u64) -> Result<()> {
+#[derive(Accounts)]
+pub struct TransferTokens<'info> {
+    #[account(mut)]
+    pub sender: Signer<'info>,
+    pub recipient: SystemAccount<'info>,
+
+    #[account(mut)]
+    pub mint_account: Account<'info, Mint>,
+    #[account(
+        mut,
+        associated_token::mint = mint_account,
+        associated_token::authority = sender,
+    )]
+    pub sender_token_account: Account<'info, TokenAccount>,
+    #[account(
+        init_if_needed,
+        payer = sender,
+        associated_token::mint = mint_account,
+        associated_token::authority = recipient,
+    )]
+    pub recipient_token_account: Account<'info, TokenAccount>,
+
+    pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub system_program: Program<'info, System>,
+}
+
+pub fn transfer_tokens(ctx: Context<TransferTokens>, amount: u64) -> Result<()> {
     msg!("Transferring tokens...");
     msg!(
         "Mint: {}",
@@ -11,53 +41,27 @@ pub fn transfer_tokens(ctx: Context<TransferTokens>, quantity: u64) -> Result<()
     );
     msg!(
         "From Token Address: {}",
-        &ctx.accounts.from_associated_token_account.key()
+        &ctx.accounts.sender_token_account.key()
     );
     msg!(
         "To Token Address: {}",
-        &ctx.accounts.to_associated_token_account.key()
+        &ctx.accounts.recipient_token_account.key()
     );
-    token::transfer(
+
+    // Invoke the transfer instruction on the token program
+    transfer(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
-            token::Transfer {
-                from: ctx.accounts.from_associated_token_account.to_account_info(),
-                to: ctx.accounts.to_associated_token_account.to_account_info(),
-                authority: ctx.accounts.owner.to_account_info(),
+            Transfer {
+                from: ctx.accounts.sender_token_account.to_account_info(),
+                to: ctx.accounts.recipient_token_account.to_account_info(),
+                authority: ctx.accounts.sender.to_account_info(),
             },
         ),
-        quantity,
+        amount * 10u64.pow(ctx.accounts.mint_account.decimals as u32), // Transfer amount, adjust for decimals
     )?;
 
     msg!("Tokens transferred successfully.");
 
     Ok(())
-}
-
-#[derive(Accounts)]
-pub struct TransferTokens<'info> {
-    #[account(mut)]
-    pub mint_account: Account<'info, token::Mint>,
-    #[account(
-        init_if_needed,
-        payer = payer,
-        associated_token::mint = mint_account,
-        associated_token::authority = owner,
-    )]
-    pub from_associated_token_account: Account<'info, token::TokenAccount>,
-    pub owner: SystemAccount<'info>,
-    #[account(
-        init_if_needed,
-        payer = payer,
-        associated_token::mint = mint_account,
-        associated_token::authority = recipient,
-    )]
-    pub to_associated_token_account: Account<'info, token::TokenAccount>,
-    pub recipient: SystemAccount<'info>,
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub rent: Sysvar<'info, Rent>,
-    pub system_program: Program<'info, System>,
-    pub token_program: Program<'info, token::Token>,
-    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
 }

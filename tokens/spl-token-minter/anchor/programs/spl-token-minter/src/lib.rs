@@ -3,10 +3,9 @@
 use anchor_lang::prelude::*;
 
 pub mod instructions;
-
 use instructions::*;
 
-declare_id!("5BStrknWEiQWHmDGdDBaG7j9qegfN2Nq83M3hXajjgXY");
+declare_id!("77p9WmpzQW29RUEzTEef2ym7AHePBE9yNWJ9acikXfZS");
 
 #[program]
 pub mod spl_token_minter {
@@ -14,14 +13,14 @@ pub mod spl_token_minter {
 
     pub fn create_token(
         ctx: Context<CreateToken>,
-        token_title: String,
+        token_name: String,
         token_symbol: String,
         token_uri: String,
     ) -> Result<()> {
-        create::create_token(ctx, token_title, token_symbol, token_uri)
+        create::create_token(ctx, token_name, token_symbol, token_uri)
     }
 
-    pub fn mint_to(ctx: Context<MintTo>, quantity: u64) -> Result<()> {
-        mint::mint_to(ctx, quantity)
+    pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+        mint::mint_token(ctx, amount)
     }
 }

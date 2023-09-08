@@ -1,14 +1,29 @@
 [features]
 seeds = false
-[programs.devnet]
-nft_minter = "DU92SqPvfiDVicA4ah3E9wP9Ci7ASog1VmJhZrYU3Hyk"
+skip-lint = false
+
+[programs.localnet]
+token_minter = "A5gNtapBvMLD6i7D2t3SSyJeFtBdfb6ibvZu1hoBLzCo"
 
 [registry]
-url = "https://anchor.projectserum.com"
+url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+
+[test.validator]
+bind_address = "0.0.0.0"
+url = "https://api.mainnet-beta.solana.com"
+ledger = ".anchor/test-ledger"
+rpc_port = 8899
+
+[[test.validator.clone]]
+address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"

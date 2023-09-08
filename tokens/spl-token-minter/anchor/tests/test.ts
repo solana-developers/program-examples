@@ -1,81 +1,92 @@
-import { 
-  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
-} from '@metaplex-foundation/mpl-token-metadata';
-import * as anchor from "@project-serum/anchor";
-import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import * as anchor from "@coral-xyz/anchor";
 import { SplTokenMinter } from "../target/types/spl_token_minter";
-
+import {
+  PublicKey,
+  Keypair,
+  SYSVAR_RENT_PUBKEY,
+  SystemProgram,
+} from "@solana/web3.js";
+import {
+  getAssociatedTokenAddressSync,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 
 describe("SPL Token Minter", () => {
-  
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.SplTokenMinter as anchor.Program<SplTokenMinter>;
+  const program = anchor.workspace
+    .SplTokenMinter as anchor.Program<SplTokenMinter>;
 
-  const tokenTitle = "Solana Gold";
-  const tokenSymbol = "GOLDSOL";
-  const tokenUri = "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json";
+  const metadata = {
+    name: "Solana Gold",
+    symbol: "GOLDSOL",
+    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+  };
 
-  const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  
+  // Generate new keypair to use as address for mint account.
+  const mintKeypair = new Keypair();
+
   it("Create an SPL Token!", async () => {
-
-    const metadataAddress = (await anchor.web3.PublicKey.findProgramAddress(
+    // Derive the metadata account address.
+    const [metadataAddress] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("metadata"),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
         mintKeypair.publicKey.toBuffer(),
       ],
       TOKEN_METADATA_PROGRAM_ID
-    ))[0];
+    );
 
-    const sx = await program.methods.createToken(
-      tokenTitle, tokenSymbol, tokenUri
-    )
+    const transactionSignature = await program.methods
+      .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
-        metadataAccount: metadataAddress,
-        mintAccount: mintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
         payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        mintAccount: mintKeypair.publicKey,
+        metadataAccount: metadataAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
         tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
       })
-      .signers([mintKeypair, payer.payer])
+      .signers([mintKeypair])
       .rpc();
 
     console.log("Success!");
-        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
+    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+    console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
   it("Mint some tokens to your wallet!", async () => {
+    // Derive the associated token address account for the mint and payer.
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
+      mintKeypair.publicKey,
+      payer.publicKey
+    );
 
-    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: mintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
+    // Amount of tokens to mint.
+    const amount = new anchor.BN(100);
 
-    const sx = await program.methods.mintTo(
-      new anchor.BN(150)
-    )
+    // Mint the tokens to the associated token account.
+    const transactionSignature = await program.methods
+      .mintToken(amount)
       .accounts({
-        associatedTokenAccount: associatedTokenAccountAddress,
-        mintAccount: mintKeypair.publicKey,
         mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+        recepient: payer.publicKey,
+        mintAccount: mintKeypair.publicKey,
+        associatedTokenAccount: associatedTokenAccountAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
       })
-      .signers([payer.payer])
       .rpc();
 
     console.log("Success!");
-        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
+    console.log(
+      `   Associated Token Account Address: ${associatedTokenAccountAddress}`
+    );
+    console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });
