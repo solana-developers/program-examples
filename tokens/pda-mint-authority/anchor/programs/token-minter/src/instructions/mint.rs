@@ -9,16 +9,23 @@ use {
 #[derive(Accounts)]
 pub struct MintToken<'info> {
     #[account(mut)]
-    pub mint_authority: Signer<'info>,
+    pub payer: Signer<'info>,
 
-    pub recepient: SystemAccount<'info>,
-    #[account(mut)]
+    // Mint account address is a PDA
+    #[account(
+        mut,
+        seeds = [b"mint"],
+        bump
+    )]
     pub mint_account: Account<'info, Mint>,
+
+    // Create Associated Token Account, if needed
+    // This is the account that will hold the minted tokens
     #[account(
         init_if_needed,
-        payer = mint_authority,
+        payer = payer,
         associated_token::mint = mint_account,
-        associated_token::authority = recepient,
+        associated_token::authority = payer,
     )]
     pub associated_token_account: Account<'info, TokenAccount>,
 
@@ -28,12 +35,15 @@ pub struct MintToken<'info> {
 }
 
 pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
-    msg!("Minting tokens to associated token account...");
+    msg!("Minting token to associated token account...");
     msg!("Mint: {}", &ctx.accounts.mint_account.key());
     msg!(
         "Token Address: {}",
         &ctx.accounts.associated_token_account.key()
     );
+
+    // PDA signer seeds
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[*ctx.bumps.get("mint_account").unwrap()]]];
 
     // Invoke the mint_to instruction on the token program
     mint_to(
@@ -42,9 +52,10 @@ pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
             MintTo {
                 mint: ctx.accounts.mint_account.to_account_info(),
                 to: ctx.accounts.associated_token_account.to_account_info(),
-                authority: ctx.accounts.mint_authority.to_account_info(),
+                authority: ctx.accounts.mint_account.to_account_info(), // PDA mint authority, required as signer
             },
-        ),
+        )
+        .with_signer(signer_seeds), // using PDA to sign
         amount * 10u64.pow(ctx.accounts.mint_account.decimals as u32), // Mint tokens, adjust for decimals
     )?;
 

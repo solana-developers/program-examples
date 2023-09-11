@@ -1,245 +1,121 @@
-import { 
-  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
-} from '@metaplex-foundation/mpl-token-metadata';
-import * as anchor from "@project-serum/anchor";
-import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import * as anchor from "@coral-xyz/anchor";
 import { TransferTokens } from "../target/types/transfer_tokens";
-
+import {
+  PublicKey,
+  Keypair,
+  SYSVAR_RENT_PUBKEY,
+  SystemProgram,
+} from "@solana/web3.js";
+import {
+  getAssociatedTokenAddressSync,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 
 describe("Transfer Tokens", () => {
-  
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.TransferTokens as anchor.Program<TransferTokens>;
+  const program = anchor.workspace
+    .TransferTokens as anchor.Program<TransferTokens>;
 
-  const tokenMintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  const nftMintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  
-  const recipientWallet: anchor.web3.Keypair = anchor.web3.Keypair.generate();
+  const metadata = {
+    name: "Solana Gold",
+    symbol: "GOLDSOL",
+    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+  };
+
+  // Generate new keypair to use as address for mint account.
+  const mintKeypair = new Keypair();
+
+  // Generate new keypair to use as address for recipient wallet.
+  const recipient = new Keypair();
+
+  // Derive the associated token address account for the mint and payer.
+  const senderTokenAddress = getAssociatedTokenAddressSync(
+    mintKeypair.publicKey,
+    payer.publicKey
+  );
+
+  // Derive the associated token address account for the mint and recipient.
+  const recepientTokenAddress = getAssociatedTokenAddressSync(
+    mintKeypair.publicKey,
+    recipient.publicKey
+  );
 
   it("Create an SPL Token!", async () => {
-
-    const metadataAddress = anchor.web3.PublicKey.findProgramAddressSync(
+    // Derive the metadata account address.
+    const [metadataAddress] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("metadata"),
         TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        tokenMintKeypair.publicKey.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
       ],
       TOKEN_METADATA_PROGRAM_ID
-    )[0];
-
-    const sx = await program.methods.createToken(
-      "Solana Gold",
-      "GOLDSOL",
-      "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
-      9,
-    )
-      .accounts({
-        metadataAccount: metadataAddress,
-        mintAccount: tokenMintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-      })
-      .signers([tokenMintKeypair, payer.payer])
-      .rpc();
-
-    console.log("Success!");
-        console.log(`   Mint Address: ${tokenMintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
-  });
-
-  it("Create an NFT!", async () => {
-
-    const metadataAddress = anchor.web3.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        nftMintKeypair.publicKey.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID
-    )[0];
-
-    const sx = await program.methods.createToken(
-      "Homer NFT",
-      "HOMR",
-      "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
-      0,
-    )
-      .accounts({
-        metadataAccount: metadataAddress,
-        mintAccount: nftMintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-      })
-      .signers([nftMintKeypair, payer.payer])
-      .rpc();
-
-    console.log("Success!");
-        console.log(`   Mint Address: ${nftMintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
-  });
-
-  it("Mint some tokens to your wallet!", async () => {
-
-    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: tokenMintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
-
-    const sx = await program.methods.mintSpl(
-      new anchor.BN(150)
-    )
-      .accounts({
-        associatedTokenAccount: associatedTokenAccountAddress,
-        mintAccount: tokenMintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
-      })
-      .signers([payer.payer])
-      .rpc();
-
-    console.log("Success!");
-        console.log(`   Mint Address: ${tokenMintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
-  });
-
-  it("Mint the NFT to your wallet!", async () => {
-
-    const metadataAddress = (anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("metadata"),
-          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-          nftMintKeypair.publicKey.toBuffer(),
-        ],
-        TOKEN_METADATA_PROGRAM_ID
-    ))[0];
-
-    const editionAddress = (anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("metadata"),
-          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-          nftMintKeypair.publicKey.toBuffer(),
-          Buffer.from("edition"),
-        ],
-        TOKEN_METADATA_PROGRAM_ID
-    ))[0];
-
-    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: nftMintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
-
-    const sx = await program.methods.mintNft()
-      .accounts({
-        associatedTokenAccount: associatedTokenAccountAddress,
-        editionAccount: editionAddress,
-        metadataAccount: metadataAddress,
-        mintAccount: nftMintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-      })
-      .signers([payer.payer])
-      .rpc();
-
-      console.log("Success!");
-      console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-      console.log(`   Tx Signature: ${sx}`);
-  });
-
-  it("Prep a new test wallet for transfers", async () => {
-        
-    await provider.connection.confirmTransaction(
-        await provider.connection.requestAirdrop(
-            recipientWallet.publicKey, 
-            await provider.connection.getMinimumBalanceForRentExemption(0),
-        )
     );
-    console.log(`Recipient Pubkey: ${recipientWallet.publicKey}`);
-  });
 
-  it("Transfer some tokens to another wallet!", async () => {
-
-    const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: tokenMintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
-    const toAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: tokenMintKeypair.publicKey,
-      owner: recipientWallet.publicKey,
-    });
-
-    const sx = await program.methods.transferTokens(
-      new anchor.BN(150)
-    )
+    const transactionSignature = await program.methods
+      .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
-        mintAccount: tokenMintKeypair.publicKey,
-        fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
-        owner: payer.publicKey,
-        toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
-        recipient: recipientWallet.publicKey,
         payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+        mintAccount: mintKeypair.publicKey,
+        metadataAccount: metadataAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
       })
-      .signers([payer.payer])
+      .signers([mintKeypair])
       .rpc();
 
     console.log("Success!");
-        console.log(`   Mint Address: ${tokenMintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
+    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+    console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it("Transfer the NFT to another wallet!", async () => {
+  it("Mint tokens!", async () => {
+    // Amount of tokens to mint.
+    const amount = new anchor.BN(100);
 
-    const fromAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: nftMintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
-    const toAssociatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: nftMintKeypair.publicKey,
-      owner: recipientWallet.publicKey,
-    });
-
-    const sx = await program.methods.transferTokens(
-      new anchor.BN(1)
-    )
+    // Mint the tokens to the associated token account.
+    const transactionSignature = await program.methods
+      .mintToken(amount)
       .accounts({
-        mintAccount: nftMintKeypair.publicKey,
-        fromAssociatedTokenAccount: fromAssociatedTokenAccountAddress,
-        owner: payer.publicKey,
-        toAssociatedTokenAccount: toAssociatedTokenAccountAddress,
-        recipient: recipientWallet.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+        mintAuthority: payer.publicKey,
+        recepient: payer.publicKey,
+        mintAccount: mintKeypair.publicKey,
+        associatedTokenAccount: senderTokenAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
       })
-      .signers([payer.payer])
       .rpc();
 
     console.log("Success!");
-        console.log(`   Mint Address: ${nftMintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
+    console.log(`   Associated Token Account Address: ${senderTokenAddress}`);
+    console.log(`   Transaction Signature: ${transactionSignature}`);
+  });
+
+  it("Transfer tokens!", async () => {
+    // Amount of tokens to transfer.
+    const amount = new anchor.BN(50);
+
+    const transactionSignature = await program.methods
+      .transferTokens(amount)
+      .accounts({
+        sender: payer.publicKey,
+        recipient: recipient.publicKey,
+        mintAccount: mintKeypair.publicKey,
+        senderTokenAccount: senderTokenAddress,
+        recipientTokenAccount: recepientTokenAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+
+    console.log("Success!");
+    console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });

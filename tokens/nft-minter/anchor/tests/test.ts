@@ -1,101 +1,81 @@
-import { 
-  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
-} from '@metaplex-foundation/mpl-token-metadata';
-import * as anchor from "@project-serum/anchor";
-import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import * as anchor from "@coral-xyz/anchor";
 import { NftMinter } from "../target/types/nft_minter";
-
+import {
+  Keypair,
+  PublicKey,
+  SYSVAR_RENT_PUBKEY,
+  SystemProgram,
+} from "@solana/web3.js";
+import {
+  getAssociatedTokenAddressSync,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 
 describe("NFT Minter", () => {
-  
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.NftMinter as anchor.Program<NftMinter>;
 
-  const nftTitle = "Homer NFT";
-  const nftSymbol = "HOMR";
-  const nftUri = "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json";
+  // The metadata for our NFT
+  const metadata = {
+    name: "Homer NFT",
+    symbol: "HOMR",
+    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
+  };
 
-  const mintKeypair: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-  
   it("Create an NFT!", async () => {
+    // Generate a keypair to use as the address of our mint account
+    const mintKeypair = new Keypair();
 
-    const metadataAddress = (anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("metadata"),
-          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-          mintKeypair.publicKey.toBuffer(),
-        ],
-        TOKEN_METADATA_PROGRAM_ID
-    ))[0];
+    // Derive the PDA of the metadata account for the mint.
+    const [metadataAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("metadata"),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      TOKEN_METADATA_PROGRAM_ID
+    );
 
-    const sx = await program.methods.createToken(
-      nftTitle, nftSymbol, nftUri
-    )
+    // Derive the PDA of the master edition account for the mint.
+    const [editionAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("metadata"),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+        Buffer.from("edition"),
+      ],
+      TOKEN_METADATA_PROGRAM_ID
+    );
+
+    // Derive the associated token address account for the mint and payer.
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
+      mintKeypair.publicKey,
+      payer.publicKey
+    );
+
+    const transactionSignature = await program.methods
+      .mintNft(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
-        metadataAccount: metadataAddress,
-        mintAccount: mintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
         payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        metadataAccount: metadataAddress,
+        editionAccount: editionAddress,
+        mintAccount: mintKeypair.publicKey,
+        associatedTokenAccount: associatedTokenAccountAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: SYSVAR_RENT_PUBKEY,
       })
-      .signers([mintKeypair, payer.payer])
-      .rpc();
+      .signers([mintKeypair])
+      .rpc({ skipPreflight: true });
 
     console.log("Success!");
-        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
-  });
-
-  it("Mint the NFT to your wallet!", async () => {
-
-    const metadataAddress = (anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("metadata"),
-          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-          mintKeypair.publicKey.toBuffer(),
-        ],
-        TOKEN_METADATA_PROGRAM_ID
-    ))[0];
-
-    const editionAddress = (anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from("metadata"),
-          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-          mintKeypair.publicKey.toBuffer(),
-          Buffer.from("edition"),
-        ],
-        TOKEN_METADATA_PROGRAM_ID
-    ))[0];
-
-    const associatedTokenAccountAddress = await anchor.utils.token.associatedAddress({
-      mint: mintKeypair.publicKey,
-      owner: payer.publicKey,
-    });
-
-    const sx = await program.methods.mintTo()
-      .accounts({
-        associatedTokenAccount: associatedTokenAccountAddress,
-        editionAccount: editionAddress,
-        metadataAccount: metadataAddress,
-        mintAccount: mintKeypair.publicKey,
-        mintAuthority: payer.publicKey,
-        payer: payer.publicKey,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-      })
-      .signers([payer.payer])
-      .rpc();
-
-      console.log("Success!");
-      console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-      console.log(`   Tx Signature: ${sx}`);
+    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+    console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });
