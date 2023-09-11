@@ -908,7 +908,7 @@ dependencies = [
  "anchor-lang 0.26.0",
  "mpl-bubblegum",
  "solana-program",
- "spl-account-compression",
+ "spl-account-compression 0.2.0",
 ]
 
 [[package]]
@@ -1139,7 +1139,7 @@ dependencies = [
  "getrandom 0.2.10",
  "mpl-bubblegum",
  "solana-program",
- "spl-account-compression",
+ "spl-account-compression 0.2.0",
  "toml_datetime",
  "winnow",
 ]
@@ -1669,7 +1669,7 @@ dependencies = [
  "bytemuck",
  "mpl-token-metadata",
  "solana-program",
- "spl-account-compression",
+ "spl-account-compression 0.1.10",
  "spl-associated-token-account 1.1.3",
  "spl-token 3.5.0",
 ]
@@ -2815,8 +2815,20 @@ checksum = "f7a5417eae3c924553b872de5f1bca5945334a235f8d94841bd44c6dd7c6358c"
 dependencies = [
  "anchor-lang 0.26.0",
  "bytemuck",
- "spl-concurrent-merkle-tree",
- "spl-noop",
+ "spl-concurrent-merkle-tree 0.1.3",
+ "spl-noop 0.1.3",
+]
+
+[[package]]
+name = "spl-account-compression"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df052fd79e45c75c84ef20f5f2dcf037aeed230d0f2400bf68fa388cc0ece240"
+dependencies = [
+ "anchor-lang 0.28.0",
+ "bytemuck",
+ "spl-concurrent-merkle-tree 0.2.0",
+ "spl-noop 0.2.0",
 ]
 
 [[package]]
@@ -2856,6 +2868,17 @@ name = "spl-concurrent-merkle-tree"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26dd605d33bdc8d2522a9f55207c3eac06737b2e8310f602e252b510e3db1210"
+dependencies = [
+ "bytemuck",
+ "solana-program",
+ "thiserror",
+]
+
+[[package]]
+name = "spl-concurrent-merkle-tree"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "141eaea58588beae81b71d101373a53f096737739873de42d6b1368bc2b8fc30"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2920,6 +2943,15 @@ name = "spl-noop"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "558536c75b5aed018113bfca39cddb414cd7ca77da7658d668e751d977830cda"
+dependencies = [
+ "solana-program",
+]
+
+[[package]]
+name = "spl-noop"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dd67ea3d0070a12ff141f5da46f9695f49384a03bce1203a5608f5739437950"
 dependencies = [
  "solana-program",
 ]
