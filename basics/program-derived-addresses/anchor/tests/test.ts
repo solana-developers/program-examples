@@ -1,12 +1,12 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from "@coral-xyz/anchor";
 import { AnchorProgramExample } from "../target/types/anchor_program_example";
 
 describe("PDAs", () => {
-
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.AnchorProgramExample as anchor.Program<AnchorProgramExample>;
+  const program = anchor.workspace
+    .AnchorProgramExample as anchor.Program<AnchorProgramExample>;
 
   let testUser = anchor.web3.Keypair.generate();
 
@@ -30,12 +30,13 @@ describe("PDAs", () => {
   function derivePageVisitsPda(userPubkey: anchor.web3.PublicKey) {
     return anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from("page_visits"), userPubkey.toBuffer()],
-      program.programId,
-    )[0]
+      program.programId
+    )[0];
   }
 
   it("Create the page visits tracking PDA", async () => {
-    await program.methods.createPageVisits()
+    await program.methods
+      .createPageVisits()
       .accounts({
         pageVisits: derivePageVisitsPda(testUser.publicKey),
         user: testUser.publicKey,
@@ -47,7 +48,8 @@ describe("PDAs", () => {
   });
 
   it("Visit the page!", async () => {
-    await program.methods.incrementPageVisits()
+    await program.methods
+      .incrementPageVisits()
       .accounts({
         pageVisits: derivePageVisitsPda(testUser.publicKey),
         user: testUser.publicKey,
@@ -58,7 +60,8 @@ describe("PDAs", () => {
   });
 
   it("Visit the page!", async () => {
-    await program.methods.incrementPageVisits()
+    await program.methods
+      .incrementPageVisits()
       .accounts({
         pageVisits: derivePageVisitsPda(testUser.publicKey),
         user: testUser.publicKey,
