@@ -1,24 +1,20 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from "@coral-xyz/anchor";
 import { AnchorProgramExample } from "../target/types/anchor_program_example";
 
 describe("Account Data!", () => {
-
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.AnchorProgramExample as anchor.Program<AnchorProgramExample>;
+  const program = anchor.workspace
+    .AnchorProgramExample as anchor.Program<AnchorProgramExample>;
 
   const addressInfoAccount = anchor.web3.Keypair.generate();
 
   it("Create the address info account", async () => {
     console.log(`Payer Address      : ${payer.publicKey}`);
     console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
-    await program.methods.createAddressInfo(
-      "Joe C",
-      136,
-      "Mile High Dr.",
-      "Solana Beach",
-    )
+    await program.methods
+      .createAddressInfo("Joe C", 136, "Mile High Dr.", "Solana Beach")
       .accounts({
         addressInfo: addressInfoAccount.publicKey,
         payer: payer.publicKey,
