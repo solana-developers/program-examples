@@ -24,7 +24,7 @@ pub struct CreateToken<'info> {
         mint::decimals = 9,
         mint::authority = mint_account.key(),
         mint::freeze_authority = mint_account.key(),
-        
+
     )]
     pub mint_account: Account<'info, Mint>,
 

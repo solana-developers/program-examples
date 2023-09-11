@@ -18,7 +18,7 @@ pub struct CreateToken<'info> {
         mint::decimals = 9,
         mint::authority = payer.key(),
         mint::freeze_authority = payer.key(),
-        
+
     )]
     pub mint_account: Account<'info, Mint>,
 
@@ -51,7 +51,7 @@ pub fn create_token(
             CreateMetadataAccountsV3 {
                 metadata: ctx.accounts.metadata_account.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),
-                mint_authority: ctx.accounts.payer.to_account_info(), 
+                mint_authority: ctx.accounts.payer.to_account_info(),
                 update_authority: ctx.accounts.payer.to_account_info(),
                 payer: ctx.accounts.payer.to_account_info(),
                 system_program: ctx.accounts.system_program.to_account_info(),
