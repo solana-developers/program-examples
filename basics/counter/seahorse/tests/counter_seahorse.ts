@@ -1,10 +1,6 @@
-import * as anchor from "@project-serum/anchor";
-import { Program } from "@project-serum/anchor";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram
-} from '@solana/web3.js';
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import { assert } from "chai";
 import { CounterSeahorse } from "../target/types/counter_seahorse";
 
@@ -33,11 +29,13 @@ describe("counter_seahorse", () => {
     await program.methods
       .increment()
       .accounts({
-        counter
+        counter,
       })
       .rpc();
 
-    const count = (await program.account.counter.fetch(counter)).count.toNumber();
+    const count = (
+      await program.account.counter.fetch(counter)
+    ).count.toNumber();
     assert(count === 1, "Expected count to be 1");
   });
 });

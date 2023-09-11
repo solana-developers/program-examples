@@ -1,11 +1,15 @@
-import * as anchor from "@project-serum/anchor";
+import * as anchor from "@coral-xyz/anchor";
 import { CnftVault } from "../../target/types/cnft_vault";
 import { loadWalletKey } from "../utils";
-import { IDL } from "../../target/types/cnft_vault"
+import { IDL } from "../../target/types/cnft_vault";
 
-export const connection = new anchor.web3.Connection("https://api.devnet.solana.com");
+export const connection = new anchor.web3.Connection(
+  "https://api.devnet.solana.com"
+);
 export const keypair = loadWalletKey("~/.config/solana/id.json");
 export const wallet = new anchor.Wallet(keypair);
 export const provider = new anchor.AnchorProvider(connection, wallet, {});
-export const programID = new anchor.web3.PublicKey("CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk")
+export const programID = new anchor.web3.PublicKey(
+  "CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk"
+);
 export const program = new anchor.Program<CnftVault>(IDL, programID, provider);
