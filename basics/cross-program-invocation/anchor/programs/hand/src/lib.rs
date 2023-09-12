@@ -5,7 +5,7 @@ use lever::cpi::accounts::SetPowerStatus;
 use lever::program::Lever;
 use lever::{self, PowerStatus};
 
-declare_id!("ABoYG2GWbzLgnnGhK2pUGNupzKoYe7UGk2idrAXbstAS");
+declare_id!("EJfTLXDCJTVwBgGpz9X2Me4CWHbvg8F8zsM7fiVJLLeR");
 
 #[program]
 mod hand {

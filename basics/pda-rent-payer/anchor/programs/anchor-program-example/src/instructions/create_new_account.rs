@@ -1,40 +1,42 @@
 use anchor_lang::prelude::*;
-
-use crate::state::RentVault;
-
-pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
-    // Assuming this account has no inner data (size 0)
-    //
-    let lamports_required_for_rent = (Rent::get()?).minimum_balance(0);
-
-    **ctx
-        .accounts
-        .rent_vault
-        .to_account_info()
-        .lamports
-        .borrow_mut() -= lamports_required_for_rent;
-    **ctx
-        .accounts
-        .new_account
-        .to_account_info()
-        .lamports
-        .borrow_mut() += lamports_required_for_rent;
-
-    Ok(())
-}
+use anchor_lang::system_program::{create_account, CreateAccount};
 
 #[derive(Accounts)]
 pub struct CreateNewAccount<'info> {
-    /// CHECK: Unchecked
     #[account(mut)]
-    new_account: SystemAccount<'info>,
+    new_account: Signer<'info>,
+
     #[account(
         mut,
         seeds = [
-            RentVault::SEED_PREFIX.as_bytes(),
+            b"rent_vault",
         ],
-        bump = rent_vault.bump,
+        bump,
     )]
-    rent_vault: Account<'info, RentVault>,
+    rent_vault: SystemAccount<'info>,
     system_program: Program<'info, System>,
+}
+
+pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
+    // PDA signer seeds
+    let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[*ctx.bumps.get("rent_vault").unwrap()]]];
+
+    // The minimum lamports for rent exemption
+    let lamports = (Rent::get()?).minimum_balance(0);
+
+    // Create the new account using the PDA signer seeds
+    create_account(
+        CpiContext::new(
+            ctx.accounts.system_program.to_account_info(),
+            CreateAccount {
+                from: ctx.accounts.rent_vault.to_account_info(), // From pubkey
+                to: ctx.accounts.new_account.to_account_info(),  // To pubkey
+            },
+        )
+        .with_signer(signer_seeds),
+        lamports,                           // Lamports
+        0,                                  // Space
+        &ctx.accounts.system_program.key(), // Owner Program
+    )?;
+    Ok(())
 }

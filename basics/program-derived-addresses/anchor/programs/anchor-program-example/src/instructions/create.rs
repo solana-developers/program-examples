@@ -1,32 +1,30 @@
-use anchor_lang::prelude::*;
-
 use crate::state::PageVisits;
-
-pub fn create_page_visits(ctx: Context<CreatePageVisits>) -> Result<()> {
-    ctx.accounts.page_visits.set_inner(PageVisits::new(
-        0,
-        *ctx.bumps
-            .get(PageVisits::SEED_PREFIX)
-            .expect("Bump not found."),
-    ));
-    Ok(())
-}
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct CreatePageVisits<'info> {
+    #[account(mut)]
+    payer: Signer<'info>,
+
     #[account(
         init,
-        space = PageVisits::ACCOUNT_SPACE,
+        space = 8 + PageVisits::INIT_SPACE,
         payer = payer,
         seeds = [
-            PageVisits::SEED_PREFIX.as_bytes(),
-            user.key().as_ref(),
+            PageVisits::SEED_PREFIX,
+            payer.key().as_ref(),
         ],
         bump,
     )]
     page_visits: Account<'info, PageVisits>,
-    user: SystemAccount<'info>,
-    #[account(mut)]
-    payer: Signer<'info>,
     system_program: Program<'info, System>,
+}
+
+pub fn create_page_visits(ctx: Context<CreatePageVisits>) -> Result<()> {
+    *ctx.accounts.page_visits = PageVisits {
+        page_visits: 0,
+        bump: *ctx.bumps.get("page_visits").unwrap(),
+    };
+
+    Ok(())
 }

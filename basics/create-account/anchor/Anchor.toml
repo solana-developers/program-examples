@@ -1,13 +1,15 @@
 [features]
 seeds = false
+skip-lint = false
+
 [programs.localnet]
-create_system_account = "6gUwvaZPvC8ZxKuC1h5aKz4mRd7pFyEfUZckiEsBZSbk"
+create_system_account = "ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi"
 
 [registry]
-url = "https://anchor.projectserum.com"
+url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

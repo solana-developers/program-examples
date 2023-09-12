@@ -24,21 +24,13 @@ pub mod transfer_sol {
         Ok(())
     }
 
+    // Directly modifying lamports is only possible if the program is the owner of the account
     pub fn transfer_sol_with_program(
         ctx: Context<TransferSolWithProgram>,
         amount: u64,
     ) -> Result<()> {
-        **ctx
-            .accounts
-            .payer
-            .to_account_info()
-            .try_borrow_mut_lamports()? -= amount;
-        **ctx
-            .accounts
-            .recipient
-            .to_account_info()
-            .try_borrow_mut_lamports()? += amount;
-
+        **ctx.accounts.payer.try_borrow_mut_lamports()? -= amount;
+        **ctx.accounts.recipient.try_borrow_mut_lamports()? += amount;
         Ok(())
     }
 }
@@ -46,19 +38,21 @@ pub mod transfer_sol {
 #[derive(Accounts)]
 pub struct TransferSolWithCpi<'info> {
     #[account(mut)]
-    recipient: SystemAccount<'info>,
-    #[account(mut)]
     payer: Signer<'info>,
+    #[account(mut)]
+    recipient: SystemAccount<'info>,
     system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct TransferSolWithProgram<'info> {
-    /// CHECK: This is just an example, not checking data
-    #[account(mut)]
-    recipient: UncheckedAccount<'info>,
-    /// CHECK: This is just an example, not checking data
-    #[account(mut)]
+    /// CHECK: Use owner constraint to check account is owned by the program
+    #[account(
+        mut,  
+        owner = id()
+    )]
     payer: UncheckedAccount<'info>,
+    #[account(mut)]
+    recipient: SystemAccount<'info>,
     system_program: Program<'info, System>,
 }

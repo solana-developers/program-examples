@@ -1,11 +1,9 @@
 #![allow(clippy::result_large_err)]
 
 use anchor_lang::prelude::*;
-use anchor_lang::system_program;
+use anchor_lang::system_program::{create_account, CreateAccount};
 
-declare_id!("6gUwvaZPvC8ZxKuC1h5aKz4mRd7pFyEfUZckiEsBZSbk");
-
-const LAMPORTS_PER_SOL: u64 = 1000000000;
+declare_id!("ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi");
 
 #[program]
 pub mod create_system_account {
@@ -18,17 +16,20 @@ pub mod create_system_account {
             &ctx.accounts.new_account.key().to_string()
         );
 
-        system_program::create_account(
+        // The minimum lamports for rent exemption
+        let lamports = (Rent::get()?).minimum_balance(0);
+
+        create_account(
             CpiContext::new(
                 ctx.accounts.system_program.to_account_info(),
-                system_program::CreateAccount {
+                CreateAccount {
                     from: ctx.accounts.payer.to_account_info(), // From pubkey
                     to: ctx.accounts.new_account.to_account_info(), // To pubkey
                 },
             ),
-            LAMPORTS_PER_SOL,                   // Lamports (1 SOL)
+            lamports,                           // Lamports
             0,                                  // Space
-            &ctx.accounts.system_program.key(), // Owner
+            &ctx.accounts.system_program.key(), // Owner Program
         )?;
 
         msg!("Account created succesfully.");

@@ -1,14 +1,15 @@
 [features]
 seeds = false
 skip-lint = false
+
 [programs.localnet]
-close_account_program = "9SWqhEABWnKXTPvSLc4aQAJyESVxtRvYBvwF2WuBy7jf"
+close_account_program = "99TQtoDdQ5NS2v5Ppha93aqEmv3vV9VZVfHTP5rGST3c"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

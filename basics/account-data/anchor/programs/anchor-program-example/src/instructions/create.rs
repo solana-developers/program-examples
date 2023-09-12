@@ -1,9 +1,20 @@
-use anchor_lang::prelude::*;
-use anchor_lang::system_program;
-
 use crate::state::AddressInfo;
+use anchor_lang::prelude::*;
 
-#[allow(clippy::result_large_err)]
+#[derive(Accounts)]
+pub struct CreateAddressInfo<'info> {
+    #[account(mut)]
+    payer: Signer<'info>,
+
+    #[account(
+        init,
+        payer = payer,
+        space = 8 + AddressInfo::INIT_SPACE,
+    )]
+    address_info: Account<'info, AddressInfo>,
+    system_program: Program<'info, System>,
+}
+
 pub fn create_address_info(
     ctx: Context<CreateAddressInfo>,
     name: String,
@@ -11,34 +22,11 @@ pub fn create_address_info(
     street: String,
     city: String,
 ) -> Result<()> {
-    let address_info = AddressInfo::new(name, house_number, street, city);
-
-    let account_span = (address_info.try_to_vec()?).len();
-    let lamports_required = (Rent::get()?).minimum_balance(account_span);
-
-    system_program::create_account(
-        CpiContext::new(
-            ctx.accounts.system_program.to_account_info(),
-            system_program::CreateAccount {
-                from: ctx.accounts.payer.to_account_info(),
-                to: ctx.accounts.address_info.to_account_info(),
-            },
-        ),
-        lamports_required,
-        account_span as u64,
-        &ctx.accounts.system_program.key(),
-    )?;
-
-    let address_info_account = &mut ctx.accounts.address_info;
-    address_info_account.set_inner(address_info);
+    *ctx.accounts.address_info = AddressInfo {
+        name,
+        house_number,
+        street,
+        city,
+    };
     Ok(())
-}
-
-#[derive(Accounts)]
-pub struct CreateAddressInfo<'info> {
-    #[account(mut)]
-    address_info: Account<'info, AddressInfo>,
-    #[account(mut)]
-    payer: Signer<'info>,
-    system_program: Program<'info, System>,
 }
