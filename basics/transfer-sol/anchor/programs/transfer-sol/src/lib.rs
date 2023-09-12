@@ -48,7 +48,7 @@ pub struct TransferSolWithCpi<'info> {
 pub struct TransferSolWithProgram<'info> {
     /// CHECK: Use owner constraint to check account is owned by the program
     #[account(
-        mut,  
+        mut,
         owner = id()
     )]
     payer: UncheckedAccount<'info>,

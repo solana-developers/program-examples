@@ -22,10 +22,10 @@ pub mod counter_anchor {
 pub struct InitializeCounter<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-    
+
     #[account(
-        init, 
-        space = 8 + Counter::INIT_SPACE, 
+        init,
+        space = 8 + Counter::INIT_SPACE,
         payer = payer
     )]
     pub counter: Account<'info, Counter>,
