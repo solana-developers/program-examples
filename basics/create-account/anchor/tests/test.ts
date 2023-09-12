@@ -20,7 +20,6 @@ describe("Create a system account", () => {
       .accounts({
         payer: wallet.publicKey,
         newAccount: newKeypair.publicKey,
-        systemProgram: SystemProgram.programId,
       })
       .signers([newKeypair])
       .rpc()

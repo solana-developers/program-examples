@@ -21,11 +21,10 @@ pub struct CreateUserContext<'info> {
 }
 
 pub fn create_user(ctx: Context<CreateUserContext>, name: String) -> Result<()> {
-    let user_account = &mut ctx.accounts.user_account;
-
-    user_account.bump = *ctx.bumps.get("user_account").unwrap();
-    user_account.user = ctx.accounts.user.key();
-    user_account.name = name;
-
+    *ctx.accounts.user_account = UserState {
+        bump: *ctx.bumps.get("user_account").unwrap(),
+        user: ctx.accounts.user.key(),
+        name,
+    };
     Ok(())
 }

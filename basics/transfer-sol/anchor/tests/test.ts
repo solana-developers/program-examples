@@ -14,6 +14,7 @@ describe("transfer-sol", () => {
   const payer = provider.wallet as anchor.Wallet
   const program = anchor.workspace.TransferSol as anchor.Program<TransferSol>
 
+  // 1 SOL
   const transferAmount = 1 * LAMPORTS_PER_SOL
 
   // Generate a new keypair for the recipient

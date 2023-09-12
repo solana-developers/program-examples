@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 import { AnchorProgramExample } from "../target/types/anchor_program_example"
-import { Keypair, SystemProgram } from "@solana/web3.js"
+import { Keypair } from "@solana/web3.js"
 
 describe("Account Data!", () => {
   const provider = anchor.AnchorProvider.env()
@@ -34,7 +34,6 @@ describe("Account Data!", () => {
       .accounts({
         addressInfo: addressInfoAccount.publicKey,
         payer: payer.publicKey,
-        systemProgram: SystemProgram.programId,
       })
       .signers([addressInfoAccount])
       .rpc()

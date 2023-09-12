@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor"
 import { PdaRentPayer } from "../target/types/pda_rent_payer"
-import { LAMPORTS_PER_SOL, Keypair } from "@solana/web3.js"
+import { LAMPORTS_PER_SOL, PublicKey, Keypair } from "@solana/web3.js"
 import { assert } from "chai"
 
 describe("PDA Rent-Payer", () => {
@@ -11,7 +11,7 @@ describe("PDA Rent-Payer", () => {
   const program = anchor.workspace.PdaRentPayer as anchor.Program<PdaRentPayer>
 
   // PDA for the Rent Vault
-  const [rentVaultPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+  const [rentVaultPDA] = PublicKey.findProgramAddressSync(
     [Buffer.from("rent_vault")],
     program.programId
   )

@@ -46,13 +46,12 @@ pub struct TransferSolWithCpi<'info> {
 
 #[derive(Accounts)]
 pub struct TransferSolWithProgram<'info> {
-    /// CHECK: Use owner constraint to check account is owned by the program
+    /// CHECK: Use owner constraint to check account is owned by our program
     #[account(
         mut,
-        owner = id()
+        owner = id() // value of declare_id!()
     )]
     payer: UncheckedAccount<'info>,
     #[account(mut)]
     recipient: SystemAccount<'info>,
-    system_program: Program<'info, System>,
 }

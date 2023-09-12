@@ -24,7 +24,7 @@ pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
     // The minimum lamports for rent exemption
     let lamports = (Rent::get()?).minimum_balance(0);
 
-    // Create the new account using the PDA signer seeds
+    // Create the new account, transferring lamports from the rent vault to the new account
     create_account(
         CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
