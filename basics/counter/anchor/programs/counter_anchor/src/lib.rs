@@ -2,7 +2,7 @@
 
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("BmDHboaj1kBUoinJKKSRqKfMeRKJqQqEbUj1VgzeQe4A");
 
 #[program]
 pub mod counter_anchor {
@@ -13,22 +13,22 @@ pub mod counter_anchor {
     }
 
     pub fn increment(ctx: Context<Increment>) -> Result<()> {
-        ctx.accounts.counter.count += 1;
+        ctx.accounts.counter.count = ctx.accounts.counter.count.checked_add(1).unwrap();
         Ok(())
     }
 }
 
-#[account]
-pub struct Counter {
-    count: u64,
-}
-
 #[derive(Accounts)]
 pub struct InitializeCounter<'info> {
-    #[account(init, space=8+8, payer=payer)]
-    pub counter: Account<'info, Counter>,
     #[account(mut)]
     pub payer: Signer<'info>,
+
+    #[account(
+        init,
+        space = 8 + Counter::INIT_SPACE,
+        payer = payer
+    )]
+    pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,
 }
 
@@ -36,4 +36,10 @@ pub struct InitializeCounter<'info> {
 pub struct Increment<'info> {
     #[account(mut)]
     pub counter: Account<'info, Counter>,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Counter {
+    count: u64,
 }

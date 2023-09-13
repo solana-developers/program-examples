@@ -1,14 +1,16 @@
 [features]
 seeds = false
+skip-lint = false
+
 [programs.localnet]
-hand = "ABoYG2GWbzLgnnGhK2pUGNupzKoYe7UGk2idrAXbstAS"
-lever = "EnjN3cm7xYqYHNUZbQfhJYj5S5RBrSU9tc5aHwQ6LqvT"
+hand = "EJfTLXDCJTVwBgGpz9X2Me4CWHbvg8F8zsM7fiVJLLeR"
+lever = "CABVoybzrbAJSv7QhQd6GXNGKxDMRjw9niqFzizhk6uk"
 
 [registry]
-url = "https://anchor.projectserum.com"
+url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

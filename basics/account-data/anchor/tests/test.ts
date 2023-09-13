@@ -1,36 +1,51 @@
-import * as anchor from "@coral-xyz/anchor";
-import { AnchorProgramExample } from "../target/types/anchor_program_example";
+import * as anchor from "@coral-xyz/anchor"
+import { AnchorProgramExample } from "../target/types/anchor_program_example"
+import { Keypair } from "@solana/web3.js"
 
 describe("Account Data!", () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
-  const payer = provider.wallet as anchor.Wallet;
+  const provider = anchor.AnchorProvider.env()
+  anchor.setProvider(provider)
+  const payer = provider.wallet as anchor.Wallet
   const program = anchor.workspace
-    .AnchorProgramExample as anchor.Program<AnchorProgramExample>;
+    .AnchorProgramExample as anchor.Program<AnchorProgramExample>
 
-  const addressInfoAccount = anchor.web3.Keypair.generate();
+  // Generate a new keypair for the addressInfo account
+  const addressInfoAccount = new Keypair()
 
   it("Create the address info account", async () => {
-    console.log(`Payer Address      : ${payer.publicKey}`);
-    console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
+    console.log(`Payer Address      : ${payer.publicKey}`)
+    console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`)
+
+    // Instruction data
+    const addressInfo = {
+      name: "Joe C",
+      houseNumber: 136,
+      street: "Mile High Dr.",
+      city: "Solana Beach",
+    }
+
     await program.methods
-      .createAddressInfo("Joe C", 136, "Mile High Dr.", "Solana Beach")
+      .createAddressInfo(
+        addressInfo.name,
+        addressInfo.houseNumber,
+        addressInfo.street,
+        addressInfo.city
+      )
       .accounts({
         addressInfo: addressInfoAccount.publicKey,
         payer: payer.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([payer.payer])
-      .rpc();
-  });
+      .signers([addressInfoAccount])
+      .rpc()
+  })
 
   it("Read the new account's data", async () => {
     const addressInfo = await program.account.addressInfo.fetch(
       addressInfoAccount.publicKey
-    );
-    console.log(`Name     : ${addressInfo.name}`);
-    console.log(`House Num: ${addressInfo.houseNumber}`);
-    console.log(`Street   : ${addressInfo.street}`);
-    console.log(`City     : ${addressInfo.city}`);
-  });
-});
+    )
+    console.log(`Name     : ${addressInfo.name}`)
+    console.log(`House Num: ${addressInfo.houseNumber}`)
+    console.log(`Street   : ${addressInfo.street}`)
+    console.log(`City     : ${addressInfo.city}`)
+  })
+})

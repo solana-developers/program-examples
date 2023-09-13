@@ -1,29 +1,23 @@
-use anchor_lang::prelude::*;
-use anchor_lang::AccountsClose;
-
 use crate::state::*;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct CloseUserContext<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
     #[account(
         mut,
         seeds = [
-            User::PREFIX.as_bytes(),
+            b"USER",
             user.key().as_ref(),
         ],
-        has_one = user,
-        bump = user_account.bump
+        bump = user_account.bump,
+        close = user, // close account and return lamports to user
     )]
-    pub user_account: Account<'info, User>,
-    #[account(mut)]
-    pub user: Signer<'info>,
-    pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
+    pub user_account: Account<'info, UserState>,
 }
 
-pub fn close_user(ctx: Context<CloseUserContext>) -> Result<()> {
-    let user = &mut ctx.accounts.user;
-    let user_account = &mut ctx.accounts.user_account;
-    user_account.close(user.to_account_info())?;
+pub fn close_user(_ctx: Context<CloseUserContext>) -> Result<()> {
     Ok(())
 }

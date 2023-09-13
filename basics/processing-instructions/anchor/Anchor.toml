@@ -4,7 +4,7 @@ seeds = false
 processing_instructions = "DgoL5J44aspizyUs9fcnpGEUJjWTLJRCfx8eYtUMYczf"
 
 [registry]
-url = "https://anchor.projectserum.com"
+url = "https://api.apr.dev"
 
 [provider]
 cluster = "localnet"

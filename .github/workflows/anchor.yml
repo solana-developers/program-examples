@@ -30,6 +30,7 @@ jobs:
             "basics/pda-rent-payer/anchor"
             "basics/processing-instructions/anchor"
             "basics/program-derived-addresses/anchor"
+            "basics/realloc/anchor"
             "basics/rent/anchor"
             "basics/repository-layout/anchor"
             "basics/transfer-sol/anchor"
