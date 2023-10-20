@@ -2,7 +2,7 @@
 import "solana";
 
 // Interface to the lever program.
-leverInterface constant leverProgram = leverInterface(address'4wFN9As94uDgcBK9umEi6DNjRLi8gq7jaHwSw3829xq8');
+@program_id("4wFN9As94uDgcBK9umEi6DNjRLi8gq7jaHwSw3829xq8")
 interface leverInterface {
     function switchPower(string name) external;
 }
@@ -16,17 +16,18 @@ contract hand {
     constructor() {}
 
     // "Pull the lever" by calling the switchPower instruction on the lever program via a Cross Program Invocation.
-    function pullLever(address dataAccount, string name) public {
+    @mutableAccount(leverData)
+    function pullLever(string name) external {
         // The account required by the switchPower instruction.
         // This is the data account created by the lever program (not this program), which stores the state of the switch.
         AccountMeta[1] metas = [
-            AccountMeta({pubkey: dataAccount, is_writable: true, is_signer: false})
+            AccountMeta({pubkey: tx.accounts.leverData.key, is_writable: true, is_signer: false})
         ];
 
         // The data required by the switchPower instruction.
         string instructionData = name;
 
         // Invoke the switchPower instruction on the lever program.
-        leverProgram.switchPower{accounts: metas}(instructionData);
+        leverInterface.switchPower{accounts: metas}(instructionData);
     }
 }

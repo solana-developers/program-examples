@@ -5,8 +5,8 @@ contract hello_solana {
     // Here we create a new account that stores no data and only prints messages to the program logs when the constructor is called.
     @payer(payer) // The "payer" pays for the account creation
     constructor() {
-        // We get the program ID by calling 'type(hello_solana).program_id', where "hello_solana" is the name of the contract.
-        address programId = type(hello_solana).program_id;
+        // We get the program ID by calling 'this';
+        address programId = address(this);
 
         // Print messages to the program logs
         print("Hello, Solana!");

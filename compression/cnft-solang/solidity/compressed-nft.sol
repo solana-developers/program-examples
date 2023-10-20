@@ -1,7 +1,7 @@
 
 import "solana";
 
-@program_id("BhDH6TLEnf4dLq9hLn2gLwm5rJdj8Cbdc9ZrsjUpL7kB")
+@program_id("BvgEJTPXfriGPopjJr1nLc4vADXm7A7TqjLFVztpd19Q")
 contract compressed_nft {
 
     @payer(payer) // payer address
@@ -16,22 +16,25 @@ contract compressed_nft {
     // Mint a compressed NFT to an existing merkle tree, via a cross-program invocation to the Bubblegum program
     // Reference: https://github.com/metaplex-foundation/metaplex-program-library/blob/master/bubblegum/program/src/lib.rs#L922
     // Reference: https://github.com/metaplex-foundation/metaplex-program-library/blob/master/bubblegum/program/src/lib.rs#L67
+    @mutableAccount(tree_authority) // authority of the merkle tree
+    @account(leaf_owner) // owner of the new compressed NFT
+    @account(leaf_delegate) // delegate of the new compressed NFT (can be the same as leaf_owner)
+    @mutableAccount(merkle_tree)  // address of the merkle tree
+    @mutableSigner(payer) // payer
+    @mutableSigner(tree_delegate) // delegate of the merkle tree
+    @account(noop_address)
+    @account(compression_pid)
+    @account(bubblegum_pid)
     function mint(
-        address tree_authority, // authority of the merkle tree
-        address leaf_owner, // owner of the new compressed NFT
-        address leaf_delegate, // delegate of the new compressed NFT (can be the same as leaf_owner)
-        address merkle_tree, // address of the merkle tree
-        address payer, // payer
-        address tree_delegate, // delegate of the merkle tree
         string uri // uri of the new compressed NFT (metadata)
-    ) public {
+    ) external {
         print("Minting Compressed NFT");
 
         // Create a creator array with a single creator
         Creator[] memory creators = new Creator[](1);
         // Set the creator to the payer
         creators[0] = Creator({
-            creatorAddress: payer,
+            creatorAddress: tx.accounts.payer.key,
             verified: false,
             share: 100
         });
@@ -67,14 +70,14 @@ contract compressed_nft {
         });
 
         AccountMeta[9] metas = [
-            AccountMeta({pubkey: tree_authority, is_writable: true, is_signer: false}),
-            AccountMeta({pubkey: leaf_owner, is_writable: false, is_signer: false}),
-            AccountMeta({pubkey: leaf_delegate, is_writable: false, is_signer: false}),
-            AccountMeta({pubkey: merkle_tree, is_writable: true, is_signer: false}),
-            AccountMeta({pubkey: payer, is_writable: true, is_signer: true}),
-            AccountMeta({pubkey: tree_delegate, is_writable: true, is_signer: true}),
-            AccountMeta({pubkey: address"noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV", is_writable: false, is_signer: false}),
-            AccountMeta({pubkey: address"cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK", is_writable: false, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.tree_authority.key, is_writable: true, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.leaf_owner.key, is_writable: false, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.leaf_delegate.key, is_writable: false, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.merkle_tree.key, is_writable: true, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.payer.key, is_writable: true, is_signer: true}),
+            AccountMeta({pubkey: tx.accounts.tree_delegate.key, is_writable: true, is_signer: true}),
+            AccountMeta({pubkey: tx.accounts.noop_address.key, is_writable: false, is_signer: false}),
+            AccountMeta({pubkey: tx.accounts.compression_pid.key, is_writable: false, is_signer: false}),
             AccountMeta({pubkey: address"11111111111111111111111111111111", is_writable: false, is_signer: false})
         ];
 
@@ -83,7 +86,7 @@ contract compressed_nft {
         bytes instructionData = abi.encode(discriminator, args);
 
         // Invoking the Bubblegum program
-        address'BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY'.call{accounts: metas}(instructionData);
+        tx.accounts.bubblegum_pid.key.call{accounts: metas}(instructionData);
     }
 
     // Reference: https://github.com/metaplex-foundation/metaplex-program-library/blob/master/bubblegum/program/src/state/metaplex_adapter.rs#L81

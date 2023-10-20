@@ -47,20 +47,11 @@ describe("cross-program-invocation", () => {
 
     // Call the pullLever instruction on the hand program, which invokes the lever program via CPI
     const tx2 = await handProgram.methods
-      .pullLever(dataAccountLever.publicKey, "Chris")
-      .accounts({ dataAccount: dataAccountHand.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: dataAccountLever.publicKey, // The lever program's data account, which stores the state
-          isWritable: true,
-          isSigner: false,
-        },
-        {
-          pubkey: leverProgram.programId, // The lever program's program ID
-          isWritable: false,
-          isSigner: false,
-        },
-      ])
+      .pullLever("Chris")
+      .accounts({ 
+        leverData: dataAccountLever.publicKey, // The lever program's data account, which stores the state
+        leverInterface_programId: leverProgram.programId // The lever program's program ID
+        })
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", tx2);
 
@@ -76,20 +67,11 @@ describe("cross-program-invocation", () => {
   it("Pull it again!", async () => {
     // Call the pullLever instruction on the hand program, which invokes the lever program via CPI
     const tx = await handProgram.methods
-      .pullLever(dataAccountLever.publicKey, "Ashley")
-      .accounts({ dataAccount: dataAccountHand.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: dataAccountLever.publicKey, // The lever program's data account, which stores the state
-          isWritable: true,
-          isSigner: false,
-        },
-        {
-          pubkey: leverProgram.programId, // The lever program's program ID
-          isWritable: false,
-          isSigner: false,
-        },
-      ])
+      .pullLever("Ashley")
+      .accounts({ 
+        leverData: dataAccountLever.publicKey, // The lever program's data account, which stores the state
+        leverInterface_programId: leverProgram.programId, // The lever program's program ID
+       })
       .rpc({ skipPreflight: true });
 
     console.log("Your transaction signature", tx);
