@@ -8,7 +8,7 @@ contract pda_rent_payer {
     @seed("rent_vault") // hardcoded seed
     constructor(@bump bytes1 bump, uint64 fundLamports) {
         // Independently derive the PDA address from the seeds, bump, and programId
-        (address pda, bytes1 _bump) = try_find_program_address(["rent_vault"], type(pda_rent_payer).program_id);
+        (address pda, bytes1 _bump) = try_find_program_address(["rent_vault"], address(this));
 
         // Verify that the bump passed to the constructor matches the bump derived from the seeds and programId
         // This ensures that only the canonical pda address can be used to create the account (first bump that generates a valid pda address)
@@ -17,14 +17,16 @@ contract pda_rent_payer {
         // Fund the pda account with additional lamports
         SystemInstruction.transfer(
             tx.accounts.payer.key, // from
-            address(this), // to (the address of the account being created)
+            tx.accounts.dataAccount.key, // to (the address of the account being created)
             fundLamports // amount of lamports to transfer
         );
     }
 
-    function createNewAccount(uint64 lamports) public {
-        AccountInfo from = tx.accounts[0]; // first account must be an account owned by the program
-        AccountInfo to = tx.accounts[1]; // second account must be the intended recipient
+    @mutableAccount(ownedByProgram)
+    @mutableAccount(intendedRecipient)
+    function createNewAccount(uint64 lamports) external {
+        AccountInfo from = tx.accounts.ownedByProgram; // an account owned by the program
+        AccountInfo to = tx.accounts.intendedRecipient; // second account must be the intended recipient
 
         print("From: {:}".format(from.key));
         print("To: {:}".format(to.key));

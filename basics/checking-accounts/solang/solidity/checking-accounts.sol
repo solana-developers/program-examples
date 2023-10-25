@@ -8,21 +8,15 @@ contract checking_accounts {
     @payer(payer) // "payer" is the account that pays to create the dataAccount
     constructor() {}
 
-    function checkAccounts(address accountToChange, address accountToCreate) public view {
+    @account(accountToChange)
+    @mutableSigner(accountToCreate)
+    function checkAccounts(address accountToChange, address accountToCreate) external view {
         print("Number of Accounts Provided: {:}".format(tx.accounts.length));
 
-        // Find the accounts we are looking for and perform checks on them
-        for (uint64 i = 0; i < tx.accounts.length; i++) {
-            if (tx.accounts[i].key == accountToChange) {
-                print("Found Account To Change");
-                programOwnerCheck(tx.accounts[i]);
-            }
-            if (tx.accounts[i].key == accountToCreate) {
-                print("Found Account To Create");
-                notInitializedCheck(tx.accounts[i]);
-                signerCheck(tx.accounts[i]);
-            }
-        }
+        // Perform checks on the account
+        programOwnerCheck(tx.accounts.accountToChange);
+        notInitializedCheck(tx.accounts.accountToCreate);
+        signerCheck(tx.accounts.accountToCreate);
 
         // (Create account...) (unimplemented)
         // (Change account...) (unimplemented)

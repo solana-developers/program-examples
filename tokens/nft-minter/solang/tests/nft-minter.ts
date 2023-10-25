@@ -50,33 +50,20 @@ describe("nft-minter", () => {
 
     const tx = await program.methods
       .createTokenMint(
-        wallet.publicKey, // payer
-        mintKeypair.publicKey, // mint
-        wallet.publicKey, // mint authority
         wallet.publicKey, // freeze authority
-        metadataAddress, // metadata address
         0, // 0 decimals for NFT
         nftTitle, // NFT name
         nftSymbol, // NFT symbol
         nftUri // NFT URI
       )
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey,
-          isWritable: true,
-          isSigner: true,
-        },
-        { pubkey: mintKeypair.publicKey, isWritable: true, isSigner: true },
-        {
-          pubkey: new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"), // Metadata program id
-          isWritable: false,
-          isSigner: false,
-        },
-        { pubkey: metadataAddress, isWritable: true, isSigner: false },
-        { pubkey: SystemProgram.programId, isWritable: false, isSigner: false },
-        { pubkey: SYSVAR_RENT_PUBKEY, isWritable: false, isSigner: false },
-      ])
+      .accounts({ 
+        payer: wallet.publicKey,
+        mint: mintKeypair.publicKey,
+        metadata: metadataAddress,
+        mintAuthority: wallet.publicKey,
+        metadataProgramId: new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"),
+        rentAddress: SYSVAR_RENT_PUBKEY,
+      })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", tx);
@@ -90,33 +77,13 @@ describe("nft-minter", () => {
     );
 
     const tx = await program.methods
-      .mintTo(
-        wallet.publicKey, // payer
-        tokenAccount, // associated token account address
-        mintKeypair.publicKey, // mint
-        wallet.publicKey // owner of token account
-      )
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey,
-          isWritable: true,
-          isSigner: true,
-        },
-        { pubkey: tokenAccount, isWritable: true, isSigner: false },
-        { pubkey: mintKeypair.publicKey, isWritable: true, isSigner: false },
-        {
-          pubkey: SystemProgram.programId,
-          isWritable: false,
-          isSigner: false,
-        },
-        { pubkey: TOKEN_PROGRAM_ID, isWritable: false, isSigner: false },
-        {
-          pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
-          isWritable: false,
-          isSigner: false,
-        },
-      ])
+      .mintTo()
+      .accounts({ 
+        payer: wallet.publicKey, // payer
+        tokenAccount: tokenAccount, // associated token account address
+        mint: mintKeypair.publicKey, // mint
+        owner: wallet.publicKey, // owner of token account
+       })
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", tx);
   });

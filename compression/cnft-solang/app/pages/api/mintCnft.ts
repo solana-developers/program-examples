@@ -61,52 +61,19 @@ async function buildTransaction(account: PublicKey, reference: PublicKey) {
   // Initialize the dataAccount.
   const instruction = await program.methods
     .mint(
-      treeAuthority, // treeAuthority
-      account, // leafOwner
-      account, // leafDelegate
-      treeAddress, // merkleTree
-      account, // payer
-      account, // treeDelegate, public tree (no delegate check, just require signer)
       randomUri // uri
     )
-    .accounts({ dataAccount: dataAccount })
-    .remainingAccounts([
-      {
-        pubkey: account,
-        isWritable: true,
-        isSigner: true,
-      },
-      {
-        pubkey: treeAuthority,
-        isWritable: true,
-        isSigner: false,
-      },
-      {
-        pubkey: treeAddress,
-        isWritable: true,
-        isSigner: false,
-      },
-      {
-        pubkey: SPL_NOOP_PROGRAM_ID,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: BUBBLEGUM_PROGRAM_ID,
-        isWritable: false,
-        isSigner: false,
-      },
-      {
-        pubkey: SystemProgram.programId,
-        isWritable: false,
-        isSigner: false,
-      },
-    ])
+    .accounts({ 
+        tree_authority: treeAuthority, // treeAuthority
+        leaf_owner: account, // leafOwner
+        leaf_delegate: account, // leafDelegate
+        merkle_tree: account, // merkleTree
+        payer: account, // payer
+        tree_delegate: account, // treeDelegate, public tree (no delegate check, just require signer)
+        noop_address: SPL_NOOP_PROGRAM_ID,
+        compression_pid: SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
+        bubblegum_pid: BUBBLEGUM_PROGRAM_ID,
+    })
     .instruction()
 
   // Add the reference account to the instruction

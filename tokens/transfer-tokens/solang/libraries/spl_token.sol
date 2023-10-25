@@ -1,5 +1,5 @@
 import 'solana';
-import 'system_instruction.sol';
+import './system_instruction.sol';
 
 library SplToken {
 	address constant tokenProgramId = address"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";

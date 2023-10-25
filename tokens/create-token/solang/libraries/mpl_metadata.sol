@@ -6,10 +6,8 @@ import 'solana';
 // If bool for Option<> type is false, comment out the corresponding struct field otherwise instruction fails with "invalid account data"
 // TODO: figure out better way to handle Option<> types
 library MplMetadata {
-	address constant metadataProgramId = address"metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
 	address constant systemAddress = address"11111111111111111111111111111111";
-    address constant rentAddress = address"SysvarRent111111111111111111111111111111111";
-
+    
 	// Reference: https://github.com/metaplex-foundation/metaplex-program-library/blob/master/token-metadata/program/src/instruction/metadata.rs#L31
 	struct CreateMetadataAccountArgsV3 {
         DataV2 data;
@@ -76,7 +74,9 @@ library MplMetadata {
 		address updateAuthority,
 		string name,
 		string symbol,
-		string uri
+		string uri,
+        address metadataProgramId,
+        address rentAddress
 	) public {
         // // Example of how to add a Creator[] array to the DataV2 struct
 		// Creator[] memory creators = new Creator[](1);

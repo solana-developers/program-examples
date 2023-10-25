@@ -131,57 +131,19 @@ describe("compressed-nft", () => {
 
     const tx = await program.methods
       .mint(
-        treeAuthority, // treeAuthority
-        receiver, // leafOwner
-        receiver, // leafDelegate
-        treeKeypair.publicKey, // merkleTree
-        wallet.publicKey, // payer
-        wallet.publicKey, // treeDelegate
         randomUri // uri
       )
-      .accounts({ dataAccount: dataAccount }) // dataAccount required by Solang even though its unused.
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey, // payer (and tree delegate in this example)
-          isWritable: true,
-          isSigner: true,
-        },
-        {
-          pubkey: receiver, // new leaf owner
-          isWritable: false,
-          isSigner: false,
-        },
-        {
-          pubkey: treeAuthority, // tree authority
-          isWritable: true,
-          isSigner: false,
-        },
-        {
-          pubkey: treeKeypair.publicKey, // tree account address
-          isWritable: true,
-          isSigner: false,
-        },
-        {
-          pubkey: SPL_NOOP_PROGRAM_ID,
-          isWritable: false,
-          isSigner: false,
-        },
-        {
-          pubkey: SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
-          isWritable: false,
-          isSigner: false,
-        },
-        {
-          pubkey: BUBBLEGUM_PROGRAM_ID,
-          isWritable: false,
-          isSigner: false,
-        },
-        {
-          pubkey: SystemProgram.programId,
-          isWritable: false,
-          isSigner: false,
-        },
-      ])
+      .accounts({ 
+        tree_authority: treeAuthority,
+        leaf_owner: receiver,
+        leaf_delegate: receiver,
+        merkle_tree: treeKeypair.publicKey,
+        payer: wallet.publicKey,
+        tree_delegate: wallet.publicKey,
+        noop_address: SPL_NOOP_PROGRAM_ID,
+        compression_pid: SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
+        bubblegum_pid: BUBBLEGUM_PROGRAM_ID,
+       })
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", tx);
   });

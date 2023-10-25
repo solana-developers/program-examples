@@ -37,23 +37,12 @@ describe("transfer-sol", () => {
 
     const tx = await program.methods
       .transferSolWithCpi(
-        wallet.publicKey, // sender
-        recipient.publicKey, // recipient
         new anchor.BN(transferAmount) // amount in lamports
       )
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey, // sender
-          isWritable: true,
-          isSigner: true,
-        },
-        {
-          pubkey: recipient.publicKey, // recipient
-          isWritable: true,
-          isSigner: false,
-        },
-      ])
+      .accounts({
+        sender: wallet.publicKey,
+        recipient: recipient.publicKey
+       })
       .rpc();
 
     await getBalances(wallet.publicKey, recipient.publicKey, "Resulting");
@@ -66,23 +55,12 @@ describe("transfer-sol", () => {
 
     const tx = await program.methods
       .transferSolWithCpi(
-        wallet.publicKey, // sender
-        dataAccount.publicKey, // recipient
         new anchor.BN(transferAmount) // amount in lamports
       )
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey, // sender
-          isWritable: true,
-          isSigner: true,
-        },
-        {
-          pubkey: dataAccount.publicKey, // recipient
-          isWritable: true,
-          isSigner: false,
-        },
-      ])
+      .accounts({ 
+        sender: wallet.publicKey,
+        recipient: dataAccount.publicKey,
+       })
       .rpc();
 
     await getBalances(wallet.publicKey, dataAccount.publicKey, "Resulting");
@@ -97,14 +75,10 @@ describe("transfer-sol", () => {
       .transferSolWithProgram(
         new anchor.BN(transferAmount) // amount in lamports
       )
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey, // recipient
-          isWritable: true,
-          isSigner: true,
-        },
-      ])
+      .accounts({ 
+        sender: dataAccount.publicKey,
+        recipient: wallet.publicKey,
+       })
       .rpc();
 
     await getBalances(dataAccount.publicKey, wallet.publicKey, "Resulting");

@@ -21,38 +21,43 @@ contract pda_mint_authority {
         bump = _bump;
     }
 
-   function createTokenMint(
-        address payer, // payer account
-        address mint, // mint account to be created
-        address mintAuthority, // mint authority for the mint account
+
+    @mutableSigner(payer) // payer account
+    @mutableSigner(mint) // mint account to be created
+    @mutableAccount(metadata) // metadata account to be created
+    @account(mintAuthority) // mint authority for the mint account
+    @account(rentAddress)
+    @account(metaplexId)
+    function createTokenMint(
         address freezeAuthority, // freeze authority for the mint account
-        address metadata, // metadata account to be created
         uint8 decimals, // decimals for the mint account
         string name, // name for the metadata account
         string symbol, // symbol for the metadata account
         string uri // uri for the metadata account
-    ) public {
+    ) external {
         // Invoke System Program to create a new account for the mint account and,
         // Invoke Token Program to initialize the mint account
         // Set mint authority, freeze authority, and decimals for the mint account
         SplToken.create_mint(
-            payer,            // payer account
-            mint,            // mint account
-            mintAuthority,   // mint authority
-            freezeAuthority, // freeze authority
-            decimals         // decimals
+            tx.accounts.payer.key,           // payer account
+            tx.accounts.mint.key,            // mint account
+            tx.accounts.mintAuthority.key,   // mint authority
+            freezeAuthority,                 // freeze authority
+            decimals                         // decimals
         );
 
         // Invoke Metadata Program to create a new account for the metadata account
         _createMetadataAccount(
-            metadata, // metadata account
-            mint,  // mint account
-            mintAuthority, // mint authority
-            payer, // payer
-            payer, // update authority (of the metadata account)
+            tx.accounts.metadata.key,       // metadata account
+            tx.accounts.mint.key,           // mint account
+            tx.accounts.mintAuthority.key,  // mint authority
+            tx.accounts.payer.key,          // payer
+            tx.accounts.payer.key,          // update authority (of the metadata account)
             name, // name
             symbol, // symbol
-            uri // uri (off-chain metadata json)
+            uri, // uri (off-chain metadata json)
+            tx.accounts.rentAddress.key,
+            tx.accounts.metaplexId.key
         );
     }
 
@@ -65,12 +70,14 @@ contract pda_mint_authority {
 		address updateAuthority, // update authority for the metadata account
 		string name, // token name
 		string symbol, // token symbol
-		string uri // token uri
+		string uri, // token uri
+        address rentAddress,
+        address metaplexId
     ) private {
         // // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
 
-        require(address(this) == pda, 'INVALID_PDA');
+        require(mintAuthority == pda, 'INVALID_PDA');
 
         DataV2 data = DataV2({
             name: name,
@@ -95,13 +102,13 @@ contract pda_mint_authority {
             AccountMeta({pubkey: payer, is_writable: true, is_signer: true}),
             AccountMeta({pubkey: updateAuthority, is_writable: false, is_signer: false}),
             AccountMeta({pubkey: address"11111111111111111111111111111111", is_writable: false, is_signer: false}),
-            AccountMeta({pubkey: address"SysvarRent111111111111111111111111111111111", is_writable: false, is_signer: false})
+            AccountMeta({pubkey: rentAddress, is_writable: false, is_signer: false})
         ];
 
         bytes1 discriminator = 33;
         bytes instructionData = abi.encode(discriminator, args);
 
-        address"metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s".call{accounts: metas, seeds: [["mint_authority", abi.encode(_bump)]]}(instructionData);
+        metaplexId.call{accounts: metas, seeds: [["mint_authority", abi.encode(_bump)]]}(instructionData);
     }
 
     struct CreateMetadataAccountArgsV3 {
@@ -120,33 +127,40 @@ contract pda_mint_authority {
         bool usesPresent; // To handle Rust Option<> in Solidity
     }
 
-    function mintTo(address payer, address tokenAccount, address mint, address owner) public {
+    @mutableSigner(payer)
+    @mutableAccount(tokenAccount)
+    @account(owner)
+    @mutableAccount(mint)
+    @mutableAccount(pdaAccount)
+    function mintTo() external {
         // Create an associated token account for the owner to receive the minted token
         SplToken.create_associated_token_account(
-            payer, // payer account
-            tokenAccount, // associated token account address
-            mint, // mint account
-            owner // owner account
+            tx.accounts.payer.key, // payer account
+            tx.accounts.tokenAccount.key, // associated token account address
+            tx.accounts.mint.key, // mint account
+            tx.accounts.owner.key // owner account
         );
 
         // Mint 1 token to the associated token account
         _mintTo(
-            mint, // mint account
-            tokenAccount, // token account
-            1 // amount
+            tx.accounts.mint.key, // mint account
+            tx.accounts.tokenAccount.key, // token account
+            1, // amount
+            tx.accounts.pdaAccount.key
         );
 
-        // Remove mint authority from mint account
+        // // Remove mint authority from mint account
         _removeMintAuthority(
-            mint // mint
+            tx.accounts.mint.key, // mint
+            tx.accounts.pdaAccount.key
         );
     }
 
     // Invoke the token program to mint tokens to a token account, using a PDA as the mint authority
-    function _mintTo(address mint, address account, uint64 amount) private {
+    function _mintTo(address mint, address account, uint64 amount, address pdaAccount) private {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
-        require(address(this) == pda, 'INVALID_PDA');
+        require(pdaAccount == pda, 'INVALID_PDA');
 
         // Prepare instruction data
         bytes instructionData = new bytes(9);
@@ -164,10 +178,10 @@ contract pda_mint_authority {
         SplToken.tokenProgramId.call{accounts: metas, seeds: [["mint_authority", abi.encode(_bump)]]}(instructionData);
     }
 
-    function _removeMintAuthority(address mintAccount) private {
+    function _removeMintAuthority(address mintAccount, address pdaAccount) private {
         // Independently derive the PDA address from the seeds, bump, and programId
         (address pda, bytes1 _bump) = try_find_program_address(["mint_authority"], type(pda_mint_authority).program_id);
-        require(address(this) == pda, 'INVALID_PDA');
+        require(pdaAccount == pda, 'INVALID_PDA');
 
 		AccountMeta[2] metas = [
 			AccountMeta({pubkey: mintAccount, is_signer: false, is_writable: true}),

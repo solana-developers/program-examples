@@ -1,175 +1,229 @@
 export type CompressedNft = {
-  version: "0.3.1";
-  name: "compressed_nft";
-  instructions: [
+  "version": "0.0.1",
+  "name": "compressed_nft",
+  "instructions": [
     {
-      name: "new";
-      accounts: [
+      "name": "new",
+      "accounts": [
         {
-          name: "dataAccount";
-          isMut: true;
-          isSigner: false;
-          isOptional: false;
+          "name": "dataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
         },
         {
-          name: "payer";
-          isMut: true;
-          isSigner: true;
-          isOptional: false;
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
         },
         {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-          isOptional: false;
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
         }
-      ];
-      args: [
+      ],
+      "args": [
         {
-          name: "bump";
-          type: {
-            array: ["u8", 1];
-          };
+          "name": "bump",
+          "type": {
+            "array": [
+              "u8",
+              1
+            ]
+          }
         }
-      ];
+      ]
     },
     {
-      name: "mint";
-      accounts: [
+      "name": "mint",
+      "accounts": [
         {
-          name: "dataAccount";
-          isMut: true;
-          isSigner: false;
-          isOptional: false;
+          "name": "tree_authority",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
         },
         {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-          isOptional: false;
+          "name": "leaf_owner",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "leaf_delegate",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "merkle_tree",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
+        },
+        {
+          "name": "tree_delegate",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
+        },
+        {
+          "name": "noop_address",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "compression_pid",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "bubblegum_pid",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
         }
-      ];
-      args: [
+      ],
+      "args": [
         {
-          name: "treeAuthority";
-          type: "publicKey";
-        },
-        {
-          name: "leafOwner";
-          type: "publicKey";
-        },
-        {
-          name: "leafDelegate";
-          type: "publicKey";
-        },
-        {
-          name: "merkleTree";
-          type: "publicKey";
-        },
-        {
-          name: "payer";
-          type: "publicKey";
-        },
-        {
-          name: "treeDelegate";
-          type: "publicKey";
-        },
-        {
-          name: "uri";
-          type: "string";
+          "name": "uri",
+          "type": "string"
         }
-      ];
+      ]
     }
-  ];
-  metadata: {
-    address: "BhDH6TLEnf4dLq9hLn2gLwm5rJdj8Cbdc9ZrsjUpL7kB";
-  };
+  ],
+  "metadata": {
+    "address": "BvgEJTPXfriGPopjJr1nLc4vADXm7A7TqjLFVztpd19Q"
+  }
 };
 
 export const IDL: CompressedNft = {
-  version: "0.3.1",
-  name: "compressed_nft",
-  instructions: [
+  "version": "0.0.1",
+  "name": "compressed_nft",
+  "instructions": [
     {
-      name: "new",
-      accounts: [
+      "name": "new",
+      "accounts": [
         {
-          name: "dataAccount",
-          isMut: true,
-          isSigner: false,
-          isOptional: false,
+          "name": "dataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
         },
         {
-          name: "payer",
-          isMut: true,
-          isSigner: true,
-          isOptional: false,
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
         },
         {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-          isOptional: false,
-        },
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        }
       ],
-      args: [
+      "args": [
         {
-          name: "bump",
-          type: {
-            array: ["u8", 1],
-          },
-        },
-      ],
+          "name": "bump",
+          "type": {
+            "array": [
+              "u8",
+              1
+            ]
+          }
+        }
+      ]
     },
     {
-      name: "mint",
-      accounts: [
+      "name": "mint",
+      "accounts": [
         {
-          name: "dataAccount",
-          isMut: true,
-          isSigner: false,
-          isOptional: false,
+          "name": "tree_authority",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
         },
         {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-          isOptional: false,
+          "name": "leaf_owner",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
         },
+        {
+          "name": "leaf_delegate",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "merkle_tree",
+          "isMut": true,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
+        },
+        {
+          "name": "tree_delegate",
+          "isMut": true,
+          "isSigner": true,
+          "isOptional": false
+        },
+        {
+          "name": "noop_address",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "compression_pid",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "bubblegum_pid",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "isOptional": false
+        }
       ],
-      args: [
+      "args": [
         {
-          name: "treeAuthority",
-          type: "publicKey",
-        },
-        {
-          name: "leafOwner",
-          type: "publicKey",
-        },
-        {
-          name: "leafDelegate",
-          type: "publicKey",
-        },
-        {
-          name: "merkleTree",
-          type: "publicKey",
-        },
-        {
-          name: "payer",
-          type: "publicKey",
-        },
-        {
-          name: "treeDelegate",
-          type: "publicKey",
-        },
-        {
-          name: "uri",
-          type: "string",
-        },
-      ],
-    },
+          "name": "uri",
+          "type": "string"
+        }
+      ]
+    }
   ],
-  metadata: {
-    address: "BhDH6TLEnf4dLq9hLn2gLwm5rJdj8Cbdc9ZrsjUpL7kB",
-  },
+  "metadata": {
+    "address": "BvgEJTPXfriGPopjJr1nLc4vADXm7A7TqjLFVztpd19Q"
+  }
 };

@@ -55,19 +55,10 @@ describe("checking-accounts", () => {
     // Invoke the checkAccounts instruction on our program, passing in the account we want to "check"
     const tx = await program.methods
       .checkAccounts(accountToChange.publicKey, accountToCreate.publicKey)
-      .accounts({ dataAccount: dataAccount.publicKey })
-      .remainingAccounts([
-        {
-          pubkey: accountToChange.publicKey,
-          isWritable: true,
-          isSigner: false,
-        },
-        {
-          pubkey: accountToCreate.publicKey,
-          isWritable: true,
-          isSigner: true,
-        },
-      ])
+      .accounts({ 
+        accountToCreate: accountToCreate.publicKey,
+        accountToChange: accountToChange.publicKey,
+    })
       .signers([accountToCreate])
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", tx);

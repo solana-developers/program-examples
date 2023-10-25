@@ -44,14 +44,10 @@ describe("pda-rent-payer", () => {
     // Invoke the createNewAccount instruction on our program
     const tx = await program.methods
       .createNewAccount(new anchor.BN(lamports))
-      .accounts({ dataAccount: dataAccountPDA })
-      .remainingAccounts([
-        {
-          pubkey: newAccount.publicKey, // account to create by directly transferring lamports
-          isWritable: true,
-          isSigner: false,
-        },
-      ])
+      .accounts({ 
+        ownedByProgram: dataAccountPDA,
+        intendedRecipient: newAccount.publicKey, // account to create by directly transferring lamports
+    })
       .rpc();
     console.log("Your transaction signature", tx);
 

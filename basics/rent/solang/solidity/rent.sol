@@ -8,13 +8,15 @@ contract rent {
     @payer(payer) // The "payer" pays for the data account creation
     constructor() {}
 
-    function createSystemAccount(address payer, address newAccount, uint64 space) public {
+    @mutableSigner(payer)
+    @mutableSigner(newAccount)
+    function createSystemAccount(uint64 space) external {
         // The minimum lamports required for the amount of space allocated to the account
         uint64 lamports = minimum_balance(space);
 
         SystemInstruction.create_account(
-            payer,        // lamports sent from this account (payer)
-            newAccount, // lamports sent to this account (account to be created)
+            tx.accounts.payer.key,        // lamports sent from this account (payer)
+            tx.accounts.newAccount.key, // lamports sent to this account (account to be created)
             lamports,      // lamport amount (minimum lamports required)
             space,          // space required for the account
             SystemInstruction.systemAddress // program owner (system program)

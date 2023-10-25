@@ -33,24 +33,13 @@ describe("rent", () => {
     // Create a new account via a Cross Program Invocation to the system program
     const tx = await program.methods
       .createSystemAccount(
-        wallet.publicKey, // payer
-        newAccount.publicKey, // new account
         new anchor.BN(space) // space
       )
-      .accounts({ dataAccount: dataAccount.publicKey })
+      .accounts({ 
+        payer: wallet.publicKey,
+        newAccount: newAccount.publicKey,
+       })
       .signers([newAccount]) // new account keypair required as signer
-      .remainingAccounts([
-        {
-          pubkey: wallet.publicKey,
-          isWritable: true,
-          isSigner: true,
-        },
-        {
-          pubkey: newAccount.publicKey, // new account
-          isWritable: true,
-          isSigner: true,
-        },
-      ])
       .rpc();
     console.log("Your transaction signature", tx);
   });

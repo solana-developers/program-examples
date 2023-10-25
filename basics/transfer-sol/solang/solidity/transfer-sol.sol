@@ -10,16 +10,20 @@ contract transfer_sol {
     }
 
     // Transfer SOL from one account to another using CPI (Cross Program Invocation) to the System program
-    function transferSolWithCpi(address from, address to, uint64 lamports) public {
+    @mutableSigner(sender)
+    @mutableAccount(recipient)
+    function transferSolWithCpi(uint64 lamports) external {
         // CPI to transfer SOL using "system_instruction" library
-        SystemInstruction.transfer(from, to, lamports);
+        SystemInstruction.transfer(tx.accounts.sender.key, tx.accounts.recipient.key, lamports);
     }
 
     // Transfer SOL from program owned account to another address by directly modifying the account data lamports
     // This approach only works for accounts owned by the program itself (ex. the dataAccount created in the constructor)
-    function transferSolWithProgram(uint64 lamports) public {
-        AccountInfo from = tx.accounts[0]; // first account must be an account owned by the program
-        AccountInfo to = tx.accounts[1]; // second account must be the intended recipient
+    @mutableAccount(sender)
+    @mutableAccount(recipient)
+    function transferSolWithProgram(uint64 lamports) external {
+        AccountInfo from = tx.accounts.sender; // first account must be an account owned by the program
+        AccountInfo to = tx.accounts.recipient; // second account must be the intended recipient
 
         print("From: {:}".format(from.key));
         print("To: {:}".format(to.key));
