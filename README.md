@@ -1,21 +1,23 @@
 # Program Examples
 
-### :crab: Rust. :snake: Python. :link: All on-chain. 
+### :crab: Rust. :snake: Python. :ice_cube: Solidity. :link: All on-chain. 
 
-> **New:** Python examples using Seahorse and Anchor Py!
+> **New:** Solidity examples from Solang!
 
 ## Navigating this Repo
 
-:file_folder: Each example contains two folders:
+:file_folder: Each example contains four folders:
 - `native` - Written using Solana's native Rust crates and vanilla Rust.
 - `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
 - `seahorse` - Written using the Python framework Seahorse, which converts your Python code to Anchor Rust.
+- `solang` - Written using the Solang compiler, which allows developers to run Solidity natively on Solana.
 
 :wrench: How to build & run:
 - Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
 - `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 - `seahorse` - Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
+- `solang` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
 ## Examples We'd Love to See!
 
@@ -25,7 +27,9 @@
     * Additional Accounts & Resolving Accounts
 * Examples needed for Seahorse
     * Any existing example missing a `seahorse` folder
-* New examples needed for Anchor, Native & Seahorse:
+* Examples needed for Solidity
+    * Any existing example missing a `solang` folder
+* New examples needed for Solidity, Anchor, Native & Seahorse:
     * Token lending
     * Token swapping
     * Escrow
