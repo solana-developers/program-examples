@@ -1,0 +1,17 @@
+{
+  "name": "program-examples",
+  "version": "1.0.0",
+  "description": "### :crab: Rust. :snake: Python. :ice_cube: Solidity. :link: All on-chain.",
+  "scripts": {
+    "sync-package-json": "ts-node scripts/sync-package-json.ts"
+  },
+  "keywords": [],
+  "author": "Solana Foundation",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "picocolors": "^1.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
