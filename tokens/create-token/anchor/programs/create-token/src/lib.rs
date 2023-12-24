@@ -1,12 +1,18 @@
 #![allow(clippy::result_large_err)]
 
 use {
-    anchor_lang::prelude::*,
+    anchor_lang::{
+        prelude::*, 
+        solana_program::entrypoint::ProgramResult
+    },
     anchor_spl::{
         metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
+    mpl_token_metadata::{
+        types::DataV2,
+        accounts::Metadata as mpl_metadata,
+    },
 };
 
 declare_id!("2B6MrsKB2pVq6W6tY8dJLcnSd3Uv1KE7yRaboBjdQoEX");
@@ -21,7 +27,7 @@ pub mod create_token {
         token_symbol: String,
         token_uri: String,
         _token_decimals: u8,
-    ) -> Result<()> {
+    ) -> ProgramResult {
         msg!("Creating metadata account...");
         msg!(
             "Metadata account address: {}",
@@ -72,7 +78,7 @@ pub struct CreateTokenMint<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
     // Create new mint account
