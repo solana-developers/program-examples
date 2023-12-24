@@ -1,6 +1,9 @@
 #![allow(clippy::result_large_err)]
 
-use anchor_lang::prelude::*;
+use anchor_lang::{
+    prelude::*, 
+    solana_program::entrypoint::ProgramResult
+};
 
 pub mod instructions;
 use instructions::*;
@@ -16,11 +19,11 @@ pub mod spl_token_minter {
         token_name: String,
         token_symbol: String,
         token_uri: String,
-    ) -> Result<()> {
+    ) -> ProgramResult {
         create::create_token(ctx, token_name, token_symbol, token_uri)
     }
 
-    pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+    pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> ProgramResult {
         mint::mint_token(ctx, amount)
     }
 }

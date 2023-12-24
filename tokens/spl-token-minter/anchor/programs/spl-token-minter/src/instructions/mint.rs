@@ -1,5 +1,8 @@
 use {
-    anchor_lang::prelude::*,
+    anchor_lang::{
+        prelude::*, 
+        solana_program::entrypoint::ProgramResult
+    },
     anchor_spl::{
         associated_token::AssociatedToken,
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
@@ -27,7 +30,7 @@ pub struct MintToken<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> ProgramResult {
     msg!("Minting tokens to associated token account...");
     msg!("Mint: {}", &ctx.accounts.mint_account.key());
     msg!(
