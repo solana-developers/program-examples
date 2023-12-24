@@ -1,4 +1,4 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID as PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { TokenMinter } from "../target/types/token_minter";
 import { PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
@@ -14,9 +14,11 @@ describe("NFT Minter", () => {
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.TokenMinter as anchor.Program<TokenMinter>;
 
+  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(PROGRAM_ID);
+
   // Derive the PDA to use as mint account address.
   // This same PDA is also used as the mint authority.
-  const [mintPDA] = PublicKey.findProgramAddressSync(
+  const [mintPDA, mintBump] = PublicKey.findProgramAddressSync(
     [Buffer.from("mint")],
     program.programId
   );
@@ -39,7 +41,7 @@ describe("NFT Minter", () => {
     );
 
     const transactionSignature = await program.methods
-      .createToken(metadata.name, metadata.symbol, metadata.uri)
+      .createToken(metadata.name, metadata.symbol, metadata.uri, mintBump)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintPDA,
@@ -67,7 +69,7 @@ describe("NFT Minter", () => {
     const amount = new anchor.BN(100);
 
     const transactionSignature = await program.methods
-      .mintToken(amount)
+      .mintToken(amount, mintBump)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintPDA,

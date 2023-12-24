@@ -1,12 +1,18 @@
 // In this example the same PDA is used as both the address of the mint account and the mint authority
 // This is to demonstrate that the same PDA can be used for both the address of an account and CPI signing
 use {
-    anchor_lang::prelude::*,
+    anchor_lang::{
+        prelude::*, 
+        solana_program::entrypoint::ProgramResult
+    },
     anchor_spl::{
         metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
+    mpl_token_metadata::{
+        types::DataV2,
+        accounts::Metadata as mpl_metadata,
+    },
 };
 
 #[derive(Accounts)]
@@ -31,7 +37,7 @@ pub struct CreateToken<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
 
@@ -46,11 +52,12 @@ pub fn create_token(
     token_name: String,
     token_symbol: String,
     token_uri: String,
-) -> Result<()> {
+    bump: u8,
+) -> ProgramResult {
     msg!("Creating metadata account");
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[*ctx.bumps.get("mint_account").unwrap()]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[bump][..]]];
 
     // Cross Program Invocation (CPI) signed by PDA
     // Invoking the create_metadata_account_v3 instruction on the token metadata program

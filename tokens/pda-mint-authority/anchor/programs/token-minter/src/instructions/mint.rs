@@ -1,5 +1,8 @@
 use {
-    anchor_lang::prelude::*,
+    anchor_lang::{
+        prelude::*,
+        solana_program::entrypoint::ProgramResult,
+    },
     anchor_spl::{
         associated_token::AssociatedToken,
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
@@ -34,7 +37,7 @@ pub struct MintToken<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+pub fn mint_token(ctx: Context<MintToken>, amount: u64, bump: u8) -> ProgramResult {
     msg!("Minting token to associated token account...");
     msg!("Mint: {}", &ctx.accounts.mint_account.key());
     msg!(
@@ -43,7 +46,7 @@ pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
     );
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[*ctx.bumps.get("mint_account").unwrap()]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[bump][..]]];
 
     // Invoke the mint_to instruction on the token program
     mint_to(
