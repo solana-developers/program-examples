@@ -1,7 +1,10 @@
 #![allow(clippy::result_large_err)]
 
 use {
-    anchor_lang::prelude::*,
+    anchor_lang::{
+        prelude::*,
+        solana_program::entrypoint::ProgramResult,
+    },
     anchor_spl::{
         associated_token::AssociatedToken,
         metadata::{
@@ -11,8 +14,11 @@ use {
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
     },
     mpl_token_metadata::{
-        pda::{find_master_edition_account, find_metadata_account},
-        state::DataV2,
+        accounts::{
+            Metadata as mpl_metadata,
+            MasterEdition as mpl_master_edition,
+        },
+        types::DataV2,
     },
 };
 
@@ -27,7 +33,7 @@ pub mod nft_minter {
         nft_name: String,
         nft_symbol: String,
         nft_uri: String,
-    ) -> Result<()> {
+    ) -> ProgramResult {
         msg!("Minting Token");
         // Cross Program Invocation (CPI)
         // Invoking the mint_to instruction on the token program
@@ -108,14 +114,14 @@ pub struct CreateToken<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
 
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_master_edition_account(&mint_account.key()).0
+        address=mpl_master_edition::find_pda(&mint_account.key()).0
     )]
     pub edition_account: UncheckedAccount<'info>,
 
