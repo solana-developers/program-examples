@@ -1,10 +1,7 @@
 #![allow(clippy::result_large_err)]
 
 use {
-    anchor_lang::{
-        prelude::*,
-        solana_program::entrypoint::ProgramResult,
-    },
+    anchor_lang::prelude::*,
     anchor_spl::{
         associated_token::AssociatedToken,
         metadata::{
@@ -33,7 +30,7 @@ pub mod nft_minter {
         nft_name: String,
         nft_symbol: String,
         nft_uri: String,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         msg!("Minting Token");
         // Cross Program Invocation (CPI)
         // Invoking the mint_to instruction on the token program

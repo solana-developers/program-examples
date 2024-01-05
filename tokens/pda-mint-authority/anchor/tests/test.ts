@@ -41,7 +41,7 @@ describe("NFT Minter", () => {
     );
 
     const transactionSignature = await program.methods
-      .createToken(metadata.name, metadata.symbol, metadata.uri, mintBump)
+      .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintPDA,
@@ -69,7 +69,7 @@ describe("NFT Minter", () => {
     const amount = new anchor.BN(100);
 
     const transactionSignature = await program.methods
-      .mintToken(amount, mintBump)
+      .mintToken(amount)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintPDA,

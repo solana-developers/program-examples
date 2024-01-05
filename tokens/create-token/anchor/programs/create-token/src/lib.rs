@@ -1,10 +1,7 @@
 #![allow(clippy::result_large_err)]
 
 use {
-    anchor_lang::{
-        prelude::*, 
-        solana_program::entrypoint::ProgramResult
-    },
+    anchor_lang::prelude::*,
     anchor_spl::{
         metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
         token::{Mint, Token},
@@ -27,7 +24,7 @@ pub mod create_token {
         token_symbol: String,
         token_uri: String,
         _token_decimals: u8,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         msg!("Creating metadata account...");
         msg!(
             "Metadata account address: {}",

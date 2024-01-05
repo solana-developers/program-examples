@@ -1,8 +1,5 @@
 use {
-    anchor_lang::{
-        prelude::*, 
-        solana_program::entrypoint::ProgramResult
-    },
+    anchor_lang::prelude::*,
     anchor_spl::{
         metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
         token::{Mint, Token},
@@ -45,7 +42,7 @@ pub fn create_token(
     token_name: String,
     token_symbol: String,
     token_uri: String,
-) -> ProgramResult {
+) -> Result<()> {
     msg!("Creating metadata account");
 
     // Cross Program Invocation (CPI)

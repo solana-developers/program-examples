@@ -4,8 +4,12 @@ use {
         metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
+    mpl_token_metadata::{
+        types::DataV2,
+        accounts::Metadata as mpl_metadata,
+    },
 };
+
 
 #[derive(Accounts)]
 pub struct CreateToken<'info> {
@@ -25,7 +29,7 @@ pub struct CreateToken<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
 
