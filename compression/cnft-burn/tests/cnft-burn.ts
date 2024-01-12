@@ -18,7 +18,7 @@ describe("cnft-burn", () => {
   const payerWallet = provider.wallet as anchor.Wallet;
   // this should be your tree address
   const tree = new anchor.web3.PublicKey(
-    "Dggp3P5C7rB5crU3TnWMGYYKTy1At1dzwE5Ax9Sz46Kj"
+    "23A8kctVQi9uQxYqzSZ3dhKiL2hSRGfmFYJd2Qfcyupp"
   );
   const MPL_BUBBLEGUM_PROGRAM_ID_KEY = new anchor.web3.PublicKey(
     MPL_BUBBLEGUM_PROGRAM_ID
@@ -33,7 +33,7 @@ describe("cnft-burn", () => {
     "2zhktLCwGLFg6bqGxgdN5BEKT7PVsQ81XyfQ33gKVtxU"
   );
   // this is the assetId of the cNft you want to burn
-  const assetId = "2joTFxoKshsWXT2QAdjZVdvqVmGv6FhTZ2s5TCCYz7Eo";
+  const assetId = "CkWeh2TW91VtfrDy4pGBKwDJwNXwzZFQWNiHbsgHzXyY";
 
   it("Burn cNft!", async () => {
     const asset = await getAsset(assetId);
