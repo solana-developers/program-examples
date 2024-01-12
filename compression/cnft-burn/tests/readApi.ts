@@ -4,7 +4,7 @@
 
 import axios from "axios";
 
-// you might want to change that to your custom RPC
+// you might want to change that to your custom RPC endpoint as this endpoint is not going to work as it does not support DAS
 const RPC_PATH = "https://api.devnet.solana.com";
 
 export async function getAsset(assetId: any, rpcUrl = RPC_PATH): Promise<any> {
