@@ -62,5 +62,7 @@ describe("cnft-burn", () => {
         skipPreflight: true,
       });
     console.log("Your transaction signature", tx);
+    // here is a sample transaction signature on devnet
+    // https://explorer.solana.com/tx/2MpeHi64pbWNY7BKBuhAp4yND5HdfQqNqkd8pu6F6meoSNUYRvxQgV5TC4w8BM8hUihB8G8TwBAaPRqS7pnN8Nu1?cluster=devnet
   });
 });
