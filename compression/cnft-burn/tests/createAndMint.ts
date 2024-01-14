@@ -40,7 +40,7 @@ export async function createAndMint() {
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-  // generate a new keypair for use in this demo (or load it locally from the filesystem when available)
+  // load it locally from the filesystem when available
   const payer = loadKeypairFromFile("/Users/pratik/.config/solana/id.json");
 
   console.log("Payer address:", payer.publicKey.toBase58());
