@@ -1,13 +1,18 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { CnftBurn } from "../target/types/cnft_burn";
-import {
-  MPL_BUBBLEGUM_PROGRAM_ID,
-  SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
-  SPL_NOOP_PROGRAM_ID,
-} from "@metaplex-foundation/mpl-bubblegum";
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
 import { decode, mapProof } from "./utils";
 import { getAsset, getAssetProof } from "./readApi";
+import { createAndMint } from "./createAndMint";
+import { getcNFTsFromCollection } from "./fetchNFTsByCollection";
+import {
+  SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
+  SPL_NOOP_PROGRAM_ID,
+} from "@solana/spl-account-compression";
+
+// Replace this with your custom RPC endpoint
+export const RPC_PATH = "https://api.devnet.solana.com";
 
 describe("cnft-burn", () => {
   // Configure the client to use the local cluster.
@@ -16,25 +21,29 @@ describe("cnft-burn", () => {
   const program = anchor.workspace.CnftBurn as Program<CnftBurn>;
   const provider = anchor.AnchorProvider.env();
   const payerWallet = provider.wallet as anchor.Wallet;
-  // this should be your tree address
-  const tree = new anchor.web3.PublicKey(
-    "23A8kctVQi9uQxYqzSZ3dhKiL2hSRGfmFYJd2Qfcyupp"
-  );
-  const MPL_BUBBLEGUM_PROGRAM_ID_KEY = new anchor.web3.PublicKey(
-    MPL_BUBBLEGUM_PROGRAM_ID
-  );
-  const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
-    [tree.toBuffer()],
-    MPL_BUBBLEGUM_PROGRAM_ID_KEY
-  );
-  console.log("Tree Authority", treeAuthority.toString());
-  console.log(
-    "Computed tree authority",
-    "2zhktLCwGLFg6bqGxgdN5BEKT7PVsQ81XyfQ33gKVtxU"
-  );
-  // this is the assetId of the cNft you want to burn
-  const assetId = "CkWeh2TW91VtfrDy4pGBKwDJwNXwzZFQWNiHbsgHzXyY";
 
+  let treeAddress: anchor.web3.PublicKey | undefined = undefined;
+  const MPL_BUBBLEGUM_PROGRAM_ID_KEY = new anchor.web3.PublicKey(
+    BUBBLEGUM_PROGRAM_ID
+  );
+
+  // this is the assetId of the cNft you want to burn
+  let assetId: string = "";
+
+  it("Should create the tree and mint a cnft", async () => {
+    const { tree, collection } = await createAndMint();
+    if (!tree.treeAddress) {
+      throw new Error("Tree address not found");
+    }
+    treeAddress = tree.treeAddress;
+
+    const fetchcNFTs = await getcNFTsFromCollection(
+      collection.mint,
+      payerWallet.publicKey.toString()
+    );
+    console.log("fetchcNFTs", fetchcNFTs);
+    assetId = fetchcNFTs[0];
+  });
   it("Burn cNft!", async () => {
     const asset = await getAsset(assetId);
 
@@ -45,14 +54,18 @@ describe("cnft-burn", () => {
     const creatorHash = decode(asset.compression.creator_hash);
     const nonce = new anchor.BN(asset.compression.leaf_id);
     const index = asset.compression.leaf_id;
+    const [treeAuthority, _bump2] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [treeAddress.toBuffer()],
+        MPL_BUBBLEGUM_PROGRAM_ID_KEY
+      );
     const tx = await program.methods
       .burnCnft(root, dataHash, creatorHash, nonce, index)
       .accounts({
-        merkleTree: tree,
+        merkleTree: treeAddress,
         leafOwner: payerWallet.publicKey,
         treeAuthority: treeAuthority,
-
-        bubblegumProgram: MPL_BUBBLEGUM_PROGRAM_ID,
+        bubblegumProgram: BUBBLEGUM_PROGRAM_ID,
         compressionProgram: SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
         logWrapper: SPL_NOOP_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,

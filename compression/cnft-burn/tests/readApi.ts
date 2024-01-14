@@ -3,9 +3,9 @@
 // this is just a subset of functions for quick availabiity
 
 import axios from "axios";
+import { RPC_PATH } from "./cnft-burn";
 
 // you might want to change that to your custom RPC endpoint as this endpoint is not going to work as it does not support DAS
-const RPC_PATH = "https://api.devnet.solana.com";
 
 export async function getAsset(assetId: any, rpcUrl = RPC_PATH): Promise<any> {
   try {
