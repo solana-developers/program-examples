@@ -41,7 +41,7 @@ export async function createAndMint() {
   //////////////////////////////////////////////////////////////////////////////
 
   // load it locally from the filesystem when available
-  const payer = loadKeypairFromFile("/Users/pratik/.config/solana/id.json");
+  const payer = loadKeypairFromFile("~/.config/solana/id.json");
 
   console.log("Payer address:", payer.publicKey.toBase58());
 
