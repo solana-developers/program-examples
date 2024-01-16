@@ -32,6 +32,7 @@ import { ValidDepthSizePair } from "@solana/spl-account-compression";
 // local import of the connection wrapper, to help with using the ReadApi
 import { WrapperConnection } from "./ReadApi/WrapperConnection";
 import { RPC_PATH } from "./cnft-burn";
+import * as anchor from "@coral-xyz/anchor";
 
 // define some reusable balance values for tracking
 let initBalance: number, balance: number;
@@ -41,7 +42,10 @@ export async function createAndMint() {
   //////////////////////////////////////////////////////////////////////////////
 
   // load it locally from the filesystem when available
-  const payer = loadKeypairFromFile("~/.config/solana/id.json");
+  anchor.setProvider(anchor.AnchorProvider.env());
+  const provider = anchor.AnchorProvider.env();
+  const payerWallet = provider.wallet as anchor.Wallet;
+  const payer = payerWallet.payer;
 
   console.log("Payer address:", payer.publicKey.toBase58());
 
