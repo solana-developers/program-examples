@@ -1,4 +1,4 @@
-import { MPL_TOKEN_METADATA_PROGRAM_ID as PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { TOKEN_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import { CreateToken } from "../target/types/create_token";
@@ -21,7 +21,7 @@ describe("Create Tokens", () => {
     uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
   };
 
-  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(PROGRAM_ID);
+  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
 
   it("Create an SPL Token!", async () => {
     // Generate new keypair to use as address for mint account.

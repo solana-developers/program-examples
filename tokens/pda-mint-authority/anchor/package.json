@@ -2,8 +2,9 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.29.0",
     "@metaplex-foundation/mpl-token-metadata": "^3.1.2",
+    "@metaplex-foundation/umi": "^0.9.1",
     "@solana/spl-token": "^0.3.9"
-},
+  },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.0",

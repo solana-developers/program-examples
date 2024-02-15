@@ -1152,7 +1152,6 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.29.0",
  "anchor-spl 0.29.0",
- "mpl-token-metadata 3.2.3",
 ]
 
 [[package]]
@@ -1907,7 +1906,6 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.29.0",
  "anchor-spl 0.29.0",
- "mpl-token-metadata 3.2.3",
 ]
 
 [[package]]
@@ -2102,7 +2100,6 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang 0.29.0",
  "anchor-spl 0.29.0",
- "mpl-token-metadata 3.2.3",
 ]
 
 [[package]]
@@ -3265,10 +3262,8 @@ dependencies = [
 name = "spl-token-minter"
 version = "0.1.0"
 dependencies = [
- "ahash 0.8.6",
  "anchor-lang 0.29.0",
  "anchor-spl 0.29.0",
- "mpl-token-metadata 3.2.3",
 ]
 
 [[package]]

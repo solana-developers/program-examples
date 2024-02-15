@@ -1,12 +1,12 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
+        metadata::{
+            create_metadata_accounts_v3,
+            mpl_token_metadata::{accounts::Metadata as mpl_metadata, types::DataV2},
+            CreateMetadataAccountsV3, Metadata,
+        },
         token::{Mint, Token},
-    },
-    mpl_token_metadata::{
-        types::DataV2,
-        accounts::Metadata as mpl_metadata,
     },
 };
 

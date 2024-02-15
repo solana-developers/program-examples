@@ -3,10 +3,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-spl_token_minter = "77p9WmpzQW29RUEzTEef2ym7AHePBE9yNWJ9acikXfZS"
+spl_token_minter = "FjtvWn2LZhezA7fwsBoAKYYyp7cFLfnqQPNWTLqZjs4S"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

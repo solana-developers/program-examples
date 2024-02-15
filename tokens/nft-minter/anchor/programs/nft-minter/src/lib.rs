@@ -5,21 +5,18 @@ use {
     anchor_spl::{
         associated_token::AssociatedToken,
         metadata::{
-            create_master_edition_v3, create_metadata_accounts_v3, CreateMasterEditionV3,
-            CreateMetadataAccountsV3, Metadata,
+            create_master_edition_v3, create_metadata_accounts_v3,
+            mpl_token_metadata::{
+                accounts::{MasterEdition as mpl_master_edition, Metadata as mpl_metadata},
+                types::DataV2,
+            },
+            CreateMasterEditionV3, CreateMetadataAccountsV3, Metadata,
         },
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
     },
-    mpl_token_metadata::{
-        accounts::{
-            Metadata as mpl_metadata,
-            MasterEdition as mpl_master_edition,
-        },
-        types::DataV2,
-    },
 };
 
-declare_id!("3qHNM98iLTaQtwmj2NkViXnHZQjNBS5PTHT2AuPxHXYN");
+declare_id!("BPZWMnoR6bAvw3jGZc7B2dcUQekAqFTCWyutY8PEXaao");
 
 #[program]
 pub mod nft_minter {
