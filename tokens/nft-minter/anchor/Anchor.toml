@@ -3,10 +3,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-nft_minter = "3qHNM98iLTaQtwmj2NkViXnHZQjNBS5PTHT2AuPxHXYN"
+nft_minter = "BPZWMnoR6bAvw3jGZc7B2dcUQekAqFTCWyutY8PEXaao"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

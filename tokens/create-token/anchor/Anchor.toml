@@ -3,13 +3,13 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-create_token = "2B6MrsKB2pVq6W6tY8dJLcnSd3Uv1KE7yRaboBjdQoEX"
+create_token = "MZR2aPTCNAFLTHkTPRb2CCtqqrvuhsHA27SeRDxrsYL"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

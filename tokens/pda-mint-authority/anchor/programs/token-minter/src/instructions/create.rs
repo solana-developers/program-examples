@@ -3,10 +3,13 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
+        metadata::{
+            create_metadata_accounts_v3,
+            mpl_token_metadata::{accounts::Metadata as mpl_metadata, types::DataV2},
+            CreateMetadataAccountsV3, Metadata,
+        },
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
 };
 
 #[derive(Accounts)]
@@ -31,7 +34,7 @@ pub struct CreateToken<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
 
@@ -50,7 +53,7 @@ pub fn create_token(
     msg!("Creating metadata account");
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[*ctx.bumps.get("mint_account").unwrap()]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[ctx.bumps.mint_account][..]]];
 
     // Cross Program Invocation (CPI) signed by PDA
     // Invoking the create_metadata_account_v3 instruction on the token metadata program

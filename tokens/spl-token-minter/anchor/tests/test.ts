@@ -1,4 +1,4 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID as PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { SplTokenMinter } from "../target/types/spl_token_minter";
 import {
@@ -19,6 +19,7 @@ describe("SPL Token Minter", () => {
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace
     .SplTokenMinter as anchor.Program<SplTokenMinter>;
+  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(PROGRAM_ID);
 
   const metadata = {
     name: "Solana Gold",

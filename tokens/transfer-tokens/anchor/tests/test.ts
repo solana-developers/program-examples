@@ -1,4 +1,4 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID as PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { TransferTokens } from "../target/types/transfer_tokens";
 import {
@@ -19,6 +19,7 @@ describe("Transfer Tokens", () => {
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace
     .TransferTokens as anchor.Program<TransferTokens>;
+  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(PROGRAM_ID);
 
   const metadata = {
     name: "Solana Gold",

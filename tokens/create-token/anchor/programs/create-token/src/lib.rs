@@ -3,13 +3,16 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
+        metadata::{
+            create_metadata_accounts_v3,
+            mpl_token_metadata::{accounts::Metadata as mpl_metadata, types::DataV2},
+            CreateMetadataAccountsV3, Metadata,
+        },
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
 };
 
-declare_id!("2B6MrsKB2pVq6W6tY8dJLcnSd3Uv1KE7yRaboBjdQoEX");
+declare_id!("MZR2aPTCNAFLTHkTPRb2CCtqqrvuhsHA27SeRDxrsYL");
 
 #[program]
 pub mod create_token {
@@ -72,9 +75,10 @@ pub struct CreateTokenMint<'info> {
     /// CHECK: Address validated using constraint
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        address=mpl_metadata::find_pda(&mint_account.key()).0
     )]
     pub metadata_account: UncheckedAccount<'info>,
+
     // Create new mint account
     #[account(
         init,

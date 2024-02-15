@@ -1,4 +1,4 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { NftMinter } from "../target/types/nft_minter";
 import {
@@ -18,6 +18,7 @@ describe("NFT Minter", () => {
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.NftMinter as anchor.Program<NftMinter>;
+  const TOKEN_METADATA_PROGRAM_ID = new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
 
   // The metadata for our NFT
   const metadata = {
@@ -72,7 +73,7 @@ describe("NFT Minter", () => {
         rent: SYSVAR_RENT_PUBKEY,
       })
       .signers([mintKeypair])
-      .rpc({ skipPreflight: true });
+      .rpc();
 
     console.log("Success!");
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
