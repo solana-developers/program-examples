@@ -1,0 +1,14 @@
+{
+  "name": "@extension-nft/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "@create-solana-game/preset-lumberjack": "1.0.5"
+  },
+  "devDependencies": {
+    "@nx/workspace": "16.10.0",
+    "nx": "16.10.0"
+  }
+}
