@@ -7,7 +7,7 @@ use instructions::*;
 pub mod instructions;
 pub mod state;
 
-declare_id!("FFKtnYFyzPj1qFjE9epkrfYHJwZMdh8CvJrB6XsKeFVz");
+declare_id!("oCCQRZyAbVxujyd8m57MPmDzZDmy2FoKW4ULS7KofCE");
 
 #[program]
 pub mod anchor_program_example {
