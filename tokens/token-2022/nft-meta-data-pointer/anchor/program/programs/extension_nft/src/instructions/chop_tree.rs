@@ -2,12 +2,12 @@ pub use crate::errors::GameErrorCode;
 pub use crate::state::game_data::GameData;
 use crate::{state::player_data::PlayerData, NftAuthority};
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::{spl_token_2022::state::Mint, Token2022};
+use anchor_spl::token_interface::{Token2022};
 use session_keys::{Session, SessionToken};
 use solana_program::program::invoke_signed;
 
-pub fn chop_tree(mut ctx: Context<ChopTree>, counter: u16, amount: u64) -> Result<()> {
-    let account: &mut &mut ChopTree<'_> = &mut ctx.accounts;
+pub fn chop_tree(ctx: Context<ChopTree>, counter: u16, amount: u64) -> Result<()> {
+    let account: &mut ChopTree<'_> = ctx.accounts;
     account.player.update_energy()?;
     account.player.print()?;
 

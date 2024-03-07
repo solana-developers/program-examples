@@ -1,4 +1,5 @@
 pub use crate::errors::GameErrorCode;
+pub use crate::errors::ProgramErrorCode;
 pub use crate::state::game_data::GameData;
 use anchor_lang::{prelude::*, system_program};
 use anchor_spl::{
@@ -10,10 +11,11 @@ use spl_token_2022::{extension::ExtensionType, state::Mint};
 pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     msg!("Mint nft with meta data extension and additional meta data");
 
-    let space = ExtensionType::try_calculate_account_len::<Mint>(
-        &[ExtensionType::MetadataPointer])
-        .unwrap();
-    
+    let space = match ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::MetadataPointer]) {
+        Ok(space) => space,
+        Err(_) => return err!(ProgramErrorCode::InvalidMintAccountSpace)
+    };
+
     // This is the space required for the metadata account. 
     // We put the meta data into the mint account at the end so we 
     // don't need to create and additional account. 
@@ -53,13 +55,15 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
 
     // Initialize the metadata pointer (Need to do this before initializing the mint)
     let init_meta_data_pointer_ix = 
-    spl_token_2022::extension::metadata_pointer::instruction::initialize(
+    match spl_token_2022::extension::metadata_pointer::instruction::initialize(
         &Token2022::id(),
         &ctx.accounts.mint.key(),
         Some(ctx.accounts.nft_authority.key()),
         Some(ctx.accounts.mint.key()),
-    )
-    .unwrap();
+    ) {
+        Ok(ix) => ix,
+        Err(_) => return err!(ProgramErrorCode::CantInitializeMetadataPointer)
+    };
     
     invoke(
         &init_meta_data_pointer_ix,

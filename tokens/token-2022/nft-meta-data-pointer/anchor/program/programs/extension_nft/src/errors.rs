@@ -7,3 +7,11 @@ pub enum GameErrorCode {
     #[msg("Wrong Authority")]
     WrongAuthority,
 }
+
+#[error_code]
+pub enum ProgramErrorCode {
+    #[msg("Invalid Mint account space")]
+    InvalidMintAccountSpace,
+    #[msg("Cant initialize metadata_pointer")]
+    CantInitializeMetadataPointer,
+}

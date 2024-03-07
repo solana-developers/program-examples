@@ -1,3 +1,224 @@
+## Token Extension MetaData Pointer NFT 
+
+This is a simple example of a program that creates a NFT using the new token extension program and facilitating the token extension meta data pointer.
+
+The cool thing about this especially for games is that we can now have additional metadata fields on chain as a key value store which can be used to save the state of the game character. In this example we save the level and the collected wood of the player.
+
+This opens all kind of interesting possibilities for games. You can for example save the level and xp of the player, the current weapon and armor, the current quest and so on. When market places will eventually support additional meta data the nfts could be filtered and ordered by the meta data fields and NFTs with better values like higher level could potentially gain more value by playing. 
+
+The nft will be created in an anchor program so it is very easy to mint from the js client. The name, uri and symbol are saved in the meta data extension which is pointed to the mint. 
+
+The nft will have a name, symbol and a uri. The uri is a link to a json file which contains the meta data of the nft.
+
+There is a video walkthrough of this example on the Solana Foundation Youtube channel. 
+
+[![Solana Foundation Youtube channel]](https://www.youtube.com/@SolanaFndn/videos)
+
+# How to run this example
+
+Running the tests
+
+```shell
+cd program
+anchor test --detach
+```
+
+Then you can set your https://solana.explorer.com url to local net an look at the transactions.
+
+The program is also already deployed to dev net so you can try it out on dev net. 
+Starting the js client
+
+```shell
+cd app
+yarn install
+yarn dev
+```
+
+# Minting the NFT 
+
+For the creating of the NFT we perform the following steps: 
+
+1. Create a mint account
+2. Initialize the mint account
+3. Create a metadata pointer account
+4. Initialize the metadata pointer account
+5. Create the metadata account
+6. Initialize the metadata account
+7. Create the associated token account
+8. Mint the token to the associated token account
+9. Freeze the mint authority
+
+Here is the rust code for the minting of the NFT:
+
+```rust
+let space = ExtensionType::try_calculate_account_len::<Mint>(
+        &[ExtensionType::MetadataPointer])
+        .unwrap();
+    
+    // This is the space required for the metadata account. 
+    // We put the meta data into the mint account at the end so we 
+    // don't need to create and additional account. 
+    let meta_data_space = 250;
+
+    let lamports_required = (Rent::get()?).minimum_balance(space + meta_data_space);
+
+    msg!(
+        "Create Mint and metadata account size and cost: {} lamports: {}",
+        space as u64,
+        lamports_required
+    );
+
+    system_program::create_account(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            system_program::CreateAccount {
+                from: ctx.accounts.signer.to_account_info(),
+                to: ctx.accounts.mint.to_account_info(),
+            },
+        ),
+        lamports_required,
+        space as u64,
+        &ctx.accounts.token_program.key(),
+    )?;
+
+    // Assign the mint to the token program
+    system_program::assign(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            system_program::Assign {
+                account_to_assign: ctx.accounts.mint.to_account_info(),
+            },
+        ),
+        &token_2022::ID,
+    )?;
+
+    // Initialize the metadata pointer (Need to do this before initializing the mint)
+    let init_meta_data_pointer_ix = 
+    spl_token_2022::extension::metadata_pointer::instruction::initialize(
+        &Token2022::id(),
+        &ctx.accounts.mint.key(),
+        Some(ctx.accounts.nft_authority.key()),
+        Some(ctx.accounts.mint.key()),
+    )
+    .unwrap();
+    
+    invoke(
+        &init_meta_data_pointer_ix,
+        &[
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.nft_authority.to_account_info()
+        ],
+    )?;
+    
+    // Initialize the mint cpi
+    let mint_cpi_ix = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        token_2022::InitializeMint2 {
+            mint: ctx.accounts.mint.to_account_info(),
+        },
+    );
+
+    token_2022::initialize_mint2(
+        mint_cpi_ix,
+        0,
+        &ctx.accounts.nft_authority.key(),
+        None).unwrap();
+    
+    // We use a PDA as a mint authority for the metadata account because 
+    // we want to be able to update the NFT from the program.
+    let seeds = b"nft_authority";
+    let bump = ctx.bumps.nft_authority;
+    let signer: &[&[&[u8]]] = &[&[seeds, &[bump]]];
+
+    msg!("Init metadata {0}", ctx.accounts.nft_authority.to_account_info().key);
+
+    // Init the metadata account
+    let init_token_meta_data_ix = 
+    &spl_token_metadata_interface::instruction::initialize(
+        &spl_token_2022::id(),
+        ctx.accounts.mint.key,
+        ctx.accounts.nft_authority.to_account_info().key,
+        ctx.accounts.mint.key,
+        ctx.accounts.nft_authority.to_account_info().key,
+        "Beaver".to_string(),
+        "BVA".to_string(),
+        "https://arweave.net/MHK3Iopy0GgvDoM7LkkiAdg7pQqExuuWvedApCnzfj0".to_string(),
+    );
+
+    invoke_signed(
+        init_token_meta_data_ix,
+        &[ctx.accounts.mint.to_account_info().clone(), ctx.accounts.nft_authority.to_account_info().clone()],
+        signer,
+    )?;
+
+    // Update the metadata account with an additional metadata field in this case the player level
+    invoke_signed(
+        &spl_token_metadata_interface::instruction::update_field(
+            &spl_token_2022::id(),
+            ctx.accounts.mint.key,
+            ctx.accounts.nft_authority.to_account_info().key,
+            spl_token_metadata_interface::state::Field::Key("level".to_string()),
+            "1".to_string(),
+        ),
+        &[
+            ctx.accounts.mint.to_account_info().clone(),
+            ctx.accounts.nft_authority.to_account_info().clone(),
+        ],
+        signer
+    )?;
+
+    // Create the associated token account
+    associated_token::create(
+        CpiContext::new(
+        ctx.accounts.associated_token_program.to_account_info(),
+        associated_token::Create {
+            payer: ctx.accounts.signer.to_account_info(),
+            associated_token: ctx.accounts.token_account.to_account_info(),
+            authority: ctx.accounts.signer.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            token_program: ctx.accounts.token_program.to_account_info(),
+        },
+    ))?;
+
+    // Mint one token to the associated token account of the player
+    token_2022::mint_to(
+        CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            token_2022::MintTo {
+                mint: ctx.accounts.mint.to_account_info(),
+                to: ctx.accounts.token_account.to_account_info(),
+                authority: ctx.accounts.nft_authority.to_account_info(),
+            },
+            signer
+        ),
+        1,
+    )?;
+
+    // Freeze the mint authority so no more tokens can be minted to make it an NFT
+    token_2022::set_authority(
+        CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            token_2022::SetAuthority {
+                current_authority: ctx.accounts.nft_authority.to_account_info(),
+                account_or_mint: ctx.accounts.mint.to_account_info(),
+            },
+            signer
+        ),
+        AuthorityType::MintTokens,
+        None,
+    )?;
+```
+
+
+
+
+The example is based on the Solana Games Preset 
+
+```shell
+npx create-solana-game gamName
+```
+
 # Solana Game Preset
 
 This game is ment as a starter game for on chain games. 
@@ -110,7 +331,7 @@ The project uses session keys (maintained by Magic Block) for auto approving tra
 
 Many casual games in traditional gaming use energy systems. This is how you can build it on chain.
 
-If you have no prior knowledge in solan and rust programming it is recommended to start with the Solana cookbook [Hello world example]([https://unity.com/](https://solanacookbook.com/gaming/hello-world.html#getting-started-with-your-first-solana-game)).  
+If you have no prior knowledge in solana and rust programming it is recommended to start with the Solana cookbook [Hello world example]([https://unity.com/](https://solanacookbook.com/gaming/hello-world.html#getting-started-with-your-first-solana-game)).  
 
 ## Anchor program 
 
