@@ -78,12 +78,12 @@ pub mod transfer_hook {
 
         if amount > 50 {
             msg!("The amount is too big {0}", amount);
-        //    return err!(MyError::AmountTooBig);
+            //return err!(MyError::AmountTooBig);
         }
 
         ctx.accounts.counter_account.counter.checked_add(1).unwrap();
 
-        msg!("This token has been transfered {0} times", ctx.accounts.counter_account.counter);
+        msg!("This token has been transferred {0} times", ctx.accounts.counter_account.counter);
        
         Ok(())
     }
