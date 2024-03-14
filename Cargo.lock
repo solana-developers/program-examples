@@ -14,7 +14,7 @@ name = "account-data-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -1040,7 +1040,7 @@ name = "close-account-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -1148,7 +1148,7 @@ name = "create-token-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "mpl-token-metadata",
  "solana-program",
  "spl-associated-token-account 2.1.0",
@@ -1908,7 +1908,7 @@ name = "nft-minter-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "mpl-token-metadata",
  "solana-program",
  "spl-associated-token-account 2.1.0",
@@ -2113,7 +2113,7 @@ name = "pda-mint-authority-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "mpl-token-metadata",
  "solana-program",
  "spl-associated-token-account 2.1.0",
@@ -2132,7 +2132,7 @@ name = "pda-rent-payer-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -2213,7 +2213,7 @@ name = "processing-instructions-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -2222,7 +2222,7 @@ name = "program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -2231,7 +2231,7 @@ name = "program-derived-addresses-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -2399,7 +2399,7 @@ name = "realloc-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -2453,7 +2453,7 @@ name = "repository-layout-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -3280,7 +3280,7 @@ name = "spl-token-minter-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "mpl-token-metadata",
  "solana-program",
  "spl-associated-token-account 2.1.0",
@@ -3458,7 +3458,7 @@ name = "token-2022-default-account-state-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
  "spl-associated-token-account 2.1.0",
  "spl-token-2022 0.7.0",
@@ -3469,7 +3469,7 @@ name = "token-2022-mint-close-authority-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
  "spl-associated-token-account 2.1.0",
  "spl-token-2022 0.7.0",
@@ -3480,7 +3480,7 @@ name = "token-2022-multiple-extensions-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
  "spl-associated-token-account 2.1.0",
  "spl-token-2022 0.7.0",
@@ -3491,7 +3491,7 @@ name = "token-2022-non-transferable-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
  "spl-associated-token-account 2.1.0",
  "spl-token-2022 0.7.0",
@@ -3502,7 +3502,7 @@ name = "token-2022-transfer-fees-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
  "spl-associated-token-account 2.1.0",
  "spl-token-2022 0.7.0",
@@ -3546,7 +3546,7 @@ name = "transfer-sol-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "solana-program",
 ]
 
@@ -3564,7 +3564,7 @@ name = "transfer-tokens-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 0.10.3",
  "mpl-token-metadata",
  "solana-program",
  "spl-associated-token-account 2.1.0",
