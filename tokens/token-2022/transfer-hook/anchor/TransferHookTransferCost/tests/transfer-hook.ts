@@ -218,7 +218,7 @@ describe("transfer-hook", () => {
       provider.connection,
       transaction,
       [wallet.payer],
-      { skipPreflight: true, commitment : "confirmed"}
+      { skipPreflight: true, commitment: "confirmed" }
     );
     console.log("Transaction Signature:", txSig);
   });
@@ -250,35 +250,54 @@ describe("transfer-hook", () => {
       senderWSolTokenAccount
     );
 
-    const mintInfo = await getMint(connection, mint.publicKey, "confirmed", TOKEN_2022_PROGRAM_ID);
-    const transferHook = getTransferHook(mintInfo);
-    if (transferHook != null) {
-        console.log("Transfer hook not found" + JSON.stringify(transferHook));
-    }
-
-    const extraAccountsAccount = getExtraAccountMetaAddress(mint.publicKey, transferHook.programId);
-    const extraAccountsInfo = await connection.getAccountInfo(extraAccountsAccount, "confirmed");
-    const extraAccountMetas = getExtraAccountMetas(extraAccountsInfo);
-
-    for (const extraAccountMeta of extraAccountMetas) {
-      console.log("Extra account meta: " + JSON.stringify(extraAccountMeta));
-    }
-
-    // Standard token transfer instruction
-    const transferInstruction = await createTransferCheckedWithTransferHookInstruction(
+    const mintInfo = await getMint(
       connection,
-      sourceTokenAccount,
       mint.publicKey,
-      destinationTokenAccount,
-      wallet.publicKey,
-      bigIntAmount,
-      decimals,
-      [],
       "confirmed",
       TOKEN_2022_PROGRAM_ID
     );
+    const transferHook = getTransferHook(mintInfo);
+    if (transferHook != null) {
+      console.log(
+        "Transfer hook program found: " + JSON.stringify(transferHook, null, 2)
+      );
+    }
 
-    console.log("Pushed keys:", JSON.stringify(transferInstruction.keys));
+    const extraAccountsAccount = getExtraAccountMetaAddress(
+      mint.publicKey,
+      transferHook.programId
+    );
+    const extraAccountsInfo = await connection.getAccountInfo(
+      extraAccountsAccount,
+      "confirmed"
+    );
+    const extraAccountMetas = getExtraAccountMetas(extraAccountsInfo);
+
+    for (const extraAccountMeta of extraAccountMetas) {
+      console.log(
+        "Extra account meta: " + JSON.stringify(extraAccountMeta, null, 2)
+      );
+    }
+
+    // Standard token transfer instruction
+    const transferInstruction =
+      await createTransferCheckedWithTransferHookInstruction(
+        connection,
+        sourceTokenAccount,
+        mint.publicKey,
+        destinationTokenAccount,
+        wallet.publicKey,
+        bigIntAmount,
+        decimals,
+        [],
+        "confirmed",
+        TOKEN_2022_PROGRAM_ID
+      );
+
+    console.log(
+      "Pushed keys:",
+      JSON.stringify(transferInstruction.keys, null, 2)
+    );
 
     const transaction = new Transaction().add(
       solTransferInstruction,
@@ -286,7 +305,7 @@ describe("transfer-hook", () => {
       approveInstruction,
       transferInstruction
     );
-    
+
     const txSig = await sendAndConfirmTransaction(
       connection,
       transaction,
@@ -296,7 +315,7 @@ describe("transfer-hook", () => {
     console.log("Transfer Signature:", txSig);
 
     const tokenAccount = await getAccount(connection, delegateWSolTokenAccount);
-    
+
     assert.equal(Number(tokenAccount.amount), amount / 2);
   });
 });

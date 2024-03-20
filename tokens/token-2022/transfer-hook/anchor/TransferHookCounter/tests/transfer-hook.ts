@@ -18,7 +18,7 @@ import {
   createAssociatedTokenAccountInstruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
-  createTransferCheckedWithTransferHookInstruction
+  createTransferCheckedWithTransferHookInstruction,
 } from "@solana/spl-token";
 
 describe("transfer-hook", () => {
@@ -59,7 +59,7 @@ describe("transfer-hook", () => {
     [Buffer.from("extra-account-metas"), mint.publicKey.toBuffer()],
     program.programId
   );
-  
+
   const [counterPDA] = PublicKey.findProgramAddressSync(
     [Buffer.from("counter")],
     program.programId
@@ -98,12 +98,14 @@ describe("transfer-hook", () => {
       provider.connection,
       transaction,
       [wallet.payer, mint],
-      { skipPreflight: true, commitment: "finalized"}
+      { skipPreflight: true, commitment: "finalized" }
     );
 
-    const txDetails = await program.provider.connection.getTransaction(txSig, { maxSupportedTransactionVersion: 0, commitment: 'confirmed'});
+    const txDetails = await program.provider.connection.getTransaction(txSig, {
+      maxSupportedTransactionVersion: 0,
+      commitment: "confirmed",
+    });
     console.log(txDetails.meta.logMessages);
-
 
     console.log(`Transaction Signature: ${txSig}`);
   });
@@ -170,7 +172,7 @@ describe("transfer-hook", () => {
       provider.connection,
       transaction,
       [wallet.payer],
-      { skipPreflight: true, commitment: "confirmed"}
+      { skipPreflight: true, commitment: "confirmed" }
     );
     console.log("Transaction Signature:", txSig);
   });
@@ -180,26 +182,28 @@ describe("transfer-hook", () => {
     const amount = 1 * 10 ** decimals;
     const amountBigInt = BigInt(amount);
 
-    let transferInstructionWithHelper = await createTransferCheckedWithTransferHookInstruction( 
-      connection,
-      sourceTokenAccount,
-      mint.publicKey,
-      destinationTokenAccount,
-      wallet.publicKey,
-      amountBigInt,
-      decimals,
-      [],
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID,
-    );
+    let transferInstructionWithHelper =
+      await createTransferCheckedWithTransferHookInstruction(
+        connection,
+        sourceTokenAccount,
+        mint.publicKey,
+        destinationTokenAccount,
+        wallet.publicKey,
+        amountBigInt,
+        decimals,
+        [],
+        "confirmed",
+        TOKEN_2022_PROGRAM_ID
+      );
 
     console.log("Extra accounts meta: " + extraAccountMetaListPDA);
     console.log("Counter PDa: " + counterPDA);
-    console.log("Transfer Instruction: " + JSON.stringify(transferInstructionWithHelper));
-    
-    const transaction = new Transaction().add(
-      transferInstructionWithHelper
+    console.log(
+      "Transfer Instruction: " +
+        JSON.stringify(transferInstructionWithHelper, null, 2)
     );
+
+    const transaction = new Transaction().add(transferInstructionWithHelper);
 
     const txSig = await sendAndConfirmTransaction(
       connection,

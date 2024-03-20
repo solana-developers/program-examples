@@ -27,7 +27,6 @@ pub mod transfer_hook {
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
 
-        // The `addExtraAccountsToInstruction` JS helper function resolving incorrectly
         let account_metas = vec![
             ExtraAccountMeta::new_with_seeds(
                 &[Seed::Literal {

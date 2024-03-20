@@ -31,7 +31,6 @@ pub mod transfer_hook {
     ) -> Result<()> {
         // index 0-3 are the accounts required for token transfer (source, mint, destination, owner)
         // index 4 is address of ExtraAccountMetaList account
-        // The `addExtraAccountsToInstruction` JS helper function resolving incorrectly
         let account_metas = vec![
             // index 5, wrapped SOL mint
             ExtraAccountMeta::new_with_pubkey(&ctx.accounts.wsol_mint.key(), false, false)?,

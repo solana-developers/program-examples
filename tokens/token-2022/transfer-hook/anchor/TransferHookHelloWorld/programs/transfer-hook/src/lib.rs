@@ -21,10 +21,7 @@ pub mod transfer_hook {
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
 
-        // The `addExtraAccountsToInstruction` JS helper function resolving incorrectly
-        let account_metas = vec![
-            
-        ];
+        let account_metas = vec![];
 
         // calculate account size
         let account_size = ExtraAccountMetaList::size_of(account_metas.len())? as u64;
