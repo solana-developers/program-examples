@@ -1,0 +1,57 @@
+{
+  "name": "anchor",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "anchor/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/anchor",
+        "main": "anchor/src/index.ts",
+        "tsConfig": "anchor/tsconfig.lib.json",
+        "assets": [],
+        "project": "anchor/package.json",
+        "compiler": "swc",
+        "format": ["cjs", "esm"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "anchor",
+        "commands": ["anchor test"],
+        "parallel": false
+      }
+    },
+    "anchor": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "anchor",
+        "commands": ["anchor"],
+        "parallel": false
+      }
+    },
+    "localnet": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "anchor",
+        "commands": ["anchor localnet"],
+        "parallel": false
+      }
+    },
+    "jest": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "anchor/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
