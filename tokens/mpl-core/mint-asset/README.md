@@ -17,25 +17,23 @@ solana-cli 1.18.9 # install by running $ solana-install 1.18.9
 nchor-cli 0.29.0 # install by running $ avm install latest
 ```
 
-1. Initialize Anchor Project
+To use this example,
 
-```bash
-anchor init mint-asset
-```
-
-2. Install crates
-
-```bash
-cargo add mpl-core
-```
-
-## Building
+1. Build the anchor project
 
 ```bash
 anchor build
 ```
 
-## Testing
+2. List the program keys
+
+```bash
+anchor keys list
+```
+
+3. Update the [Anchor.toml](./Anchor.toml) and [lib.rs](./programs/mint-asset/src/lib.rs) with the new program address
+
+4. Running the Tests
 
 ```bash
 anchor test
