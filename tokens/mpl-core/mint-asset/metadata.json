@@ -1,0 +1,30 @@
+{
+	"name": "Kobeni",
+	"symbol": "KBN",
+	"description": "Kobeni supremacy 🛐",
+	"image": "https://pbs.twimg.com/media/F3DRtPUb0AEPJRi?format=jpg&name=large",
+    "external_url": "https://twitter.com/inoitoh",
+	"attributes": [
+		{
+			"gender": "female"
+		},
+		{
+			"show": "CSM"
+		},
+		{
+			"artist": "ナカムラ"
+		},
+		{
+			"source": "Twitter"
+		}
+	],
+	"properties": {
+		"category": "image",
+		"files": [
+			{
+				"uri": "https://pbs.twimg.com/media/F3DRtPUb0AEPJRi?format=jpg&name=large",
+				"type": "image/jpeg"
+			}
+		]
+	}
+}
