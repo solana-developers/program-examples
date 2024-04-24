@@ -17,4 +17,5 @@ default = []
 
 [dependencies]
 anchor-lang = "0.29.0"
-ahash = "=0.8.6"
+solana-program = "=1.17"
+ahash = "=0.8.4"
