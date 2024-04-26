@@ -16,8 +16,8 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.29.0"
-anchor-spl = "0.29.0"
+anchor-lang = "0.30.0"
+anchor-spl = "0.30.0"
 solana-program = "1.17.13"
 
 spl-transfer-hook-interface = "0.4.1"

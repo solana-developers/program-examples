@@ -16,8 +16,8 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = { version = "0.28.0", features = ["init-if-needed"] }
-anchor-spl = { version = "0.28.0" }
+anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
+anchor-spl = { version = "0.30.0" }
 fixed = "1.23.1"
 half = "=2.2.1"
 fixed-sqrt = "0.2.5"
