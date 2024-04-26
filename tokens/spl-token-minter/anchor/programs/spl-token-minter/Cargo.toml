@@ -9,11 +9,12 @@ crate-type = ["cdylib", "lib"]
 name = "spl_token_minter"
 
 [features]
+default = []
+cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
-default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
 anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
