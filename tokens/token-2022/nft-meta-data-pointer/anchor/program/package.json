@@ -4,7 +4,7 @@
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
     },
     "dependencies": {
-        "@coral-xyz/anchor": "0.30.0",
+        "@coral-xyz/anchor": "^0.30.0",
         "@coral-xyz/spl-token": "0.30.0",
         "@solana/spl-token": "^0.4.0"
     },
