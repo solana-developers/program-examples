@@ -1,12 +1,12 @@
 [package]
-name = "amm-tutorial"
+name = "swap_example"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "amm_tutorial"
+name = "swap_example"
 
 [features]
 default = []
@@ -22,6 +22,5 @@ anchor-spl = { version = "0.30.0" }
 fixed = "1.23.1"
 half = "=2.2.1"
 fixed-sqrt = "0.2.5"
-solana-program = "1.16.10"
-winnow = "=0.4.1"
-toml_datetime = "=0.6.1"
+solana-program = "1.18.10"
+

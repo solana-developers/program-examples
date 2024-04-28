@@ -1,14 +1,17 @@
+[toolchain]
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
+
 [programs.devnet]
-swap_example = "C3ti6PFK6PoYShRFx1BNNTQU3qeY1iVwjwCA6SjJhiuW"
+swap_example = "9mcG7PFTBuii5oyfHbJm3kL8eQZrYqNYe9NEgaME21ff"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

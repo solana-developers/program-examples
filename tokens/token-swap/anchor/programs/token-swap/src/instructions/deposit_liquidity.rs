@@ -4,7 +4,6 @@ use anchor_spl::{
     token::{self, Mint, MintTo, Token, TokenAccount, Transfer},
 };
 use fixed::types::I64F64;
-use fixed_sqrt::FixedSqrt;
 
 use crate::{
     constants::{AUTHORITY_SEED, LIQUIDITY_SEED, MINIMUM_LIQUIDITY},
@@ -101,12 +100,12 @@ pub fn deposit_liquidity(
     )?;
 
     // Mint the liquidity to user
-    let authority_bump = *ctx.bumps.get("pool_authority").unwrap();
+    let authority_bump = ctx.bumps.pool_authority;
     let authority_seeds = &[
         &ctx.accounts.pool.amm.to_bytes(),
         &ctx.accounts.mint_a.key().to_bytes(),
         &ctx.accounts.mint_b.key().to_bytes(),
-        AUTHORITY_SEED.as_bytes(),
+        AUTHORITY_SEED,
         &[authority_bump],
     ];
     let signer_seeds = &[&authority_seeds[..]];
@@ -146,7 +145,7 @@ pub struct DepositLiquidity<'info> {
             pool.amm.as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            AUTHORITY_SEED.as_ref(),
+            AUTHORITY_SEED,
         ],
         bump,
     )]
@@ -161,7 +160,7 @@ pub struct DepositLiquidity<'info> {
             pool.amm.as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            LIQUIDITY_SEED.as_ref(),
+            LIQUIDITY_SEED,
         ],
         bump,
     )]

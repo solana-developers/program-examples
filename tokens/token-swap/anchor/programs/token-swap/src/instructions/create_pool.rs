@@ -49,7 +49,7 @@ pub struct CreatePool<'info> {
             amm.key().as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            AUTHORITY_SEED.as_ref(),
+            AUTHORITY_SEED,
         ],
         bump,
     )]
@@ -62,7 +62,7 @@ pub struct CreatePool<'info> {
             amm.key().as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            LIQUIDITY_SEED.as_ref(),
+            LIQUIDITY_SEED,
         ],
         bump,
         mint::decimals = 6,

@@ -43,7 +43,7 @@ pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
     );
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[*ctx.bumps.get("mint_account").unwrap()]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[ctx.bumps.mint_account]]];
 
     // Invoke the mint_to instruction on the token program
     mint_to(

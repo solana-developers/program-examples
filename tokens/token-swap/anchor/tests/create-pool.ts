@@ -21,6 +21,8 @@ describe("Create pool", () => {
       .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
       .rpc();
 
+    console.log(values.ammKey);
+
     await mintingTokens({
       connection,
       creator: values.admin,

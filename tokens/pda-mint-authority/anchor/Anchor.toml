@@ -1,15 +1,17 @@
+[toolchain]
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-token_minter = "A5gNtapBvMLD6i7D2t3SSyJeFtBdfb6ibvZu1hoBLzCo"
+token_minter = "3LFrPHqwk5jMrmiz48BFj6NV2k4NjobgTe1jChzx3JGD"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
@@ -18,6 +20,7 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 [test]
 startup_wait = 5000
 shutdown_wait = 2000
+upgradeable = false
 
 [test.validator]
 bind_address = "0.0.0.0"

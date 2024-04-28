@@ -1,10 +1,12 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
+        metadata::{
+            create_metadata_accounts_v3, mpl_token_metadata::types::DataV2,
+            CreateMetadataAccountsV3, Metadata,
+        },
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
 };
 
 #[derive(Accounts)]
@@ -21,10 +23,12 @@ pub struct CreateToken<'info> {
 
     )]
     pub mint_account: Account<'info, Mint>,
-    /// CHECK: Address validated using constraint
+    /// CHECK: Validate address by deriving pda
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        seeds = [b"metadata", token_metadata_program.key().as_ref(), mint_account.key().as_ref()],
+        bump,
+        seeds::program = token_metadata_program.key(),
     )]
     pub metadata_account: UncheckedAccount<'info>,
 

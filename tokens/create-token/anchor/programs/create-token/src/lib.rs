@@ -3,13 +3,15 @@
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
-        metadata::{create_metadata_accounts_v3, CreateMetadataAccountsV3, Metadata},
+        metadata::{
+            create_metadata_accounts_v3, mpl_token_metadata::types::DataV2,
+            CreateMetadataAccountsV3, Metadata,
+        },
         token::{Mint, Token},
     },
-    mpl_token_metadata::{pda::find_metadata_account, state::DataV2},
 };
 
-declare_id!("2B6MrsKB2pVq6W6tY8dJLcnSd3Uv1KE7yRaboBjdQoEX");
+declare_id!("GwvQ53QTu1xz3XXYfG5m5jEqwhMBvVBudPS8TUuFYnhT");
 
 #[program]
 pub mod create_token {
@@ -17,10 +19,10 @@ pub mod create_token {
 
     pub fn create_token_mint(
         ctx: Context<CreateTokenMint>,
+        _token_decimals: u8,
         token_name: String,
         token_symbol: String,
         token_uri: String,
-        _token_decimals: u8,
     ) -> Result<()> {
         msg!("Creating metadata account...");
         msg!(
@@ -69,10 +71,12 @@ pub struct CreateTokenMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    /// CHECK: Address validated using constraint
+    /// CHECK: Validate address by deriving pda
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        seeds = [b"metadata", token_metadata_program.key().as_ref(), mint_account.key().as_ref()],
+        bump,
+        seeds::program = token_metadata_program.key(),
     )]
     pub metadata_account: UncheckedAccount<'info>,
     // Create new mint account
