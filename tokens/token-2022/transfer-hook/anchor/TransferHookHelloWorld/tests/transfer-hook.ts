@@ -2,7 +2,6 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { TransferHook } from "../target/types/transfer_hook";
 import {
-  PublicKey,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
@@ -17,7 +16,6 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createMintToInstruction,
-  createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
   createTransferCheckedWithTransferHookInstruction,
 } from "@solana/spl-token";
@@ -52,13 +50,6 @@ describe("transfer-hook", () => {
     false,
     TOKEN_2022_PROGRAM_ID,
     ASSOCIATED_TOKEN_PROGRAM_ID
-  );
-
-  // ExtraAccountMetaList address
-  // Store extra accounts required by the custom transfer hook instruction
-  const [extraAccountMetaListPDA] = PublicKey.findProgramAddressSync(
-    [Buffer.from("extra-account-metas"), mint.publicKey.toBuffer()],
-    program.programId
   );
 
   it("Create Mint Account with Transfer Hook Extension", async () => {
@@ -147,7 +138,6 @@ describe("transfer-hook", () => {
       .initializeExtraAccountMetaList()
       .accounts({
         mint: mint.publicKey,
-        extraAccountMetaList: extraAccountMetaListPDA,
       })
       .instruction();
 
@@ -170,22 +160,21 @@ describe("transfer-hook", () => {
     const bigIntAmount = BigInt(amount);
 
     // Standard token transfer instruction
-    const transferInstruction = await createTransferCheckedWithTransferHookInstruction(
-      connection,
-      sourceTokenAccount,
-      mint.publicKey,
-      destinationTokenAccount,
-      wallet.publicKey,
-      bigIntAmount,
-      decimals,
-      [],
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID
-    );
+    const transferInstruction =
+      await createTransferCheckedWithTransferHookInstruction(
+        connection,
+        sourceTokenAccount,
+        mint.publicKey,
+        destinationTokenAccount,
+        wallet.publicKey,
+        bigIntAmount,
+        decimals,
+        [],
+        "confirmed",
+        TOKEN_2022_PROGRAM_ID
+      );
 
-    const transaction = new Transaction().add(
-      transferInstruction
-    );
+    const transaction = new Transaction().add(transferInstruction);
 
     const txSig = await sendAndConfirmTransaction(
       connection,

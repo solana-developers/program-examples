@@ -17,9 +17,7 @@ no-log-ix-name = []
 idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
-anchor-lang = {version = "0.30.0", features = ["init-if-needed"]}
+anchor-lang = {version = "0.30.0", features = ["interface-instructions"]}
 anchor-spl = "0.30.0"
-solana-program = "=1.17.17"
-
-spl-transfer-hook-interface = "0.5.0"
-spl-tlv-account-resolution = "0.5.0"
+spl-tlv-account-resolution = "0.6.3"
+spl-transfer-hook-interface = "0.6.3"

@@ -1,11 +1,11 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_hook = "DrWbQtYJGtsoRwzKqAbHKHKsCJJfpysudF39GBVFSxub"
+transfer_hook = "FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g"
 
 [registry]
 url = "https://api.apr.dev"
