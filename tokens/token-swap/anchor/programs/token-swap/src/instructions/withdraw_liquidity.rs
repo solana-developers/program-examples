@@ -153,8 +153,7 @@ pub struct WithdrawLiquidity<'info> {
     pub pool_account_b: Box<Account<'info, TokenAccount>>,
 
     #[account(
-        init_if_needed,
-        payer = payer,
+        mut,
         associated_token::mint = mint_liquidity,
         associated_token::authority = depositor,
     )]

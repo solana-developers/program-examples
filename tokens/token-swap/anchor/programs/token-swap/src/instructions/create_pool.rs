@@ -6,7 +6,6 @@ use anchor_spl::{
 
 use crate::{
     constants::{AUTHORITY_SEED, LIQUIDITY_SEED},
-    errors::*,
     state::{Amm, Pool},
 };
 
@@ -27,7 +26,7 @@ pub struct CreatePool<'info> {
         ],
         bump,
     )]
-    pub amm: Account<'info, Amm>,
+    pub amm: Box<Account<'info, Amm>>,
 
     #[account(
         init,
@@ -39,9 +38,8 @@ pub struct CreatePool<'info> {
             mint_b.key().as_ref(),
         ],
         bump,
-        constraint = mint_a.key() < mint_b.key() @ TutorialError::InvalidMint
     )]
-    pub pool: Account<'info, Pool>,
+    pub pool: Box<Account<'info, Pool>>,
 
     /// CHECK: Read only authority
     #[account(

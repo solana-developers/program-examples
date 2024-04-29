@@ -20,7 +20,5 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
 anchor-spl = { version = "0.30.0" }
 fixed = "1.23.1"
-half = "=2.2.1"
-fixed-sqrt = "0.2.5"
-solana-program = "1.18.10"
+
 

@@ -137,7 +137,7 @@ pub struct DepositLiquidity<'info> {
         has_one = mint_a,
         has_one = mint_b,
     )]
-    pub pool: Account<'info, Pool>,
+    pub pool: Box<Account<'info, Pool>>,
 
     /// CHECK: Read only authority
     #[account(
@@ -193,16 +193,14 @@ pub struct DepositLiquidity<'info> {
     pub depositor_account_liquidity: Box<Account<'info, TokenAccount>>,
 
     #[account(
-        init_if_needed,
-        payer = payer,
+        mut,
         associated_token::mint = mint_a,
         associated_token::authority = depositor,
     )]
     pub depositor_account_a: Box<Account<'info, TokenAccount>>,
 
     #[account(
-        init_if_needed,
-        payer = payer,
+        mut,
         associated_token::mint = mint_b,
         associated_token::authority = depositor,
     )]
