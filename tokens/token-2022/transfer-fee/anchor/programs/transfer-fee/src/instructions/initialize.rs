@@ -39,8 +39,7 @@ pub fn process_initialize(
 ) -> Result<()> {
     // Calculate space required for mint and extension data
     let mint_size =
-        ExtensionType::try_calculate_account_len::<PodMint>(&[ExtensionType::TransferFeeConfig])
-            .unwrap();
+        ExtensionType::try_calculate_account_len::<PodMint>(&[ExtensionType::TransferFeeConfig])?;
 
     // Calculate minimum lamports required for size of mint account with extensions
     let lamports = (Rent::get()?).minimum_balance(mint_size);

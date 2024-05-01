@@ -30,8 +30,7 @@ pub mod interest_bearing {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::InterestBearingConfig,
-        ])
-        .unwrap();
+        ])?;
 
         // Calculate minimum lamports required for size of mint account with extensions
         let lamports = (Rent::get()?).minimum_balance(mint_size);

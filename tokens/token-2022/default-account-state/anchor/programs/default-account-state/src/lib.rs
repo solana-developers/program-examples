@@ -24,8 +24,7 @@ pub mod default_account_state {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::DefaultAccountState,
-        ])
-        .unwrap();
+        ])?;
 
         // Calculate minimum lamports required for size of mint account with extensions
         let lamports = (Rent::get()?).minimum_balance(mint_size);

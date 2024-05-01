@@ -20,8 +20,7 @@ pub mod non_transferable {
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         // Calculate space required for mint and extension data
         let mint_size =
-            ExtensionType::try_calculate_account_len::<PodMint>(&[ExtensionType::NonTransferable])
-                .unwrap();
+            ExtensionType::try_calculate_account_len::<PodMint>(&[ExtensionType::NonTransferable])?;
 
         // Calculate minimum lamports required for size of mint account with extensions
         let lamports = (Rent::get()?).minimum_balance(mint_size);
