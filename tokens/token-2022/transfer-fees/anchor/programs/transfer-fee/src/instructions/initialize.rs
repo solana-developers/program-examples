@@ -88,8 +88,7 @@ pub fn process_initialize(
         Some(&ctx.accounts.payer.key()), // freeze authority
     )?;
 
-    Initialize::check_mint_data(&ctx.accounts)?;
-
+    ctx.accounts.check_mint_data()?;
     Ok(())
 }
 

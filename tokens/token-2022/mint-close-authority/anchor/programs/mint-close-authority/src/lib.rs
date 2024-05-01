@@ -20,7 +20,7 @@ pub mod mint_close_authority {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        Initialize::check_mint_data(&ctx.accounts)?;
+        ctx.accounts.check_mint_data()?;
         Ok(())
     }
 

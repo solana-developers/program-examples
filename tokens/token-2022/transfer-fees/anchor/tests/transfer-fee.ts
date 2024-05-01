@@ -110,11 +110,6 @@ describe("transfer-fee", () => {
           isSigner: false,
           isWritable: true,
         },
-        {
-          pubkey: new anchor.web3.Keypair().publicKey,
-          isSigner: false,
-          isWritable: true,
-        },
       ])
       .rpc({ skipPreflight: true });
     console.log("Your transaction signature", transactionSignature);
