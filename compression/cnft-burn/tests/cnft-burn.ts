@@ -11,7 +11,7 @@ import {
   SPL_NOOP_PROGRAM_ID,
 } from "@solana/spl-account-compression";
 
-// Replace this with your custom RPC endpoint
+// Replace this with your custom RPC endpoint that supports cNFT indexing
 export const RPC_PATH = "https://api.devnet.solana.com";
 
 describe("cnft-burn", () => {

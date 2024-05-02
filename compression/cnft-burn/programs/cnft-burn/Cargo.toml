@@ -14,10 +14,10 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
 anchor-lang = "0.30.0"
-mpl-bubblegum = {version="1.1.0" }
+mpl-bubblegum = "1.3.0"
 spl-account-compression = { version="0.3.0",features = ["no-entrypoint","cpi"] }
-ahash = "=0.8.6"
+ahash = "=0.8.7"

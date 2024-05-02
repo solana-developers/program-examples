@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("FbeHkUEevbhKmdk5FE5orcTaJkCYn5drwZoZXaxQXXNn");
+declare_id!("FcLCJkSvwQQTDfCde5LdC4DSZAqSyb2AWM9US3wF5Fp7");
 
 #[derive(Clone)]
 pub struct SPLCompression;

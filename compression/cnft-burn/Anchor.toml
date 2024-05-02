@@ -1,17 +1,17 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.devnet]
-cnft_burn = "FbeHkUEevbhKmdk5FE5orcTaJkCYn5drwZoZXaxQXXNn"
+cnft_burn = "FcLCJkSvwQQTDfCde5LdC4DSZAqSyb2AWM9US3wF5Fp7"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
