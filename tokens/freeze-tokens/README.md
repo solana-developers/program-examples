@@ -1,3 +1,0 @@
-# Freeze Tokens
-
-> Coming soon!
