@@ -1,8 +1,6 @@
 import {
-    Connection,
     Keypair,
     PublicKey,
-    sendAndConfirmTransaction,
     SystemProgram,
     Transaction,
     TransactionInstruction,
@@ -13,10 +11,6 @@ import { describe, test } from 'node:test';
 import { start } from 'solana-bankrun';
 
 describe("PDAs", async () => {
-    // const PROGRAM_ID: PublicKey = new PublicKey(
-    //     "BCw7MQWBugruuYgno5crGUGFNufqGJbPpzZevhRRRQAu"
-    // );
-
     const PROGRAM_ID = PublicKey.unique();
     const context = await start([{ name: 'program_derived_addresses_program', programId: PROGRAM_ID }],[]);
     const client = context.banksClient;

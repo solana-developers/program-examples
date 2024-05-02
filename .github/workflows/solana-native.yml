@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: ['1.18.4']
+        solana-version: [stable, 1.18.4]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - uses: metadaoproject/setup-solana@v1.0
+      - uses: metadaoproject/setup-solana@v1.2
         with:
           solana-cli-version: ${{ matrix.solana-version }}
       - run: solana block
@@ -35,7 +35,7 @@ jobs:
           npm install --global pnpm
       - name: Build Native programs
         run: |
-          declare -a StringArray=(
+          declare -a ProjectDirs=(
             "basics/account-data/native/program"
             "basics/checking-accounts/native/program"
             "basics/close-account/native/program"
@@ -50,18 +50,18 @@ jobs:
             "basics/repository-layout/native/program"
             "basics/transfer-sol/native/program"
           )
-          for val in "${StringArray[@]}"; do
+          for projectDir in "${ProjectDirs[@]}"; do
             echo "
             ********
-            Building $val
+            Building $projectDir
             ********"
-            cd $val
+            cd $projectDir
             if cargo-build-sbf --verbose; then
-              echo "Build succeeded for $val."
+              echo "Build succeeded for $projectDir."
             else
               failed=true
-              failed_builds+=($val)
-              echo "Build failed for $val. Continuing with the next program."
+              failed_builds+=($projectDir)
+              echo "Build failed for $projectDir. Continuing with the next program."
             fi
           cd - > /dev/null
           done
@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: ['1.18.4']
+        solana-version: [stable, 1.18.4]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -87,7 +87,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - uses: metadaoproject/setup-solana@v1.0
+      - uses: metadaoproject/setup-solana@v1.2
         with:
           solana-cli-version: ${{ matrix.solana-version }}
       - run: solana block
@@ -99,7 +99,7 @@ jobs:
         run: |
           solana -V
           rustc -V
-          declare -a StringArray=(
+          declare -a ProjectDirs=(
             "basics/account-data/native/"
             "basics/checking-accounts/native/"
             "basics/close-account/native/"
@@ -113,19 +113,19 @@ jobs:
             "basics/repository-layout/native/"
             "basics/transfer-sol/native/"
           )
-          for val in "${StringArray[@]}"; do
+          for projectDir in "${ProjectDirs[@]}"; do
             echo "
             ********
-            Testing $val
+            Testing $projectDir
             ********"
-            cd $val
+            cd $projectDir
             pnpm install --frozen-lockfile
             if (cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test); then
-              echo "Tests succeeded for $val."
+              echo "Tests succeeded for $projectDir."
             else
               failed=true
-              failed_tests+=($val)
-              echo "Tests failed for $val. Continuing with the next program."
+              failed_tests+=($projectDir)
+              echo "Tests failed for $projectDir. Continuing with the next program."
             fi
           cd - > /dev/null
           done

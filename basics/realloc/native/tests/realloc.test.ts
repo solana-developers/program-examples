@@ -80,7 +80,7 @@ describe('Realloc!', async () => {
   });
 
   async function printAddressInfo(pubkey: PublicKey): Promise<void> {
-    await delay(2);
+    await sleep(2);
     const data = (await client.getAccount(pubkey))?.data;
     if (data) {
       const addressInfo = AddressInfo.fromBuffer(Buffer.from(data));
@@ -93,7 +93,7 @@ describe('Realloc!', async () => {
   }
 
   async function printEnhancedAddressInfo(pubkey: PublicKey): Promise<void> {
-    await delay(2);
+    await sleep(2);
     const data = (await client.getAccount(pubkey))?.data;
     if (data) {
       const enhancedAddressInfo = EnhancedAddressInfo.fromBuffer(Buffer.from(data));
@@ -108,7 +108,7 @@ describe('Realloc!', async () => {
   }
 
   async function printWorkInfo(pubkey: PublicKey): Promise<void> {
-    await delay(2);
+    await sleep(2);
     const data = (await client.getAccount(pubkey))?.data;
     if (data) {
       const workInfo = WorkInfo.fromBuffer(Buffer.from(data));
@@ -120,7 +120,8 @@ describe('Realloc!', async () => {
     }
   }
 
-  function delay(s: number) {
-    return new Promise(resolve => setTimeout(resolve, s * 1000));
+  function sleep(s: number) {
+    const SECONDS = 1000
+    return new Promise(resolve => setTimeout(resolve, s * SECONDS));
   }
 });
