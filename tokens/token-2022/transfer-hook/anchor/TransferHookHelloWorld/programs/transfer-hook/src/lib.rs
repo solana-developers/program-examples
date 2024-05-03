@@ -1,15 +1,31 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    associated_token::AssociatedToken, token_2022::Token2022, token_interface::{Mint, TokenAccount}
+    associated_token::AssociatedToken, token_interface::{
+        spl_pod::optional_keys::OptionalNonZeroPubkey,
+        spl_token_2022::{
+            extension::{
+                transfer_hook::TransferHook as TransferHookExtension, BaseStateWithExtensions,
+                StateWithExtensions,
+            },
+            state::Mint as MintState,
+        },
+        Mint, Token2022, TokenAccount
+    },
 };
 use spl_tlv_account_resolution::{account::ExtraAccountMeta, state::ExtraAccountMetaList};
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
-declare_id!("DrWbQtYJGtsoRwzKqAbHKHKsCJJfpysudF39GBVFSxub");
+declare_id!("jY5DfVksJT8Le38LCaQhz5USeiGu4rUeVSS8QRAMoba");
 
 #[program]
 pub mod transfer_hook {
     use super::*;
+
+    // create a mint account that specifies this program as the transfer hook program
+    pub fn initialize(ctx: Context<Initialize>, _decimals: u8) -> Result<()> {
+        ctx.accounts.check_mint_data()?;
+        Ok(())
+    }
 
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
     pub fn initialize_extra_account_meta_list(
@@ -35,6 +51,49 @@ pub mod transfer_hook {
         Ok(())
     }
 }
+
+#[derive(Accounts)]
+#[instruction(_decimals: u8)]
+pub struct Initialize<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+
+    #[account(
+        init,
+        payer = payer,
+        mint::decimals = _decimals,
+        mint::authority = payer,
+        extensions::transfer_hook::authority = payer,
+        extensions::transfer_hook::program_id = crate::ID,
+    )]
+    pub mint_account: InterfaceAccount<'info, Mint>,
+    pub token_program: Program<'info, Token2022>,
+    pub system_program: Program<'info, System>,
+}
+
+// helper to check mint data, and demonstrate how to read mint extension data within a program
+impl<'info> Initialize<'info> {
+    pub fn check_mint_data(&self) -> Result<()> {
+        let mint = &self.mint_account.to_account_info();
+        let mint_data = mint.data.borrow();
+        let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
+        let extension_data = mint_with_extension.get_extension::<TransferHookExtension>()?;
+
+        assert_eq!(
+            extension_data.authority,
+            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
+        );
+
+        assert_eq!(
+            extension_data.program_id,
+            OptionalNonZeroPubkey::try_from(Some(crate::ID))?
+        );
+
+        msg!("{:?}", extension_data);
+        Ok(())
+    }
+}
+
 
 #[derive(Accounts)]
 pub struct InitializeExtraAccountMetaList<'info> {
