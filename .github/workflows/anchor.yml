@@ -18,7 +18,7 @@ jobs:
       matrix:
         node-version: [20.x]
         solana-version: [stable, 1.17.25]
-        anchor-version: [latest, 0.30.0]
+        anchor-version: [0.29.0]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -86,11 +86,11 @@ jobs:
       matrix:
         node-version: [20.x]
         solana-version: [1.18.4, stable]
-        anchor-version: [0.30.0, latest]
+        anchor-version: [0.29.0]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Anchor
-        uses: metadaoproject/setup-anchor@v2.1
+        uses: heyAyushh/setup-anchor@v2.2
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}

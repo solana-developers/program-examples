@@ -24,7 +24,7 @@ describe('hello-solana', async () => {
 
     const tx = new Transaction();
     tx.recentBlockhash = blockhash;
-    tx.add(ix).sign(payer); // Add instruction and Sign the transaction
+    tx.add(ix).sign(payer);
 
     // Now we process the transaction
     await client.processTransaction(tx);
