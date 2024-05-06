@@ -9,12 +9,11 @@ crate-type = ["cdylib", "lib"]
 name = "cnft_vault"
 
 [features]
-default = []
-cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+cpi = ["no-entrypoint"]
+default = []
 
 [dependencies]
 anchor-lang = "0.26.0"
