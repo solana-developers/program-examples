@@ -2,12 +2,12 @@ name: Native
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
@@ -119,7 +119,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install --frozen-lockfile
+            pnpm install
             if (cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test); then
               echo "Tests succeeded for $projectDir."
             else
