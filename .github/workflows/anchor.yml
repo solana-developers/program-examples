@@ -2,12 +2,12 @@ name: Anchor
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
@@ -18,7 +18,7 @@ jobs:
       matrix:
         node-version: [20.x]
         solana-version: [stable, 1.17.25]
-        anchor-version: [0.29.0]
+        anchor-version: [0.30.0]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -86,7 +86,7 @@ jobs:
       matrix:
         node-version: [20.x]
         solana-version: [1.18.4, stable]
-        anchor-version: [0.29.0]
+        anchor-version: [0.30.0]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Anchor
