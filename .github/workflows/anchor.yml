@@ -125,7 +125,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install --frozen-lockfile
+            pnpm install
             if anchor test; then
               echo "Tests succeeded for $projectDir."
             else
