@@ -7,6 +7,7 @@ test-ledger/
 **/*/node_modules
 **/*/package-lock.json
 **/*/Cargo.lock
+**/*/pnpm-lock.yaml
 
 **/*/.anchor
 **/*/.DS_Store
