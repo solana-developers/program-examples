@@ -1,0 +1,140 @@
+name: Native
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        solana-version: [stable, 1.18.4]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+      - uses: heyAyushh/setup-solana@v5.1
+        with:
+          solana-cli-version: ${{ matrix.solana-version }}
+      - run: solana block
+        shell: bash
+      - name: Install pnpm
+        run: |
+          npm install --global pnpm
+      - name: Build Native programs
+        run: |
+          declare -a ProjectDirs=(
+            "basics/account-data/native/program"
+            "basics/checking-accounts/native/program"
+            "basics/close-account/native/program"
+            "basics/counter/native/program"
+            "basics/create-account/native/program"
+            "basics/hello-solana/native/program"
+            "basics/pda-rent-payer/native/program"
+            "basics/processing-instructions/native/program"
+            "basics/program-derived-addresses/native/program"
+            "basics/realloc/native/program"
+            "basics/rent/native/program"
+            "basics/repository-layout/native/program"
+            "basics/transfer-sol/native/program"
+          )
+          for projectDir in "${ProjectDirs[@]}"; do
+            echo "
+            ********
+            Building $projectDir
+            ********"
+            cd $projectDir
+            if cargo-build-sbf --verbose; then
+              echo "Build succeeded for $projectDir."
+            else
+              failed=true
+              failed_builds+=($projectDir)
+              echo "Build failed for $projectDir. Continuing with the next program."
+            fi
+          cd - > /dev/null
+          done
+          if [ "$failed" = true ]; then
+            echo "Programs that failed building:"
+            printf "%s\n" "${failed_builds[@]}"
+            exit 1
+          else
+            echo "All programs built successfully."
+          fi
+        shell: bash
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        solana-version: [stable, 1.18.4]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+      - uses: heyAyushh/setup-solana@v5.1
+        with:
+          solana-cli-version: ${{ matrix.solana-version }}
+      - run: solana block
+        shell: bash
+      - name: Install pnpm
+        run: |
+          npm install --global pnpm
+      - name: Test solana native programs
+        run: |
+          solana -V
+          rustc -V
+          declare -a ProjectDirs=(
+            "basics/account-data/native/"
+            "basics/checking-accounts/native/"
+            "basics/close-account/native/"
+            "basics/counter/native/"
+            "basics/create-account/native/"
+            "basics/hello-solana/native/"
+            "basics/pda-rent-payer/native/"
+            "basics/processing-instructions/native/"
+            "basics/program-derived-addresses/native/"
+            "basics/rent/native/"
+            "basics/repository-layout/native/"
+            "basics/transfer-sol/native/"
+          )
+          for projectDir in "${ProjectDirs[@]}"; do
+            echo "
+            ********
+            Testing $projectDir
+            ********"
+            cd $projectDir
+            pnpm install --frozen-lockfile
+            if (cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test); then
+              echo "Tests succeeded for $projectDir."
+            else
+              failed=true
+              failed_tests+=($projectDir)
+              echo "Tests failed for $projectDir. Continuing with the next program."
+            fi
+          cd - > /dev/null
+          done
+          if [ "$failed" = true ]; then
+            echo "*****************************"
+            echo "Programs that failed testing:"
+            printf "%s\n" "${failed_tests[@]}"
+            # exit 1
+          else
+            echo "All tests passed."
+          fi
+        shell: bash

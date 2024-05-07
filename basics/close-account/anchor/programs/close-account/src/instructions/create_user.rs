@@ -22,7 +22,7 @@ pub struct CreateUserContext<'info> {
 
 pub fn create_user(ctx: Context<CreateUserContext>, name: String) -> Result<()> {
     *ctx.accounts.user_account = UserState {
-        bump: *ctx.bumps.get("user_account").unwrap(),
+        bump: ctx.bumps.user_account,
         user: ctx.accounts.user.key(),
         name,
     };

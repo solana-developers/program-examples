@@ -1,7 +1,6 @@
 [workspace]
-members = [
-    "programs/*"
-]
+resolver = "2"
+members = ["programs/*"]
 
 [profile.release]
 overflow-checks = true

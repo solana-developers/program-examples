@@ -19,7 +19,7 @@ pub struct CreateNewAccount<'info> {
 
 pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[*ctx.bumps.get("rent_vault").unwrap()]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[ctx.bumps.rent_vault]]];
 
     // The minimum lamports for rent exemption
     let lamports = (Rent::get()?).minimum_balance(0);

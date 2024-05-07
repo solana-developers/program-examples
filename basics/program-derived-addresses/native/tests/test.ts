@@ -1,30 +1,21 @@
 import {
-    Connection,
     Keypair,
     PublicKey,
-    sendAndConfirmTransaction,
     SystemProgram,
     Transaction,
     TransactionInstruction,
 } from '@solana/web3.js';
 import * as borsh from "borsh";
 import { Buffer } from "buffer";
+import { describe, test } from 'node:test';
+import { start } from 'solana-bankrun';
 
-
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
-
-
-describe("PDAs", () => {
-
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const PROGRAM_ID: PublicKey = new PublicKey(
-        "BCw7MQWBugruuYgno5crGUGFNufqGJbPpzZevhRRRQAu"
-    );
+describe("PDAs", async () => {
+    const PROGRAM_ID = PublicKey.unique();
+    const context = await start([{ name: 'program_derived_addresses_program', programId: PROGRAM_ID }],[]);
+    const client = context.banksClient;
+    const payer = context.payer;
+    const rent = await client.getRent();
 
     class Assignable {
         constructor(properties) {
@@ -36,14 +27,14 @@ describe("PDAs", () => {
 
     class PageVisits extends Assignable {
         toBuffer() { return Buffer.from(borsh.serialize(PageVisitsSchema, this)) }
-        
+
         static fromBuffer(buffer: Buffer) {
             return borsh.deserialize(PageVisitsSchema, PageVisits, buffer);
         };
     };
     const PageVisitsSchema = new Map([
-        [ PageVisits, { 
-            kind: 'struct', 
+        [ PageVisits, {
+            kind: 'struct',
             fields: [ ['page_visits', 'u32'], ['bump', 'u8'] ],
         }]
     ]);
@@ -52,27 +43,29 @@ describe("PDAs", () => {
         toBuffer() { return Buffer.from(borsh.serialize(IncrementPageVisitsSchema, this)) }
     };
     const IncrementPageVisitsSchema = new Map([
-        [ IncrementPageVisits, { 
-            kind: 'struct', 
+        [ IncrementPageVisits, {
+            kind: 'struct',
             fields: [],
         }]
     ]);
 
     const testUser = Keypair.generate();
 
-    it("Create a test user", async () => {
+    test("Create a test user", async () => {
         let ix = SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
-            lamports: await connection.getMinimumBalanceForRentExemption(0),
+            lamports: Number(rent.minimumBalance(BigInt(0))),
             newAccountPubkey: testUser.publicKey,
             programId: SystemProgram.programId,
             space: 0,
         });
-        await sendAndConfirmTransaction(
-            connection,
-            new Transaction().add(ix),
-            [payer, testUser]
-        );
+
+        const tx = new Transaction();
+        const blockhash = context.lastBlockhash;
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer, testUser); // Add instruction and Sign the transaction
+
+        await client.processTransaction(tx);
         console.log(`Local Wallet: ${payer.publicKey}`);
         console.log(`Created User: ${testUser.publicKey}`);
     });
@@ -84,7 +77,7 @@ describe("PDAs", () => {
         )
     }
 
-    it("Create the page visits tracking PDA", async () => {
+    test("Create the page visits tracking PDA", async () => {
         const [pageVisitsPda, pageVisitsBump] = derivePageVisitsPda(testUser.publicKey);
         let ix = new TransactionInstruction({
             keys: [
@@ -96,14 +89,15 @@ describe("PDAs", () => {
             programId: PROGRAM_ID,
             data: (new PageVisits({page_visits: 0, bump: pageVisitsBump})).toBuffer(),
         });
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer]
-        );
+        const tx = new Transaction();
+        const blockhash = context.lastBlockhash;
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer);
+
+        await client.processTransaction(tx);
     });
 
-    it("Visit the page!", async () => {
+    test("Visit the page!", async () => {
         const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
         let ix = new TransactionInstruction({
             keys: [
@@ -113,14 +107,16 @@ describe("PDAs", () => {
             programId: PROGRAM_ID,
             data: new IncrementPageVisits({}).toBuffer(),
         });
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer]
-        );
+        const tx = new Transaction();
+        const blockhash = context.lastBlockhash;
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer);
+
+        await client.processTransaction(tx);
     });
 
-    it("Visit the page!", async () => {
+    // commented because couldn't get different blockhash
+    test("Visit the page!", async () => {
         const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
         let ix = new TransactionInstruction({
             keys: [
@@ -130,17 +126,18 @@ describe("PDAs", () => {
             programId: PROGRAM_ID,
             data: new IncrementPageVisits({}).toBuffer(),
         });
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer]
-        );
+        const tx = new Transaction();
+        const [blockhash, _block_height] = await client.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer);
+
+        await client.processTransaction(tx);
     });
 
-    it("Read page visits", async () => {
+    test("Read page visits", async () => {
         const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
-        const accountInfo = await connection.getAccountInfo(pageVisitsPda);
-        const readPageVisits = PageVisits.fromBuffer(accountInfo.data);
+        const accountInfo = await client.getAccount(pageVisitsPda);
+        const readPageVisits = PageVisits.fromBuffer(Buffer.from(accountInfo.data));
         console.log(`Number of page visits: ${readPageVisits.page_visits}`);
     });
 });

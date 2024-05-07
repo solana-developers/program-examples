@@ -16,5 +16,7 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.28.0"
+anchor-lang = "0.29.0"
+solana-program = "=1.17"
+ahash = "=0.8.4"
 cross-program-invocatio-anchor-lever = { path = "../lever", features = ["cpi"] }

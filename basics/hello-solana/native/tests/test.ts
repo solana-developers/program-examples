@@ -1,45 +1,32 @@
 import {
-    Connection,
-    Keypair,
-    sendAndConfirmTransaction,
-    Transaction,
-    TransactionInstruction,
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
 } from '@solana/web3.js';
+import { start } from 'solana-bankrun';
+import { describe, test } from 'node:test';
 
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
+describe('hello-solana', async () => {
+  // load program in solana-bankrun
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start([{ name: 'hello_solana_program', programId: PROGRAM_ID }],[]);
+  const client = context.banksClient;
+  const payer = context.payer;
 
-
-describe("hello-solana", () => {
-
-    // Loading these from local files for development
-    //
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
-  
-    it("Say hello!", async () => {
-
-        // We set up our instruction first.
-        //
-        let ix = new TransactionInstruction({
-            keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true}
-            ],
-            programId: program.publicKey,
-            data: Buffer.alloc(0), // No data
-        });
-
-        // Now we send the transaction over RPC
-        //
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix), // Add our instruction (you can add more than one)
-            [payer]
-        );
+  test('Say hello!', async () => {
+    const blockhash = context.lastBlockhash;
+    // We set up our instruction first.
+    let ix = new TransactionInstruction({
+      keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
+      programId: PROGRAM_ID,
+      data: Buffer.alloc(0), // No data
     });
+
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer);
+
+    // Now we process the transaction
+    await client.processTransaction(tx);
   });
-  
+});

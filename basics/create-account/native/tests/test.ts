@@ -1,68 +1,58 @@
 import {
-    Connection,
-    Keypair,
-    LAMPORTS_PER_SOL,
-    PublicKey,
-    sendAndConfirmTransaction,
-    SystemProgram,
-    Transaction,
-    TransactionInstruction,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
 } from '@solana/web3.js';
+import { start } from 'solana-bankrun';
+import { describe, test } from 'node:test';
 
+describe('Create a system account', async () => {
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start([{ name: 'create_account_program', programId: PROGRAM_ID }],[]);
+  const client = context.banksClient;
+  const payer = context.payer;
 
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
+  test('Create the account via a cross program invocation', async () => {
+    const newKeypair = Keypair.generate();
+    const blockhash = context.lastBlockhash;
 
-
-describe("Create a system account", async () => {
-
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json')
-
-    const PROGRAM_ID: PublicKey = program.publicKey;
-  
-    it("Create the account via a cross program invocation", async () => {
-
-        const newKeypair = Keypair.generate();
-
-        let ix = new TransactionInstruction({
-            keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true},
-                {pubkey: newKeypair.publicKey, isSigner: true, isWritable: true},
-                {pubkey: SystemProgram.programId, isSigner: false, isWritable: false}
-            ],
-            programId: PROGRAM_ID,
-            data: Buffer.alloc(0),
-        });
-
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer, newKeypair]
-        );
+    let ix = new TransactionInstruction({
+      keys: [
+        { pubkey: payer.publicKey, isSigner: true, isWritable: true },
+        { pubkey: newKeypair.publicKey, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      programId: PROGRAM_ID,
+      data: Buffer.alloc(0),
     });
 
-    it("Create the account via direct call to system program", async () => {
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer, newKeypair);
 
-        const newKeypair = Keypair.generate();
-
-        const ix = SystemProgram.createAccount({
-            fromPubkey: payer.publicKey,
-            newAccountPubkey: newKeypair.publicKey,
-            lamports: LAMPORTS_PER_SOL,
-            space: 0,
-            programId: SystemProgram.programId
-        })
-
-        await sendAndConfirmTransaction(connection,
-            new Transaction().add(ix),
-            [payer, newKeypair]);
-
-        console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
-    });
+    await client.processTransaction(tx);
   });
-  
+
+  test('Create the account via direct call to system program', async () => {
+    const newKeypair = Keypair.generate();
+    const blockhash = context.lastBlockhash;
+
+    const ix = SystemProgram.createAccount({
+      fromPubkey: payer.publicKey,
+      newAccountPubkey: newKeypair.publicKey,
+      lamports: LAMPORTS_PER_SOL,
+      space: 0,
+      programId: SystemProgram.programId,
+    });
+
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer, newKeypair);
+
+    await client.processTransaction(tx);
+    console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
+  });
+});

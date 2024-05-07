@@ -9,20 +9,14 @@ import {
 } from '@solana/web3.js';
 import * as borsh from "borsh";
 import { Buffer } from "buffer";
+import { start } from 'solana-bankrun';
+import { describe, test } from 'node:test';
 
-
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
-
-
-describe("PDA Rent-Payer", () => {
-
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const PROGRAM_ID: PublicKey = createKeypairFromFile('./program/target/deploy/program-keypair.json').publicKey;
+describe("PDA Rent-Payer", async () => {
+    const PROGRAM_ID = PublicKey.unique();
+    const context = await start([{ name: 'pda_rent_payer_program', programId: PROGRAM_ID }],[]);
+    const client = context.banksClient;
+    const payer = context.payer;
 
     class Assignable {
         constructor(properties) {
@@ -41,8 +35,8 @@ describe("PDA Rent-Payer", () => {
         toBuffer() { return Buffer.from(borsh.serialize(InitRentVaultSchema, this)) }
     };
     const InitRentVaultSchema = new Map([
-        [ InitRentVault, { 
-            kind: 'struct', 
+        [InitRentVault, {
+            kind: 'struct',
             fields: [ ['instruction', 'u8'], ['fund_lamports', 'u64'] ],
         }]
     ]);
@@ -51,8 +45,8 @@ describe("PDA Rent-Payer", () => {
         toBuffer() { return Buffer.from(borsh.serialize(CreateNewAccountSchema, this)) }
     };
     const CreateNewAccountSchema = new Map([
-        [ CreateNewAccount, { 
-            kind: 'struct', 
+        [ CreateNewAccount, {
+            kind: 'struct',
             fields: [ ['instruction', 'u8'] ],
         }]
     ]);
@@ -66,7 +60,8 @@ describe("PDA Rent-Payer", () => {
         return pda
     }
 
-    it("Initialize the Rent Vault", async () => {
+    test("Initialize the Rent Vault", async () => {
+        const blockhash = context.lastBlockhash;
         const [rentVaultPda, _] = deriveRentVaultPda();
         let ix = new TransactionInstruction({
             keys: [
@@ -77,14 +72,16 @@ describe("PDA Rent-Payer", () => {
             programId: PROGRAM_ID,
             data: (new InitRentVault({ instruction: MyInstruction.InitRentVault, fund_lamports: 1000000000 })).toBuffer(),
         });
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer]
-        );
+
+        const tx = new Transaction();
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer);
+
+        await client.processTransaction(tx);
     });
 
-    it("Create a new account using the Rent Vault", async () => {
+    test("Create a new account using the Rent Vault", async () => {
+        const blockhash = context.lastBlockhash;
         const newAccount = Keypair.generate();
         const [rentVaultPda, _] = deriveRentVaultPda();
         let ix = new TransactionInstruction({
@@ -96,10 +93,12 @@ describe("PDA Rent-Payer", () => {
             programId: PROGRAM_ID,
             data: new CreateNewAccount({ instruction: MyInstruction.CreateNewAccount }).toBuffer(),
         });
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer, newAccount]
-        );
+
+        const tx = new Transaction();
+        tx.recentBlockhash = blockhash;
+        tx.add(ix).sign(payer, newAccount); // Add instruction and Sign the transaction
+
+        // Now we process the transaction
+        await client.processTransaction(tx);
     });
 });

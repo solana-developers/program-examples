@@ -1,60 +1,50 @@
-import {
-    Connection,
-    Keypair,
-    PublicKey,
-    sendAndConfirmTransaction,
-    Transaction,
-} from '@solana/web3.js';
-import {
-    describe,
-    it,
-} from 'mocha';
-import {
-    createCreateUserInstruction,
-    createCloseUserInstruction,
-    createKeypairFromFile,
-} from '../ts';
+import { PublicKey, Transaction } from '@solana/web3.js';
+import { describe, test } from 'node:test';
+import { createCreateUserInstruction, createCloseUserInstruction } from '../ts';
+import { start } from 'solana-bankrun';
 
+describe('Close Account!', async () => {
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start(
+    [{ name: 'close_account_native_program', programId: PROGRAM_ID }],
+    []
+  );
+  const client = context.banksClient;
+  const payer = context.payer;
 
+  const testAccountPublicKey = PublicKey.findProgramAddressSync(
+    [Buffer.from('USER'), payer.publicKey.toBuffer()],
+    PROGRAM_ID
+  )[0];
 
-describe("Close Account!", async () => {
+  test('Create the account', async () => {
+    const blockhash = context.lastBlockhash;
+    const ix = createCreateUserInstruction(
+      testAccountPublicKey,
+      payer.publicKey,
+      PROGRAM_ID,
+      'Jacob'
+    );
 
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/deploy/program-keypair.json');
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer);
 
-    const testAccountPublicKey = PublicKey.findProgramAddressSync(
-        [Buffer.from("USER"), payer.publicKey.toBuffer()],
-        program.publicKey,
-    )[0];
-
-    it("Create the account", async () => {
-        console.log(`${testAccountPublicKey}`);
-        const ix = createCreateUserInstruction(
-            testAccountPublicKey,
-            payer.publicKey, 
-            program.publicKey,
-            "Jacob",
-        );
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer]
-        );
-    });
-    
-    it("Close the account", async () => {
-        const ix = createCloseUserInstruction(
-            testAccountPublicKey,
-            payer.publicKey, 
-            program.publicKey,
-        );
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer],
-            { skipPreflight: true }
-        );
-    });
+    await client.processTransaction(tx);
   });
-  
+
+  test('Close the account', async () => {
+    const blockhash = context.lastBlockhash;
+
+    const ix = createCloseUserInstruction(
+      testAccountPublicKey,
+      payer.publicKey,
+      PROGRAM_ID
+    );
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer);
+
+    await client.processTransaction(tx);
+  });
+});

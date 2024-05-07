@@ -1,123 +1,110 @@
 import {
-    Connection,
     Keypair,
-    LAMPORTS_PER_SOL,
+    PublicKey,
+    SystemProgram,
     Transaction,
-    TransactionInstruction,
-    sendAndConfirmTransaction,
-    SystemProgram
+    TransactionInstruction
 } from '@solana/web3.js';
 import { assert } from 'chai';
-
+import { describe, test } from 'node:test';
+import {  start } from 'solana-bankrun';
 import {
+    COUNTER_ACCOUNT_SIZE,
     createIncrementInstruction,
     deserializeCounterAccount,
-    Counter,
-    COUNTER_ACCOUNT_SIZE,
-    PROGRAM_ID,
+    PROGRAM_ID
 } from '../ts';
 
-describe("Counter Solana Native", () => {
-    const connection = new Connection("http://localhost:8899");
+describe('Counter Solana Native', async () => {
+  // Randomly generate the program keypair and load the program to solana-bankrun
+  const context = await start([{ name: 'counter_solana_native', programId: PROGRAM_ID }],[]);
+  const client = context.banksClient;
+  // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
+  const payer = context.payer;
+  // Get the rent object to calculate rent for the accounts
+  const rent = await client.getRent();
 
-    it("Test allocate counter + increment tx", async () => {
-        // Randomly generate our wallet
-        const payerKeypair = Keypair.generate();
-        const payer = payerKeypair.publicKey;
+  test('Test allocate counter + increment tx', async () => {
+    // Randomly generate the account key
+    // to sign for setting up the Counter state
+    const counterKeypair = Keypair.generate();
+    const counter = counterKeypair.publicKey;
 
-        // Randomly generate the account key 
-        // to sign for setting up the Counter state
-        const counterKeypair = Keypair.generate();
-        const counter = counterKeypair.publicKey;
-
-        // Airdrop our wallet 1 Sol
-        await connection.requestAirdrop(payer, LAMPORTS_PER_SOL);
-
-        // Create a TransactionInstruction to interact with our counter program
-        const allocIx: TransactionInstruction = SystemProgram.createAccount({
-            fromPubkey: payer,
-            newAccountPubkey: counter,
-            lamports: await connection.getMinimumBalanceForRentExemption(COUNTER_ACCOUNT_SIZE),
-            space: COUNTER_ACCOUNT_SIZE,
-            programId: PROGRAM_ID
-        })
-        const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, {});
-        let tx = new Transaction().add(allocIx).add(incrementIx);
-
-        // Explicitly set the feePayer to be our wallet (this is set to first signer by default)
-        tx.feePayer = payer;
-
-        // Fetch a "timestamp" so validators know this is a recent transaction
-        tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
-
-        // Send transaction to network (local network)
-        await sendAndConfirmTransaction(
-            connection,
-            tx,
-            [payerKeypair, counterKeypair],
-            { skipPreflight: true, commitment: 'confirmed' }
-        );
-
-        // Get the counter account info from network
-        const counterAccountInfo = await connection.getAccountInfo(counter, { commitment: "confirmed" });
-        assert(counterAccountInfo, "Expected counter account to have been created");
-
-        // Deserialize the counter & check count has been incremented
-        const counterAccount = deserializeCounterAccount(counterAccountInfo.data);
-        assert(counterAccount.count.toNumber() === 1, "Expected count to have been 1");
-        console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
+    // Create a TransactionInstruction to interact with our counter program
+    const allocIx: TransactionInstruction = SystemProgram.createAccount({
+      fromPubkey: payer.publicKey,
+      newAccountPubkey: counter,
+      lamports: Number(rent.minimumBalance(BigInt(COUNTER_ACCOUNT_SIZE))),
+      space: COUNTER_ACCOUNT_SIZE,
+      programId: PROGRAM_ID,
     });
-    it("Test allocate tx and increment tx", async () => {
-        const payerKeypair = Keypair.generate();
-        const payer = payerKeypair.publicKey;
+    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter },{});
+    let tx = new Transaction().add(allocIx).add(incrementIx);
 
-        const counterKeypair = Keypair.generate();
-        const counter = counterKeypair.publicKey;
+    // Explicitly set the feePayer to be our wallet (this is set to first signer by default)
+    tx.feePayer = payer.publicKey;
 
-        await connection.requestAirdrop(payer, LAMPORTS_PER_SOL);
+    // Fetch a "timestamp" so validators know this is a recent transaction
+    const blockhash = context.lastBlockhash;
+    tx.recentBlockhash = blockhash;
 
-        // Check allocate tx
-        const allocIx: TransactionInstruction = SystemProgram.createAccount({
-            fromPubkey: payer,
-            newAccountPubkey: counter,
-            lamports: await connection.getMinimumBalanceForRentExemption(COUNTER_ACCOUNT_SIZE),
-            space: COUNTER_ACCOUNT_SIZE,
-            programId: PROGRAM_ID
-        })
-        let tx = new Transaction().add(allocIx);
-        tx.feePayer = payer;
-        tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
-        await sendAndConfirmTransaction(
-            connection,
-            tx,
-            [payerKeypair, counterKeypair],
-            { skipPreflight: true, commitment: 'confirmed' }
-        );
+    // Sign the transaction with the payer's keypair
+    tx.sign(payer, counterKeypair);
 
-        let counterAccountInfo = await connection.getAccountInfo(counter, { commitment: "confirmed" });
-        assert(counterAccountInfo, "Expected counter account to have been created");
+    // Send transaction to bankrun
+    await client.processTransaction(tx);
 
-        let counterAccount = deserializeCounterAccount(counterAccountInfo.data);
-        assert(counterAccount.count.toNumber() === 0, "Expected count to have been 0");
-        console.log(`[allocate] count is: ${counterAccount.count.toNumber()}`);
+    // Get the counter account info from network
+    const counterAccountInfo = await client.getAccount(counter);
+    assert(counterAccountInfo, 'Expected counter account to have been created');
 
-        // Check increment tx
-        const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, {});
-        tx = new Transaction().add(incrementIx);
-        tx.feePayer = payer;
-        tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
-        await sendAndConfirmTransaction(
-            connection,
-            tx,
-            [payerKeypair],
-            { skipPreflight: true, commitment: 'confirmed' }
-        );
+    // Deserialize the counter & check count has been incremented
+    const counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
+    assert(counterAccount.count.toNumber() === 1,'Expected count to have been 1');
+    console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
+  });
 
-        counterAccountInfo = await connection.getAccountInfo(counter, { commitment: "confirmed" });
-        assert(counterAccountInfo, "Expected counter account to have been created");
+  test('Test allocate tx and increment tx', async () => {
+    const counterKeypair = Keypair.generate();
+    const counter = counterKeypair.publicKey;
 
-        counterAccount = deserializeCounterAccount(counterAccountInfo.data);
-        assert(counterAccount.count.toNumber() === 1, "Expected count to have been 1");
-        console.log(`[increment] count is: ${counterAccount.count.toNumber()}`);
-    })
-})
+    // Check allocate tx
+    const allocIx: TransactionInstruction = SystemProgram.createAccount({
+      fromPubkey: payer.publicKey,
+      newAccountPubkey: counter,
+      lamports:Number(rent.minimumBalance(BigInt(COUNTER_ACCOUNT_SIZE))),
+      space: COUNTER_ACCOUNT_SIZE,
+      programId: PROGRAM_ID,
+    });
+    let tx = new Transaction().add(allocIx);
+    const blockhash = context.lastBlockhash;
+    tx.feePayer = payer.publicKey;
+    tx.recentBlockhash = blockhash;
+    tx.sign(payer, counterKeypair);
+
+    await client.processTransaction(tx);
+
+    let counterAccountInfo = await client.getAccount(counter);
+    assert(counterAccountInfo, 'Expected counter account to have been created');
+
+    let counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
+    assert(counterAccount.count.toNumber() === 0,'Expected count to have been 0');
+    console.log(`[allocate] count is: ${counterAccount.count.toNumber()}`);
+
+    // Check increment tx
+    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter },{});
+    tx = new Transaction().add(incrementIx);
+    tx.feePayer = payer.publicKey;
+    tx.recentBlockhash = blockhash;
+    tx.sign(payer);
+
+    await client.processTransaction(tx);
+
+    counterAccountInfo = await client.getAccount(counter);
+    assert(counterAccountInfo, 'Expected counter account to have been created');
+
+    counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
+    assert(counterAccount.count.toNumber() === 1,'Expected count to have been 1');
+    console.log(`[increment] count is: ${counterAccount.count.toNumber()}`);
+  });
+});

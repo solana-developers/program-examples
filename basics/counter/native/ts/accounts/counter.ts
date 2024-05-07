@@ -1,4 +1,4 @@
-import * as BN from 'bn.js';
+import BN from 'bn.js';
 
 export type Counter = {
     count: BN

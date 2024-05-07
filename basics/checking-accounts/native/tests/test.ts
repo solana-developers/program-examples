@@ -1,72 +1,63 @@
 import {
-    Connection,
-    Keypair,
-    PublicKey,
-    sendAndConfirmTransaction,
-    SystemProgram,
-    Transaction,
-    TransactionInstruction,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
 } from '@solana/web3.js';
+import { describe, test } from 'node:test';
+import { start } from 'solana-bankrun';
 
+describe('Checking accounts', async () => {
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start(
+    [{ name: 'checking_accounts_program', programId: PROGRAM_ID }],
+    []
+  );
+  const client = context.banksClient;
+  const payer = context.payer;
+  const rent = await client.getRent();
 
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
+  // We'll create this ahead of time.
+  // Our program will try to modify it.
+  const accountToChange = Keypair.generate();
+  // Our program will create this.
+  const accountToCreate = Keypair.generate();
 
-
-describe("Checking accounts", async () => {
-
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
-
-    const PROGRAM_ID: PublicKey = new PublicKey(
-        program.publicKey
-    );
-
-    // We'll create this ahead of time.
-    // Our program will try to modify it.
-    const accountToChange = Keypair.generate();
-    // Our program will create this.
-    const accountToCreate = Keypair.generate();
-  
-    it("Create an account owned by our program", async () => {
-
-        let ix = SystemProgram.createAccount({
-            fromPubkey: payer.publicKey,
-            newAccountPubkey: accountToChange.publicKey,
-            lamports: await connection.getMinimumBalanceForRentExemption(0),
-            space: 0,
-            programId: PROGRAM_ID, // Our program
-        });
-
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer, accountToChange]
-        );
+  test('Create an account owned by our program', async () => {
+    const blockhash = context.lastBlockhash;
+    let ix = SystemProgram.createAccount({
+      fromPubkey: payer.publicKey,
+      newAccountPubkey: accountToChange.publicKey,
+      lamports: Number(rent.minimumBalance(BigInt(0))),
+      space: 0,
+      programId: PROGRAM_ID, // Our program
     });
-    
-    it("Check accounts", async () => {
 
-        let ix = new TransactionInstruction({
-            keys: [
-                {pubkey: payer.publicKey, isSigner: true, isWritable: true},
-                {pubkey: accountToCreate.publicKey, isSigner: true, isWritable: true},
-                {pubkey: accountToChange.publicKey, isSigner: true, isWritable: true},
-                {pubkey: SystemProgram.programId, isSigner: false, isWritable: false}
-            ],
-            programId: PROGRAM_ID,
-            data: Buffer.alloc(0),
-        }); 
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer, accountToChange);
 
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer, accountToCreate, accountToChange]
-        );
-    });
+    await client.processTransaction(tx);
   });
-  
+
+  test('Check accounts', async () => {
+    const blockhash = context.lastBlockhash;
+    let ix = new TransactionInstruction({
+      keys: [
+        { pubkey: payer.publicKey, isSigner: true, isWritable: true },
+        { pubkey: accountToCreate.publicKey, isSigner: true, isWritable: true },
+        { pubkey: accountToChange.publicKey, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      programId: PROGRAM_ID,
+      data: Buffer.alloc(0),
+    });
+
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer, accountToChange, accountToCreate);
+
+    await client.processTransaction(tx);
+  });
+});

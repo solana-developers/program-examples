@@ -1,53 +1,146 @@
-name: Anchor Build
+name: Anchor
 
 on:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: [20.x]
+        solana-version: [stable, 1.17.25]
+        anchor-version: [0.29.0]
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: Install dependencies
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          check-latest: true
+      - uses: heyAyushh/setup-solana@v5.1
+        with:
+          solana-cli-version: ${{ matrix.solana-version }}
+      - run: solana block
+        shell: bash
+      - name: Install Anchor
         run: |
-          sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
           solana -V
           rustc -V
-          sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev
           cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
-          avm install latest
-          avm use latest
-          declare -a StringArray=(
-            "basics/checking-accounts/anchor"
-            "basics/close-account/anchor"
-            "basics/counter/anchor"
-            "basics/create-account/anchor"
-            "basics/hello-solana/anchor"
-            "basics/pda-rent-payer/anchor"
-            "basics/processing-instructions/anchor"
-            "basics/program-derived-addresses/anchor"
-            "basics/realloc/anchor"
-            "basics/rent/anchor"
-            "basics/repository-layout/anchor"
-            "basics/transfer-sol/anchor"
-            "compression/cnft-vault/anchor"
-            "oracles/pyth/anchor"
-            "tokens/create-token/anchor"
-            "tokens/nft-minter/anchor"
-            "tokens/pda-mint-authority/anchor"
-            "tokens/spl-token-minter/anchor"
-            "tokens/token-2022/basics/anchor"
-            "tokens/transfer-tokens/anchor"
-            "basics/account-data/anchor"
+          avm install ${{ matrix.anchor-version }}
+          avm use ${{ matrix.anchor-version }}
+          npm install --global pnpm
+      - name: Build Anchor programs
+        run: |
+          declare -a ProjectDirs=(
+          "basics/account-data/anchor"
+          "basics/checking-accounts/anchor"
+          "basics/close-account/anchor"
+          "basics/counter/anchor"
+          "basics/create-account/anchor"
+          "basics/hello-solana/anchor"
+          "basics/pda-rent-payer/anchor"
+          "basics/processing-instructions/anchor"
+          "basics/program-derived-addresses/anchor"
+          "basics/realloc/anchor"
+          "basics/rent/anchor"
+          "basics/repository-layout/anchor"
+          "basics/transfer-sol/anchor"
           )
-          for val in "${StringArray[@]}"; do
-             echo "Building $val..."
-             cd $val
-             anchor build
-             cd - > /dev/null
+          for projectDir in "${ProjectDirs[@]}"; do
+            echo "
+            ********
+            Building $projectDir
+            ********"
+            cd $projectDir
+            if anchor build; then
+              echo "Build succeeded for $projectDir."
+            else
+              failed=true
+              failed_builds+=($projectDir)
+              echo "Build failed for $projectDir. Continuing with the next program."
+            fi
+          cd - > /dev/null
           done
+          if [ "$failed" = true ]; then
+            echo "Programs that failed building:"
+            printf "%s\n" "${failed_builds[@]}"
+            exit 1
+          else
+            echo "All programs built successfully."
+          fi
+        shell: bash
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        solana-version: [1.18.4, stable]
+        anchor-version: [0.29.0]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Anchor
+        uses: heyAyushh/setup-anchor@v2.2
+        with:
+          anchor-version: ${{ matrix.anchor-version }}
+          solana-cli-version: ${{ matrix.solana-version }}
+          node-version: ${{ matrix.node-version }}
+      - name: Display versions
+        run: |
+          solana -V
+          solana-keygen new --no-bip39-passphrase
+          rustc -V
+          anchor -V
+          npm i -g pnpm
+      - name: Test anchor programs
+        run: |
+          declare -a ProjectDirs=(
+          "basics/account-data/anchor"
+          "basics/checking-accounts/anchor"
+          "basics/close-account/anchor"
+          "basics/counter/anchor"
+          "basics/create-account/anchor"
+          "basics/hello-solana/anchor"
+          "basics/pda-rent-payer/anchor"
+          "basics/processing-instructions/anchor"
+          "basics/program-derived-addresses/anchor"
+          "basics/realloc/anchor"
+          "basics/rent/anchor"
+          "basics/repository-layout/anchor"
+          "basics/transfer-sol/anchor"
+          )
+          for projectDir in "${ProjectDirs[@]}"; do
+            echo "
+            ********
+            Testing $projectDir
+            ********"
+            cd $projectDir
+            pnpm install --frozen-lockfile
+            if anchor test; then
+              echo "Tests succeeded for $projectDir."
+            else
+              failed=true
+              failed_tests+=($projectDir)
+              echo "Tests failed for $val. Continuing with the next program."
+            fi
+          cd - > /dev/null
+          done
+          if [ "$failed" = true ]; then
+            echo "*****************************"
+            echo "Programs that failed testing:"
+            printf "%s\n" "${failed_tests[@]}"
+            exit 1
+          else
+            echo "All tests passed."
+          fi
         shell: bash

@@ -1,0 +1,44 @@
+# Contribution Guidelines
+Thank you for considering contributing to the Solana Program Examples repository. We greatly appreciate your interest and efforts in helping us improve and expand this valuable resource for the Solana developer community.
+
+We believe that a welcoming and inclusive environment fosters collaboration and encourages participation from developers of all backgrounds and skill levels.
+
+To ensure a smooth and effective contribution process, please take a moment to review and follow the guidelines outlined below.
+
+## How to Contribute
+We welcome contributions in the form of code, documentation, bug reports, feature requests, and other forms of feedback. Here are some ways you can contribute:
+
+- **Code Contributions:** You can contribute code examples in Rust, Python, or Solidity that demonstrate various Solana program functionalities. You can also contribute improvements to existing examples, such as bug fixes, optimizations, or additional features.
+
+- **Bug Reports, Ideas or Feedback:** If you encounter any issues or have ideas for new examples, please submit a bug report or feature request. Your feedback is valuable and helps us improve the quality and relevance of the examples.
+
+## Contributing code examples:
+When contributing code examples, please follow these guidelines to ensure programs build and test successfully:
+
+1. Use pnpm as the default package manager for the project. You can install pnpm by following the instructions [here](https://pnpm.io/installation). Commit pnpm-lock.yaml to the repository.
+
+2. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
+
+3. Tests for solana native programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
+
+4. here are some helpful scripts to add to your `package.json` file:
+
+```json
+"scripts": {
+  "test": "pnpm ts-mocha -p ./tests/tsconfig.test.json -t 1000000 ./tests/realloc.test.ts",
+  "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
+  "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+  "deploy": "solana program deploy ./program/target/so/program.so"
+},
+```
+
+5. Test command for anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
+
+## Code of Conduct
+We are committed to providing a friendly, safe, and welcoming environment for all contributors, regardless of their background, experience level, or personal characteristics. As a contributor, you are expected to:
+
+Be respectful and inclusive in your interactions with others.
+Refrain from engaging in any form of harassment, discrimination, or offensive behavior. Be open to constructive feedback and be willing to learn from others.
+Help create a positive and supportive community where everyone feels valued and respected.
+
+If you encounter any behavior that violates our code of conduct, please report it to the project maintainers immediately.
