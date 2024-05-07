@@ -1,13 +1,13 @@
 [workspace]
 members = [
-    #basic
+    #basics
     "basics/account-data/native/program",
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
     "basics/close-account/native/program",
     "basics/close-account/anchor/programs/close-account",
-    "basics/counter/native",
+    "basics/counter/native/program",
     "basics/counter/anchor/programs/counter_anchor",
     "basics/counter/mpl-stack",
     "basics/create-account/native/program",
@@ -28,32 +28,6 @@ members = [
     "basics/repository-layout/native/program",
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
-    "basics/transfer-sol/anchor/programs/*",
-    # compression
-    "compression/cnft-vault/anchor/programs/*",
-    "compression/cutils/programs/*",
-    # oracles
-    "oracles/pyth/anchor/programs/*",
-    # tokens
-    "tokens/create-token/native/program",
-    "tokens/create-token/anchor/programs/*",
-    "tokens/nft-minter/native/program",
-    "tokens/nft-minter/anchor/programs/*",
-    "tokens/pda-mint-authority/native/program",
-    "tokens/pda-mint-authority/anchor/programs/*",
-    "tokens/spl-token-minter/native/program",
-    "tokens/spl-token-minter/anchor/programs/*",
-    "tokens/token-2022/basics/anchor/programs/*",
-    "tokens/token-2022/default-account-state/native/program",
-    "tokens/token-2022/mint-close-authority/native/program",
-    "tokens/token-2022/multiple-extensions/native/program",
-    "tokens/token-2022/non-transferable/native/program",
-    "tokens/token-2022/transfer-fees/native/program",
-    "tokens/token-swap/anchor/programs/*",
-    "tokens/transfer-tokens/native/program",
-    "tokens/transfer-tokens/anchor/programs/*",
-    # tools
-    # "tools/shank-and-solita/native/program",
-
+    "basics/transfer-sol/anchor/programs/*"
 ]
 resolver = "2"

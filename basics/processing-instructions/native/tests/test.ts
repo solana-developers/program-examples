@@ -1,26 +1,18 @@
 import {
-    Connection,
-    Keypair,
-    sendAndConfirmTransaction,
+    PublicKey,
     Transaction,
     TransactionInstruction,
 } from '@solana/web3.js';
 import * as borsh from "borsh";
 import { Buffer } from "buffer";
+import { start } from 'solana-bankrun';
+import { describe, test } from 'node:test';
 
-
-function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
-
-
-describe("custom-instruction-data", () => {
-
-    const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/so/program-keypair.json');
+describe("custom-instruction-data", async () => {
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start([{ name: 'processing_instructions_program', programId: PROGRAM_ID }],[]);
+  const client = context.banksClient;
+  const payer = context.payer;
 
     class Assignable {
         constructor(properties) {
@@ -47,8 +39,9 @@ describe("custom-instruction-data", () => {
             }
         ]
     ]);
-  
-    it("Go to the park!", async () => {
+
+    test("Go to the park!", async () => {
+        const blockhash = context.lastBlockhash;
 
         const jimmy = new InstructionData({
             name: "Jimmy",
@@ -64,7 +57,7 @@ describe("custom-instruction-data", () => {
             keys: [
                 {pubkey: payer.publicKey, isSigner: true, isWritable: true}
             ],
-            programId: program.publicKey,
+            programId: PROGRAM_ID,
             data: jimmy.toBuffer(),
         });
 
@@ -73,11 +66,10 @@ describe("custom-instruction-data", () => {
             data: mary.toBuffer(),
         });
 
-        await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix1).add(ix2),
-            [payer]
-        );
+        const tx = new Transaction();
+        tx.recentBlockhash = blockhash;
+        tx.add(ix1).add(ix2).sign(payer);
+
+        await client.processTransaction(tx);
     });
   });
-  

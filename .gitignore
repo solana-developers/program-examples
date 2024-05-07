@@ -11,6 +11,7 @@ test-ledger/
 **/*/.anchor
 **/*/.DS_Store
 **/*/target
+**/*/tests/fixtures
 **/*.rs.bk
 **/*/test-ledger
 **/*/yarn.lock
