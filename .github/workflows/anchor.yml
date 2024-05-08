@@ -79,30 +79,23 @@ jobs:
           "tokens/token-2022/transfer-hook/anchor/TransferHookTransferCost"
           "tokens/token-2022/transfer-hook/anchor/TransferHookWhitelist"
           )
-          declare -a pids=()
-          declare -a failed_builds=()
-
           for projectDir in "${ProjectDirs[@]}"; do
-            (
-              echo "******** Building $projectDir ********"
-              cd $projectDir
-              if anchor build; then
-                echo "Build succeeded for $projectDir."
-              else
-                echo "Build failed for $projectDir."
-                # Capture the directory of failed build
-                failed_builds+=("$projectDir")
-              fi
-            ) &
-            pids+=($!)
+            echo "
+            ********
+            Building $projectDir
+            ********"
+            cd $projectDir
+            if anchor build; then
+              echo "Build succeeded for $projectDir."
+            else
+              failed=true
+              failed_builds+=($projectDir)
+              echo "Build failed for $projectDir. Continuing with the next program."
+            fi
+          cd - > /dev/null
           done
-
-          for pid in "${pids[@]}"; do
-            wait $pid
-          done
-
-          if [ ${#failed_builds[@]} -ne 0 ]; then
-            echo "Some builds failed:"
+          if [ "$failed" = true ]; then
+            echo "Programs that failed building:"
             printf "%s\n" "${failed_builds[@]}"
             exit 1
           else
