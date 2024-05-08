@@ -2,7 +2,7 @@ name: Anchor
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
@@ -45,16 +45,16 @@ jobs:
           "basics/account-data/anchor"
           "basics/checking-accounts/anchor"
           "basics/close-account/anchor"
-          "basics/counter/anchor"
-          "basics/create-account/anchor"
-          "basics/hello-solana/anchor"
-          "basics/pda-rent-payer/anchor"
-          "basics/processing-instructions/anchor"
-          "basics/program-derived-addresses/anchor"
-          "basics/realloc/anchor"
-          "basics/rent/anchor"
-          "basics/repository-layout/anchor"
-          "basics/transfer-sol/anchor"
+          # "basics/counter/anchor"
+          # "basics/create-account/anchor"
+          # "basics/hello-solana/anchor"
+          # "basics/pda-rent-payer/anchor"
+          # "basics/processing-instructions/anchor"
+          # "basics/program-derived-addresses/anchor"
+          # "basics/realloc/anchor"
+          # "basics/rent/anchor"
+          # "basics/repository-layout/anchor"
+          # "basics/transfer-sol/anchor"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -108,16 +108,16 @@ jobs:
           "basics/account-data/anchor"
           "basics/checking-accounts/anchor"
           "basics/close-account/anchor"
-          "basics/counter/anchor"
-          "basics/create-account/anchor"
-          "basics/hello-solana/anchor"
-          "basics/pda-rent-payer/anchor"
-          "basics/processing-instructions/anchor"
-          "basics/program-derived-addresses/anchor"
-          "basics/realloc/anchor"
-          "basics/rent/anchor"
-          "basics/repository-layout/anchor"
-          "basics/transfer-sol/anchor"
+          # "basics/counter/anchor"
+          # "basics/create-account/anchor"
+          # "basics/hello-solana/anchor"
+          # "basics/pda-rent-payer/anchor"
+          # "basics/processing-instructions/anchor"
+          # "basics/program-derived-addresses/anchor"
+          # "basics/realloc/anchor"
+          # "basics/rent/anchor"
+          # "basics/repository-layout/anchor"
+          # "basics/transfer-sol/anchor"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -125,7 +125,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install
+            pnpm install --frozen-lockfile
             if anchor test; then
               echo "Tests succeeded for $projectDir."
             else

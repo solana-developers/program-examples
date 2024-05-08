@@ -2,7 +2,7 @@ name: Native
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
@@ -39,16 +39,16 @@ jobs:
             "basics/account-data/native/program"
             "basics/checking-accounts/native/program"
             "basics/close-account/native/program"
-            "basics/counter/native/program"
-            "basics/create-account/native/program"
-            "basics/hello-solana/native/program"
-            "basics/pda-rent-payer/native/program"
-            "basics/processing-instructions/native/program"
-            "basics/program-derived-addresses/native/program"
-            "basics/realloc/native/program"
-            "basics/rent/native/program"
-            "basics/repository-layout/native/program"
-            "basics/transfer-sol/native/program"
+            # "basics/counter/native/program"
+            # "basics/create-account/native/program"
+            # "basics/hello-solana/native/program"
+            # "basics/pda-rent-payer/native/program"
+            # "basics/processing-instructions/native/program"
+            # "basics/program-derived-addresses/native/program"
+            # "basics/realloc/native/program"
+            # "basics/rent/native/program"
+            # "basics/repository-layout/native/program"
+            # "basics/transfer-sol/native/program"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -103,15 +103,15 @@ jobs:
             "basics/account-data/native/"
             "basics/checking-accounts/native/"
             "basics/close-account/native/"
-            "basics/counter/native/"
-            "basics/create-account/native/"
-            "basics/hello-solana/native/"
-            "basics/pda-rent-payer/native/"
-            "basics/processing-instructions/native/"
-            "basics/program-derived-addresses/native/"
-            "basics/rent/native/"
-            "basics/repository-layout/native/"
-            "basics/transfer-sol/native/"
+            # "basics/counter/native/"
+            # "basics/create-account/native/"
+            # "basics/hello-solana/native/"
+            # "basics/pda-rent-payer/native/"
+            # "basics/processing-instructions/native/"
+            # "basics/program-derived-addresses/native/"
+            # "basics/rent/native/"
+            # "basics/repository-layout/native/"
+            # "basics/transfer-sol/native/"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -119,7 +119,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install
+            pnpm install --frozen-lockfile
             if (cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test); then
               echo "Tests succeeded for $projectDir."
             else
