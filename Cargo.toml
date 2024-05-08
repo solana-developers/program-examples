@@ -23,11 +23,12 @@ members = [
     "basics/program-derived-addresses/native/program",
     "basics/program-derived-addresses/anchor/programs/*",
     "basics/realloc/native/program",
+    "basics/realloc/anchor/programs/*",
     "basics/rent/native/program",
     "basics/rent/anchor/programs/*",
     "basics/repository-layout/native/program",
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
-    "basics/transfer-sol/anchor/programs/*"
+    "basics/transfer-sol/anchor/programs/*",
 ]
 resolver = "2"

@@ -10,8 +10,8 @@ cpi = ["no-entrypoint"]
 [dependencies]
 borsh = "0.10"
 borsh-derive = "0.10"
-solana-program = "1.16.10"
-cross-program-invocatio-native-lever = { path = "../lever", features = [ "cpi" ] }
+solana-program = "=1.17.25"
+cross-program-invocatio-native-lever = { path = "../lever", features = ["cpi"] }
 
 [lib]
 crate-type = ["cdylib", "lib"]
