@@ -1,29 +1,27 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
-use lever::cpi::accounts::SetPowerStatus;
-use lever::program::Lever;
-use lever::{self, PowerStatus};
 
-declare_id!("EJfTLXDCJTVwBgGpz9X2Me4CWHbvg8F8zsM7fiVJLLeR");
+declare_id!("Bi5N7SUQhpGknVcqPTzdFFVueQoxoUu8YTLz75J6fT8A");
+
+// automatically generate module using program idl found in ./idls
+declare_program!(lever);
+use lever::accounts::PowerStatus;
+use lever::cpi::accounts::SwitchPower;
+use lever::cpi::switch_power;
+use lever::program::Lever;
 
 #[program]
-mod hand {
+pub mod hand {
     use super::*;
-    pub fn pull_lever(ctx: Context<PullLever>, name: String) -> anchor_lang::Result<()> {
-        // Hitting the switch_power method on the lever program
-        //
-        lever::cpi::switch_power(
-            CpiContext::new(
-                ctx.accounts.lever_program.to_account_info(),
-                // Using the accounts context struct from the lever program
-                //
-                SetPowerStatus {
-                    power: ctx.accounts.power.to_account_info(),
-                },
-            ),
-            name,
-        )
+
+    pub fn pull_lever(ctx: Context<PullLever>, name: String) -> Result<()> {
+        let cpi_ctx = CpiContext::new(
+            ctx.accounts.lever_program.to_account_info(),
+            SwitchPower {
+                power: ctx.accounts.power.to_account_info(),
+            },
+        );
+        switch_power(cpi_ctx, name)?;
+        Ok(())
     }
 }
 

@@ -11,8 +11,8 @@
   "dependencies": {
     "@chakra-ui/next-js": "^2.1.3",
     "@chakra-ui/react": "^2.6.1",
-    "@coral-xyz/anchor": "^0.29.0",
-    "@coral-xyz/spl-token": "0.29.0",
+    "@coral-xyz/anchor": "^0.30.0",
+    "@coral-xyz/spl-token": "0.30.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@magicblock-labs/gum-react-sdk": "^3.0.4",

@@ -1,92 +1,99 @@
-use anchor_lang::{
-    prelude::*,
-    system_program::{create_account, CreateAccount},
-};
+use anchor_lang::prelude::*;
 use anchor_spl::{
-    associated_token::AssociatedToken,
-    token_interface::{Mint, TokenAccount, TokenInterface},
+    associated_token::AssociatedToken, token_interface::{
+        spl_pod::optional_keys::OptionalNonZeroPubkey,
+        spl_token_2022::{
+            extension::{
+                transfer_hook::TransferHook as TransferHookExtension, BaseStateWithExtensions,
+                StateWithExtensions,
+            },
+            state::Mint as MintState,
+        },
+        Mint, Token2022, TokenAccount
+    },
 };
-use spl_tlv_account_resolution::{
-    state::ExtraAccountMetaList,
-};
-use spl_transfer_hook_interface::instruction::{ExecuteInstruction, TransferHookInstruction};
+use spl_tlv_account_resolution::{account::ExtraAccountMeta, state::ExtraAccountMetaList};
+use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
-declare_id!("DrWbQtYJGtsoRwzKqAbHKHKsCJJfpysudF39GBVFSxub");
+declare_id!("jY5DfVksJT8Le38LCaQhz5USeiGu4rUeVSS8QRAMoba");
 
 #[program]
 pub mod transfer_hook {
     use super::*;
 
+    // create a mint account that specifies this program as the transfer hook program
+    pub fn initialize(ctx: Context<Initialize>, _decimals: u8) -> Result<()> {
+        ctx.accounts.check_mint_data()?;
+        Ok(())
+    }
+
+    #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
     pub fn initialize_extra_account_meta_list(
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
-
-        let account_metas = vec![];
-
-        // calculate account size
-        let account_size = ExtraAccountMetaList::size_of(account_metas.len())? as u64;
-        // calculate minimum required lamports
-        let lamports = Rent::get()?.minimum_balance(account_size as usize);
-
-        let mint = ctx.accounts.mint.key();
-        let signer_seeds: &[&[&[u8]]] = &[&[
-            b"extra-account-metas",
-            &mint.as_ref(),
-            &[ctx.bumps.extra_account_meta_list],
-        ]];
-
-        // create ExtraAccountMetaList account
-        create_account(
-            CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
-                CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.extra_account_meta_list.to_account_info(),
-                },
-            )
-            .with_signer(signer_seeds),
-            lamports,
-            account_size,
-            ctx.program_id,
-        )?;
+        let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
-            &account_metas,
+            &extra_account_metas,
         )?;
+
 
         Ok(())
     }
 
-    pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
+    #[interface(spl_transfer_hook_interface::execute)]
+    pub fn transfer_hook(_ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
 
         msg!("Hello Transfer Hook!");
 
         Ok(())
     }
+}
 
-    // fallback instruction handler as workaround to anchor instruction discriminator check
-    pub fn fallback<'info>(
-        program_id: &Pubkey,
-        accounts: &'info [AccountInfo<'info>],
-        data: &[u8],
-    ) -> Result<()> {
-        let instruction = TransferHookInstruction::unpack(data)?;
+#[derive(Accounts)]
+#[instruction(_decimals: u8)]
+pub struct Initialize<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
 
-        // match instruction discriminator to transfer hook interface execute instruction  
-        // token2022 program CPIs this instruction on token transfer
-        match instruction {
-            TransferHookInstruction::Execute { amount } => {
-                let amount_bytes = amount.to_le_bytes();
+    #[account(
+        init,
+        payer = payer,
+        mint::decimals = _decimals,
+        mint::authority = payer,
+        extensions::transfer_hook::authority = payer,
+        extensions::transfer_hook::program_id = crate::ID,
+    )]
+    pub mint_account: InterfaceAccount<'info, Mint>,
+    pub token_program: Program<'info, Token2022>,
+    pub system_program: Program<'info, System>,
+}
 
-                // invoke custom transfer hook instruction on our program
-                __private::__global::transfer_hook(program_id, accounts, &amount_bytes)
-            }
-            _ => return Err(ProgramError::InvalidInstructionData.into()),
-        }
+// helper to check mint data, and demonstrate how to read mint extension data within a program
+impl<'info> Initialize<'info> {
+    pub fn check_mint_data(&self) -> Result<()> {
+        let mint = &self.mint_account.to_account_info();
+        let mint_data = mint.data.borrow();
+        let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
+        let extension_data = mint_with_extension.get_extension::<TransferHookExtension>()?;
+
+        assert_eq!(
+            extension_data.authority,
+            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
+        );
+
+        assert_eq!(
+            extension_data.program_id,
+            OptionalNonZeroPubkey::try_from(Some(crate::ID))?
+        );
+
+        msg!("{:?}", extension_data);
+        Ok(())
     }
 }
+
 
 #[derive(Accounts)]
 pub struct InitializeExtraAccountMetaList<'info> {
@@ -95,15 +102,25 @@ pub struct InitializeExtraAccountMetaList<'info> {
 
     /// CHECK: ExtraAccountMetaList Account, must use these seeds
     #[account(
-        mut,
+        init,
         seeds = [b"extra-account-metas", mint.key().as_ref()], 
-        bump
+        bump,
+        space = ExtraAccountMetaList::size_of(InitializeExtraAccountMetaList::extra_account_metas()?.len())?,
+        payer = payer,
     )]
-    pub extra_account_meta_list: AccountInfo<'info>,
+    pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
-    pub token_program: Interface<'info, TokenInterface>,
+    pub token_program: Program<'info, Token2022>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
+}
+
+// Define extra account metas to store on extra_account_meta_list account
+// In this example there are none
+impl<'info> InitializeExtraAccountMetaList<'info> {
+    pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+        Ok(vec![])
+    }
 }
 
 // Order of accounts matters for this struct.

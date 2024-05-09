@@ -1,12 +1,11 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
 
-declare_id!("CABVoybzrbAJSv7QhQd6GXNGKxDMRjw9niqFzizhk6uk");
+declare_id!("E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN");
 
 #[program]
 pub mod lever {
     use super::*;
+
     pub fn initialize(_ctx: Context<InitializeLever>) -> Result<()> {
         Ok(())
     }

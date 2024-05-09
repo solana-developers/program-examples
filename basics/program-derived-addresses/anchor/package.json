@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@coral-xyz/anchor": "^0.28.0"
+    "@coral-xyz/anchor": "^0.30.0"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",

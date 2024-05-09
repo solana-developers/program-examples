@@ -1,13 +1,6 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
-import { TOKEN_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import { CreateToken } from "../target/types/create_token";
-import {
-  PublicKey,
-  Keypair,
-  SYSVAR_RENT_PUBKEY,
-  SystemProgram,
-} from "@solana/web3.js";
+import { Keypair } from "@solana/web3.js";
 
 describe("Create Tokens", () => {
   const provider = anchor.AnchorProvider.env();
@@ -25,27 +18,12 @@ describe("Create Tokens", () => {
     // Generate new keypair to use as address for mint account.
     const mintKeypair = new Keypair();
 
-    // Derive the PDA of the metadata account for the mint.
-    const [metadataAddress] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintKeypair.publicKey.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID
-    );
-
     // SPL Token default = 9 decimals
     const transactionSignature = await program.methods
-      .createTokenMint(metadata.name, metadata.symbol, metadata.uri, 9)
+      .createTokenMint(9, metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
-        metadataAccount: metadataAddress,
         mintAccount: mintKeypair.publicKey,
-        rent: SYSVAR_RENT_PUBKEY,
-        systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
       })
       .signers([mintKeypair])
       .rpc();
@@ -59,27 +37,12 @@ describe("Create Tokens", () => {
     // Generate new keypair to use as address for mint account.
     const mintKeypair = new Keypair();
 
-    // Derive the PDA of the metadata account for the mint.
-    const [metadataAddress] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintKeypair.publicKey.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID
-    );
-
     // NFT default = 0 decimals
     const transactionSignature = await program.methods
-      .createTokenMint(metadata.name, metadata.symbol, metadata.uri, 0)
+      .createTokenMint(0, metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
-        metadataAccount: metadataAddress,
         mintAccount: mintKeypair.publicKey,
-        rent: SYSVAR_RENT_PUBKEY,
-        systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
       })
       .signers([mintKeypair])
       .rpc();

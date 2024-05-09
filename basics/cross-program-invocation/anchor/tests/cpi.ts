@@ -1,16 +1,17 @@
-import * as anchor from "@coral-xyz/anchor"
-import { Hand } from "../target/types/hand"
-import { Lever } from "../target/types/lever"
-import { Keypair } from "@solana/web3.js"
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { Hand } from "../target/types/hand";
+import { Lever } from "../target/types/lever";
 
-describe("CPI Example", () => {
-  const provider = anchor.AnchorProvider.env()
-  anchor.setProvider(provider)
-  const hand = anchor.workspace.Hand as anchor.Program<Hand>
-  const lever = anchor.workspace.Lever as anchor.Program<Lever>
+describe("cpi", () => {
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
+
+  const hand = anchor.workspace.Hand as Program<Hand>;
+  const lever = anchor.workspace.Lever as Program<Lever>;
 
   // Generate a new keypair for the power account
-  const powerAccount = new Keypair()
+  const powerAccount = new anchor.web3.Keypair();
 
   it("Initialize the lever!", async () => {
     await lever.methods
@@ -20,26 +21,24 @@ describe("CPI Example", () => {
         user: provider.wallet.publicKey,
       })
       .signers([powerAccount])
-      .rpc()
-  })
+      .rpc();
+  });
 
   it("Pull the lever!", async () => {
     await hand.methods
       .pullLever("Chris")
       .accounts({
         power: powerAccount.publicKey,
-        leverProgram: lever.programId,
       })
-      .rpc()
-  })
+      .rpc();
+  });
 
   it("Pull it again!", async () => {
     await hand.methods
       .pullLever("Ashley")
       .accounts({
         power: powerAccount.publicKey,
-        leverProgram: lever.programId,
       })
-      .rpc()
-  })
-})
+      .rpc();
+  });
+});

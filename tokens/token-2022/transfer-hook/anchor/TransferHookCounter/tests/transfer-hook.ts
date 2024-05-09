@@ -159,8 +159,6 @@ describe("transfer-hook", () => {
       .initializeExtraAccountMetaList()
       .accounts({
         mint: mint.publicKey,
-        extraAccountMetaList: extraAccountMetaListPDA,
-        counterAccount: counterPDA,
       })
       .instruction();
 
@@ -197,7 +195,7 @@ describe("transfer-hook", () => {
       );
 
     console.log("Extra accounts meta: " + extraAccountMetaListPDA);
-    console.log("Counter PDa: " + counterPDA);
+    console.log("Counter PDA: " + counterPDA);
     console.log(
       "Transfer Instruction: " +
         JSON.stringify(transferInstructionWithHelper, null, 2)

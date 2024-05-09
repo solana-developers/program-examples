@@ -1,5 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
-import { RentExample, IDL } from "../target/types/rent_example";
+import { RentExample } from "../target/types/rent_example";
+import Idl from "../target/idl/rent_example.json";
 
 describe("Create a system account", () => {
   const provider = anchor.AnchorProvider.env();
@@ -10,7 +11,7 @@ describe("Create a system account", () => {
   it("Create the account", async () => {
     const newKeypair = anchor.web3.Keypair.generate();
 
-    const addressData: anchor.IdlTypes<RentExample>["AddressData"] = {
+    const addressData: anchor.IdlTypes<RentExample>["addressData"] = {
       name: "Marcus",
       address: "123 Main St. San Francisco, CA",
     };
@@ -18,10 +19,9 @@ describe("Create a system account", () => {
     // We're just going to serialize our object here so we can check
     //  the size on the client side against the program logs
     //
-    const addressDataBuffer = new anchor.BorshCoder(IDL).types.encode(
-      "AddressData",
-      addressData
-    );
+    const addressDataBuffer = new anchor.BorshCoder(
+      Idl as anchor.Idl
+    ).types.encode("AddressData", addressData);
     console.log(`Address data buffer length: ${addressDataBuffer.length}`);
 
     await program.methods
@@ -29,7 +29,6 @@ describe("Create a system account", () => {
       .accounts({
         payer: wallet.publicKey,
         newAccount: newKeypair.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
       })
       .signers([wallet.payer, newKeypair])
       .rpc();

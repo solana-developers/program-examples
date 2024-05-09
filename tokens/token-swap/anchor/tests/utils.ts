@@ -133,7 +133,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
   const admin = Keypair.generate();
   const ammKey = PublicKey.findProgramAddressSync(
     [id.toBuffer()],
-    anchor.workspace.AmmTutorial.programId
+    anchor.workspace.SwapExample.programId
   )[0];
 
   // Making sure tokens are in the right order
@@ -154,7 +154,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintBKeypair.publicKey.toBuffer(),
       Buffer.from("authority"),
     ],
-    anchor.workspace.AmmTutorial.programId
+    anchor.workspace.SwapExample.programId
   )[0];
   const mintLiquidity = PublicKey.findProgramAddressSync(
     [
@@ -163,7 +163,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintBKeypair.publicKey.toBuffer(),
       Buffer.from("liquidity"),
     ],
-    anchor.workspace.AmmTutorial.programId
+    anchor.workspace.SwapExample.programId
   )[0];
   const poolKey = PublicKey.findProgramAddressSync(
     [
@@ -171,7 +171,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintAKeypair.publicKey.toBuffer(),
       mintBKeypair.publicKey.toBuffer(),
     ],
-    anchor.workspace.AmmTutorial.programId
+    anchor.workspace.SwapExample.programId
   )[0];
   return {
     id,

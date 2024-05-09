@@ -6,7 +6,7 @@ pub mod instructions;
 
 use instructions::*;
 
-declare_id!("2W7B8C5skxyVaAA1LfYAsRHiv26LL5j88GJ9XYyybWqc");
+declare_id!("nHi9DdNjuupjQ3c8AJU9sChB5gLbZvTLsJQouY4hU67");
 
 #[program]
 pub mod transfer_tokens {

@@ -1,12 +1,18 @@
+[toolchain]
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
+seeds = true
 
 [programs.localnet]
-nft_minter = "3qHNM98iLTaQtwmj2NkViXnHZQjNBS5PTHT2AuPxHXYN"
+nft_minter = "52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc"
+
+[registry]
+url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
@@ -15,6 +21,7 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 [test]
 startup_wait = 5000
 shutdown_wait = 2000
+upgradeable = false
 
 [test.validator]
 bind_address = "0.0.0.0"

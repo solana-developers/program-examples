@@ -1,7 +1,7 @@
 {
   "name": "program-examples",
   "version": "1.0.0",
-  "description": "### :crab: Rust. :snake: Python. :ice_cube: Solidity. :link: All on-chain.",
+  "description": "### :crab: Rust. :snake: Python. :link: All on-chain.",
   "scripts": {
     "sync-package-json": "ts-node scripts/sync-package-json.ts"
   },

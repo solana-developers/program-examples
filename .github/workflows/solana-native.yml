@@ -2,12 +2,12 @@ name: Native
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [stable, 1.18.4]
+        solana-version: [1.17.25, stable, beta]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [stable, 1.18.4]
+        solana-version: [1.17.25, stable, beta]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -133,7 +133,7 @@ jobs:
             echo "*****************************"
             echo "Programs that failed testing:"
             printf "%s\n" "${failed_tests[@]}"
-            # exit 1
+            exit 1
           else
             echo "All tests passed."
           fi

@@ -2,12 +2,12 @@ name: Anchor
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   push:
     branches:
       - main
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
     branches:
       - main
 
@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [stable, 1.17.25]
-        anchor-version: [0.29.0]
+        solana-version: [1.18.8, beta]
+        anchor-version: [0.30.0]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -55,6 +55,22 @@ jobs:
           "basics/rent/anchor"
           "basics/repository-layout/anchor"
           "basics/transfer-sol/anchor"
+          "tokens/token-2022/basics/anchor"
+          "tokens/token-2022/cpi-guard/anchor"
+          "tokens/token-2022/default-account-state/anchor"
+          "tokens/token-2022/group/anchor"
+          "tokens/token-2022/immutable-owner/anchor"
+          "tokens/token-2022/interest-bearing/anchor"
+          "tokens/token-2022/memo-transfer/anchor"
+          "tokens/token-2022/metadata/anchor"
+          "tokens/token-2022/mint-close-authority/anchor"
+          "tokens/token-2022/non-transferable/anchor"
+          "tokens/token-2022/permanent-delegate/anchor"
+          "tokens/token-2022/transfer-fee/anchor"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookCounter"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookHelloWorld"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookTransferCost"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookWhitelist"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -64,6 +80,7 @@ jobs:
             cd $projectDir
             if anchor build; then
               echo "Build succeeded for $projectDir."
+              rm -rf target
             else
               failed=true
               failed_builds+=($projectDir)
@@ -85,8 +102,8 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.18.4, stable]
-        anchor-version: [0.29.0]
+        solana-version: [1.18.8, beta]
+        anchor-version: [0.30.0]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Anchor
@@ -118,6 +135,22 @@ jobs:
           "basics/rent/anchor"
           "basics/repository-layout/anchor"
           "basics/transfer-sol/anchor"
+          "tokens/token-2022/basics/anchor"
+          "tokens/token-2022/cpi-guard/anchor"
+          "tokens/token-2022/default-account-state/anchor"
+          "tokens/token-2022/group/anchor"
+          "tokens/token-2022/immutable-owner/anchor"
+          "tokens/token-2022/interest-bearing/anchor"
+          "tokens/token-2022/memo-transfer/anchor"
+          "tokens/token-2022/metadata/anchor"
+          "tokens/token-2022/mint-close-authority/anchor"
+          "tokens/token-2022/non-transferable/anchor"
+          "tokens/token-2022/permanent-delegate/anchor"
+          "tokens/token-2022/transfer-fee/anchor"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookCounter"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookHelloWorld"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookTransferCost"
+          "tokens/token-2022/transfer-hook/anchor/TransferHookWhitelist"
           )
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
@@ -128,6 +161,7 @@ jobs:
             pnpm install --frozen-lockfile
             if anchor test; then
               echo "Tests succeeded for $projectDir."
+              rm -rf target node_modules
             else
               failed=true
               failed_tests+=($projectDir)

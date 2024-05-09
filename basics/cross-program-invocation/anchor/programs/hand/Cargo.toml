@@ -1,5 +1,5 @@
 [package]
-name = "cross-program-invocatio-anchor-hand"
+name = "hand"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
@@ -9,14 +9,12 @@ crate-type = ["cdylib", "lib"]
 name = "hand"
 
 [features]
+default = []
+cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
-default = []
+idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
-anchor-lang = "0.29.0"
-solana-program = "=1.17"
-ahash = "=0.8.4"
-cross-program-invocatio-anchor-lever = { path = "../lever", features = ["cpi"] }
+anchor-lang = "0.30.0"

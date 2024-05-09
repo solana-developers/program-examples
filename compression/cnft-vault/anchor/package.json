@@ -4,7 +4,7 @@
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
   "dependencies": {
-    "@coral-xyz/anchor": "^0.28.0",
+    "@coral-xyz/anchor": "^0.30.0",
     "@metaplex-foundation/mpl-bubblegum": "^0.6.2",
     "@solana/spl-account-compression": "^0.1.8",
     "axios": "^1.4.0"

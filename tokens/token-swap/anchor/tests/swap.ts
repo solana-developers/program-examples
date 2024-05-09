@@ -10,7 +10,7 @@ describe("Swap", () => {
   const connection = provider.connection;
   anchor.setProvider(provider);
 
-  const program = anchor.workspace.AmmTutorial as Program<AmmTutorial>;
+  const program = anchor.workspace.SwapExample as Program<SwapExample>;
 
   let values: TestValues;
 

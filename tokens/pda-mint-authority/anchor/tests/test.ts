@@ -1,12 +1,7 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { TokenMinter } from "../target/types/token_minter";
-import { PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from "@solana/web3.js";
-import {
-  getAssociatedTokenAddressSync,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 describe("NFT Minter", () => {
   const provider = anchor.AnchorProvider.env();
@@ -28,26 +23,10 @@ describe("NFT Minter", () => {
   };
 
   it("Create a token!", async () => {
-    // Derive the metadata account address.
-    const [metadataAddress] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintPDA.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID
-    );
-
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
-        mintAccount: mintPDA,
-        metadataAccount: metadataAddress,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY,
       })
       .rpc();
 
@@ -70,11 +49,7 @@ describe("NFT Minter", () => {
       .mintToken(amount)
       .accounts({
         payer: payer.publicKey,
-        mintAccount: mintPDA,
         associatedTokenAccount: associatedTokenAccountAddress,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
       })
       .rpc();
 

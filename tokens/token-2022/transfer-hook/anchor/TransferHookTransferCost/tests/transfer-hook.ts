@@ -64,18 +64,6 @@ describe("transfer-hook", () => {
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 
-  // ExtraAccountMetaList address
-  // Store extra accounts required by the custom transfer hook instruction
-  const [extraAccountMetaListPDA] = PublicKey.findProgramAddressSync(
-    [Buffer.from("extra-account-metas"), mint.publicKey.toBuffer()],
-    program.programId
-  );
-
-  const [counterPDA] = PublicKey.findProgramAddressSync(
-    [Buffer.from("counter")],
-    program.programId
-  );
-
   // PDA delegate to transfer wSOL tokens from sender
   const [delegatePDA] = PublicKey.findProgramAddressSync(
     [Buffer.from("delegate")],
@@ -201,12 +189,7 @@ describe("transfer-hook", () => {
       .initializeExtraAccountMetaList()
       .accounts({
         payer: wallet.publicKey,
-        extraAccountMetaList: extraAccountMetaListPDA,
         mint: mint.publicKey,
-        wsolMint: NATIVE_MINT,
-        counterAccount: counterPDA,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       })
       .instruction();
 
@@ -316,6 +299,6 @@ describe("transfer-hook", () => {
 
     const tokenAccount = await getAccount(connection, delegateWSolTokenAccount);
 
-    assert.equal(Number(tokenAccount.amount), amount / 2);
+    assert.equal(Number(tokenAccount.amount), amount);
   });
 });

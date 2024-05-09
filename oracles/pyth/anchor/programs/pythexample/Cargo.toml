@@ -9,11 +9,11 @@ crate-type = ["cdylib", "lib"]
 name = "pythexample"
 
 [features]
+default = []
+cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
-default = []
 
 [dependencies]
 anchor-lang = "0.28.0"

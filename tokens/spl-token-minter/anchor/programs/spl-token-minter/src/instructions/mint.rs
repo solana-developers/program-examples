@@ -11,14 +11,14 @@ pub struct MintToken<'info> {
     #[account(mut)]
     pub mint_authority: Signer<'info>,
 
-    pub recepient: SystemAccount<'info>,
+    pub recipient: SystemAccount<'info>,
     #[account(mut)]
     pub mint_account: Account<'info, Mint>,
     #[account(
         init_if_needed,
         payer = mint_authority,
         associated_token::mint = mint_account,
-        associated_token::authority = recepient,
+        associated_token::authority = recipient,
     )]
     pub associated_token_account: Account<'info, TokenAccount>,
 

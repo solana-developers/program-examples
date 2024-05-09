@@ -4,14 +4,15 @@ import { Anchor } from "../target/types/anchor";
 
 describe("anchor", () => {
   // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
   const program = anchor.workspace.Anchor as Program<Anchor>;
   const connection = program.provider.connection;
   const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
     "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
   );
-  const payer = anchor.web3.Keypair.generate();
+  const wallet = provider.wallet as anchor.Wallet;
   const ATA_PROGRAM_ID = new anchor.web3.PublicKey(
     "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
   );
@@ -20,14 +21,14 @@ describe("anchor", () => {
   const [mint] = anchor.web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from("token-2022-token"),
-      payer.publicKey.toBytes(),
+      wallet.publicKey.toBytes(),
       Buffer.from(tokenName),
     ],
     program.programId
   );
   const [payerATA] = anchor.web3.PublicKey.findProgramAddressSync(
     [
-      payer.publicKey.toBytes(),
+      wallet.publicKey.toBytes(),
       TOKEN_2022_PROGRAM_ID.toBytes(),
       mint.toBytes(),
     ],
@@ -47,14 +48,13 @@ describe("anchor", () => {
 
   it("Create Token-2022 Token", async () => {
     await connection.requestAirdrop(receiver.publicKey, 1000000000);
-    await connection.requestAirdrop(payer.publicKey, 1000000000);
+    await connection.requestAirdrop(wallet.publicKey, 1000000000);
     const tx = new anchor.web3.Transaction();
 
     const ix = await program.methods
       .createToken(tokenName)
       .accounts({
-        mint: mint,
-        signer: payer.publicKey,
+        signer: wallet.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
       })
       .instruction();
@@ -64,7 +64,7 @@ describe("anchor", () => {
     const sig = await anchor.web3.sendAndConfirmTransaction(
       program.provider.connection,
       tx,
-      [payer]
+      [wallet.payer]
     );
     console.log("Your transaction signature", sig);
   });
@@ -77,7 +77,7 @@ describe("anchor", () => {
       .accounts({
         tokenAccount: payerATA,
         mint: mint,
-        signer: payer.publicKey,
+        signer: wallet.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
       })
       .instruction();
@@ -87,7 +87,7 @@ describe("anchor", () => {
     const sig = await anchor.web3.sendAndConfirmTransaction(
       program.provider.connection,
       tx,
-      [payer]
+      [wallet.payer]
     );
     console.log("Your transaction signature", sig);
   });
@@ -124,11 +124,10 @@ describe("anchor", () => {
       .mintToken(new anchor.BN(200000000))
       .accounts({
         mint: mint,
-        signer: payer.publicKey,
+        signer: wallet.publicKey,
         receiver: payerATA,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
       })
-      .signers([payer])
       .instruction();
 
     tx.add(ix);
@@ -136,7 +135,7 @@ describe("anchor", () => {
     const sig = await anchor.web3.sendAndConfirmTransaction(
       program.provider.connection,
       tx,
-      [payer]
+      [wallet.payer]
     );
     console.log("Your transaction signature", sig);
   });
@@ -149,11 +148,10 @@ describe("anchor", () => {
       .transferToken(new anchor.BN(100))
       .accounts({
         mint: mint,
-        signer: payer.publicKey,
+        signer: wallet.publicKey,
         from: payerATA,
         to: receiver.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
-        associatedTokenProgram: ATA_PROGRAM_ID,
         toAta: receiverATA,
       })
       .instruction();
@@ -163,7 +161,7 @@ describe("anchor", () => {
     const sig = await anchor.web3.sendAndConfirmTransaction(
       program.provider.connection,
       tx,
-      [payer]
+      [wallet.payer]
     );
     console.log("Your transaction signature", sig);
   });

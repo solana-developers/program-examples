@@ -1,26 +1,24 @@
 [package]
-name = "amm-tutorial"
+name = "swap_example"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "amm_tutorial"
+name = "swap_example"
 
 [features]
+default = []
+cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
-default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
-anchor-lang = { version = "0.28.0", features = ["init-if-needed"] }
-anchor-spl = { version = "0.28.0" }
+anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
+anchor-spl = { version = "0.30.0" }
 fixed = "1.23.1"
-half = "=2.2.1"
-fixed-sqrt = "0.2.5"
-solana-program = "1.16.10"
-winnow = "=0.4.1"
-toml_datetime = "=0.6.1"
+
+

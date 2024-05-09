@@ -5,7 +5,7 @@ use anchor_lang::prelude::*;
 pub mod instructions;
 use instructions::*;
 
-declare_id!("77p9WmpzQW29RUEzTEef2ym7AHePBE9yNWJ9acikXfZS");
+declare_id!("3of89Z9jwek9zrFgpCWc9jZvQvitpVMxpZNsrAD2vQUD");
 
 #[program]
 pub mod spl_token_minter {

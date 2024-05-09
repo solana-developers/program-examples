@@ -1,17 +1,7 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import * as anchor from "@coral-xyz/anchor";
 import { TransferTokens } from "../target/types/transfer_tokens";
-import {
-  PublicKey,
-  Keypair,
-  SYSVAR_RENT_PUBKEY,
-  SystemProgram,
-} from "@solana/web3.js";
-import {
-  getAssociatedTokenAddressSync,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+import { Keypair } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 describe("Transfer Tokens", () => {
   const provider = anchor.AnchorProvider.env();
@@ -45,26 +35,11 @@ describe("Transfer Tokens", () => {
   );
 
   it("Create an SPL Token!", async () => {
-    // Derive the metadata account address.
-    const [metadataAddress] = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintKeypair.publicKey.toBuffer(),
-      ],
-      TOKEN_METADATA_PROGRAM_ID
-    );
-
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
         payer: payer.publicKey,
         mintAccount: mintKeypair.publicKey,
-        metadataAccount: metadataAddress,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-        rent: SYSVAR_RENT_PUBKEY,
       })
       .signers([mintKeypair])
       .rpc();
@@ -83,12 +58,9 @@ describe("Transfer Tokens", () => {
       .mintToken(amount)
       .accounts({
         mintAuthority: payer.publicKey,
-        recepient: payer.publicKey,
+        recipient: payer.publicKey,
         mintAccount: mintKeypair.publicKey,
         associatedTokenAccount: senderTokenAddress,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
       })
       .rpc();
 
@@ -109,9 +81,6 @@ describe("Transfer Tokens", () => {
         mintAccount: mintKeypair.publicKey,
         senderTokenAccount: senderTokenAddress,
         recipientTokenAccount: recepientTokenAddress,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
       })
       .rpc();
 

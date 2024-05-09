@@ -39,10 +39,10 @@ pub struct Update<'info> {
     pub payer: Signer<'info>,
 
     #[account(
-       mut, 
-       realloc = Message::required_space(input.len()),
-       realloc::payer = payer,
-       realloc::zero = true,
+        mut,
+        realloc = Message::required_space(input.len()),
+        realloc::payer = payer,
+        realloc::zero = true,
     )]
     pub message_account: Account<'info, Message>,
     pub system_program: Program<'info, System>,
@@ -60,4 +60,3 @@ impl Message {
         input_len
     }
 }
-

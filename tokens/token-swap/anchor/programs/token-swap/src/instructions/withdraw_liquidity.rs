@@ -11,12 +11,12 @@ use crate::{
 };
 
 pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Result<()> {
-    let authority_bump = *ctx.bumps.get("pool_authority").unwrap();
+    let authority_bump = ctx.bumps.pool_authority;
     let authority_seeds = &[
         &ctx.accounts.pool.amm.to_bytes(),
         &ctx.accounts.mint_a.key().to_bytes(),
         &ctx.accounts.mint_b.key().to_bytes(),
-        AUTHORITY_SEED.as_bytes(),
+        AUTHORITY_SEED,
         &[authority_bump],
     ];
     let signer_seeds = &[&authority_seeds[..]];
@@ -111,7 +111,7 @@ pub struct WithdrawLiquidity<'info> {
             pool.amm.as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            AUTHORITY_SEED.as_ref(),
+            AUTHORITY_SEED,
         ],
         bump,
     )]
@@ -126,7 +126,7 @@ pub struct WithdrawLiquidity<'info> {
             pool.amm.as_ref(),
             mint_a.key().as_ref(),
             mint_b.key().as_ref(),
-            LIQUIDITY_SEED.as_ref(),
+            LIQUIDITY_SEED,
         ],
         bump,
     )]
@@ -153,8 +153,7 @@ pub struct WithdrawLiquidity<'info> {
     pub pool_account_b: Box<Account<'info, TokenAccount>>,
 
     #[account(
-        init_if_needed,
-        payer = payer,
+        mut,
         associated_token::mint = mint_liquidity,
         associated_token::authority = depositor,
     )]

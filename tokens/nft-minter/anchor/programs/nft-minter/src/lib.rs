@@ -5,18 +5,15 @@ use {
     anchor_spl::{
         associated_token::AssociatedToken,
         metadata::{
-            create_master_edition_v3, create_metadata_accounts_v3, CreateMasterEditionV3,
-            CreateMetadataAccountsV3, Metadata,
+            create_master_edition_v3, create_metadata_accounts_v3,
+            mpl_token_metadata::types::DataV2, CreateMasterEditionV3, CreateMetadataAccountsV3,
+            Metadata,
         },
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
     },
-    mpl_token_metadata::{
-        pda::{find_master_edition_account, find_metadata_account},
-        state::DataV2,
-    },
 };
 
-declare_id!("3qHNM98iLTaQtwmj2NkViXnHZQjNBS5PTHT2AuPxHXYN");
+declare_id!("52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc");
 
 #[program]
 pub mod nft_minter {
@@ -105,17 +102,21 @@ pub struct CreateToken<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    /// CHECK: Address validated using constraint
+    /// CHECK: Validate address by deriving pda
     #[account(
         mut,
-        address=find_metadata_account(&mint_account.key()).0
+        seeds = [b"metadata", token_metadata_program.key().as_ref(), mint_account.key().as_ref()],
+        bump,
+        seeds::program = token_metadata_program.key(),
     )]
     pub metadata_account: UncheckedAccount<'info>,
 
-    /// CHECK: Address validated using constraint
+    /// CHECK: Validate address by deriving pda
     #[account(
         mut,
-        address=find_master_edition_account(&mint_account.key()).0
+        seeds = [b"metadata", token_metadata_program.key().as_ref(), mint_account.key().as_ref(), b"edition"],
+        bump,
+        seeds::program = token_metadata_program.key(),
     )]
     pub edition_account: UncheckedAccount<'info>,
 

@@ -2,22 +2,15 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { TransferHook } from "../target/types/transfer_hook";
 import {
-  PublicKey,
-  SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
   Keypair,
 } from "@solana/web3.js";
 import {
-  ExtensionType,
   TOKEN_2022_PROGRAM_ID,
-  getMintLen,
-  createInitializeMintInstruction,
-  createInitializeTransferHookInstruction,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createMintToInstruction,
-  createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
   createTransferCheckedWithTransferHookInstruction,
 } from "@solana/spl-token";
@@ -33,7 +26,7 @@ describe("transfer-hook", () => {
 
   // Generate keypair to use as address for the transfer-hook enabled mint
   const mint = new Keypair();
-  const decimals = 9;
+  const decimals = 2;
 
   // Sender token account address
   const sourceTokenAccount = getAssociatedTokenAddressSync(
@@ -54,48 +47,13 @@ describe("transfer-hook", () => {
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
 
-  // ExtraAccountMetaList address
-  // Store extra accounts required by the custom transfer hook instruction
-  const [extraAccountMetaListPDA] = PublicKey.findProgramAddressSync(
-    [Buffer.from("extra-account-metas"), mint.publicKey.toBuffer()],
-    program.programId
-  );
-
-  it("Create Mint Account with Transfer Hook Extension", async () => {
-    const extensions = [ExtensionType.TransferHook];
-    const mintLen = getMintLen(extensions);
-    const lamports =
-      await provider.connection.getMinimumBalanceForRentExemption(mintLen);
-
-    const transaction = new Transaction().add(
-      SystemProgram.createAccount({
-        fromPubkey: wallet.publicKey,
-        newAccountPubkey: mint.publicKey,
-        space: mintLen,
-        lamports: lamports,
-        programId: TOKEN_2022_PROGRAM_ID,
-      }),
-      createInitializeTransferHookInstruction(
-        mint.publicKey,
-        wallet.publicKey,
-        program.programId, // Transfer Hook Program ID
-        TOKEN_2022_PROGRAM_ID
-      ),
-      createInitializeMintInstruction(
-        mint.publicKey,
-        decimals,
-        wallet.publicKey,
-        null,
-        TOKEN_2022_PROGRAM_ID
-      )
-    );
-
-    const txSig = await sendAndConfirmTransaction(
-      provider.connection,
-      transaction,
-      [wallet.payer, mint]
-    );
-    console.log(`Transaction Signature: ${txSig}`);
+  it("Create Mint with Transfer Hook Extension", async () => {
+    const transactionSignature = await program.methods
+      .initialize(decimals)
+      .accounts({ mintAccount: mint.publicKey })
+      .signers([mint])
+      .rpc({ skipPreflight: true });
+    console.log("Your transaction signature", transactionSignature);
   });
 
   // Create the two token accounts for the transfer-hook enabled mint
@@ -147,7 +105,6 @@ describe("transfer-hook", () => {
       .initializeExtraAccountMetaList()
       .accounts({
         mint: mint.publicKey,
-        extraAccountMetaList: extraAccountMetaListPDA,
       })
       .instruction();
 
@@ -170,22 +127,21 @@ describe("transfer-hook", () => {
     const bigIntAmount = BigInt(amount);
 
     // Standard token transfer instruction
-    const transferInstruction = await createTransferCheckedWithTransferHookInstruction(
-      connection,
-      sourceTokenAccount,
-      mint.publicKey,
-      destinationTokenAccount,
-      wallet.publicKey,
-      bigIntAmount,
-      decimals,
-      [],
-      "confirmed",
-      TOKEN_2022_PROGRAM_ID
-    );
+    const transferInstruction =
+      await createTransferCheckedWithTransferHookInstruction(
+        connection,
+        sourceTokenAccount,
+        mint.publicKey,
+        destinationTokenAccount,
+        wallet.publicKey,
+        bigIntAmount,
+        decimals,
+        [],
+        "confirmed",
+        TOKEN_2022_PROGRAM_ID
+      );
 
-    const transaction = new Transaction().add(
-      transferInstruction
-    );
+    const transaction = new Transaction().add(transferInstruction);
 
     const txSig = await sendAndConfirmTransaction(
       connection,

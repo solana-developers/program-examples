@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@coral-xyz/anchor':
-    specifier: ^0.28.0
-    version: 0.28.0
+    specifier: ^0.30.0
+    version: 0.30.0
 
 devDependencies:
   '@types/bn.js':
@@ -15,7 +15,7 @@ devDependencies:
     version: 5.1.5
   '@types/chai':
     specifier: ^4.3.0
-    version: 4.3.14
+    version: 4.3.16
   '@types/mocha':
     specifier: ^9.0.0
     version: 9.1.1
@@ -25,6 +25,9 @@ devDependencies:
   mocha:
     specifier: ^9.0.3
     version: 9.2.2
+  prettier:
+    specifier: ^2.6.2
+    version: 2.8.8
   ts-mocha:
     specifier: ^10.0.0
     version: 10.0.0(mocha@9.2.2)
@@ -34,20 +37,20 @@ devDependencies:
 
 packages:
 
-  /@babel/runtime@7.24.4:
-    resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
+  /@babel/runtime@7.24.5:
+    resolution: {integrity: sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
     dev: false
 
-  /@coral-xyz/anchor@0.28.0:
-    resolution: {integrity: sha512-kQ02Hv2ZqxtWP30WN1d4xxT4QqlOXYDxmEd3k/bbneqhV3X5QMO4LAtoUFs7otxyivOgoqam5Il5qx81FuI4vw==}
+  /@coral-xyz/anchor@0.30.0:
+    resolution: {integrity: sha512-qreDh5ztiRHVnCbJ+RS70NJ6aSTPBYDAgFeQ7Z5QvaT5DcDIhNyt4onOciVz2ieIE1XWePOJDDu9SbNvPGBkvQ==}
     engines: {node: '>=11'}
     dependencies:
-      '@coral-xyz/borsh': 0.28.0(@solana/web3.js@1.91.4)
-      '@solana/web3.js': 1.91.4
-      base64-js: 1.5.1
+      '@coral-xyz/borsh': 0.30.0(@solana/web3.js@1.91.8)
+      '@noble/hashes': 1.4.0
+      '@solana/web3.js': 1.91.8
       bn.js: 5.2.1
       bs58: 4.0.1
       buffer-layout: 1.2.2
@@ -55,7 +58,6 @@ packages:
       cross-fetch: 3.1.8
       crypto-hash: 1.3.0
       eventemitter3: 4.0.7
-      js-sha256: 0.9.0
       pako: 2.1.0
       snake-case: 3.0.4
       superstruct: 0.15.5
@@ -66,13 +68,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@coral-xyz/borsh@0.28.0(@solana/web3.js@1.91.4):
-    resolution: {integrity: sha512-/u1VTzw7XooK7rqeD7JLUSwOyRSesPUk0U37BV9zK0axJc1q0nRbKFGFLYCQ16OtdOJTTwGfGp11Lx9B45bRCQ==}
+  /@coral-xyz/borsh@0.30.0(@solana/web3.js@1.91.8):
+    resolution: {integrity: sha512-OrcV+7N10cChhgDRUxM4iEIuwxUHHs52XD85R8cFCUqE0vbLYrcoPPPs+VF6kZ9DhdJGVW2I6DHJOp5TykyZog==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.68.0
     dependencies:
-      '@solana/web3.js': 1.91.4
+      '@solana/web3.js': 1.91.8
       bn.js: 5.2.1
       buffer-layout: 1.2.2
     dev: false
@@ -95,10 +97,10 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@solana/web3.js@1.91.4:
-    resolution: {integrity: sha512-zconqecIcBqEF6JiM4xYF865Xc4aas+iWK5qnu7nwKPq9ilRYcn+2GiwpYXqUqqBUe0XCO17w18KO0F8h+QATg==}
+  /@solana/web3.js@1.91.8:
+    resolution: {integrity: sha512-USa6OS1jbh8zOapRJ/CBZImZ8Xb7AJjROZl5adql9TpOoBN9BUzyyouS5oPuZHft7S7eB8uJPuXWYjMi6BHgOw==}
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.5
       '@noble/curves': 1.4.0
       '@noble/hashes': 1.4.0
       '@solana/buffer-layout': 4.0.1
@@ -111,7 +113,7 @@ packages:
       fast-stable-stringify: 1.0.0
       jayson: 4.1.0
       node-fetch: 2.7.0
-      rpc-websockets: 7.10.0
+      rpc-websockets: 7.11.0
       superstruct: 0.14.2
     transitivePeerDependencies:
       - bufferutil
@@ -122,11 +124,11 @@ packages:
   /@types/bn.js@5.1.5:
     resolution: {integrity: sha512-V46N0zwKRF5Q00AZ6hWtN0T8gGmDUaUzLWQvHFo5yThtVwK/VCenFY3wXVbOvNfajEpsTfQM4IN9k/d6gUVX3A==}
     dependencies:
-      '@types/node': 20.12.7
+      '@types/node': 20.12.11
     dev: true
 
-  /@types/chai@4.3.14:
-    resolution: {integrity: sha512-Wj71sXE4Q4AkGdG9Tvq1u/fquNz9EdG4LIJMwVVII7ashjD/8cf8fyIfJAjRr6YcsXnSE8cOGQPq1gqeR8z+3w==}
+  /@types/chai@4.3.16:
+    resolution: {integrity: sha512-PatH4iOdyh3MyWtmHVFXLWCCIhUbopaltqddG9BzB+gMIzee2MJrvd+jouii9Z3wzQJruGWAm7WOMjgfG8hQlQ==}
     dev: true
 
   /@types/connect@3.4.38:
@@ -149,8 +151,8 @@ packages:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
     dev: false
 
-  /@types/node@20.12.7:
-    resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
+  /@types/node@20.12.11:
+    resolution: {integrity: sha512-vDg9PZ/zi+Nqp6boSOT7plNuthRugEKixDv5sFTIpkE89MmNtEArAShI4mxuX2+UrLEe9pxC1vm2cjm9YlWbJw==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -308,7 +310,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.1
     dev: false
 
   /camelcase@6.3.0:
@@ -381,7 +383,7 @@ packages:
     dev: false
 
   /concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
 
   /cross-fetch@3.1.8:
@@ -653,10 +655,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /js-sha256@0.9.0:
-    resolution: {integrity: sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==}
-    dev: false
-
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -800,8 +798,8 @@ packages:
       whatwg-url: 5.0.0
     dev: false
 
-  /node-gyp-build@4.8.0:
-    resolution: {integrity: sha512-u6fs2AEUljNho3EYTJNBfImO5QTo/J/1Etd+NVdCj7qWKUSN/bSLkZwhDv7I+w/MSC6qJ4cknepkAYykDdK8og==}
+  /node-gyp-build@4.8.1:
+    resolution: {integrity: sha512-OSs33Z9yWr148JZcbZd5WiAXhh/n9z8TxQcdMhIOlpN9AhWpLfvVFO73+m77bBABQMaY9XSvIa+qk0jlI7Gcaw==}
     hasBin: true
     requiresBuild: true
     dev: false
@@ -854,6 +852,12 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
+  /prettier@2.8.8:
+    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
   /randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
     dependencies:
@@ -876,13 +880,12 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /rpc-websockets@7.10.0:
-    resolution: {integrity: sha512-cemZ6RiDtYZpPiBzYijdOrkQQzmBCmug0E9SdRH2gIUNT15ql4mwCYWIp0VnSZq6Qrw/JkGUygp4PrK1y9KfwQ==}
+  /rpc-websockets@7.11.0:
+    resolution: {integrity: sha512-IkLYjayPv6Io8C/TdCL5gwgzd1hFz2vmBZrjMw/SPEXo51ETOhnzgS4Qy5GWi2JQN7HKHa66J3+2mv0fgNh/7w==}
     dependencies:
-      '@babel/runtime': 7.24.4
       eventemitter3: 4.0.7
       uuid: 8.3.2
-      ws: 8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
@@ -1052,7 +1055,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.1
     dev: false
 
   /uuid@8.3.2:
@@ -1109,8 +1112,8 @@ packages:
         optional: true
     dev: false
 
-  /ws@8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
-    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
+  /ws@8.17.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+    resolution: {integrity: sha512-uJq6108EgZMAl20KagGkzCKfMEjxmKvZHG7Tlq0Z6nOky7YF7aq4mOx6xK8TJ/i1LeK4Qus7INktacctDgY8Ow==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

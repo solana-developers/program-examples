@@ -1,10 +1,12 @@
+[toolchain]
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-hand = "EJfTLXDCJTVwBgGpz9X2Me4CWHbvg8F8zsM7fiVJLLeR"
-lever = "CABVoybzrbAJSv7QhQd6GXNGKxDMRjw9niqFzizhk6uk"
+hand = "Bi5N7SUQhpGknVcqPTzdFFVueQoxoUu8YTLz75J6fT8A"
+lever = "E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN"
 
 [registry]
 url = "https://api.apr.dev"
