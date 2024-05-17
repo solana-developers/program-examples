@@ -1,4 +1,3 @@
-asdfasdg
 import {
   PublicKey,
   Transaction,
