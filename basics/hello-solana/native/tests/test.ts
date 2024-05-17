@@ -27,6 +27,7 @@ describe('hello-solana', async () => {
     tx.add(ix).sign(payer);
 
     // Now we process the transaction
-    await client.processTransaction(tx);
+    let transaction = await client.processTransaction(tx);
+    console.log(transaction?.meta?.logMessages);
   });
 });
