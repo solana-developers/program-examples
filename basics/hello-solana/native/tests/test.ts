@@ -5,6 +5,7 @@ import {
 } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
 import { describe, test } from 'node:test';
+import { assert } from "chai";
 
 describe('hello-solana', async () => {
   // load program in solana-bankrun
@@ -28,6 +29,12 @@ describe('hello-solana', async () => {
 
     // Now we process the transaction
     let transaction = await client.processTransaction(tx);
-    console.log(transaction?.meta?.logMessages);
-  });
+
+    assert(transaction.logMessages[0].startsWith("Program " + PROGRAM_ID));
+    assert(transaction.logMessages[1] === "Program log: Hello, Solana!");
+    assert(transaction.logMessages[2] === "Program log: Our program's Program ID: " + PROGRAM_ID);
+    assert(transaction.logMessages[3].startsWith("Program " + PROGRAM_ID + " consumed"));
+    assert(transaction.logMessages[4] === "Program " + PROGRAM_ID + " success");
+    assert(transaction.logMessages.length == 5);
+});
 });
