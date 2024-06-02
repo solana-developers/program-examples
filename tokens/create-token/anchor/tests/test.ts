@@ -1,20 +1,20 @@
-import * as anchor from "@coral-xyz/anchor";
-import { CreateToken } from "../target/types/create_token";
-import { Keypair } from "@solana/web3.js";
+import * as anchor from '@coral-xyz/anchor';
+import { Keypair } from '@solana/web3.js';
+import type { CreateToken } from '../target/types/create_token';
 
-describe("Create Tokens", () => {
+describe('Create Tokens', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.CreateToken as anchor.Program<CreateToken>;
 
   const metadata = {
-    name: "Solana Gold",
-    symbol: "GOLDSOL",
-    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+    name: 'Solana Gold',
+    symbol: 'GOLDSOL',
+    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
   };
 
-  it("Create an SPL Token!", async () => {
+  it('Create an SPL Token!', async () => {
     // Generate new keypair to use as address for mint account.
     const mintKeypair = new Keypair();
 
@@ -28,12 +28,12 @@ describe("Create Tokens", () => {
       .signers([mintKeypair])
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it("Create an NFT!", async () => {
+  it('Create an NFT!', async () => {
     // Generate new keypair to use as address for mint account.
     const mintKeypair = new Keypair();
 
@@ -47,7 +47,7 @@ describe("Create Tokens", () => {
       .signers([mintKeypair])
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });

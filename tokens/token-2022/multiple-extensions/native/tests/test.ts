@@ -1,23 +1,10 @@
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
-import {
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-  TransactionInstruction,
-  Transaction,
-  sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import * as borsh from "borsh";
-import { Buffer } from "buffer";
-
-function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(
-    Buffer.from(JSON.parse(require("fs").readFileSync(path, "utf-8")))
-  );
-}
+import { Buffer } from 'node:buffer';
+import { describe, test } from 'node:test';
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as borsh from 'borsh';
+import { assert } from 'chai';
+import { start } from 'solana-bankrun';
 
 class Assignable {
   constructor(properties) {
@@ -36,32 +23,27 @@ const CreateTokenArgsSchema = new Map([
   [
     CreateTokenArgs,
     {
-      kind: "struct",
-      fields: [["token_decimals", "u8"]],
+      kind: 'struct',
+      fields: [['token_decimals', 'u8']],
     },
   ],
 ]);
 
-describe("Create Token", async () => {
-  const connection = new Connection(
-    `https://api.devnet.solana.com/`,
-    "confirmed"
-  );
-  const payer = createKeypairFromFile(
-    require("os").homedir() + "/.config/solana/id.json"
-  );
-  const program = createKeypairFromFile(
-    "./program/target/deploy/program-keypair.json"
-  );
+describe('Create Token', async () => {
+  const PROGRAM_ID = PublicKey.unique();
+  const context = await start([{ name: 'token_2022_multiple_extensions_program', programId: PROGRAM_ID }], []);
+  const client = context.banksClient;
+  const payer = context.payer;
 
-  it("Create a Token-22 SPL-Token !", async () => {
+  test('Create a Token-22 SPL-Token !', async () => {
+    const blockhash = context.lastBlockhash;
     const mintKeypair: Keypair = Keypair.generate();
 
     const instructionData = new CreateTokenArgs({
       token_decimals: 9,
     });
 
-    const instruction = new TransactionInstruction({
+    const ix = new TransactionInstruction({
       keys: [
         { pubkey: mintKeypair.publicKey, isSigner: true, isWritable: true }, // Mint account
         { pubkey: payer.publicKey, isSigner: false, isWritable: true }, // Mint authority account
@@ -71,17 +53,17 @@ describe("Create Token", async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // System program
         { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false }, // Token program
       ],
-      programId: program.publicKey,
+      programId: PROGRAM_ID,
       data: instructionData.toBuffer(),
     });
 
-    const signature = await sendAndConfirmTransaction(
-      connection,
-      new Transaction().add(instruction),
-      [payer, mintKeypair]
-    );
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix).sign(payer, mintKeypair);
 
-    console.log(`Token Mint Address: `, mintKeypair.publicKey.toBase58());
-    console.log(`Transaction Signature: `, signature);
+    const transaction = await client.processTransaction(tx);
+
+    assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
+    console.log('Token Mint Address: ', mintKeypair.publicKey.toBase58());
   });
 });

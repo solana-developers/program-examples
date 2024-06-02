@@ -1,0 +1,36 @@
+# build and test error
+basics/realloc/native
+basics/cross-program-invocation/native
+
+# uses generated client from shank, can't rewrite to solana-bankrun
+tools/shank-and-solita/native
+
+# can't test on localnet
+tokens/pda-mint-authority/native
+tokens/nft-minter/native
+tokens/transfer-tokens/native
+tokens/spl-token-minter/native
+tokens/create-token/native
+tokens/create-token/anchor
+tokens/nft-minter/anchor
+tokens/pda-mint-authority/anchor
+tokens/spl-token-minter/anchor
+tokens/token-swap/anchor
+tokens/transfer-tokens/anchor
+
+# not building with stable solana
+tokens/token-2022/mint-close-authority/native
+tokens/token-2022/non-transferable/native
+tokens/token-2022/default-account-state/native
+tokens/token-2022/transfer-fee/native
+tokens/token-2022/multiple-extensions/native
+
+# not building
+oracles/pyth/anchor
+
+# not building
+compression/cutils/anchor
+compression/cnft-vault/anchor
+# builds but need to test on localhost
+compression/cnft-burn/anchor
+tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor

@@ -1,59 +1,39 @@
-import * as anchor from "@coral-xyz/anchor";
-import { decode, mapProof } from "../utils";
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
+import * as anchor from '@coral-xyz/anchor';
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
+import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
 import {
-  SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
-  SPL_NOOP_PROGRAM_ID,
-} from "@solana/spl-account-compression";
-import { getAsset, getAssetProof } from "../readAPI";
-import {
-  AccountMeta,
+  type AccountMeta,
   AddressLookupTableProgram,
-  PublicKey,
+  type PublicKey,
   SystemProgram,
   Transaction,
   TransactionMessage,
   VersionedTransaction,
   sendAndConfirmTransaction,
-} from "@solana/web3.js";
+} from '@solana/web3.js';
+import { getAsset, getAssetProof } from '../readAPI';
+import { decode, mapProof } from '../utils';
 
-import { connection, keypair, program, programID } from "./constants";
+import { connection, keypair, program, programID } from './constants';
 
 async function main() {
   // TODO change all of these to your values
-  const assetId1 = "DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd";
-  const assetId2 = "14JojSTdBZvP7f77rCxB3oQK78skTVD6DiXrXUL4objg"; //"D2CoMLCRfsfv1EAiNbaBHfoU1Sqf1964KXLGxEfyUwWo";
+  const assetId1 = 'DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd';
+  const assetId2 = '14JojSTdBZvP7f77rCxB3oQK78skTVD6DiXrXUL4objg'; //"D2CoMLCRfsfv1EAiNbaBHfoU1Sqf1964KXLGxEfyUwWo";
 
-  const tree1 = new anchor.web3.PublicKey(
-    "trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B"
-  );
-  const tree2 = new anchor.web3.PublicKey(
-    "trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B"
-  );
+  const tree1 = new anchor.web3.PublicKey('trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B');
+  const tree2 = new anchor.web3.PublicKey('trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B');
 
-  const receiver1 = new anchor.web3.PublicKey(
-    "Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM"
-  );
-  const receiver2 = new anchor.web3.PublicKey(
-    "Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM"
-  );
+  const receiver1 = new anchor.web3.PublicKey('Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM');
+  const receiver2 = new anchor.web3.PublicKey('Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM');
   // ---
 
   const lookupTable = await createLookupTable();
 
-  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("cNFT-vault", "utf8")],
-    programID
-  );
+  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('cNFT-vault', 'utf8')], programID);
 
-  const [treeAuthority1, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
-    [tree1.toBuffer()],
-    BUBBLEGUM_PROGRAM_ID
-  );
-  const [treeAuthority2, _bump3] = anchor.web3.PublicKey.findProgramAddressSync(
-    [tree2.toBuffer()],
-    BUBBLEGUM_PROGRAM_ID
-  );
+  const [treeAuthority1, _bump2] = anchor.web3.PublicKey.findProgramAddressSync([tree1.toBuffer()], BUBBLEGUM_PROGRAM_ID);
+  const [treeAuthority2, _bump3] = anchor.web3.PublicKey.findProgramAddressSync([tree2.toBuffer()], BUBBLEGUM_PROGRAM_ID);
 
   const asset1 = await getAsset(assetId1);
   const asset2 = await getAsset(assetId2);
@@ -66,10 +46,7 @@ async function main() {
   const ixData1 = getInstructionData(asset1, proof1);
   const ixData2 = getInstructionData(asset2, proof2);
 
-  const remainingAccounts: AccountMeta[] = [
-    ...proofPathAsAccounts1,
-    ...proofPathAsAccounts2,
-  ];
+  const remainingAccounts: AccountMeta[] = [...proofPathAsAccounts1, ...proofPathAsAccounts2];
 
   const ix = await program.methods
     .withdrawTwoCnfts(...ixData1, ...ixData2)
@@ -91,19 +68,17 @@ async function main() {
 
   await extendLookupTable(
     lookupTable,
-    proofPathAsAccounts1.map((acc) => acc.pubkey)
+    proofPathAsAccounts1.map((acc) => acc.pubkey),
   );
   await extendLookupTable(
     lookupTable,
-    proofPathAsAccounts2.map((acc) => acc.pubkey)
+    proofPathAsAccounts2.map((acc) => acc.pubkey),
   );
 
-  const lookupTableAccount = await connection
-    .getAddressLookupTable(lookupTable)
-    .then((res) => res.value);
+  const lookupTableAccount = await connection.getAddressLookupTable(lookupTable).then((res) => res.value);
 
   if (!lookupTableAccount) {
-    console.log("could not fetch ATL!");
+    console.log('could not fetch ATL!');
     return;
   }
 
@@ -122,10 +97,7 @@ async function main() {
   console.log(txid);
 }
 
-function getInstructionData(
-  asset: any,
-  proof: any
-): [number[], number[], number[], anchor.BN, number, number] {
+function getInstructionData(asset: any, proof: any): [number[], number[], number[], anchor.BN, number, number] {
   const root = decode(proof.root);
   const dataHash = decode(asset.compression.data_hash);
   const creatorHash = decode(asset.compression.creator_hash);
@@ -137,10 +109,7 @@ function getInstructionData(
 
 main();
 
-async function extendLookupTable(
-  lookupTableAddress: PublicKey,
-  proofHashes: PublicKey[]
-) {
+async function extendLookupTable(lookupTableAddress: PublicKey, proofHashes: PublicKey[]) {
   const extendInstruction = AddressLookupTableProgram.extendLookupTable({
     payer: keypair.publicKey,
     authority: keypair.publicKey,
@@ -152,21 +121,20 @@ async function extendLookupTable(
   tx.add(extendInstruction);
 
   const sx = await sendAndConfirmTransaction(connection, tx, [keypair], {
-    commitment: "finalized",
+    commitment: 'finalized',
   });
   console.log(sx);
-  console.log("ALT extended!");
+  console.log('ALT extended!');
 }
 
 async function createLookupTable(): Promise<PublicKey> {
   const slot = await connection.getSlot();
 
-  const [lookupTableInst, lookupTableAddress] =
-    AddressLookupTableProgram.createLookupTable({
-      authority: keypair.publicKey,
-      payer: keypair.publicKey,
-      recentSlot: slot,
-    });
+  const [lookupTableInst, lookupTableAddress] = AddressLookupTableProgram.createLookupTable({
+    authority: keypair.publicKey,
+    payer: keypair.publicKey,
+    recentSlot: slot,
+  });
   console.log(lookupTableAddress.toBase58());
 
   const extendInstruction = AddressLookupTableProgram.extendLookupTable({
@@ -187,10 +155,10 @@ async function createLookupTable(): Promise<PublicKey> {
   tx.add(lookupTableInst).add(extendInstruction);
 
   const sx = await sendAndConfirmTransaction(connection, tx, [keypair], {
-    commitment: "finalized",
+    commitment: 'finalized',
   });
   console.log(sx);
-  console.log("ALT created");
+  console.log('ALT created');
 
   return lookupTableAddress;
 }

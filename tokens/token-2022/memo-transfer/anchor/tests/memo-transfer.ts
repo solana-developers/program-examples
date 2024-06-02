@@ -1,17 +1,11 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { MemoTransfer } from "../target/types/memo_transfer";
-import {
-  TOKEN_2022_PROGRAM_ID,
-  createAccount,
-  createMint,
-  createTransferInstruction,
-  mintTo,
-} from "@solana/spl-token";
-import { createMemoInstruction } from "@solana/spl-memo";
-import { Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { createMemoInstruction } from '@solana/spl-memo';
+import { TOKEN_2022_PROGRAM_ID, createAccount, createMint, createTransferInstruction, mintTo } from '@solana/spl-token';
+import { Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import type { MemoTransfer } from '../target/types/memo_transfer';
 
-describe("memo-transfer", () => {
+describe('memo-transfer', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -23,7 +17,7 @@ describe("memo-transfer", () => {
   const mintKeypair = new anchor.web3.Keypair();
   const tokenKeypair = new anchor.web3.Keypair();
 
-  it("Create Token Account with RequiredMemo extension", async () => {
+  it('Create Token Account with RequiredMemo extension', async () => {
     await createMint(
       connection,
       wallet.payer, // Payer of the transaction and initialization fees
@@ -32,7 +26,7 @@ describe("memo-transfer", () => {
       2, // Decimals of Mint
       mintKeypair, // Optional keypair
       undefined, // Options for confirming the transaction
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     const transactionSignature = await program.methods
@@ -43,10 +37,10 @@ describe("memo-transfer", () => {
       })
       .signers([tokenKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt transfer without memo, expect fail", async () => {
+  it('Attempt transfer without memo, expect fail', async () => {
     // Create a new token account to transfer to
     const sourceTokenAccount = await createAccount(
       connection,
@@ -55,20 +49,10 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Token Account owner
       new anchor.web3.Keypair(), // Optional keypair,
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
-    await mintTo(
-      connection,
-      wallet.payer,
-      mintKeypair.publicKey,
-      sourceTokenAccount,
-      wallet.payer,
-      1,
-      [],
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
+    await mintTo(connection, wallet.payer, mintKeypair.publicKey, sourceTokenAccount, wallet.payer, 1, [], null, TOKEN_2022_PROGRAM_ID);
 
     const transferInstruction = createTransferInstruction(
       sourceTokenAccount, // Source Token Account
@@ -76,7 +60,7 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Source Token Account owner
       1, // Amount
       undefined, // Additional signers
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     const transaction = new Transaction().add(transferInstruction);
@@ -86,14 +70,14 @@ describe("memo-transfer", () => {
       await sendAndConfirmTransaction(
         connection,
         transaction,
-        [wallet.payer] // Signers
+        [wallet.payer], // Signers
       );
     } catch (error) {
-      console.log("\nExpect Error:", error.logs);
+      console.log('\nExpect Error:', error.logs);
     }
   });
 
-  it("Attempt transfer with memo, expect success", async () => {
+  it('Attempt transfer with memo, expect success', async () => {
     // Create a new token account to transfer to
     const sourceTokenAccount = await createAccount(
       connection,
@@ -102,24 +86,12 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Token Account owner
       new anchor.web3.Keypair(), // Optional keypair, default to Associated Token Account
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
-    await mintTo(
-      connection,
-      wallet.payer,
-      mintKeypair.publicKey,
-      sourceTokenAccount,
-      wallet.payer,
-      1,
-      [],
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
+    await mintTo(connection, wallet.payer, mintKeypair.publicKey, sourceTokenAccount, wallet.payer, 1, [], null, TOKEN_2022_PROGRAM_ID);
 
-    const memoInstruction = createMemoInstruction("hello, world", [
-      wallet.publicKey,
-    ]);
+    const memoInstruction = createMemoInstruction('hello, world', [wallet.publicKey]);
 
     const transferInstruction = createTransferInstruction(
       sourceTokenAccount, // Source Token Account
@@ -127,34 +99,31 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Source Token Account owner
       1, // Amount
       undefined, // Additional signers
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
-    const transaction = new Transaction().add(
-      memoInstruction,
-      transferInstruction
-    );
+    const transaction = new Transaction().add(memoInstruction, transferInstruction);
 
     const transactionSignature = await sendAndConfirmTransaction(
       connection,
       transaction,
-      [wallet.payer] // Signers
+      [wallet.payer], // Signers
     );
 
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Disable RequiredMemo extension", async () => {
+  it('Disable RequiredMemo extension', async () => {
     const transactionSignature = await program.methods
       .disable()
       .accounts({
         tokenAccount: tokenKeypair.publicKey,
       })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt transfer without memo, expect success", async () => {
+  it('Attempt transfer without memo, expect success', async () => {
     // Create a new token account to transfer to
     const sourceTokenAccount = await createAccount(
       connection,
@@ -163,20 +132,10 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Token Account owner
       new anchor.web3.Keypair(), // Optional keypair,
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
-    await mintTo(
-      connection,
-      wallet.payer,
-      mintKeypair.publicKey,
-      sourceTokenAccount,
-      wallet.payer,
-      1,
-      [],
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
+    await mintTo(connection, wallet.payer, mintKeypair.publicKey, sourceTokenAccount, wallet.payer, 1, [], null, TOKEN_2022_PROGRAM_ID);
 
     const transferInstruction = createTransferInstruction(
       sourceTokenAccount, // Source Token Account
@@ -184,7 +143,7 @@ describe("memo-transfer", () => {
       wallet.publicKey, // Source Token Account owner
       1, // Amount
       undefined, // Additional signers
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     const transaction = new Transaction().add(transferInstruction);
@@ -192,9 +151,9 @@ describe("memo-transfer", () => {
     const transactionSignature = await sendAndConfirmTransaction(
       connection,
       transaction,
-      [wallet.payer] // Signers
+      [wallet.payer], // Signers
     );
 
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 });

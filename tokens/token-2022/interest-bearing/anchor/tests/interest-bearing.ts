@@ -1,9 +1,9 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { InterestBearing } from "../target/types/interest_bearing";
-import { TOKEN_2022_PROGRAM_ID, amountToUiAmount } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { TOKEN_2022_PROGRAM_ID, amountToUiAmount } from '@solana/spl-token';
+import type { InterestBearing } from '../target/types/interest_bearing';
 
-describe("interest-bearing", () => {
+describe('interest-bearing', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -14,7 +14,7 @@ describe("interest-bearing", () => {
 
   const mintKeypair = new anchor.web3.Keypair();
 
-  it("Create Mint with InterestBearingConfig extension", async () => {
+  it('Create Mint with InterestBearingConfig extension', async () => {
     const rate = 0;
 
     const transactionSignature = await program.methods
@@ -22,20 +22,17 @@ describe("interest-bearing", () => {
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Update Mint with Interest Rate", async () => {
+  it('Update Mint with Interest Rate', async () => {
     const rate = 100;
 
-    const transactionSignature = await program.methods
-      .updateRate(rate)
-      .accounts({ mintAccount: mintKeypair.publicKey })
-      .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    const transactionSignature = await program.methods.updateRate(rate).accounts({ mintAccount: mintKeypair.publicKey }).rpc({ skipPreflight: true });
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Calculate accrued interest", async () => {
+  it('Calculate accrued interest', async () => {
     await sleep(1);
 
     const amount = 1000;
@@ -46,10 +43,10 @@ describe("interest-bearing", () => {
       wallet.payer,
       mintKeypair.publicKey, // Address of the Mint account
       amount, // Amount to be converted
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
-    console.log("\nAmount with Accrued Interest:", uiAmount);
+    console.log('\nAmount with Accrued Interest:', uiAmount);
   });
 });
 

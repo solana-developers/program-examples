@@ -30,5 +30,13 @@ members = [
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/anchor/programs/*",
+    "tokens/token-2022/mint-close-authority/native/program",
+    "tokens/token-2022/non-transferable/native/program",
+    "tokens/token-2022/default-account-state/native/program",
+    "tokens/token-2022/transfer-fee/native/program",
+    "tokens/token-2022/multiple-extensions/native/program"
 ]
 resolver = "2"
+
+[profile.release]
+overflow-checks = true

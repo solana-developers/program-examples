@@ -1,22 +1,18 @@
+import { describe, test } from 'node:test';
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { start } from 'solana-bankrun';
 import {
-  Keypair,
-  PublicKey,
-  Transaction,
-} from '@solana/web3.js';
-import {
-  createCreateInstruction,
-  createReallocateWithoutZeroInitInstruction,
-  createReallocateZeroInitInstruction,
   AddressInfo,
   EnhancedAddressInfo,
   WorkInfo,
+  createCreateInstruction,
+  createReallocateWithoutZeroInitInstruction,
+  createReallocateZeroInitInstruction,
 } from '../ts';
-import { start } from 'solana-bankrun';
-import { describe, test } from 'node:test';
 
 describe('Realloc!', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'realloc_program', programId: PROGRAM_ID }],[]);
+  const context = await start([{ name: 'realloc_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -24,15 +20,7 @@ describe('Realloc!', async () => {
 
   test('Create the account with data', async () => {
     console.log(`${testAccount.publicKey}`);
-    const ix = createCreateInstruction(
-      testAccount.publicKey,
-      payer.publicKey,
-      PROGRAM_ID,
-      'Jacob',
-      123,
-      'Main St.',
-      'Chicago'
-    );
+    const ix = createCreateInstruction(testAccount.publicKey, payer.publicKey, PROGRAM_ID, 'Jacob', 123, 'Main St.', 'Chicago');
 
     const tx = new Transaction();
     tx.recentBlockhash = context.lastBlockhash;
@@ -43,13 +31,7 @@ describe('Realloc!', async () => {
   });
 
   test('Reallocate WITHOUT zero init', async () => {
-    const ix = createReallocateWithoutZeroInitInstruction(
-      testAccount.publicKey,
-      payer.publicKey,
-      PROGRAM_ID,
-      'Illinois',
-      12345
-    );
+    const ix = createReallocateWithoutZeroInitInstruction(testAccount.publicKey, payer.publicKey, PROGRAM_ID, 'Illinois', 12345);
     const tx = new Transaction();
     const [blockHash, _blockHeight] = await client.getLatestBlockhash();
     tx.recentBlockhash = blockHash;
@@ -60,15 +42,7 @@ describe('Realloc!', async () => {
   });
 
   test('Reallocate WITH zero init', async () => {
-    const ix = createReallocateZeroInitInstruction(
-      testAccount.publicKey,
-      payer.publicKey,
-      PROGRAM_ID,
-      'Pete',
-      'Engineer',
-      'Solana Labs',
-      2
-    );
+    const ix = createReallocateZeroInitInstruction(testAccount.publicKey, payer.publicKey, PROGRAM_ID, 'Pete', 'Engineer', 'Solana Labs', 2);
     const tx = new Transaction();
     const [blockHash, _blockHeight] = await client.getLatestBlockhash();
     tx.recentBlockhash = blockHash;
@@ -121,7 +95,7 @@ describe('Realloc!', async () => {
   }
 
   function sleep(s: number) {
-    const SECONDS = 1000
-    return new Promise(resolve => setTimeout(resolve, s * SECONDS));
+    const SECONDS = 1000;
+    return new Promise((resolve) => setTimeout(resolve, s * SECONDS));
   }
 });

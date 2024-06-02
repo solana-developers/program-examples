@@ -1,19 +1,18 @@
-import * as anchor from "@coral-xyz/anchor";
-import { TransferTokens } from "../target/types/transfer_tokens";
-import { Keypair } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Keypair } from '@solana/web3.js';
+import type { TransferTokens } from '../target/types/transfer_tokens';
 
-describe("Transfer Tokens", () => {
+describe('Transfer Tokens', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace
-    .TransferTokens as anchor.Program<TransferTokens>;
+  const program = anchor.workspace.TransferTokens as anchor.Program<TransferTokens>;
 
   const metadata = {
-    name: "Solana Gold",
-    symbol: "GOLDSOL",
-    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+    name: 'Solana Gold',
+    symbol: 'GOLDSOL',
+    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
   };
 
   // Generate new keypair to use as address for mint account.
@@ -23,18 +22,12 @@ describe("Transfer Tokens", () => {
   const recipient = new Keypair();
 
   // Derive the associated token address account for the mint and payer.
-  const senderTokenAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    payer.publicKey
-  );
+  const senderTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
   // Derive the associated token address account for the mint and recipient.
-  const recepientTokenAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    recipient.publicKey
-  );
+  const recepientTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, recipient.publicKey);
 
-  it("Create an SPL Token!", async () => {
+  it('Create an SPL Token!', async () => {
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
@@ -44,12 +37,12 @@ describe("Transfer Tokens", () => {
       .signers([mintKeypair])
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it("Mint tokens!", async () => {
+  it('Mint tokens!', async () => {
     // Amount of tokens to mint.
     const amount = new anchor.BN(100);
 
@@ -64,12 +57,12 @@ describe("Transfer Tokens", () => {
       })
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Associated Token Account Address: ${senderTokenAddress}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it("Transfer tokens!", async () => {
+  it('Transfer tokens!', async () => {
     // Amount of tokens to transfer.
     const amount = new anchor.BN(50);
 
@@ -84,7 +77,7 @@ describe("Transfer Tokens", () => {
       })
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });

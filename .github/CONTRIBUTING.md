@@ -17,11 +17,13 @@ When contributing code examples, please follow these guidelines to ensure progra
 
 1. Use pnpm as the default package manager for the project. You can install pnpm by following the instructions [here](https://pnpm.io/installation). Commit pnpm-lock.yaml to the repository.
 
-2. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
+2. Programs written for Solana Native should be in directory `native` and Anchor programs should be in directory `anchor`.
 
-3. Tests for solana native programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
+3. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
 
-4. here are some helpful scripts to add to your `package.json` file:
+4. Tests for solana native programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
+
+5. For Solana native programs ensure adding these mandatory pnpm run scripts to your `package.json`. file for successful ci/cd builds:
 
 ```json
 "scripts": {
@@ -32,7 +34,14 @@ When contributing code examples, please follow these guidelines to ensure progra
 },
 ```
 
-5. Test command for anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
+6. Test command for anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
+
+7. TypeScript, JavaScript and JSON files are formatted and linted using
+[Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
+
+```bash
+pnpm check:fix
+```
 
 ## Code of Conduct
 We are committed to providing a friendly, safe, and welcoming environment for all contributors, regardless of their background, experience level, or personal characteristics. As a contributor, you are expected to:
