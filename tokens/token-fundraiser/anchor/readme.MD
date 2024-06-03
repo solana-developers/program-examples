@@ -182,7 +182,7 @@ We pass the authority of the account where the tokens are being deducted from (I
 
 ---
 
-### USer will be able to claim the tokens once the fundraiding target has been reached
+### User will be able to claim the tokens once the fundraiding target has been reached
 
 ```rust
 #[derive(Accounts)]
