@@ -6,7 +6,7 @@ In this example, a user will be able to create a fundraiser account, where he wi
 
 ---
 
-# Let's walk through the architecture:
+## Let's walk through the architecture:
 
 A fundraising account consists of:
 
@@ -23,7 +23,7 @@ impl Space for Fundraiser {
 }
 ```
 
-##In this state account, we will store:
+### In this state account, we will store:
 
 - maker: the person who is starting the fundraising
 
@@ -66,7 +66,7 @@ pub struct Initialize<'info> {
 }
 ```
 
-##lets have a closer look at the accounts that we are passing in this context:
+### lets have a closer look at the accounts that we are passing in this context:
 
 - maker: will be the person starting the fundraising. He will be a signer of the transaction, and we mark his account as mutable as we will be deducting lamports from this account
 
