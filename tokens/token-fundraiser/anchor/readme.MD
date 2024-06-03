@@ -153,3 +153,119 @@ In this context, we are passing all the accounts needed to contribute to a fundr
 - vault: The ata where we will be depositing tokens to. We make sure that the authority and mint of the ATA are correct (mint_to_raise and Fundraiser account), and we mark it as mutable since we will be depositing tokens in that account
 
 - token_program: We will performing CPIs (Cross Program Invocations) to the token program to transfer tokens
+
+### We then implement some functionality for our Contribute context:
+
+```rust
+impl<'info> Contribute<'info> {
+    pub fn contribute(&mut self, amount: u64) -> Result<()> {
+
+        let cpi_program = self.token_program.to_account_info();
+
+        let cpi_accounts = Transfer {
+            from: self.contributor_ata.to_account_info(),
+            to: self.vault.to_account_info(),
+            authority: self.contributor.to_account_info(),
+        };
+
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+        transfer(cpi_ctx, amount)?;
+
+        Ok(())
+    }
+}
+```
+
+In here, we create a CPI to the token program, to transfer a certain amount of SPL tokens from the Contributor ATA to the vault.
+We pass the authority of the account where the tokens are being deducted from (In this case is the contributor, as he is the authority of the contributor ata)
+
+---
+
+### USer will be able to claim the tokens once the fundraiding target has been reached
+
+```rust
+#[derive(Accounts)]
+pub struct CheckContributions<'info> {
+    #[account(mut)]
+    pub maker: Signer<'info>,
+    pub mint_to_raise: Account<'info, Mint>,
+    #[account(
+        mut,
+        seeds = [b"fundraiser".as_ref(), maker.key().as_ref()],
+        bump = fundraiser.bump,
+    )]
+    pub fundraiser: Account<'info, Fundraiser>,
+    #[account(
+        mut,
+        associated_token::mint = mint_to_raise,
+        associated_token::authority = fundraiser,
+    )]
+    pub vault: Account<'info, TokenAccount>,
+    #[account(
+        init_if_needed,
+        payer = maker,
+        associated_token::mint = mint_to_raise,
+        associated_token::authority = maker,
+    )]
+    pub maker_ata: Account<'info, TokenAccount>,
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+}
+```
+
+In this context, we are passing all the accounts needed for a user to claim the raised tokens:
+
+- maker: The address of the person raising the the funds. We mark it as mutable since the maker will be paying for initialization fees and will receive lamports from rent back
+
+- mint_to_raise: the mint that the maker is expecting to receive as contributions
+
+- fundraiser: An initialized Fundraiser account where appropriate checks will be performed, such as the appropriate mint, the seeds and the bump of the Fundraiser PDA
+
+- vault: The ata where we will be transfering tokens from. We make sure that the authority and mint of the ATA are correct (mint_to_raise and fundraiser account), and we mark it as mutable since we will be deducting tokens from that account
+
+- maker_ata: The ata where we will be depositing tokens to. We make sure that the authority and mint of the ATA are correct (mint_to_raise and maker account), and we mark it as mutable since we will be depositing tokens in that account.
+In case we need to initialize this ATA, the maker will be paying for the initialization fees
+
+- system_program and associated_token_program: Since we are initializing new ATAs
+
+- token_program: We will performing CPIs (Cross Program Invocations) to the token program to transfer tokens
+
+### We then implement some functionality for our Contribute context:
+
+```rust
+impl<'info> CheckContributions<'info> {
+    pub fn check_contributions(&self) -> Result<()> {
+        if self.vault.amount >= self.fundraiser.amount_to_raise {
+
+            let cpi_program = self.token_program.to_account_info();
+
+            let cpi_accounts = Transfer {
+                from: self.vault.to_account_info(),
+                to: self.maker_ata.to_account_info(),
+                authority: self.fundraiser.to_account_info(),
+            };
+
+            let signer_seeds: [&[&[u8]]; 1] = [&[
+                b"fundraiser".as_ref(),
+                self.maker.to_account_info().key.as_ref(),
+                &[self.fundraiser.bump],
+            ]];
+
+            let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds);
+
+            transfer(cpi_ctx, self.vault.amount)?;
+
+            self.fundraiser.close(self.maker.to_account_info())?;
+        }
+
+        Ok(())
+    }
+}
+```
+
+In this implementation, we check if the amount of tokens in the vault is equal or bigger then the fundraiing campaign target.
+If it is, then we perform a CPI to the token program to transfer the funds from the vault to the maker ATA. Since the vault is an ATA, we need to create our CPI contexr with a signer and use the seeds and bump from the PDA (We are signing with our program on behalf of that PDA).
+
+In the end, we close our Fundraising account and senf the lamports from the rent back to the maker
