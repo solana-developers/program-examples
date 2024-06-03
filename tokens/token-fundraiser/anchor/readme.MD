@@ -265,7 +265,7 @@ impl<'info> CheckContributions<'info> {
 }
 ```
 
-In this implementation, we check if the amount of tokens in the vault is equal or bigger then the fundraiing campaign target.
+In this implementation, we check if the amount of tokens in the vault is equal or bigger then the fundraising campaign target.
 If it is, then we perform a CPI to the token program to transfer the funds from the vault to the maker ATA. Since the vault is an ATA, we need to create our CPI contexr with a signer and use the seeds and bump from the PDA (We are signing with our program on behalf of that PDA).
 
-In the end, we close our Fundraising account and send the lamports from the rent back to the maker
+Finally, we close our Fundraiser account and send the lamports from the rent back to the maker.
