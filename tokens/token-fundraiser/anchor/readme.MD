@@ -38,9 +38,10 @@ In this case it will be 8 (anchor discriminator) + 32 (Pubkey -> maker) + 32 (Pu
 
 ---
 
-The user will be able to create new Fundraiser accounts. For that, we create the following context:
+### The user will be able to create new Fundraiser accounts. For that, we create the following context:
 
 ```rust
+#[derive(Accounts)]
 pub struct Initialize<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
@@ -66,7 +67,7 @@ pub struct Initialize<'info> {
 }
 ```
 
-### lets have a closer look at the accounts that we are passing in this context:
+Let´s have a closer look at the accounts that we are passing in this context:
 
 - maker: will be the person starting the fundraising. He will be a signer of the transaction, and we mark his account as mutable as we will be deducting lamports from this account
 
@@ -81,6 +82,74 @@ We derive the Fundraiser PDA from the byte representation of the word "fundraise
 
 - token_program and associated_token_program: We are reating new ATAs
 
+### We then implement some functionality for our Initialize context:
+
+```rust
+impl<'info> Initialize<'info> {
+    pub fn initialize(&mut self, amount: u64, bumps: &InitializeBumps) -> Result<()> {
+
+        self.fundraiser.set_inner(Fundraiser {
+            maker: self.maker.key(),
+            mint_to_raise: self.mint_to_raise.key(),
+            amount_to_raise: amount,
+            bump: bumps.fundraiser
+        });
+        
+        Ok(())
+    }
+}
+```
+
+In here, we basically just set the data of our Fundraiser account
+
 ---
 
-placeholder 4
+### Users will be able to contribute to a fundraising
+
+```rust
+#[derive(Accounts)]
+pub struct Contribute<'info> {
+    #[account(mut)]
+    pub contributor: Signer<'info>,
+    #[account(mut)]
+    pub maker: SystemAccount<'info>,
+    #[account(mut)]
+    pub mint_to_raise: Account<'info, Mint>,
+    #[account(
+        mut,
+        has_one = mint_to_raise,
+        seeds = [b"fundraiser".as_ref(), maker.key().as_ref()],
+        bump = fundraiser.bump,
+    )]
+    pub fundraiser: Account<'info, Fundraiser>,
+    #[account(
+        mut,
+        associated_token::mint = fundraiser.mint_to_raise,
+        associated_token::authority = contributor
+    )]
+    pub contributor_ata: Account<'info, TokenAccount>,
+    #[account(
+        mut,
+        associated_token::mint = fundraiser.mint_to_raise,
+        associated_token::authority = fundraiser
+    )]
+    pub vault: Account<'info, TokenAccount>,
+    pub token_program: Program<'info, Token>,
+}
+```
+
+In this context, we are passing all the accounts needed to contribute to a fundraising campaign:
+
+- contributor: The address of the person that is contributing
+
+- maker: The address of the person raising the the funds
+
+- mint_to_raise: the mint that the maker is expecting to receive as contributions
+
+- fundraiser: An initialized Fundraiser account where appropriate checks will be performed, such as the appropriate mint, the seeds and the bump of the Fundraiser PDA
+
+- contributor_ata: The ata where we will be transfering tokens from. We make sure that the authority and mint of the ATA are correct (mint_to_raise and contributor address), and we mark it as mutable since we will be deducting tokens from that account
+
+- vault: The ata where we will be depositing tokens to. We make sure that the authority and mint of the ATA are correct (mint_to_raise and Fundraiser account), and we mark it as mutable since we will be depositing tokens in that account
+
+- token_program: We will performing CPIs (Cross Program Invocations) to the token program to transfer tokens
