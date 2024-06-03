@@ -1,0 +1,7 @@
+[package]
+name = "hello"
+version = "1.0.0"
+
+[addresses]
+hello = "0xba31"
+
