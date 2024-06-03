@@ -74,13 +74,13 @@ Let´s have a closer look at the accounts that we are passing in this context:
 - mint_to_raise: The mint that the user wants to receive. This will be a Mint Account, that we will use to store the mint address (mint_to_raise)
 
 - fundraiser: will be the state account that we will initialize and the maker will be paying for the initialization of the account.
-We derive the Fundraiser PDA from the byte representation of the word "fundraiser" and the reference if the maker publick key. Anchor will calculate the canonical bump (the first bump that throes that address out of the ed25519 eliptic curve) and save it for us in a struct
+We derive the Fundraiser PDA from the byte representation of the word "fundraiser" and the reference of the maker publick key. Anchor will calculate the canonical bump (the first bump that throes that address out of the ed25519 eliptic curve) and save it for us in a struct
 
 - vault: We will initialize a vault (ATA) to receive the contributions. This account will be derived from the mint that the user wants to receive, and the fundraiser account that we are just creating
 
 - system_program: Program resposible for the initialization of any new account
 
-- token_program and associated_token_program: We are reating new ATAs
+- token_program and associated_token_program: We are creating new ATAs
 
 ### We then implement some functionality for our Initialize context:
 
@@ -268,4 +268,4 @@ impl<'info> CheckContributions<'info> {
 In this implementation, we check if the amount of tokens in the vault is equal or bigger then the fundraiing campaign target.
 If it is, then we perform a CPI to the token program to transfer the funds from the vault to the maker ATA. Since the vault is an ATA, we need to create our CPI contexr with a signer and use the seeds and bump from the PDA (We are signing with our program on behalf of that PDA).
 
-In the end, we close our Fundraising account and senf the lamports from the rent back to the maker
+In the end, we close our Fundraising account and send the lamports from the rent back to the maker
