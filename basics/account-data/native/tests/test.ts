@@ -1,18 +1,12 @@
-import { start } from 'solana-bankrun';
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as borsh from 'borsh';
+import { start } from 'solana-bankrun';
 
 class Assignable {
   constructor(properties) {
-    Object.keys(properties).map(key => {
+    Object.keys(properties).map((key) => {
       return (this[key] = properties[key]);
     });
   }
@@ -49,7 +43,7 @@ const AddressInfoSchema = new Map([
 describe('Account Data!', async () => {
   const addressInfoAccount = Keypair.generate();
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'account_data_program', programId: PROGRAM_ID }],[]);
+  const context = await start([{ name: 'account_data_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
 
   test('Create the address info account', async () => {
@@ -59,7 +53,7 @@ describe('Account Data!', async () => {
     console.log(`Payer Address      : ${payer.publicKey}`);
     console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
 
-    let ix = new TransactionInstruction({
+    const ix = new TransactionInstruction({
       keys: [
         {
           pubkey: addressInfoAccount.publicKey,
@@ -89,9 +83,7 @@ describe('Account Data!', async () => {
   test("Read the new account's data", async () => {
     const accountInfo = await client.getAccount(addressInfoAccount.publicKey);
 
-    const readAddressInfo = AddressInfo.fromBuffer(
-      Buffer.from(accountInfo.data)
-    );
+    const readAddressInfo = AddressInfo.fromBuffer(Buffer.from(accountInfo.data));
     console.log(`Name     : ${readAddressInfo.name}`);
     console.log(`House Num: ${readAddressInfo.house_number}`);
     console.log(`Street   : ${readAddressInfo.street}`);

@@ -1,22 +1,18 @@
-import {
-  PublicKey,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { Buffer } from 'buffer';
-import { start } from 'solana-bankrun';
+import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as borsh from 'borsh';
+import { start } from 'solana-bankrun';
 
 describe('Carnival', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'repository_layout_program', programId: PROGRAM_ID }],[]);
+  const context = await start([{ name: 'repository_layout_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
   class Assignable {
     constructor(properties) {
-      Object.keys(properties).map(key => {
+      Object.keys(properties).map((key) => {
         return (this[key] = properties[key]);
       });
     }
@@ -44,18 +40,16 @@ describe('Carnival', async () => {
     ],
   ]);
 
-  async function sendCarnivalInstructions(
-    instructionsList: CarnivalInstruction[]
-  ) {
-    let tx = new Transaction();
-    for (var ix of instructionsList) {
+  async function sendCarnivalInstructions(instructionsList: CarnivalInstruction[]) {
+    const tx = new Transaction();
+    for (const ix of instructionsList) {
       tx.recentBlockhash = context.lastBlockhash;
       tx.add(
         new TransactionInstruction({
           keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
           programId: PROGRAM_ID,
           data: ix.toBuffer(),
-        })
+        }),
       ).sign(payer);
     }
     await client.processTransaction(tx);

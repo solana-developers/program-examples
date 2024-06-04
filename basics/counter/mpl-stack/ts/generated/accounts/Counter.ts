@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
+import * as beet from '@metaplex-foundation/beet';
+import * as beetSolana from '@metaplex-foundation/beet-solana';
+import * as web3 from '@solana/web3.js';
 
 /**
  * Arguments used to create {@link Counter}
@@ -15,8 +15,8 @@ import * as beetSolana from '@metaplex-foundation/beet-solana'
  * @category generated
  */
 export type CounterArgs = {
-  count: beet.bignum
-}
+  count: beet.bignum;
+};
 /**
  * Holds the data for the {@link Counter} Account and provides de/serialization
  * functionality for that data
@@ -25,24 +25,21 @@ export type CounterArgs = {
  * @category generated
  */
 export class Counter implements CounterArgs {
-  private constructor(readonly count: beet.bignum) { }
+  private constructor(readonly count: beet.bignum) {}
 
   /**
    * Creates a {@link Counter} instance from the provided args.
    */
   static fromArgs(args: CounterArgs) {
-    return new Counter(args.count)
+    return new Counter(args.count);
   }
 
   /**
    * Deserializes the {@link Counter} from the data of the provided {@link web3.AccountInfo}.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
-  static fromAccountInfo(
-    accountInfo: web3.AccountInfo<Buffer>,
-    offset = 0
-  ): [Counter, number] {
-    return Counter.deserialize(accountInfo.data, offset)
+  static fromAccountInfo(accountInfo: web3.AccountInfo<Buffer>, offset = 0): [Counter, number] {
+    return Counter.deserialize(accountInfo.data, offset);
   }
 
   /**
@@ -51,15 +48,14 @@ export class Counter implements CounterArgs {
    *
    * @throws Error if no account info is found at the address or if deserialization fails
    */
-  static async fromAccountAddress(
-    connection: web3.Connection,
-    address: web3.PublicKey
-  ): Promise<Counter> {
-    const accountInfo = await connection.getAccountInfo(address, { commitment: "confirmed" });
+  static async fromAccountAddress(connection: web3.Connection, address: web3.PublicKey): Promise<Counter> {
+    const accountInfo = await connection.getAccountInfo(address, {
+      commitment: 'confirmed',
+    });
     if (accountInfo == null) {
-      throw new Error(`Unable to find Counter account at ${address}`)
+      throw new Error(`Unable to find Counter account at ${address}`);
     }
-    return Counter.fromAccountInfo(accountInfo, 0)[0]
+    return Counter.fromAccountInfo(accountInfo, 0)[0];
   }
 
   /**
@@ -68,12 +64,8 @@ export class Counter implements CounterArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(
-    programId: web3.PublicKey = new web3.PublicKey(
-      'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS'
-    )
-  ) {
-    return beetSolana.GpaBuilder.fromStruct(programId, counterBeet)
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS')) {
+    return beetSolana.GpaBuilder.fromStruct(programId, counterBeet);
   }
 
   /**
@@ -81,7 +73,7 @@ export class Counter implements CounterArgs {
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static deserialize(buf: Buffer, offset = 0): [Counter, number] {
-    return counterBeet.deserialize(buf, offset)
+    return counterBeet.deserialize(buf, offset);
   }
 
   /**
@@ -89,7 +81,7 @@ export class Counter implements CounterArgs {
    * @returns a tuple of the created Buffer and the offset up to which the buffer was written to store it.
    */
   serialize(): [Buffer, number] {
-    return counterBeet.serialize(this)
+    return counterBeet.serialize(this);
   }
 
   /**
@@ -97,7 +89,7 @@ export class Counter implements CounterArgs {
    * {@link Counter}
    */
   static get byteSize() {
-    return counterBeet.byteSize
+    return counterBeet.byteSize;
   }
 
   /**
@@ -106,14 +98,8 @@ export class Counter implements CounterArgs {
    *
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(
-    connection: web3.Connection,
-    commitment?: web3.Commitment
-  ): Promise<number> {
-    return connection.getMinimumBalanceForRentExemption(
-      Counter.byteSize,
-      commitment
-    )
+  static async getMinimumBalanceForRentExemption(connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+    return connection.getMinimumBalanceForRentExemption(Counter.byteSize, commitment);
   }
 
   /**
@@ -121,7 +107,7 @@ export class Counter implements CounterArgs {
    * hold {@link Counter} data.
    */
   static hasCorrectByteSize(buf: Buffer, offset = 0) {
-    return buf.byteLength - offset === Counter.byteSize
+    return buf.byteLength - offset === Counter.byteSize;
   }
 
   /**
@@ -131,17 +117,17 @@ export class Counter implements CounterArgs {
   pretty() {
     return {
       count: (() => {
-        const x = <{ toNumber: () => number }>this.count
+        const x = <{ toNumber: () => number }>this.count;
         if (typeof x.toNumber === 'function') {
           try {
-            return x.toNumber()
+            return x.toNumber();
           } catch (_) {
-            return x
+            return x;
           }
         }
-        return x
+        return x;
       })(),
-    }
+    };
   }
 }
 
@@ -149,8 +135,4 @@ export class Counter implements CounterArgs {
  * @category Accounts
  * @category generated
  */
-export const counterBeet = new beet.BeetStruct<Counter, CounterArgs>(
-  [['count', beet.u64]],
-  Counter.fromArgs,
-  'Counter'
-)
+export const counterBeet = new beet.BeetStruct<Counter, CounterArgs>([['count', beet.u64]], Counter.fromArgs, 'Counter');

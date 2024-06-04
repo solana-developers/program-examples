@@ -1,51 +1,52 @@
-import * as borsh from "borsh";
-
+import * as borsh from 'borsh';
 
 class Assignable {
-    constructor(properties) {
-        Object.keys(properties).map((key) => {
-            return (this[key] = properties[key]);
-        });
-    };
-};
+  constructor(properties) {
+    Object.keys(properties).map((key) => {
+      return (this[key] = properties[key]);
+    });
+  }
+}
 
 export enum SplMinterInstruction {
-    Create,
-    Mint,
+  Create = 0,
+  Mint = 1,
 }
 
 export class CreateTokenArgs extends Assignable {
-    toBuffer() {
-        return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
-    }
-};
+  toBuffer() {
+    return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
+  }
+}
 const CreateTokenArgsSchema = new Map([
-    [
-        CreateTokenArgs, {
-            kind: 'struct',
-            fields: [
-                ['instruction', 'u8'],
-                ['token_title', 'string'],
-                ['token_symbol', 'string'],
-                ['token_uri', 'string'],
-            ]
-        }
-    ]
+  [
+    CreateTokenArgs,
+    {
+      kind: 'struct',
+      fields: [
+        ['instruction', 'u8'],
+        ['token_title', 'string'],
+        ['token_symbol', 'string'],
+        ['token_uri', 'string'],
+      ],
+    },
+  ],
 ]);
 
 export class MintToArgs extends Assignable {
-    toBuffer() {
-        return Buffer.from(borsh.serialize(MintToArgsSchema, this));
-    }
-};
+  toBuffer() {
+    return Buffer.from(borsh.serialize(MintToArgsSchema, this));
+  }
+}
 const MintToArgsSchema = new Map([
-    [
-        MintToArgs, {
-            kind: 'struct',
-            fields: [
-                ['instruction', 'u8'],
-                ['quantity', 'u64'],
-            ]
-        }
-    ]
+  [
+    MintToArgs,
+    {
+      kind: 'struct',
+      fields: [
+        ['instruction', 'u8'],
+        ['quantity', 'u64'],
+      ],
+    },
+  ],
 ]);

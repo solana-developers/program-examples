@@ -5,12 +5,12 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
+import * as beet from '@metaplex-foundation/beet';
 export type AddCarArgs = {
-  year: number
-  make: string
-  model: string
-}
+  year: number;
+  make: string;
+  model: string;
+};
 
 /**
  * @category userTypes
@@ -22,5 +22,5 @@ export const addCarArgsBeet = new beet.FixableBeetArgsStruct<AddCarArgs>(
     ['make', beet.utf8String],
     ['model', beet.utf8String],
   ],
-  'AddCarArgs'
-)
+  'AddCarArgs',
+);

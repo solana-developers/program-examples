@@ -1,10 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
-import { SwapExample } from "../target/types/swap_example";
-import { TestValues, createValues, expectRevert, mintingTokens } from "./utils";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import type { SwapExample } from '../target/types/swap_example';
+import { type TestValues, createValues, expectRevert, mintingTokens } from './utils';
 
-describe("Create pool", () => {
+describe('Create pool', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   anchor.setProvider(provider);
@@ -16,10 +16,7 @@ describe("Create pool", () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods
-      .createAmm(values.id, values.fee)
-      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
-      .rpc();
+    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
 
     await mintingTokens({
       connection,
@@ -29,7 +26,7 @@ describe("Create pool", () => {
     });
   });
 
-  it("Creation", async () => {
+  it('Creation', async () => {
     await program.methods
       .createPool()
       .accounts({
@@ -45,25 +42,16 @@ describe("Create pool", () => {
       .rpc({ skipPreflight: true });
   });
 
-  it("Invalid mints", async () => {
+  it('Invalid mints', async () => {
     values = createValues({
       mintBKeypair: values.mintAKeypair,
       poolKey: PublicKey.findProgramAddressSync(
-        [
-          values.id.toBuffer(),
-          values.mintAKeypair.publicKey.toBuffer(),
-          values.mintBKeypair.publicKey.toBuffer(),
-        ],
-        program.programId
+        [values.id.toBuffer(), values.mintAKeypair.publicKey.toBuffer(), values.mintBKeypair.publicKey.toBuffer()],
+        program.programId,
       )[0],
       poolAuthority: PublicKey.findProgramAddressSync(
-        [
-          values.id.toBuffer(),
-          values.mintAKeypair.publicKey.toBuffer(),
-          values.mintBKeypair.publicKey.toBuffer(),
-          Buffer.from("authority"),
-        ],
-        program.programId
+        [values.id.toBuffer(), values.mintAKeypair.publicKey.toBuffer(), values.mintBKeypair.publicKey.toBuffer(), Buffer.from('authority')],
+        program.programId,
       )[0],
     });
 
@@ -80,7 +68,7 @@ describe("Create pool", () => {
           poolAccountA: values.poolAccountA,
           poolAccountB: values.poolAccountB,
         })
-        .rpc()
+        .rpc(),
     );
   });
 });

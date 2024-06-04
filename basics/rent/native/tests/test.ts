@@ -1,24 +1,18 @@
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { Buffer } from 'buffer';
-import { start } from 'solana-bankrun';
+import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as borsh from 'borsh';
+import { start } from 'solana-bankrun';
 
 describe('Create a system account', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program', programId: PROGRAM_ID }],[]);
+  const context = await start([{ name: 'program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
   class Assignable {
     constructor(properties) {
-      Object.keys(properties).map(key => {
+      Object.keys(properties).map((key) => {
         return (this[key] = properties[key]);
       });
     }
@@ -56,7 +50,7 @@ describe('Create a system account', async () => {
     const addressDataBuffer = addressData.toBuffer();
     console.log(`Address data buffer length: ${addressDataBuffer.length}`);
 
-    let ix = new TransactionInstruction({
+    const ix = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
         { pubkey: newKeypair.publicKey, isSigner: true, isWritable: true },

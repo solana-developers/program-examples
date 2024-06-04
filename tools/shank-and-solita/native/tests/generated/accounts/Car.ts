@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
+import * as beet from '@metaplex-foundation/beet';
+import * as beetSolana from '@metaplex-foundation/beet-solana';
+import * as web3 from '@solana/web3.js';
 
 /**
  * Arguments used to create {@link Car}
@@ -15,10 +15,10 @@ import * as beetSolana from '@metaplex-foundation/beet-solana'
  * @category generated
  */
 export type CarArgs = {
-  year: number
-  make: string
-  model: string
-}
+  year: number;
+  make: string;
+  model: string;
+};
 /**
  * Holds the data for the {@link Car} Account and provides de/serialization
  * functionality for that data
@@ -30,25 +30,22 @@ export class Car implements CarArgs {
   private constructor(
     readonly year: number,
     readonly make: string,
-    readonly model: string
+    readonly model: string,
   ) {}
 
   /**
    * Creates a {@link Car} instance from the provided args.
    */
   static fromArgs(args: CarArgs) {
-    return new Car(args.year, args.make, args.model)
+    return new Car(args.year, args.make, args.model);
   }
 
   /**
    * Deserializes the {@link Car} from the data of the provided {@link web3.AccountInfo}.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
-  static fromAccountInfo(
-    accountInfo: web3.AccountInfo<Buffer>,
-    offset = 0
-  ): [Car, number] {
-    return Car.deserialize(accountInfo.data, offset)
+  static fromAccountInfo(accountInfo: web3.AccountInfo<Buffer>, offset = 0): [Car, number] {
+    return Car.deserialize(accountInfo.data, offset);
   }
 
   /**
@@ -60,16 +57,13 @@ export class Car implements CarArgs {
   static async fromAccountAddress(
     connection: web3.Connection,
     address: web3.PublicKey,
-    commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig
+    commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig,
   ): Promise<Car> {
-    const accountInfo = await connection.getAccountInfo(
-      address,
-      commitmentOrConfig
-    )
+    const accountInfo = await connection.getAccountInfo(address, commitmentOrConfig);
     if (accountInfo == null) {
-      throw new Error(`Unable to find Car account at ${address}`)
+      throw new Error(`Unable to find Car account at ${address}`);
     }
-    return Car.fromAccountInfo(accountInfo, 0)[0]
+    return Car.fromAccountInfo(accountInfo, 0)[0];
   }
 
   /**
@@ -78,12 +72,8 @@ export class Car implements CarArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(
-    programId: web3.PublicKey = new web3.PublicKey(
-      '8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'
-    )
-  ) {
-    return beetSolana.GpaBuilder.fromStruct(programId, carBeet)
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ')) {
+    return beetSolana.GpaBuilder.fromStruct(programId, carBeet);
   }
 
   /**
@@ -91,7 +81,7 @@ export class Car implements CarArgs {
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static deserialize(buf: Buffer, offset = 0): [Car, number] {
-    return carBeet.deserialize(buf, offset)
+    return carBeet.deserialize(buf, offset);
   }
 
   /**
@@ -99,7 +89,7 @@ export class Car implements CarArgs {
    * @returns a tuple of the created Buffer and the offset up to which the buffer was written to store it.
    */
   serialize(): [Buffer, number] {
-    return carBeet.serialize(this)
+    return carBeet.serialize(this);
   }
 
   /**
@@ -110,8 +100,8 @@ export class Car implements CarArgs {
    * depends on them
    */
   static byteSize(args: CarArgs) {
-    const instance = Car.fromArgs(args)
-    return carBeet.toFixedFromValue(instance).byteSize
+    const instance = Car.fromArgs(args);
+    return carBeet.toFixedFromValue(instance).byteSize;
   }
 
   /**
@@ -122,15 +112,8 @@ export class Car implements CarArgs {
    * depends on them
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(
-    args: CarArgs,
-    connection: web3.Connection,
-    commitment?: web3.Commitment
-  ): Promise<number> {
-    return connection.getMinimumBalanceForRentExemption(
-      Car.byteSize(args),
-      commitment
-    )
+  static async getMinimumBalanceForRentExemption(args: CarArgs, connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+    return connection.getMinimumBalanceForRentExemption(Car.byteSize(args), commitment);
   }
 
   /**
@@ -142,7 +125,7 @@ export class Car implements CarArgs {
       year: this.year,
       make: this.make,
       model: this.model,
-    }
+    };
   }
 }
 
@@ -157,5 +140,5 @@ export const carBeet = new beet.FixableBeetStruct<Car, CarArgs>(
     ['model', beet.utf8String],
   ],
   Car.fromArgs,
-  'Car'
-)
+  'Car',
+);
