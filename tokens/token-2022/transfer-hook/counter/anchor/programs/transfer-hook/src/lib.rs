@@ -26,7 +26,7 @@ use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 declare_id!("1qahDxKHeCLZhbBU2NyMU6vQCQmEUmdeSEBrG5drffK");
 
 #[error_code]
-pub enum MyError {
+pub enum TransferError {
     #[msg("The amount is too big")]
     AmountTooBig,
     #[msg("The token is not currently transferring")]
@@ -60,13 +60,13 @@ pub mod transfer_hook {
         // Check if the amount is too big
         if amount > 50 {
             msg!("The amount is too big: {}", amount);
-            //return err!(MyError::AmountTooBig);
+            //return err!(TransferError::AmountTooBig);
         }
 
         // Increment the transfer count safely
         let count = ctx.accounts.counter_account.counter
             .checked_add(1)
-            .ok_or(MyError::AmountTooBig)?;
+            .ok_or(TransferError::AmountTooBig)?;
 
         msg!("This token has been transferred {} times", count);
 
@@ -81,7 +81,7 @@ fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
     let account_extension = account.get_extension_mut::<TransferHookAccount>()?;
 
     if !bool::from(account_extension.transferring) {
-        return err!(MyError::IsNotCurrentlyTransferring);
+        return err!(TransferError::IsNotCurrentlyTransferring);
     }
 
     Ok(())

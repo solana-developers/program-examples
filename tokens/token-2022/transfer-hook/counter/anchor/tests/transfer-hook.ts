@@ -25,7 +25,6 @@ import { BN } from "bn.js";
 import { expect } from "chai";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
-import { send } from "process";
 
 chai.use(chaiAsPromised);
 
@@ -244,7 +243,7 @@ describe("transfer-hook", () => {
 
     await expect(sendPromise).to.eventually.be.rejectedWith(
       SendTransactionError,
-      /Number: 6001./
+      program.idl.errors[1].msg
     );
   });
 });

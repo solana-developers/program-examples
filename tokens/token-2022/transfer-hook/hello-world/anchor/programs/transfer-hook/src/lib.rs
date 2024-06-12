@@ -1,6 +1,16 @@
+use std::cell::RefMut;
+
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
+    token_2022::spl_token_2022::{
+        extension::{
+            transfer_hook::TransferHookAccount,
+            BaseStateWithExtensionsMut,
+            PodStateWithExtensionsMut,
+        },
+        pod::PodAccount,
+    },
     token_interface::{
         spl_pod::optional_keys::OptionalNonZeroPubkey,
         spl_token_2022::{
@@ -20,6 +30,12 @@ use spl_tlv_account_resolution::{ account::ExtraAccountMeta, state::ExtraAccount
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
 declare_id!("jY5DfVksJT8Le38LCaQhz5USeiGu4rUeVSS8QRAMoba");
+
+#[error_code]
+pub enum TransferError {
+    #[msg("The token is not currently transferring")]
+    IsNotCurrentlyTransferring,
+}
 
 #[program]
 pub mod transfer_hook {
@@ -47,7 +63,7 @@ pub mod transfer_hook {
     }
 
     #[interface(spl_transfer_hook_interface::execute)]
-    pub fn transfer_hook(_ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
+    pub fn transfer_hook(ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&ctx)?;
 
@@ -64,7 +80,7 @@ fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
     let account_extension = account.get_extension_mut::<TransferHookAccount>()?;
 
     if !bool::from(account_extension.transferring) {
-        return err!(MyError::IsNotCurrentlyTransferring);
+        return err!(TransferError::IsNotCurrentlyTransferring);
     }
 
     Ok(())
