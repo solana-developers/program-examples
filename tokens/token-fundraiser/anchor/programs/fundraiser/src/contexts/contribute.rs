@@ -50,9 +50,6 @@ impl<'info> Contribute<'info> {
 
         transfer(cpi_ctx, amount)?;
 
-        msg!("Total raised: {}", self.vault.amount);
-        msg!("Amount to raise: {}", self.fundraiser.amount_to_raise);
-
         Ok(())
     }
 }
