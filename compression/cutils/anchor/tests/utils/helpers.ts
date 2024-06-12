@@ -105,16 +105,17 @@ export function loadKeypairFromFile(absPath: string) {
     const keypair = Keypair.fromSecretKey(new Uint8Array(keyfileBytes));
     return keypair;
   } catch (err) {
-    // return false;
+    console.error('loadKeypairFromFile:', err);
     throw err;
   }
 }
 
 /*
   Save a locally stored JSON keypair file for later importing
+  TODO: delete this function and use the helpers library
 */
-export function saveKeypairToFile(keypair: Keypair, fileName: string, dirName: string = DEFAULT_KEY_DIR_NAME) {
-  fileName = path.join(dirName, `${fileName}.json`);
+export function saveKeypairToFile(keypair: Keypair, relativeFileName: string, dirName: string = DEFAULT_KEY_DIR_NAME) {
+  const fileName = path.join(dirName, `${relativeFileName}.json`);
 
   // create the `dirName` directory, if it does not exists
   if (!fs.existsSync(`./${dirName}/`)) fs.mkdirSync(`./${dirName}/`);

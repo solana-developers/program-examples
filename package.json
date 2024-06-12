@@ -5,9 +5,9 @@
   "scripts": {
     "sync-package-json": "ts-node scripts/sync-package-json.ts",
     "format:fix": "pnpx @biomejs/biome format --write ./",
-    "lint:fix": "pnpx @biomejs/biome lint --apply ./",
+    "lint:fix": "pnpx @biomejs/biome lint --write ./",
     "lint": "pnpx @biomejs/biome lint ./",
-    "fix": "pnpx @biomejs/biome check --apply ./",
+    "fix": "pnpx @biomejs/biome check --write ./",
     "check": "pnpx @biomejs/biome check ./",
     "prepare": "husky"
   },
@@ -18,7 +18,7 @@
   "author": "Solana Foundation",
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "1.7.3",
+    "@biomejs/biome": "1.8.1",
     "@types/node": "^20.9.0",
     "husky": "^9.0.11",
     "picocolors": "^1.0.0",

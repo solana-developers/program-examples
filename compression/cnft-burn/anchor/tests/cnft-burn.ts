@@ -9,7 +9,7 @@ import { getAsset, getAssetProof } from './readApi';
 import { decode, mapProof } from './utils';
 
 // Replace this with your custom RPC endpoint that supports cNFT indexing
-export const RPC_PATH = 'https://api.devnet.solana.com';
+const RPC_PATH = 'https://api.devnet.solana.com';
 
 describe('cnft-burn', () => {
   // Configure the client to use the local cluster.

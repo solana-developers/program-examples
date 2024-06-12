@@ -101,16 +101,17 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  // This will loop through all pages and return all assets
+  // Loop through all pages and return all assets
   async getAllAssetsByGroup(
     groupKey: string,
     groupValue: string,
     sortBy: any,
     limit: number,
-    page: number,
+    startPage: number,
     before: string,
     after: string,
   ): Promise<any> {
+    let page = startPage;
     try {
       const events = [];
       let response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
