@@ -8,8 +8,13 @@ import {
   createTransferCheckedWithTransferHookInstruction,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
-import { Keypair, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, SendTransactionError, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { expect } from 'chai';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type { TransferHook } from '../target/types/transfer_hook';
+
+chai.use(chaiAsPromised);
 
 describe('transfer-hook', () => {
   // Configure the client to use the local cluster.
@@ -121,5 +126,23 @@ describe('transfer-hook', () => {
 
     const txSig = await sendAndConfirmTransaction(connection, transaction, [wallet.payer], { skipPreflight: true });
     console.log('Transfer Signature:', txSig);
+  });
+
+  it('Try call transfer hook without transfer', async () => {
+    const transferHookIx = await program.methods
+      .transferHook(new anchor.BN(1))
+      .accounts({
+        sourceToken: sourceTokenAccount,
+        mint: mint.publicKey,
+        destinationToken: destinationTokenAccount,
+        owner: wallet.publicKey,
+      })
+      .instruction();
+
+    const transaction = new Transaction().add(transferHookIx);
+
+    const sendPromise = sendAndConfirmTransaction(connection, transaction, [wallet.payer], { skipPreflight: false });
+
+    await expect(sendPromise).to.eventually.be.rejectedWith(SendTransactionError, program.idl.errors[0].msg);
   });
 });
