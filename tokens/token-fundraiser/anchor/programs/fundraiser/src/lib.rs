@@ -3,9 +3,11 @@ use anchor_lang::prelude::*;
 declare_id!("Eoiuq1dXvHxh6dLx3wh9gj8kSAUpga11krTrbfF5XYsC");
 
 mod state;
+mod error;
 
 mod contexts;
 use contexts::*;
+use error::*;
 
 #[program]
 pub mod fundraiser {

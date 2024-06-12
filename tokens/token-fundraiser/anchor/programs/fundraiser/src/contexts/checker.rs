@@ -10,7 +10,7 @@ use anchor_spl::{
     }
 };
 
-use crate::state::Fundraiser;
+use crate::{state::Fundraiser, FundraiserError};
 
 #[derive(Accounts)]
 pub struct CheckContributions<'info> {
@@ -43,28 +43,30 @@ pub struct CheckContributions<'info> {
 
 impl<'info> CheckContributions<'info> {
     pub fn check_contributions(&self) -> Result<()> {
-        if self.vault.amount >= self.fundraiser.amount_to_raise {
+        require!(
+            self.vault.amount >= self.fundraiser.amount_to_raise,
+            FundraiserError::TargetNotMet
+        );
 
-            let cpi_program = self.token_program.to_account_info();
+        let cpi_program = self.token_program.to_account_info();
 
-            let cpi_accounts = Transfer {
-                from: self.vault.to_account_info(),
-                to: self.maker_ata.to_account_info(),
-                authority: self.fundraiser.to_account_info(),
-            };
+        let cpi_accounts = Transfer {
+            from: self.vault.to_account_info(),
+            to: self.maker_ata.to_account_info(),
+            authority: self.fundraiser.to_account_info(),
+        };
 
-            let signer_seeds: [&[&[u8]]; 1] = [&[
-                b"fundraiser".as_ref(),
-                self.maker.to_account_info().key.as_ref(),
-                &[self.fundraiser.bump],
-            ]];
+        let signer_seeds: [&[&[u8]]; 1] = [&[
+            b"fundraiser".as_ref(),
+            self.maker.to_account_info().key.as_ref(),
+            &[self.fundraiser.bump],
+        ]];
 
-            let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds);
 
-            transfer(cpi_ctx, self.vault.amount)?;
+        transfer(cpi_ctx, self.vault.amount)?;
 
-            self.fundraiser.close(self.maker.to_account_info())?;
-        }
+        self.fundraiser.close(self.maker.to_account_info())?;
 
         Ok(())
     }

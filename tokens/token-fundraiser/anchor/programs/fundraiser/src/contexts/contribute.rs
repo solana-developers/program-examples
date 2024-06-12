@@ -1,7 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{
-    transfer, 
-    Mint, 
+    transfer,
     Token, 
     TokenAccount, 
     Transfer
@@ -15,11 +14,8 @@ pub struct Contribute<'info> {
     pub contributor: Signer<'info>,
     #[account(mut)]
     pub maker: SystemAccount<'info>,
-    #[account(mut)]
-    pub mint_to_raise: Account<'info, Mint>,
     #[account(
         mut,
-        has_one = mint_to_raise,
         seeds = [b"fundraiser".as_ref(), maker.key().as_ref()],
         bump = fundraiser.bump,
     )]
