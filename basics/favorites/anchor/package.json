@@ -7,7 +7,7 @@
     "@coral-xyz/anchor": "^0.30.0",
     "@solana-developers/helpers": "^2.0.0"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.0",
