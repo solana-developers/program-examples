@@ -12,9 +12,9 @@ describe('PDA Rent-Payer', async () => {
 
   class Assignable {
     constructor(properties) {
-      Object.keys(properties).map((key) => {
-        return (this[key] = properties[key]);
-      });
+      for (const [key, value] of Object.entries(properties)) {
+        this[key] = value;
+      }
     }
   }
 

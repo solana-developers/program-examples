@@ -4,9 +4,8 @@ import { PROGRAM_ID } from '../';
 export type IncrementInstructionAccounts = {
   counter: PublicKey;
 };
-export type IncrementInstructionArgs = {};
 
-export function createIncrementInstruction(accounts: IncrementInstructionAccounts, args: IncrementInstructionArgs): TransactionInstruction {
+export function createIncrementInstruction(accounts: IncrementInstructionAccounts): TransactionInstruction {
   return new TransactionInstruction({
     programId: PROGRAM_ID,
     keys: [

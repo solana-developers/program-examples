@@ -6,20 +6,20 @@ export function getRecursiveFileList(path: string): string[] {
   const files: string[] = [];
 
   const items = readdirSync(path);
-  items.forEach((item) => {
-    if (ignore.includes(item)) {
-      return;
+
+  for (const item of items) {
+    if (!ignore.includes(item)) {
+      // Check out if it's a directory or a file
+      const isDir = statSync(`${path}/${item}`).isDirectory();
+      if (isDir) {
+        // If it's a directory, recursively call the method
+        files.push(...getRecursiveFileList(`${path}/${item}`));
+      } else {
+        // If it's a file, add it to the array of files
+        files.push(`${path}/${item}`);
+      }
     }
-    // Check out if it's a directory or a file
-    const isDir = statSync(`${path}/${item}`).isDirectory();
-    if (isDir) {
-      // If it's a directory, recursively call the method
-      files.push(...getRecursiveFileList(`${path}/${item}`));
-    } else {
-      // If it's a file, add it to the array of files
-      files.push(`${path}/${item}`);
-    }
-  });
+  }
 
   return files.filter((file) => {
     // Remove package.json from the root directory

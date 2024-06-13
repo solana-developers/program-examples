@@ -9,6 +9,7 @@ const DEFAULT_DEMO_DATA_FILE = 'demo.json';
 
 /*
   Load locally stored PublicKey addresses
+  TODO: use the helpers library and delete this function
 */
 export function loadPublicKeysFromFile(absPath = `${DEFAULT_KEY_DIR_NAME}/${DEFAULT_PUBLIC_KEY_FILE}`) {
   try {
@@ -25,7 +26,7 @@ export function loadPublicKeysFromFile(absPath = `${DEFAULT_KEY_DIR_NAME}/${DEFA
 
     return data;
   } catch (err) {
-    // console.warn("Unable to load local file");
+    console.warn('Unable to load local file');
   }
   // always return an object
   return {};
@@ -51,7 +52,7 @@ export function saveDemoDataToFile(name: string, newData: any, absPath = `${DEFA
     return data;
   } catch (err) {
     console.warn('Unable to save to file');
-    // console.warn(err);
+    console.warn(err);
   }
 
   // always return an object
@@ -105,16 +106,17 @@ export function loadKeypairFromFile(absPath: string) {
     const keypair = Keypair.fromSecretKey(new Uint8Array(keyfileBytes));
     return keypair;
   } catch (err) {
-    // return false;
+    console.error('loadKeypairFromFile:', err);
     throw err;
   }
 }
 
 /*
   Save a locally stored JSON keypair file for later importing
+  TODO: delete this function and use the helpers library
 */
-export function saveKeypairToFile(keypair: Keypair, fileName: string, dirName: string = DEFAULT_KEY_DIR_NAME) {
-  fileName = path.join(dirName, `${fileName}.json`);
+export function saveKeypairToFile(keypair: Keypair, relativeFileName: string, dirName: string = DEFAULT_KEY_DIR_NAME) {
+  const fileName = path.join(dirName, `${relativeFileName}.json`);
 
   // create the `dirName` directory, if it does not exists
   if (!fs.existsSync(`./${dirName}/`)) fs.mkdirSync(`./${dirName}/`);

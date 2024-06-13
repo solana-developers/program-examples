@@ -28,7 +28,6 @@ describe('Create a system account', () => {
 
     // Check that the account was created
     const accountInfo = await connection.getAccountInfo(newKeypair.publicKey);
-    assert((accountInfo.owner = SystemProgram.programId));
     assert(accountInfo.lamports === lamports);
   });
 });
