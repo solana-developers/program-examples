@@ -4,7 +4,8 @@
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
-Note - if you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making account or transferring SOL) or the token program (for creating tokens and NFTs). See the [Solana Developer site](https://solana.com/developers) to learn more.
+> [!NOTE]
+> If you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, sending tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making account or transferring SOL) or the token program (for creating tokens and NFTs). See the [Solana Developer site](https://solana.com/developers) to learn more.
 
 ## Using this repo
 
