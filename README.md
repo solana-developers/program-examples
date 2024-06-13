@@ -1,31 +1,31 @@
 # Program Examples
 
-### :crab: Rust. :snake: Python. :link: All on-chain.
+### Onchain program examples for :anchor: Anchor :crab: Native Rust and :snake: Python
 
 ## Navigating this Repo
 
 :file_folder: Each example contains four folders:
 
-- `native` - Written using Solana's native Rust crates and vanilla Rust.
 - `anchor` - Written using Anchor's `anchor_lang` Rust crate and the associated Anchor framework to build & deploy.
+- `native` - Written using Solana's native Rust crates and vanilla Rust.
 - `seahorse` - Written using the Python framework Seahorse, which converts your Python code to Anchor Rust.
 
 :wrench: How to build & run:
 
 - Before running anything in any folder make sure you pull in the dependencies with `yarn install`.
-- `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `anchor` - Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
+- `native` - Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `seahorse` - Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
 ## Examples We'd Love to See!
 
 - Examples needed for Native:
-  - Token2022
+  - Token Extensions
 - Examples needed for Anchor:
   - Additional Accounts & Resolving Accounts
 - Examples needed for Seahorse
   - Any existing example missing a `seahorse` folder
-- New examples needed for Solidity, Anchor, Native & Seahorse:
+- New examples needed for Anchor, Native, Solidity & Seahorse:
   - Token lending
   - Token swapping
   - Escrow
