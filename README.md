@@ -1,6 +1,6 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor :crab: Native Rust, :snake: Python and Solidity
+## Onchain program examples for :anchor: Anchor :crab: Native Rust, :snake: Python and :hedgehog: Solidity
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
