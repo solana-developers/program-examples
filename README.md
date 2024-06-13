@@ -1,6 +1,6 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor :crab: Native Rust, :snake: Python and :hedgehog: Solidity
+## Onchain program examples for :anchor: Anchor :crab: Native Rust, and :snake: Python
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
@@ -14,7 +14,6 @@ Each folder includes examples for one or more of the following
 - `anchor` - Written using [Anchor](https://www.anchor-lang.com/), the most popular framework for Solana Development, which uses Rust. Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 - `native` - Written using Solana's native Rust crates and vanilla Rust. Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `seahorse` - Written using the [Seahorse framework](https://seahorse-lang.org/), which converts your Python code to Anchor Rust. Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
-- `solidity` - Written using Solidity.
 
 If a given example is missing, please add it!
 
