@@ -1,7 +1,12 @@
 import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
 import { ASSOCIATED_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+  getOrCreateAssociatedTokenAccount,
+} from '@solana/spl-token';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import type { ExtensionNft } from '../target/types/extension_nft';
 
@@ -30,22 +35,16 @@ describe('extension_nft', () => {
       ASSOCIATED_TOKEN_PROGRAM_ID,
     );
 
-    const nft_authority = await PublicKey.findProgramAddress([Buffer.from('nft_authority')], program.programId);
-
+    getOrCreateAssociatedTokenAccount;
     const tx = await program.methods
       .mintNft()
       .accounts({
         signer: payer.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        tokenProgram: TOKEN_2022_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
         tokenAccount: destinationTokenAccount,
         mint: mint.publicKey,
-        nftAuthority: nft_authority[0],
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       })
       .signers([mint])
-      .rpc({ skipPreflight: true });
+      .rpc();
 
     console.log('Mint nft tx', tx);
     await anchor.getProvider().connection.confirmTransaction(tx, 'confirmed');

@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-extension_nft = "MkabCfyUD6rBTaYHpgKBBpBo5qzWA2pK2hrGGKMurJt"
+extension_nft = "9aZZ7TJ2fQZxY8hMtWXywp5y6BgqC4N2BPcr9FDT47sW"
 
 [registry]
 url = "https://anchor.projectserum.com"

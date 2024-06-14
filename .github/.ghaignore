@@ -33,4 +33,3 @@ compression/cutils/anchor
 compression/cnft-vault/anchor
 # builds but need to test on localhost
 compression/cnft-burn/anchor
-tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor
