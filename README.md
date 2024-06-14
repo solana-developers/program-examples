@@ -17,9 +17,10 @@ Each folder includes examples for one or more of the following
 
 If a given example is missing, please add it!
 
-## The example projects!
+## The example projects
 
-### basics
+<details>
+  <summary>Basics</summary>
 
 #### account-data
 
@@ -81,7 +82,9 @@ If a given example is missing, please add it!
 
 [anchor](./basics/transfer-sol/anchor), [native](./basics/transfer-sol/native), [seahorse](./basics/transfer-sol/seahorse)
 
-### tokens
+</details>
+<details>
+  <summary>Tokens</summary>
 
 #### create-token
 
@@ -111,7 +114,11 @@ If a given example is missing, please add it!
 
 [anchor](./tokens/transfer-tokens/anchor), [native](./tokens/transfer-tokens/native), [seahorse](./tokens/transfer-tokens/seahorse)
 
-### tokens/token-2022
+</details>
+
+<details>
+
+  <summary>Token Extensions</summary>
 
 #### basics
 
@@ -165,7 +172,10 @@ If a given example is missing, please add it!
 
 [anchor](./tokens/token-2022/transfer-fee/anchor), [native](./tokens/token-2022/transfer-fee/native)
 
-### compression
+</details>
+<details>
+
+<summary>Compression</summary>
 
 #### cnft-burn
 
@@ -179,11 +189,17 @@ If a given example is missing, please add it!
 
 [anchor](./compression/cutils/anchor)
 
-### oracles
+</details>
+
+<details>
+
+<summary>Oracles</summary>
 
 #### pyth
 
 [anchor](./oracles/pyth/anchor), [seahorse](./oracles/pyth/seahorse)
+
+</details>
 
 ## Examples We'd Love to See!
 
