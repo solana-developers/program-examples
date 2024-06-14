@@ -1,17 +1,16 @@
 pub use crate::errors::GameErrorCode;
 pub use anchor_lang::prelude::*;
-pub use session_keys::{session_auth_or, Session, SessionError};
+pub use session_keys::{ session_auth_or, Session, SessionError };
 pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
 use instructions::*;
 
-declare_id!("H31ofLpWqeAzF2Pg54HSPQGYifJad843tTJg8vCYVoh3");
+declare_id!("9aZZ7TJ2fQZxY8hMtWXywp5y6BgqC4N2BPcr9FDT47sW");
 
 #[program]
 pub mod extension_nft {
-
     use super::*;
 
     pub fn init_player(ctx: Context<InitPlayer>, _level_seed: String) -> Result<()> {
