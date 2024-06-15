@@ -23,6 +23,8 @@ describe("fundraiser", () => {
 
   const fundraiser = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("fundraiser"), maker.publicKey.toBuffer()], program.programId)[0];
 
+  const contributor = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("contributor"), fundraiser.toBuffer(), provider.publicKey.toBuffer()], program.programId)[0];
+
   const confirm = async (signature: string): Promise<string> => {
     const block = await provider.connection.getLatestBlockhash();
     await provider.connection.confirmTransaction({
@@ -53,7 +55,7 @@ describe("fundraiser", () => {
 
     const tx = await program
     .methods
-    .initialize(new anchor.BN(3000000))
+    .initialize(new anchor.BN(30000000), 0)
     .accountsPartial({
       maker: maker.publicKey,
       fundraiser,
@@ -80,8 +82,8 @@ describe("fundraiser", () => {
     .contribute(new anchor.BN(1000000))
     .accountsPartial({
       contributor: provider.publicKey,
-      maker: maker.publicKey,
       fundraiser,
+      contributorAccount: contributor,
       contributorAta: contributorATA,
       vault,
       tokenProgram: TOKEN_PROGRAM_ID,
@@ -94,6 +96,9 @@ describe("fundraiser", () => {
     console.log("\nContributed to fundraiser", tx);
     console.log("Your transaction signature", tx);
     console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+
+    let contributorAccount = await program.account.contributor.fetch(contributor);
+    console.log("Contributor balance", contributorAccount.amount.toString());
   });
   it("Contribute to Fundraiser", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
@@ -102,8 +107,8 @@ describe("fundraiser", () => {
     .contribute(new anchor.BN(1000000))
     .accountsPartial({
       contributor: provider.publicKey,
-      maker: maker.publicKey,
       fundraiser,
+      contributorAccount: contributor,
       contributorAta: contributorATA,
       vault,
       tokenProgram: TOKEN_PROGRAM_ID,
@@ -116,77 +121,94 @@ describe("fundraiser", () => {
     console.log("\nContributed to fundraiser", tx);
     console.log("Your transaction signature", tx);
     console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+
+    let contributorAccount = await program.account.contributor.fetch(contributor);
+    console.log("Contributor balance", contributorAccount.amount.toString());
   });
 
-  it("Check contributions", async () => {
-    const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
+  it("Contribute to Fundraiser - Robustness Test", async () => {
+    try {
+      const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const tx = await program.methods
-    .checkContributions()
-    .accountsPartial({
-      maker: maker.publicKey,
-      mintToRaise: mint,
-      fundraiser,
-      makerAta: makerATA,
-      vault,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    })
-    .signers([maker])
-    .rpc({
-      skipPreflight: true,
-    })
-    .then(confirm);
+      const tx = await program.methods
+      .contribute(new anchor.BN(2000000))
+      .accountsPartial({
+        contributor: provider.publicKey,
+        fundraiser,
+        contributorAccount: contributor,
+        contributorAta: contributorATA,
+        vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc({
+        skipPreflight: true,
+      })
+      .then(confirm);
 
-    console.log("\nChecked contributions");
-    console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+      console.log("\nContributed to fundraiser", tx);
+      console.log("Your transaction signature", tx);
+      console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    } catch (error) {
+      console.log("\nError contributing to fundraiser");
+      console.log(error.msg);
+    }
   });
 
-  it("Contribute to Fundraiser", async () => {
-    const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
+  it("Check contributions - Robustness Test", async () => {
+    try {
+      const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const tx = await program.methods
-    .contribute(new anchor.BN(1000000))
-    .accountsPartial({
-      contributor: provider.publicKey,
-      maker: maker.publicKey,
-      fundraiser,
-      contributorAta: contributorATA,
-      vault,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    })
-    .rpc({
-      skipPreflight: true,
-    })
-    .then(confirm);
+      const tx = await program.methods
+      .checkContributions()
+      .accountsPartial({
+        maker: maker.publicKey,
+        mintToRaise: mint,
+        fundraiser,
+        makerAta: makerATA,
+        vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([maker])
+      .rpc({
+        skipPreflight: true,
+      })
+      .then(confirm);
 
-    console.log("\nContributed to fundraiser", tx);
-    console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
-  });
-
-  it("Check contributions", async () => {
-    const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
-
-    const tx = await program.methods
-    .checkContributions()
-    .accountsPartial({
-      maker: maker.publicKey,
-      mintToRaise: mint,
-      fundraiser,
-      makerAta: makerATA,
-      vault,
-      tokenProgram: TOKEN_PROGRAM_ID,
-    })
-    .signers([maker])
-    .rpc({
-      skipPreflight: true,
-    })
-    .then(confirm);
-
-    console.log("\nChecked contributions");
-    console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+      console.log("\nChecked contributions");
+      console.log("Your transaction signature", tx);
+      console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    } catch (error) {
+      console.log("\nError checking contributions");
+      console.log(error.msg);
+    }
   });
   
+  it("Refund Contributions", async () => {
+    const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
+
+    let contributorAccount = await program.account.contributor.fetch(contributor);
+    console.log("\nContributor balance", contributorAccount.amount.toString());
+
+    const tx = await program.methods
+    .refund()
+    .accountsPartial({
+      contributor: provider.publicKey,
+      maker: maker.publicKey,
+      mintToRaise: mint,
+      fundraiser,
+      contributorAccount: contributor,
+      contributorAta: contributorATA,
+      vault,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    })
+    .rpc({
+      skipPreflight: true,
+    })
+    .then(confirm);
+
+    console.log("\nRefunded contributions", tx);
+    console.log("Your transaction signature", tx);
+    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+  });
 });

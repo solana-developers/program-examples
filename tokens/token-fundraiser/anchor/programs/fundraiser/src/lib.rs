@@ -3,19 +3,21 @@ use anchor_lang::prelude::*;
 declare_id!("Eoiuq1dXvHxh6dLx3wh9gj8kSAUpga11krTrbfF5XYsC");
 
 mod state;
+mod instructions;
 mod error;
+mod constants;
 
-mod contexts;
-use contexts::*;
+use instructions::*;
 use error::*;
+pub use constants::*;
 
 #[program]
 pub mod fundraiser {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, amount: u64) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, amount: u64, duration: u8) -> Result<()> {
 
-        ctx.accounts.initialize(amount, &ctx.bumps)?;
+        ctx.accounts.initialize(amount, duration, &ctx.bumps)?;
 
         Ok(())
     }
@@ -30,6 +32,13 @@ pub mod fundraiser {
     pub fn check_contributions(ctx: Context<CheckContributions>) -> Result<()> {
 
         ctx.accounts.check_contributions()?;
+
+        Ok(())
+    }
+
+    pub fn refund(ctx: Context<Refund>) -> Result<()> {
+
+        ctx.accounts.refund()?;
 
         Ok(())
     }
