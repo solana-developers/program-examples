@@ -1,0 +1,21 @@
+name: Typescript Code quality
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - main
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+      - name: Run Biome
+        run: |
+          biome ci ./ --config-path biome.json

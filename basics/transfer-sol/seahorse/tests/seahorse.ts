@@ -1,19 +1,16 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { Seahorse } from "../target/types/seahorse";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import type { Seahorse } from '../target/types/seahorse';
 
-describe("seahorse", () => {
+describe('seahorse', () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace.Seahorse as Program<Seahorse>;
 
-  const mockReceiverAccount = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("mock_account")],
-    program.programId
-  );
+  const mockReceiverAccount = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('mock_account')], program.programId);
 
-  it("Initialize the Mock account to send our SOL to", async () => {
+  it('Initialize the Mock account to send our SOL to', async () => {
     const tx = await program.methods
       .initMockAccount()
       .accounts({
@@ -22,7 +19,7 @@ describe("seahorse", () => {
       })
       .rpc();
   });
-  it("Send SOL To Mock account", async () => {
+  it('Send SOL To Mock account', async () => {
     const transferAmount = 1;
     // Convert to lamport.
     const lamports: number = anchor.web3.LAMPORTS_PER_SOL * transferAmount;
@@ -33,6 +30,6 @@ describe("seahorse", () => {
         sender: program.provider.publicKey,
       })
       .rpc();
-    console.log("Your transaction signature: ", tx);
+    console.log('Your transaction signature: ', tx);
   });
 });

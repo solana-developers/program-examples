@@ -1,5 +1,5 @@
 export enum ReallocInstruction {
-    Create,
-    ReallocateWithoutZeroInit,
-    ReallocateZeroInit,
+  Create = 0,
+  ReallocateWithoutZeroInit = 1,
+  ReallocateZeroInit = 2,
 }

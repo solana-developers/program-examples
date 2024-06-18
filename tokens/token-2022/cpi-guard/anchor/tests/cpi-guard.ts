@@ -1,6 +1,5 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { CpiGuard } from "../target/types/cpi_guard";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
 import {
   ExtensionType,
   TOKEN_2022_PROGRAM_ID,
@@ -10,14 +9,11 @@ import {
   disableCpiGuard,
   getAccountLen,
   mintTo,
-} from "@solana/spl-token";
-import {
-  sendAndConfirmTransaction,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+} from '@solana/spl-token';
+import { SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import type { CpiGuard } from '../target/types/cpi_guard';
 
-describe("cpi-guard", () => {
+describe('cpi-guard', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -29,7 +25,7 @@ describe("cpi-guard", () => {
   const mintKeypair = new anchor.web3.Keypair();
   const tokenKeypair = new anchor.web3.Keypair();
 
-  it("Create Token Account with CpiGuard extension", async () => {
+  it('Create Token Account with CpiGuard extension', async () => {
     await createMint(
       connection,
       wallet.payer, // Payer of the transaction and initialization fees
@@ -38,15 +34,13 @@ describe("cpi-guard", () => {
       2, // Decimals of Mint
       mintKeypair, // Optional keypair
       undefined, // Options for confirming the transaction
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     // Size of Token Account with extension
     const accountLen = getAccountLen([ExtensionType.CpiGuard]);
     // Minimum lamports required for Token Account
-    const lamports = await connection.getMinimumBalanceForRentExemption(
-      accountLen
-    );
+    const lamports = await connection.getMinimumBalanceForRentExemption(accountLen);
 
     // Instruction to invoke System Program to create new account
     const createAccountInstruction = SystemProgram.createAccount({
@@ -62,45 +56,26 @@ describe("cpi-guard", () => {
       tokenKeypair.publicKey, // Token Account Address
       mintKeypair.publicKey, // Mint Account
       wallet.publicKey, // Token Account Owner
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     // Instruction to initialize the CpiGuard Extension
-    const enableCpiGuiardInstruction = createEnableCpiGuardInstruction(
-      tokenKeypair.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_2022_PROGRAM_ID
-    );
+    const enableCpiGuiardInstruction = createEnableCpiGuardInstruction(tokenKeypair.publicKey, wallet.publicKey, [], TOKEN_2022_PROGRAM_ID);
 
-    const transaction = new Transaction().add(
-      createAccountInstruction,
-      initializeAccountInstruction,
-      enableCpiGuiardInstruction
-    );
+    const transaction = new Transaction().add(createAccountInstruction, initializeAccountInstruction, enableCpiGuiardInstruction);
 
     const transactionSignature = await sendAndConfirmTransaction(
       connection,
       transaction,
-      [wallet.payer, tokenKeypair] // Signers
+      [wallet.payer, tokenKeypair], // Signers
     );
 
-    await mintTo(
-      connection,
-      wallet.payer,
-      mintKeypair.publicKey,
-      tokenKeypair.publicKey,
-      wallet.payer,
-      1,
-      [],
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
+    await mintTo(connection, wallet.payer, mintKeypair.publicKey, tokenKeypair.publicKey, wallet.payer, 1, [], null, TOKEN_2022_PROGRAM_ID);
 
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Transfer, expect fail", async () => {
+  it('Transfer, expect fail', async () => {
     try {
       await program.methods
         .cpiTransfer()
@@ -111,21 +86,16 @@ describe("cpi-guard", () => {
         })
         .rpc({ skipPreflight: true });
     } catch (error) {
-      console.log("\nExpect Error:", error.message);
+      console.log('\nExpect Error:', error.message);
     }
   });
 
-  it("Disable CpiGuard", async () => {
-    const transactionSignature = await disableCpiGuard(
-      connection,
-      wallet.payer,
-      tokenKeypair.publicKey,
-      wallet.publicKey
-    );
-    console.log("Your transaction signature", transactionSignature);
+  it('Disable CpiGuard', async () => {
+    const transactionSignature = await disableCpiGuard(connection, wallet.payer, tokenKeypair.publicKey, wallet.publicKey);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Transfer, expect success", async () => {
+  it('Transfer, expect success', async () => {
     const transactionSignature = await program.methods
       .cpiTransfer()
       .accounts({
@@ -134,6 +104,6 @@ describe("cpi-guard", () => {
         mintAccount: mintKeypair.publicKey,
       })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 });

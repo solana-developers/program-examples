@@ -5,13 +5,10 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as web3 from '@solana/web3.js'
-import * as beet from '@metaplex-foundation/beet'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
-import {
-  RentalOrderStatus,
-  rentalOrderStatusBeet,
-} from '../types/RentalOrderStatus'
+import * as beet from '@metaplex-foundation/beet';
+import * as beetSolana from '@metaplex-foundation/beet-solana';
+import * as web3 from '@solana/web3.js';
+import { RentalOrderStatus, rentalOrderStatusBeet } from '../types/RentalOrderStatus';
 
 /**
  * Arguments used to create {@link RentalOrder}
@@ -19,13 +16,13 @@ import {
  * @category generated
  */
 export type RentalOrderArgs = {
-  car: web3.PublicKey
-  name: string
-  pickUpDate: string
-  returnDate: string
-  price: beet.bignum
-  status: RentalOrderStatus
-}
+  car: web3.PublicKey;
+  name: string;
+  pickUpDate: string;
+  returnDate: string;
+  price: beet.bignum;
+  status: RentalOrderStatus;
+};
 /**
  * Holds the data for the {@link RentalOrder} Account and provides de/serialization
  * functionality for that data
@@ -40,32 +37,22 @@ export class RentalOrder implements RentalOrderArgs {
     readonly pickUpDate: string,
     readonly returnDate: string,
     readonly price: beet.bignum,
-    readonly status: RentalOrderStatus
+    readonly status: RentalOrderStatus,
   ) {}
 
   /**
    * Creates a {@link RentalOrder} instance from the provided args.
    */
   static fromArgs(args: RentalOrderArgs) {
-    return new RentalOrder(
-      args.car,
-      args.name,
-      args.pickUpDate,
-      args.returnDate,
-      args.price,
-      args.status
-    )
+    return new RentalOrder(args.car, args.name, args.pickUpDate, args.returnDate, args.price, args.status);
   }
 
   /**
    * Deserializes the {@link RentalOrder} from the data of the provided {@link web3.AccountInfo}.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
-  static fromAccountInfo(
-    accountInfo: web3.AccountInfo<Buffer>,
-    offset = 0
-  ): [RentalOrder, number] {
-    return RentalOrder.deserialize(accountInfo.data, offset)
+  static fromAccountInfo(accountInfo: web3.AccountInfo<Buffer>, offset = 0): [RentalOrder, number] {
+    return RentalOrder.deserialize(accountInfo.data, offset);
   }
 
   /**
@@ -77,16 +64,13 @@ export class RentalOrder implements RentalOrderArgs {
   static async fromAccountAddress(
     connection: web3.Connection,
     address: web3.PublicKey,
-    commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig
+    commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig,
   ): Promise<RentalOrder> {
-    const accountInfo = await connection.getAccountInfo(
-      address,
-      commitmentOrConfig
-    )
+    const accountInfo = await connection.getAccountInfo(address, commitmentOrConfig);
     if (accountInfo == null) {
-      throw new Error(`Unable to find RentalOrder account at ${address}`)
+      throw new Error(`Unable to find RentalOrder account at ${address}`);
     }
-    return RentalOrder.fromAccountInfo(accountInfo, 0)[0]
+    return RentalOrder.fromAccountInfo(accountInfo, 0)[0];
   }
 
   /**
@@ -95,12 +79,8 @@ export class RentalOrder implements RentalOrderArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(
-    programId: web3.PublicKey = new web3.PublicKey(
-      '8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'
-    )
-  ) {
-    return beetSolana.GpaBuilder.fromStruct(programId, rentalOrderBeet)
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ')) {
+    return beetSolana.GpaBuilder.fromStruct(programId, rentalOrderBeet);
   }
 
   /**
@@ -108,7 +88,7 @@ export class RentalOrder implements RentalOrderArgs {
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static deserialize(buf: Buffer, offset = 0): [RentalOrder, number] {
-    return rentalOrderBeet.deserialize(buf, offset)
+    return rentalOrderBeet.deserialize(buf, offset);
   }
 
   /**
@@ -116,7 +96,7 @@ export class RentalOrder implements RentalOrderArgs {
    * @returns a tuple of the created Buffer and the offset up to which the buffer was written to store it.
    */
   serialize(): [Buffer, number] {
-    return rentalOrderBeet.serialize(this)
+    return rentalOrderBeet.serialize(this);
   }
 
   /**
@@ -127,8 +107,8 @@ export class RentalOrder implements RentalOrderArgs {
    * depends on them
    */
   static byteSize(args: RentalOrderArgs) {
-    const instance = RentalOrder.fromArgs(args)
-    return rentalOrderBeet.toFixedFromValue(instance).byteSize
+    const instance = RentalOrder.fromArgs(args);
+    return rentalOrderBeet.toFixedFromValue(instance).byteSize;
   }
 
   /**
@@ -139,15 +119,8 @@ export class RentalOrder implements RentalOrderArgs {
    * depends on them
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(
-    args: RentalOrderArgs,
-    connection: web3.Connection,
-    commitment?: web3.Commitment
-  ): Promise<number> {
-    return connection.getMinimumBalanceForRentExemption(
-      RentalOrder.byteSize(args),
-      commitment
-    )
+  static async getMinimumBalanceForRentExemption(args: RentalOrderArgs, connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+    return connection.getMinimumBalanceForRentExemption(RentalOrder.byteSize(args), commitment);
   }
 
   /**
@@ -161,18 +134,18 @@ export class RentalOrder implements RentalOrderArgs {
       pickUpDate: this.pickUpDate,
       returnDate: this.returnDate,
       price: (() => {
-        const x = <{ toNumber: () => number }>this.price
+        const x = <{ toNumber: () => number }>this.price;
         if (typeof x.toNumber === 'function') {
           try {
-            return x.toNumber()
+            return x.toNumber();
           } catch (_) {
-            return x
+            return x;
           }
         }
-        return x
+        return x;
       })(),
-      status: 'RentalOrderStatus.' + RentalOrderStatus[this.status],
-    }
+      status: `RentalOrderStatus.${RentalOrderStatus[this.status]}`,
+    };
   }
 }
 
@@ -180,10 +153,7 @@ export class RentalOrder implements RentalOrderArgs {
  * @category Accounts
  * @category generated
  */
-export const rentalOrderBeet = new beet.FixableBeetStruct<
-  RentalOrder,
-  RentalOrderArgs
->(
+export const rentalOrderBeet = new beet.FixableBeetStruct<RentalOrder, RentalOrderArgs>(
   [
     ['car', beetSolana.publicKey],
     ['name', beet.utf8String],
@@ -193,5 +163,5 @@ export const rentalOrderBeet = new beet.FixableBeetStruct<
     ['status', rentalOrderStatusBeet],
   ],
   RentalOrder.fromArgs,
-  'RentalOrder'
-)
+  'RentalOrder',
+);

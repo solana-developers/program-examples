@@ -17,15 +17,15 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.17.25, stable, beta]
+        solana-version: [stable, beta]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - uses: heyAyushh/setup-solana@v5.1
+      - uses: heyAyushh/setup-solana@v5.2
         with:
           solana-cli-version: ${{ matrix.solana-version }}
       - run: solana block
@@ -35,28 +35,16 @@ jobs:
           npm install --global pnpm
       - name: Build Native programs
         run: |
-          declare -a ProjectDirs=(
-            "basics/account-data/native/program"
-            "basics/checking-accounts/native/program"
-            "basics/close-account/native/program"
-            "basics/counter/native/program"
-            "basics/create-account/native/program"
-            "basics/hello-solana/native/program"
-            "basics/pda-rent-payer/native/program"
-            "basics/processing-instructions/native/program"
-            "basics/program-derived-addresses/native/program"
-            "basics/realloc/native/program"
-            "basics/rent/native/program"
-            "basics/repository-layout/native/program"
-            "basics/transfer-sol/native/program"
-          )
+          declare -a ProjectDirs=($(find . -type d -name "native"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
+          echo "Projects to Build:"
+          printf "%s\n" "${ProjectDirs[@]}"
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
             ********
             Building $projectDir
             ********"
             cd $projectDir
-            if cargo-build-sbf --verbose; then
+            if pnpm build; then
               echo "Build succeeded for $projectDir."
             else
               failed=true
@@ -83,11 +71,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - uses: heyAyushh/setup-solana@v5.1
+      - uses: heyAyushh/setup-solana@v5.2
         with:
           solana-cli-version: ${{ matrix.solana-version }}
       - run: solana block
@@ -99,20 +87,9 @@ jobs:
         run: |
           solana -V
           rustc -V
-          declare -a ProjectDirs=(
-            "basics/account-data/native/"
-            "basics/checking-accounts/native/"
-            "basics/close-account/native/"
-            "basics/counter/native/"
-            "basics/create-account/native/"
-            "basics/hello-solana/native/"
-            "basics/pda-rent-payer/native/"
-            "basics/processing-instructions/native/"
-            "basics/program-derived-addresses/native/"
-            "basics/rent/native/"
-            "basics/repository-layout/native/"
-            "basics/transfer-sol/native/"
-          )
+          declare -a ProjectDirs=($(find . -type d -name "native"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
+          echo "Projects to Test:"
+          printf "%s\n" "${ProjectDirs[@]}"
           for projectDir in "${ProjectDirs[@]}"; do
             echo "
             ********
@@ -120,7 +97,7 @@ jobs:
             ********"
             cd $projectDir
             pnpm install --frozen-lockfile
-            if (cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test); then
+            if pnpm build-and-test; then
               echo "Tests succeeded for $projectDir."
             else
               failed=true

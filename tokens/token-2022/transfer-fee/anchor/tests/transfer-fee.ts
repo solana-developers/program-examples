@@ -1,15 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { TransferFee } from "../target/types/transfer_fee";
-import {
-  TOKEN_2022_PROGRAM_ID,
-  getAssociatedTokenAddressSync,
-  getOrCreateAssociatedTokenAccount,
-  mintTo,
-} from "@solana/spl-token";
-import { ASSOCIATED_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { ASSOCIATED_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
+import { TOKEN_2022_PROGRAM_ID, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
+import type { TransferFee } from '../target/types/transfer_fee';
 
-describe("transfer-fee", () => {
+describe('transfer-fee', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   const wallet = provider.wallet as anchor.Wallet;
@@ -20,21 +15,11 @@ describe("transfer-fee", () => {
   const mintKeypair = new anchor.web3.Keypair();
   const recipient = new anchor.web3.Keypair();
 
-  const senderTokenAccountAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    wallet.publicKey,
-    false,
-    TOKEN_2022_PROGRAM_ID
-  );
+  const senderTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, wallet.publicKey, false, TOKEN_2022_PROGRAM_ID);
 
-  const recipientTokenAccountAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    recipient.publicKey,
-    false,
-    TOKEN_2022_PROGRAM_ID
-  );
+  const recipientTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, recipient.publicKey, false, TOKEN_2022_PROGRAM_ID);
 
-  it("Create Mint with Transfer Fee", async () => {
+  it('Create Mint with Transfer Fee', async () => {
     const transferFeeBasisPoints = 100;
     const maximumFee = 1;
 
@@ -43,10 +28,10 @@ describe("transfer-fee", () => {
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Mint Tokens", async () => {
+  it('Mint Tokens', async () => {
     await getOrCreateAssociatedTokenAccount(
       connection,
       wallet.payer,
@@ -56,23 +41,13 @@ describe("transfer-fee", () => {
       null,
       null,
       TOKEN_2022_PROGRAM_ID,
-      ASSOCIATED_PROGRAM_ID
+      ASSOCIATED_PROGRAM_ID,
     );
 
-    await mintTo(
-      connection,
-      wallet.payer,
-      mintKeypair.publicKey,
-      senderTokenAccountAddress,
-      wallet.payer,
-      300,
-      [],
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
+    await mintTo(connection, wallet.payer, mintKeypair.publicKey, senderTokenAccountAddress, wallet.payer, 300, [], null, TOKEN_2022_PROGRAM_ID);
   });
 
-  it("Transfer", async () => {
+  it('Transfer', async () => {
     const transactionSignature = await program.methods
       .transfer(new anchor.BN(100))
       .accounts({
@@ -83,10 +58,10 @@ describe("transfer-fee", () => {
         recipientTokenAccount: recipientTokenAccountAddress,
       })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Transfer Again, fee limit by maximumFee", async () => {
+  it('Transfer Again, fee limit by maximumFee', async () => {
     const transactionSignature = await program.methods
       .transfer(new anchor.BN(200))
       .accounts({
@@ -97,10 +72,10 @@ describe("transfer-fee", () => {
         recipientTokenAccount: recipientTokenAccountAddress,
       })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Harvest Transfer Fees to Mint Account", async () => {
+  it('Harvest Transfer Fees to Mint Account', async () => {
     const transactionSignature = await program.methods
       .harvest()
       .accounts({ mintAccount: mintKeypair.publicKey })
@@ -112,10 +87,10 @@ describe("transfer-fee", () => {
         },
       ])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Withdraw Transfer Fees from Mint Account", async () => {
+  it('Withdraw Transfer Fees from Mint Account', async () => {
     const transactionSignature = await program.methods
       .withdraw()
       .accounts({
@@ -123,10 +98,10 @@ describe("transfer-fee", () => {
         tokenAccount: senderTokenAccountAddress,
       })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Update Transfer Fee", async () => {
+  it('Update Transfer Fee', async () => {
     const transferFeeBasisPoints = 0;
     const maximumFee = 0;
 
@@ -134,6 +109,6 @@ describe("transfer-fee", () => {
       .updateFee(transferFeeBasisPoints, new anchor.BN(maximumFee))
       .accounts({ mintAccount: mintKeypair.publicKey })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 });
