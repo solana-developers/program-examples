@@ -1,6 +1,6 @@
 import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import type { Fundraiser } from '../target/types/fundraiser';
+import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -9,7 +9,7 @@ import {
   getOrCreateAssociatedTokenAccount,
   mintTo,
 } from '@solana/spl-token';
-import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
+import type { Fundraiser } from '../target/types/fundraiser';
 
 describe('fundraiser', () => {
   // Configure the client to use the local cluster.
