@@ -1,14 +1,9 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { ImmutableOwner } from "../target/types/immutable_owner";
-import {
-  AuthorityType,
-  TOKEN_2022_PROGRAM_ID,
-  createMint,
-  setAuthority,
-} from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { AuthorityType, TOKEN_2022_PROGRAM_ID, createMint, setAuthority } from '@solana/spl-token';
+import type { ImmutableOwner } from '../target/types/immutable_owner';
 
-describe("immutable-owner", () => {
+describe('immutable-owner', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -19,7 +14,7 @@ describe("immutable-owner", () => {
 
   const tokenKeypair = new anchor.web3.Keypair();
 
-  it("Create Token Account with ImmutableOwner extension", async () => {
+  it('Create Token Account with ImmutableOwner extension', async () => {
     const mint = await createMint(
       connection,
       wallet.payer, // Payer of the transaction and initialization fees
@@ -28,7 +23,7 @@ describe("immutable-owner", () => {
       2, // Decimals of Mint
       undefined, // Optional keypair
       undefined, // Options for confirming the transaction
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     const transactionSignature = await program.methods
@@ -39,10 +34,10 @@ describe("immutable-owner", () => {
       })
       .signers([tokenKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt to change token account owner, expect fail", async () => {
+  it('Attempt to change token account owner, expect fail', async () => {
     try {
       await setAuthority(
         connection, // Connection to use
@@ -53,10 +48,10 @@ describe("immutable-owner", () => {
         new anchor.web3.Keypair().publicKey, // Random address as new account Owner
         undefined, // Additional signers
         undefined, // Confirmation options
-        TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+        TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
       );
     } catch (error) {
-      console.log("\nExpect Error:", error.logs);
+      console.log('\nExpect Error:', error.logs);
     }
   });
 });

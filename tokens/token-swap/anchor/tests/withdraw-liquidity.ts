@@ -1,10 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { SwapExample } from "../target/types/swap_example";
-import { expect } from "chai";
-import { TestValues, createValues, mintingTokens } from "./utils";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { expect } from 'chai';
+import type { SwapExample } from '../target/types/swap_example';
+import { type TestValues, createValues, mintingTokens } from './utils';
 
-describe("Withdraw liquidity", () => {
+describe('Withdraw liquidity', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   anchor.setProvider(provider);
@@ -16,10 +16,7 @@ describe("Withdraw liquidity", () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods
-      .createAmm(values.id, values.fee)
-      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
-      .rpc();
+    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
 
     await mintingTokens({
       connection,
@@ -61,7 +58,7 @@ describe("Withdraw liquidity", () => {
       .rpc({ skipPreflight: true });
   });
 
-  it("Withdraw everything", async () => {
+  it('Withdraw everything', async () => {
     await program.methods
       .withdrawLiquidity(values.depositAmountA.sub(values.minimumLiquidity))
       .accounts({
@@ -81,27 +78,13 @@ describe("Withdraw liquidity", () => {
       .signers([values.admin])
       .rpc({ skipPreflight: true });
 
-    const liquidityTokenAccount = await connection.getTokenAccountBalance(
-      values.liquidityAccount
-    );
-    const depositTokenAccountA = await connection.getTokenAccountBalance(
-      values.holderAccountA
-    );
-    const depositTokenAccountB = await connection.getTokenAccountBalance(
-      values.holderAccountB
-    );
-    expect(liquidityTokenAccount.value.amount).to.equal("0");
-    expect(Number(depositTokenAccountA.value.amount)).to.be.lessThan(
-      values.defaultSupply.toNumber()
-    );
-    expect(Number(depositTokenAccountA.value.amount)).to.be.greaterThan(
-      values.defaultSupply.sub(values.depositAmountA).toNumber()
-    );
-    expect(Number(depositTokenAccountB.value.amount)).to.be.lessThan(
-      values.defaultSupply.toNumber()
-    );
-    expect(Number(depositTokenAccountB.value.amount)).to.be.greaterThan(
-      values.defaultSupply.sub(values.depositAmountA).toNumber()
-    );
+    const liquidityTokenAccount = await connection.getTokenAccountBalance(values.liquidityAccount);
+    const depositTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
+    const depositTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
+    expect(liquidityTokenAccount.value.amount).to.equal('0');
+    expect(Number(depositTokenAccountA.value.amount)).to.be.lessThan(values.defaultSupply.toNumber());
+    expect(Number(depositTokenAccountA.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountA).toNumber());
+    expect(Number(depositTokenAccountB.value.amount)).to.be.lessThan(values.defaultSupply.toNumber());
+    expect(Number(depositTokenAccountB.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountA).toNumber());
   });
 });

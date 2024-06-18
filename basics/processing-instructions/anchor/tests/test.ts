@@ -1,16 +1,15 @@
-import * as anchor from "@coral-xyz/anchor";
-import { ProcessingInstructions } from "../target/types/processing_instructions";
+import * as anchor from '@coral-xyz/anchor';
+import type { ProcessingInstructions } from '../target/types/processing_instructions';
 
-describe("custom-instruction-data", () => {
+describe('custom-instruction-data', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
-  const program = anchor.workspace
-    .ProcessingInstructions as anchor.Program<ProcessingInstructions>;
+  const program = anchor.workspace.ProcessingInstructions as anchor.Program<ProcessingInstructions>;
 
-  it("Go to the park!", async () => {
+  it('Go to the park!', async () => {
     // Again, Anchor makes it super simple.
     //
-    await program.methods.goToPark("Jimmy", 3).accounts({}).rpc();
-    await program.methods.goToPark("Mary", 10).accounts({}).rpc();
+    await program.methods.goToPark('Jimmy', 3).accounts({}).rpc();
+    await program.methods.goToPark('Mary', 10).accounts({}).rpc();
   });
 });

@@ -1,35 +1,28 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { PermanentDelegate } from "../target/types/permanent_delegate";
-import {
-  TOKEN_2022_PROGRAM_ID,
-  burnChecked,
-  createAccount,
-  getAccount,
-  mintTo,
-} from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { TOKEN_2022_PROGRAM_ID, burnChecked, createAccount, getAccount, mintTo } from '@solana/spl-token';
+import type { PermanentDelegate } from '../target/types/permanent_delegate';
 
-describe("permanent-delegate", () => {
+describe('permanent-delegate', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   const wallet = provider.wallet as anchor.Wallet;
   anchor.setProvider(provider);
 
-  const program = anchor.workspace
-    .PermanentDelegate as Program<PermanentDelegate>;
+  const program = anchor.workspace.PermanentDelegate as Program<PermanentDelegate>;
 
   const mintKeypair = new anchor.web3.Keypair();
 
-  it("Create Mint with Permanent Delegate", async () => {
+  it('Create Mint with Permanent Delegate', async () => {
     const transactionSignature = await program.methods
       .initialize()
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Create Token Account, Mint Tokens, and burn with Permanent Delegate", async () => {
+  it('Create Token Account, Mint Tokens, and burn with Permanent Delegate', async () => {
     const amount = 100;
 
     // Random keypair to use as owner of Token Account
@@ -43,7 +36,7 @@ describe("permanent-delegate", () => {
       randomKeypair.publicKey, // Token Account owner
       undefined, // Optional keypair, default to Associated Token Account
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     // Mint tokens to sourceTokenAccount
@@ -56,7 +49,7 @@ describe("permanent-delegate", () => {
       amount, // Amount
       undefined, // Additional signers
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     // Burn tokens from sourceTokenAccount, using Permanent Delegate
@@ -71,16 +64,11 @@ describe("permanent-delegate", () => {
       2, // Mint Account decimals
       undefined, // Additional signers
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
 
-    const tokenAccount = await getAccount(
-      connection,
-      sourceTokenAccount,
-      null,
-      TOKEN_2022_PROGRAM_ID
-    );
-    console.log("Token Account Balance:", Number(tokenAccount.amount));
+    const tokenAccount = await getAccount(connection, sourceTokenAccount, null, TOKEN_2022_PROGRAM_ID);
+    console.log('Token Account Balance:', Number(tokenAccount.amount));
   });
 });

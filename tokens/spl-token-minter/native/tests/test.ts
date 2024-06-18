@@ -1,124 +1,104 @@
-import { 
-    PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID
-} from '@metaplex-foundation/mpl-token-metadata';
+import { Buffer } from 'node:buffer';
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token';
 import {
-    Connection,
-    Keypair,
-    PublicKey,
-    SystemProgram,
-    SYSVAR_RENT_PUBKEY,
-    TransactionInstruction,
-    Transaction,
-    sendAndConfirmTransaction,
+  Connection,
+  Keypair,
+  PublicKey,
+  SYSVAR_RENT_PUBKEY,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+  sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import {
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    getAssociatedTokenAddress,
-    TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { Buffer } from "buffer";
-import { 
-    CreateTokenArgs,
-    MintToArgs,
-    SplMinterInstruction,
-} from './instructions';
 import { BN } from 'bn.js';
-
+import { CreateTokenArgs, MintToArgs, SplMinterInstruction } from './instructions';
 
 function createKeypairFromFile(path: string): Keypair {
-    return Keypair.fromSecretKey(
-        Buffer.from(JSON.parse(require('fs').readFileSync(path, "utf-8")))
-    )
-};
+  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+}
 
+describe('SPL Token Minter', async () => {
+  // const connection = new Connection(`http://localhost:8899`, 'confirmed');
+  const connection = new Connection('https://api.devnet.solana.com/', 'confirmed');
+  const payer = createKeypairFromFile(`${require('node:os').homedir()}/.config/solana/id.json`);
+  const program = createKeypairFromFile('./program/target/deploy/program-keypair.json');
 
-describe("SPL Token Minter", async () => {
+  const mintKeypair: Keypair = Keypair.generate();
 
-    // const connection = new Connection(`http://localhost:8899`, 'confirmed');
-    const connection = new Connection(`https://api.devnet.solana.com/`, 'confirmed');
-    const payer = createKeypairFromFile(require('os').homedir() + '/.config/solana/id.json');
-    const program = createKeypairFromFile('./program/target/deploy/program-keypair.json');
+  it('Create an SPL Token!', async () => {
+    const metadataAddress = PublicKey.findProgramAddressSync(
+      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
+      TOKEN_METADATA_PROGRAM_ID,
+    )[0];
 
-    const mintKeypair: Keypair = Keypair.generate();
-
-    it("Create an SPL Token!", async () => {
-
-        const metadataAddress = (PublicKey.findProgramAddressSync(
-            [
-              Buffer.from("metadata"),
-              TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-              mintKeypair.publicKey.toBuffer(),
-            ],
-            TOKEN_METADATA_PROGRAM_ID
-        ))[0];
-        
-        const instructionData = new CreateTokenArgs({
-            instruction: SplMinterInstruction.Create,
-            token_title: "Solana Gold",
-            token_symbol: "GOLDSOL",
-            token_uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
-        });
-
-        let ix = new TransactionInstruction({
-            keys: [
-                { pubkey: mintKeypair.publicKey, isSigner: true, isWritable: true },            // Mint account
-                { pubkey: payer.publicKey, isSigner: false, isWritable: true },                 // Mint authority account
-                { pubkey: metadataAddress, isSigner: false, isWritable: true },                 // Metadata account
-                { pubkey: payer.publicKey, isSigner: true, isWritable: true },                  // Payer
-                { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },             // Rent account
-                { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },        // System program
-                { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },               // Token program
-                { pubkey: TOKEN_METADATA_PROGRAM_ID, isSigner: false, isWritable: false },      // Token metadata program
-            ],
-            programId: program.publicKey,
-            data: instructionData.toBuffer(),
-        });
-
-        const sx = await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer, mintKeypair]
-        );
-
-        console.log("Success!");
-        console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-        console.log(`   Tx Signature: ${sx}`);
+    const instructionData = new CreateTokenArgs({
+      instruction: SplMinterInstruction.Create,
+      token_title: 'Solana Gold',
+      token_symbol: 'GOLDSOL',
+      token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
     });
 
-    it("Mint some tokens to your wallet!", async () => {
+    const ix = new TransactionInstruction({
+      keys: [
+        { pubkey: mintKeypair.publicKey, isSigner: true, isWritable: true }, // Mint account
+        { pubkey: payer.publicKey, isSigner: false, isWritable: true }, // Mint authority account
+        { pubkey: metadataAddress, isSigner: false, isWritable: true }, // Metadata account
+        { pubkey: payer.publicKey, isSigner: true, isWritable: true }, // Payer
+        { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }, // Rent account
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // System program
+        { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // Token program
+        {
+          pubkey: TOKEN_METADATA_PROGRAM_ID,
+          isSigner: false,
+          isWritable: false,
+        }, // Token metadata program
+      ],
+      programId: program.publicKey,
+      data: instructionData.toBuffer(),
+    });
 
-        const associatedTokenAccountAddress = await getAssociatedTokenAddress(
-            mintKeypair.publicKey,
-            payer.publicKey,
-        );
-        
-        const instructionData = new MintToArgs({
-            instruction: SplMinterInstruction.Mint,
-            quantity: new BN(150),
-        });
+    const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair]);
 
-        let ix = new TransactionInstruction({
-            keys: [
-                { pubkey: mintKeypair.publicKey, isSigner: false, isWritable: true },           // Mint account
-                { pubkey: payer.publicKey, isSigner: false, isWritable: true },                 // Mint authority account
-                { pubkey: associatedTokenAccountAddress, isSigner: false, isWritable: true },   // ATA
-                { pubkey: payer.publicKey, isSigner: true, isWritable: true },                  // Payer
-                { pubkey: SystemProgram.programId, isSigner: false, isWritable: true },                  // System program
-                { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },               // Token program
-                { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },    // Token metadata program
-            ],
-            programId: program.publicKey,
-            data: instructionData.toBuffer(),
-        });
+    console.log('Success!');
+    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+    console.log(`   Tx Signature: ${sx}`);
+  });
 
-        const sx = await sendAndConfirmTransaction(
-            connection, 
-            new Transaction().add(ix),
-            [payer],
-        );
+  it('Mint some tokens to your wallet!', async () => {
+    const associatedTokenAccountAddress = await getAssociatedTokenAddress(mintKeypair.publicKey, payer.publicKey);
 
-        console.log("Success!");
-        console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-        console.log(`   Tx Signature: ${sx}`);
+    const instructionData = new MintToArgs({
+      instruction: SplMinterInstruction.Mint,
+      quantity: new BN(150),
+    });
+
+    const ix = new TransactionInstruction({
+      keys: [
+        { pubkey: mintKeypair.publicKey, isSigner: false, isWritable: true }, // Mint account
+        { pubkey: payer.publicKey, isSigner: false, isWritable: true }, // Mint authority account
+        {
+          pubkey: associatedTokenAccountAddress,
+          isSigner: false,
+          isWritable: true,
+        }, // ATA
+        { pubkey: payer.publicKey, isSigner: true, isWritable: true }, // Payer
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: true }, // System program
+        { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // Token program
+        {
+          pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+          isSigner: false,
+          isWritable: false,
+        }, // Token metadata program
+      ],
+      programId: program.publicKey,
+      data: instructionData.toBuffer(),
+    });
+
+    const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
+
+    console.log('Success!');
+    console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
+    console.log(`   Tx Signature: ${sx}`);
   });
 });

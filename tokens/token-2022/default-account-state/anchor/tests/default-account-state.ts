@@ -1,33 +1,28 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { DefaultAccountState } from "../target/types/default_account_state";
-import {
-  TOKEN_2022_PROGRAM_ID,
-  mintTo,
-  createAccount,
-} from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { TOKEN_2022_PROGRAM_ID, createAccount, mintTo } from '@solana/spl-token';
+import type { DefaultAccountState } from '../target/types/default_account_state';
 
-describe("default-account-state", () => {
+describe('default-account-state', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   const wallet = provider.wallet as anchor.Wallet;
   anchor.setProvider(provider);
 
-  const program = anchor.workspace
-    .DefaultAccountState as Program<DefaultAccountState>;
+  const program = anchor.workspace.DefaultAccountState as Program<DefaultAccountState>;
 
   const mintKeypair = new anchor.web3.Keypair();
 
-  it("Create Mint with DefaultAccountState extension", async () => {
+  it('Create Mint with DefaultAccountState extension', async () => {
     const transactionSignature = await program.methods
       .initialize()
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt Mint Token, expect fail", async () => {
+  it('Attempt Mint Token, expect fail', async () => {
     const amount = 1;
 
     // Create a token account, default state is frozen
@@ -38,7 +33,7 @@ describe("default-account-state", () => {
       wallet.payer.publicKey, // Token Account owner
       new anchor.web3.Keypair(), // Optional keypair
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     try {
@@ -52,23 +47,23 @@ describe("default-account-state", () => {
         amount, // Amount
         [], // Additional signers
         null, // Commitment
-        TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+        TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
       );
     } catch (error) {
-      console.log("\nExpect Error:", error.logs);
+      console.log('\nExpect Error:', error.logs);
     }
   });
 
-  it("Update DefaultAccountState", async () => {
+  it('Update DefaultAccountState', async () => {
     // Update the default state to initialized (not frozen)
     const transactionSignature = await program.methods
       .updateDefaultState({ initialized: {} })
       .accounts({ mintAccount: mintKeypair.publicKey })
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt Mint Token, expect success", async () => {
+  it('Attempt Mint Token, expect success', async () => {
     const amount = 1;
 
     // Create a token account, default state is initialized (not frozen)
@@ -79,7 +74,7 @@ describe("default-account-state", () => {
       wallet.payer.publicKey, // Token Account owner
       new anchor.web3.Keypair(), // Optional keypair
       undefined, // Confirmation options
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     await mintTo(
@@ -91,7 +86,7 @@ describe("default-account-state", () => {
       amount, // Amount
       [], // Additional signers
       null, // Commitment
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
   });
 });

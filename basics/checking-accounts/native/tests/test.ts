@@ -1,19 +1,10 @@
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
 import { describe, test } from 'node:test';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
 
 describe('Checking accounts', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: 'checking_accounts_program', programId: PROGRAM_ID }],
-    []
-  );
+  const context = await start([{ name: 'checking_accounts_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
   const rent = await client.getRent();
@@ -26,7 +17,7 @@ describe('Checking accounts', async () => {
 
   test('Create an account owned by our program', async () => {
     const blockhash = context.lastBlockhash;
-    let ix = SystemProgram.createAccount({
+    const ix = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       newAccountPubkey: accountToChange.publicKey,
       lamports: Number(rent.minimumBalance(BigInt(0))),
@@ -43,7 +34,7 @@ describe('Checking accounts', async () => {
 
   test('Check accounts', async () => {
     const blockhash = context.lastBlockhash;
-    let ix = new TransactionInstruction({
+    const ix = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
         { pubkey: accountToCreate.publicKey, isSigner: true, isWritable: true },

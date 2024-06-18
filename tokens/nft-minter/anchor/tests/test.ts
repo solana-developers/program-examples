@@ -1,9 +1,9 @@
-import * as anchor from "@coral-xyz/anchor";
-import { NftMinter } from "../target/types/nft_minter";
-import { Keypair } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Keypair } from '@solana/web3.js';
+import type { NftMinter } from '../target/types/nft_minter';
 
-describe("NFT Minter", () => {
+describe('NFT Minter', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
@@ -11,20 +11,17 @@ describe("NFT Minter", () => {
 
   // The metadata for our NFT
   const metadata = {
-    name: "Homer NFT",
-    symbol: "HOMR",
-    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
+    name: 'Homer NFT',
+    symbol: 'HOMR',
+    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
   };
 
-  it("Create an NFT!", async () => {
+  it('Create an NFT!', async () => {
     // Generate a keypair to use as the address of our mint account
     const mintKeypair = new Keypair();
 
     // Derive the associated token address account for the mint and payer.
-    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
-      mintKeypair.publicKey,
-      payer.publicKey
-    );
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
     const transactionSignature = await program.methods
       .mintNft(metadata.name, metadata.symbol, metadata.uri)
@@ -36,7 +33,7 @@ describe("NFT Minter", () => {
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });

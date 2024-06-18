@@ -1,9 +1,9 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { Hand } from "../target/types/hand";
-import { Lever } from "../target/types/lever";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import type { Hand } from '../target/types/hand';
+import type { Lever } from '../target/types/lever';
 
-describe("cpi", () => {
+describe('cpi', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
@@ -13,7 +13,7 @@ describe("cpi", () => {
   // Generate a new keypair for the power account
   const powerAccount = new anchor.web3.Keypair();
 
-  it("Initialize the lever!", async () => {
+  it('Initialize the lever!', async () => {
     await lever.methods
       .initialize()
       .accounts({
@@ -24,18 +24,18 @@ describe("cpi", () => {
       .rpc();
   });
 
-  it("Pull the lever!", async () => {
+  it('Pull the lever!', async () => {
     await hand.methods
-      .pullLever("Chris")
+      .pullLever('Chris')
       .accounts({
         power: powerAccount.publicKey,
       })
       .rpc();
   });
 
-  it("Pull it again!", async () => {
+  it('Pull it again!', async () => {
     await hand.methods
-      .pullLever("Ashley")
+      .pullLever('Ashley')
       .accounts({
         power: powerAccount.publicKey,
       })

@@ -5,8 +5,8 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
+import * as beet from '@metaplex-foundation/beet';
+import * as web3 from '@solana/web3.js';
 
 /**
  * @category Instructions
@@ -14,8 +14,8 @@ import * as web3 from '@solana/web3.js'
  * @category generated
  */
 export const ReturnCarStruct = new beet.BeetArgsStruct<{
-  instructionDiscriminator: number
-}>([['instructionDiscriminator', beet.u8]], 'ReturnCarInstructionArgs')
+  instructionDiscriminator: number;
+}>([['instructionDiscriminator', beet.u8]], 'ReturnCarInstructionArgs');
 /**
  * Accounts required by the _ReturnCar_ instruction
  *
@@ -27,12 +27,12 @@ export const ReturnCarStruct = new beet.BeetArgsStruct<{
  * @category generated
  */
 export type ReturnCarInstructionAccounts = {
-  rentalAccount: web3.PublicKey
-  carAccount: web3.PublicKey
-  payer: web3.PublicKey
-}
+  rentalAccount: web3.PublicKey;
+  carAccount: web3.PublicKey;
+  payer: web3.PublicKey;
+};
 
-export const returnCarInstructionDiscriminator = 3
+export const returnCarInstructionDiscriminator = 3;
 
 /**
  * Creates a _ReturnCar_ instruction.
@@ -44,11 +44,11 @@ export const returnCarInstructionDiscriminator = 3
  */
 export function createReturnCarInstruction(
   accounts: ReturnCarInstructionAccounts,
-  programId = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ')
+  programId = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'),
 ) {
   const [data] = ReturnCarStruct.serialize({
     instructionDiscriminator: returnCarInstructionDiscriminator,
-  })
+  });
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.rentalAccount,
@@ -65,12 +65,12 @@ export function createReturnCarInstruction(
       isWritable: true,
       isSigner: false,
     },
-  ]
+  ];
 
   const ix = new web3.TransactionInstruction({
     programId,
     keys,
     data,
-  })
-  return ix
+  });
+  return ix;
 }

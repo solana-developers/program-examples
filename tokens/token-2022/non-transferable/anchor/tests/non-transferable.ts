@@ -1,15 +1,9 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { NonTransferable } from "../target/types/non_transferable";
-import {
-  TOKEN_2022_PROGRAM_ID,
-  getOrCreateAssociatedTokenAccount,
-  mintTo,
-  transfer,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@coral-xyz/anchor';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getOrCreateAssociatedTokenAccount, mintTo, transfer } from '@solana/spl-token';
+import type { NonTransferable } from '../target/types/non_transferable';
 
-describe("non-transferable", () => {
+describe('non-transferable', () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   const wallet = provider.wallet as anchor.Wallet;
@@ -20,16 +14,16 @@ describe("non-transferable", () => {
   const mintKeypair = new anchor.web3.Keypair();
   const recipient = new anchor.web3.Keypair();
 
-  it("Create Mint with NonTransferable extension", async () => {
+  it('Create Mint with NonTransferable extension', async () => {
     const transactionSignature = await program.methods
       .initialize()
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log("Your transaction signature", transactionSignature);
+    console.log('Your transaction signature', transactionSignature);
   });
 
-  it("Attempt Token Transfer", async () => {
+  it('Attempt Token Transfer', async () => {
     const amount = 1;
 
     const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
@@ -41,7 +35,7 @@ describe("non-transferable", () => {
       null, // Commitment
       null, // Confirm options
       TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
-      ASSOCIATED_TOKEN_PROGRAM_ID // Associated Token Program ID
+      ASSOCIATED_TOKEN_PROGRAM_ID, // Associated Token Program ID
     );
 
     const destinationTokenAccount = await getOrCreateAssociatedTokenAccount(
@@ -53,7 +47,7 @@ describe("non-transferable", () => {
       null, // Commitment
       null, // Confirm options
       TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
-      ASSOCIATED_TOKEN_PROGRAM_ID // Associated Token Program ID
+      ASSOCIATED_TOKEN_PROGRAM_ID, // Associated Token Program ID
     );
 
     await mintTo(
@@ -65,7 +59,7 @@ describe("non-transferable", () => {
       amount, // Amount
       [], // Additional signers
       null, // Commitment
-      TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+      TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
     );
 
     try {
@@ -79,10 +73,10 @@ describe("non-transferable", () => {
         amount, // Amount
         undefined, // Additional signers
         undefined, // Confirmation options
-        TOKEN_2022_PROGRAM_ID // Token Extension Program ID
+        TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
       );
     } catch (error) {
-      console.log("\nExpect Error:", error.logs);
+      console.log('\nExpect Error:', error.logs);
     }
   });
 });

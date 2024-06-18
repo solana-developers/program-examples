@@ -1,34 +1,21 @@
-import * as anchor from "@coral-xyz/anchor";
-import { decode, mapProof } from "../utils";
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
-import {
-  SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
-  SPL_NOOP_PROGRAM_ID,
-} from "@solana/spl-account-compression";
-import { getAsset, getAssetProof } from "../readAPI";
+import * as anchor from '@coral-xyz/anchor';
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
+import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
+import { getAsset, getAssetProof } from '../readAPI';
+import { decode, mapProof } from '../utils';
 
-import { program, programID } from "./constants";
+import { program, programID } from './constants';
 
 async function main() {
-  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("cNFT-vault", "utf8")],
-    programID
-  );
+  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('cNFT-vault', 'utf8')], programID);
 
-  const tree = new anchor.web3.PublicKey(
-    "trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B"
-  );
+  const tree = new anchor.web3.PublicKey('trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B');
 
-  const receiver = new anchor.web3.PublicKey(
-    "Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM"
-  );
+  const receiver = new anchor.web3.PublicKey('Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM');
 
-  const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
-    [tree.toBuffer()],
-    BUBBLEGUM_PROGRAM_ID
-  );
+  const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync([tree.toBuffer()], BUBBLEGUM_PROGRAM_ID);
 
-  const assetId = "DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd";
+  const assetId = 'DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd';
   const asset = await getAsset(assetId);
   // console.log(res)
 

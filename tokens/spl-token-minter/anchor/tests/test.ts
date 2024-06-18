@@ -1,25 +1,24 @@
-import * as anchor from "@coral-xyz/anchor";
-import { SplTokenMinter } from "../target/types/spl_token_minter";
-import { Keypair } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Keypair } from '@solana/web3.js';
+import type { SplTokenMinter } from '../target/types/spl_token_minter';
 
-describe("SPL Token Minter", () => {
+describe('SPL Token Minter', () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace
-    .SplTokenMinter as anchor.Program<SplTokenMinter>;
+  const program = anchor.workspace.SplTokenMinter as anchor.Program<SplTokenMinter>;
 
   const metadata = {
-    name: "Solana Gold",
-    symbol: "GOLDSOL",
-    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+    name: 'Solana Gold',
+    symbol: 'GOLDSOL',
+    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
   };
 
   // Generate new keypair to use as address for mint account.
   const mintKeypair = new Keypair();
 
-  it("Create an SPL Token!", async () => {
+  it('Create an SPL Token!', async () => {
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
@@ -29,17 +28,14 @@ describe("SPL Token Minter", () => {
       .signers([mintKeypair])
       .rpc();
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it("Mint some tokens to your wallet!", async () => {
+  it('Mint some tokens to your wallet!', async () => {
     // Derive the associated token address account for the mint and payer.
-    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
-      mintKeypair.publicKey,
-      payer.publicKey
-    );
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
     // Amount of tokens to mint.
     const amount = new anchor.BN(100);
@@ -55,10 +51,8 @@ describe("SPL Token Minter", () => {
       })
       .rpc();
 
-    console.log("Success!");
-    console.log(
-      `   Associated Token Account Address: ${associatedTokenAccountAddress}`
-    );
+    console.log('Success!');
+    console.log(`   Associated Token Account Address: ${associatedTokenAccountAddress}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });
