@@ -1,6 +1,6 @@
 # Token Fundraiser
 
-This example demonstrates how to create a fundraising for SPL Tokens.
+This example demonstrates how to create a fundraiser for SPL Tokens.
 
 In this example, a user will be able to create a fundraiser account, where he will be specify the mint he wants to collect and the fundraising target.
 
@@ -80,7 +80,7 @@ Let´s have a closer look at the accounts that we are passing in this context:
 - mint_to_raise: The mint that the user wants to receive. This will be a Mint Account, that we will use to store the mint address
 
 - fundraiser: will be the state account that we will initialize and the maker will be paying for the initialization of the account.
-We derive the Fundraiser PDA from the byte representation of the word "fundraiser" and the reference of the maker publick key. Anchor will calculate the canonical bump (the first bump that throes that address out of the ed25519 eliptic curve) and save it for us in a struct
+We derive the Fundraiser PDA from the byte representation of the word "fundraiser" and the reference of the maker public key. Anchor will calculate the canonical bump (the first bump that throws that address out of the ed25519 eliptic curve) and save it for us in a struct
 
 - vault: We will initialize a vault (ATA) to receive the contributions. This account will be derived from the mint that the user wants to receive, and the fundraiser account that we are just creating
 
@@ -248,7 +248,7 @@ impl<'info> Contribute<'info> {
 In here, we make some checks:
 - We check that the user is depositing at least one token
 
-- We Check that the user is not contributiong with more than 10% of the target amount
+- We Check that the user is not contributing with more than 10% of the target amount
 
 - We check that the total contributions of the user do not exceed a total of 10% of the target amount
 
@@ -261,7 +261,7 @@ Lastly, we update our state acounts with the right amounts
 
 ---
 
-### User will be able to claim the tokens once the fundraiding target has been reached
+### User will be able to claim the tokens once the fundraising target has been reached
 
 ```rust
 #[derive(Accounts)]
@@ -354,7 +354,7 @@ impl<'info> CheckContributions<'info> {
 ```
 
 In this implementation, we check if the amount of tokens in the vault is equal or bigger then the fundraising campaign target.
-If it is, then we perform a CPI to the token program to transfer the funds from the vault to the maker ATA. Since the vault is an ATA, we need to create our CPI contexr with a signer and use the seeds and bump from the PDA (We are signing with our program on behalf of that PDA).
+If it is, then we perform a CPI to the token program to transfer the funds from the vault to the maker ATA. Since the vault is an ATA, we need to create our CPI context with a signer and use the seeds and bump from the PDA (We are signing with our program on behalf of that PDA).
 
 Finally, we close our Fundraiser account and send the lamports from the rent back to the maker (done with the "close" constraint int the Fundraiser account).
 
@@ -466,5 +466,5 @@ impl<'info> Refund<'info> {
     }
 }
 
-In here, we will check if the fundrasing has already met the target and if ir passed the duration time.
+In here, we will check if the fundrasing has already met the target and if it passed the duration time.
 After doing the proper checks, we transfer the donated funds from the vault back to the contributor

@@ -38,11 +38,11 @@ pub struct Initialize<'info> {
 }
 
 impl<'info> Initialize<'info> {
-    pub fn initialize(&mut self, amount: u64, duration: u8, bumps: &InitializeBumps) -> Result<()> {
+    pub fn initialize(&mut self, amount: u64, duration: u16, bumps: &InitializeBumps) -> Result<()> {
 
         // Check if the amount to raise meets the minimum amount required
         require!(
-            amount > MIN_AMOUNT_TO_RAISE.pow(self.mint_to_raise.decimals as u32),
+            amount >= MIN_AMOUNT_TO_RAISE.pow(self.mint_to_raise.decimals as u32),
             FundraiserError::InvalidAmount
         );
 

@@ -58,7 +58,7 @@ impl<'info> Contribute<'info> {
 
         // Check if the amount to contribute meets the minimum amount required
         require!(
-            amount > 1_u8.pow(self.mint_to_raise.decimals as u32) as u64, 
+            amount >= 1_u64.pow(self.mint_to_raise.decimals as u32), 
             FundraiserError::ContributionTooSmall
         );
 
@@ -71,7 +71,7 @@ impl<'info> Contribute<'info> {
         // Check if the fundraising duration has been reached
         let current_time = Clock::get()?.unix_timestamp;
         require!(
-            self.fundraiser.duration <= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u8,
+            self.fundraiser.duration <= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
             crate::FundraiserError::FundraiserEnded
         );
 

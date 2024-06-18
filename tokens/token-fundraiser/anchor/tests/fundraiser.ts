@@ -50,7 +50,6 @@ describe("fundraiser", () => {
   })
 
   it("Initialize Fundaraiser", async () => {
-    // Add your test here.
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program
@@ -66,9 +65,7 @@ describe("fundraiser", () => {
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     })
     .signers([maker])
-    .rpc({
-      skipPreflight: true,
-    })
+    .rpc()
     .then(confirm);
 
     console.log("\nInitialized fundraiser Account");
@@ -88,9 +85,7 @@ describe("fundraiser", () => {
       vault,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
-    .rpc({
-      skipPreflight: true,
-    })
+    .rpc()
     .then(confirm);
 
     console.log("\nContributed to fundraiser", tx);
@@ -113,9 +108,7 @@ describe("fundraiser", () => {
       vault,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
-    .rpc({
-      skipPreflight: true,
-    })
+    .rpc()
     .then(confirm);
 
     console.log("\nContributed to fundraiser", tx);
@@ -140,9 +133,7 @@ describe("fundraiser", () => {
         vault,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
-      .rpc({
-        skipPreflight: true,
-      })
+      .rpc()
       .then(confirm);
 
       console.log("\nContributed to fundraiser", tx);
@@ -169,9 +160,7 @@ describe("fundraiser", () => {
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .signers([maker])
-      .rpc({
-        skipPreflight: true,
-      })
+      .rpc()
       .then(confirm);
 
       console.log("\nChecked contributions");
@@ -202,9 +191,7 @@ describe("fundraiser", () => {
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,
     })
-    .rpc({
-      skipPreflight: true,
-    })
+    .rpc()
     .then(confirm);
 
     console.log("\nRefunded contributions", tx);

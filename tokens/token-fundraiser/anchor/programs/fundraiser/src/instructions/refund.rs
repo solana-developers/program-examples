@@ -58,7 +58,7 @@ impl<'info> Refund<'info> {
         let current_time = Clock::get()?.unix_timestamp;
  
         require!(
-            self.fundraiser.duration <= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u8,
+            self.fundraiser.duration >= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
             crate::FundraiserError::FundraiserNotEnded
         );
 

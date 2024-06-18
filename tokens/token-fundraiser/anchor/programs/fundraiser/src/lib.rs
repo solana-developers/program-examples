@@ -15,7 +15,7 @@ pub use constants::*;
 pub mod fundraiser {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, amount: u64, duration: u8) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, amount: u64, duration: u16) -> Result<()> {
 
         ctx.accounts.initialize(amount, duration, &ctx.bumps)?;
 
