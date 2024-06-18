@@ -363,6 +363,7 @@ Finally, we close our Fundraiser account and send the lamports from the rent bac
 
 ### Users will be able to refund their contributions, if the duration of the fundraising has elapsed and the target has not reached
 
+```rust
 #[derive(Accounts)]
 pub struct Refund<'info> {
     #[account(mut)]
@@ -398,6 +399,7 @@ pub struct Refund<'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
 }
+```
 
 In this context, we are passing all the accounts needed for a contributor to refund their tokens:
 
@@ -419,6 +421,7 @@ In this context, we are passing all the accounts needed for a contributor to ref
 
 ### We then implement some functionality for our Refund context:
 
+```rust
 impl<'info> Refund<'info> {
     pub fn refund(&mut self) -> Result<()> {
 
@@ -465,6 +468,7 @@ impl<'info> Refund<'info> {
         Ok(())
     }
 }
+```
 
 In here, we will check if the fundrasing has already met the target and if it passed the duration time.
 After doing the proper checks, we transfer the donated funds from the vault back to the contributor
