@@ -20,7 +20,7 @@ jobs:
       matrix:
         node-version: [20.x]
         solana-version: [1.18.8, beta]
-        anchor-version: [0.30.0]
+        anchor-version: [0.30.1]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Anchor
@@ -46,8 +46,10 @@ jobs:
           filters: |
             anchor:
               - added|modified: '**/anchor/**'
+            anchor_action:
+              - added|modified: '**/workflows/anchor.yml'
       - name: Build Changed Anchor programs
-        if: ${{ steps.changes.outputs.anchor == 'true' }}
+        if: steps.changes.outputs.anchor == 'true'
         run: |
             changed_files=(${{ steps.changes.outputs.anchor_files }})
 
@@ -91,7 +93,7 @@ jobs:
         shell: bash
       # Skip Building all Programs if it's a PR to main branch
       - name: Build All Anchor programs
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' || steps.changes.outputs.anchor_action == 'true'
         run: |
           # Find all anchor projects and remove ignored projects
           declare -a ProjectDirs=($(find . -type d -name 'anchor' | sed 's|^\./||'| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
