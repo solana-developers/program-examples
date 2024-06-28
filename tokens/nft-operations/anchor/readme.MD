@@ -4,6 +4,22 @@ This example demonstrates how to create a NFT collection, how to mint a NFT and 
 
 ---
 
+## Program Setup
+
+For this program example we will be cloning the Metaplex Token Metadata program from mainnet. You can find this in the Anchor.toml file
+
+```rust
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[[test.validator.clone]]
+address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+```
+
+We will need this program to perform CPIs to create the Metadata Accounts, Master Edition Accounts and to Verify NFTs as part of collections
+
+---
+
 ## Create a NFT Collection:
 
 The accounts needed to create a NFT Collection are the following:
