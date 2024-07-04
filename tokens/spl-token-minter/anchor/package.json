@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@coral-xyz/anchor": "^0.30.0",
+    "@coral-xyz/anchor": "^0.30.1",
     "@solana/spl-token": "^0.3.8"
   },
   "devDependencies": {
