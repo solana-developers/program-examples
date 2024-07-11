@@ -180,8 +180,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install --frozen-lockfile
-            if anchor test; then
+            if pnpm install --frozen-lockfile && anchor test; then
               echo "Tests succeeded for $projectDir."
               rm -rf target node_modules
             else
