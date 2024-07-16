@@ -12,7 +12,9 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*": ["biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"]
+    "*": [
+      "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"
+    ]
   },
   "keywords": [],
   "author": "Solana Foundation",
@@ -24,5 +26,8 @@
     "picocolors": "^1.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "package.json": "^2.0.1"
   }
 }

@@ -17,7 +17,7 @@ pub fn create_user(program_id: &Pubkey, accounts: &[AccountInfo], data: User) ->
     let payer = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (data.try_to_vec()?).len();
+    let account_span = std::mem::size_of_val(&data);
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     let (_, bump) = Pubkey::find_program_address(

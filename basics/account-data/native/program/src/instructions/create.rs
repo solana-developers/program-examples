@@ -21,7 +21,7 @@ pub fn create_address_info(
     let payer = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (address_info.try_to_vec()?).len();
+    let account_span = std::mem::size_of_val(&address_info);
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke(

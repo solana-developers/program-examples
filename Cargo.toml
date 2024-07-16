@@ -5,7 +5,7 @@ members = [
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
-    "basics/close-account/native/program",
+    "basics/close-account/native/program",`
     "basics/close-account/anchor/programs/close-account",
     "basics/counter/native/program",
     "basics/counter/anchor/programs/counter_anchor",
@@ -14,6 +14,7 @@ members = [
     "basics/create-account/anchor/programs/create-system-account",
     "basics/cross-program-invocation/native/programs/*",
     "basics/cross-program-invocation/anchor/programs/*",
+    "basics/favorites/anchor/programs/favorites",
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
     "basics/pda-rent-payer/native/program",
@@ -30,11 +31,12 @@ members = [
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/anchor/programs/*",
+    "oracles/pyth/anchor/programs/pythexample",
     "tokens/token-2022/mint-close-authority/native/program",
     "tokens/token-2022/non-transferable/native/program",
     "tokens/token-2022/default-account-state/native/program",
     "tokens/token-2022/transfer-fee/native/program",
-    "tokens/token-2022/multiple-extensions/native/program"
+    "tokens/token-2022/multiple-extensions/native/program", 
 ]
 resolver = "2"
 

@@ -42,7 +42,7 @@ pub fn initialize(
     let user = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (power_status.try_to_vec()?).len();
+    let account_span = std::mem::size_of_val(&power_status);
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke(

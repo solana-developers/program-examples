@@ -23,7 +23,7 @@ pub fn reallocate_without_zero_init(
     let enhanced_address_info_data =
         EnhancedAddressInfo::from_address_info(address_info_data, args.state, args.zip);
 
-    let account_span = (enhanced_address_info_data.try_to_vec()?).len();
+    let account_span = std::mem::size_of_val(&enhanced_address_info_data);
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     let diff = lamports_required - target_account.lamports();
@@ -47,7 +47,7 @@ pub fn reallocate_zero_init(accounts: &[AccountInfo], data: WorkInfo) -> Program
     let accounts_iter = &mut accounts.iter();
     let target_account = next_account_info(accounts_iter)?;
 
-    let account_span = (data.try_to_vec()?).len();
+    let account_span = std::mem::size_of_val(&data);
 
     target_account.realloc(account_span, true)?;
 
