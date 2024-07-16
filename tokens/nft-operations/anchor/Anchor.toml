@@ -1,0 +1,27 @@
+[toolchain]
+
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
+
+[programs.devnet]
+mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[[test.validator.clone]]
+address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"

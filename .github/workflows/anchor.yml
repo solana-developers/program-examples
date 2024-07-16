@@ -19,25 +19,10 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.18.8, beta]
-        anchor-version: [0.30.0]
+        solana-version: [1.18.17, stable]
+        anchor-version: [0.30.1]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Anchor
-        uses: heyAyushh/setup-anchor@v3.10
-        with:
-          anchor-version: ${{ matrix.anchor-version }}
-          solana-cli-version: ${{ matrix.solana-version }}
-          node-version: ${{ matrix.node-version }}
-      - name: Display versions
-        run: |
-          solana -V
-          solana-keygen new --no-bip39-passphrase
-          rustc -V
-          anchor -V
-          npm i -g pnpm
-      # Run only if it's triggered by PR to main,
-      # Build the changed programs
       - uses: dorny/paths-filter@v3
         if: github.event_name == 'pull_request'
         id: changes
@@ -46,8 +31,28 @@ jobs:
           filters: |
             anchor:
               - added|modified: '**/anchor/**'
+            anchor_action:
+              - added|modified: '**/workflows/anchor.yml'
+
+      - name: Setup Anchor
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
+        uses: heyAyushh/setup-anchor@v3.12
+        with:
+          anchor-version: ${{ matrix.anchor-version }}
+          solana-cli-version: ${{ matrix.solana-version }}
+          node-version: ${{ matrix.node-version }}
+      - name: Display versions and Install pnpm
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
+        run: |
+          solana -V
+          solana-keygen new --no-bip39-passphrase
+          rustc -V
+          anchor -V
+          npm i -g pnpm
+      # Run only if it's triggered by PR to main,
+      # Build the changed programs
       - name: Build Changed Anchor programs
-        if: ${{ steps.changes.outputs.anchor == 'true' }}
+        if: steps.changes.outputs.anchor == 'true' && steps.changes.outputs.anchor_action != 'true'
         run: |
             changed_files=(${{ steps.changes.outputs.anchor_files }})
 
@@ -91,7 +96,7 @@ jobs:
         shell: bash
       # Skip Building all Programs if it's a PR to main branch
       - name: Build All Anchor programs
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'schedule' || github.event_name == 'push' || steps.changes.outputs.anchor_action == 'true'
         run: |
           # Find all anchor projects and remove ignored projects
           declare -a ProjectDirs=($(find . -type d -name 'anchor' | sed 's|^\./||'| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
@@ -132,25 +137,10 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.18.8, beta]
-        anchor-version: [0.30.0]
+        solana-version: [1.18.17, stable]
+        anchor-version: [0.30.1]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Anchor
-        uses: heyAyushh/setup-anchor@v3.10
-        with:
-          anchor-version: ${{ matrix.anchor-version }}
-          solana-cli-version: ${{ matrix.solana-version }}
-          node-version: ${{ matrix.node-version }}
-      - name: Display versions
-        run: |
-          solana -V
-          solana-keygen new --no-bip39-passphrase
-          rustc -V
-          anchor -V
-          npm i -g pnpm
-      # Run only if it's triggered by PR to main,
-      # Test the changed programs (if any)
       - uses: dorny/paths-filter@v3
         if: github.event_name == 'pull_request'
         id: changes
@@ -159,8 +149,26 @@ jobs:
           filters: |
             anchor:
               - added|modified: '**/anchor/**'
+            anchor_action:
+              - added|modified: '**/workflows/anchor.yml'
+      # Skip Installing and Displaying versions if theres no change in anchor programs or anchor action workflow file or isn't a schedule event
+      - name: Setup Anchor
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
+        uses: heyAyushh/setup-anchor@v3.12
+        with:
+          anchor-version: ${{ matrix.anchor-version }}
+          solana-cli-version: ${{ matrix.solana-version }}
+          node-version: ${{ matrix.node-version }}
+      - name: Display versions and Install pnpm
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
+        run: |
+          solana -V
+          solana-keygen new --no-bip39-passphrase
+          rustc -V
+          anchor -V
+          npm i -g pnpm
       - name: Test Changed Anchor Programs
-        if: ${{ steps.changes.outputs.anchor == 'true' }}
+        if: steps.changes.outputs.anchor == 'true' && steps.changes.outputs.anchor_action != 'true'
         run: |
           changed_files=(${{ steps.changes.outputs.anchor_files }})
           ProjectDirs=($(for file in "${changed_files[@]}"; do dirname "${file}" | grep anchor | sed 's#/anchor/.*#/anchor#g'; done | grep -v -f <(grep . .github/.ghaignore | grep -v '^$') | sort -u))
@@ -172,8 +180,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install --frozen-lockfile
-            if anchor test; then
+            if pnpm install --frozen-lockfile && anchor test; then
               echo "Tests succeeded for $projectDir."
               rm -rf target node_modules
             else
@@ -192,9 +199,9 @@ jobs:
             echo "All tests passed."
           fi
         shell: bash
-      # Skip Testing all Programs if it's a PR to main branch
+      # Skip Testing all Programs if it's a CRON job or a change in the workflow file
       - name: Test All Anchor Programs
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'schedule' || steps.changes.outputs.anchor_action == 'true'
         run: |
           declare -a ProjectDirs=($(find . -type d -name "anchor"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
           echo "Projects to Test:"
