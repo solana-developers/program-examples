@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.18.8, stable]
+        solana-version: [1.18.17, stable]
         anchor-version: [0.30.1]
     steps:
       - uses: actions/checkout@v4
@@ -35,8 +35,8 @@ jobs:
               - added|modified: '**/workflows/anchor.yml'
 
       - name: Setup Anchor
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
-        uses: heyAyushh/setup-anchor@v3.10
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
+        uses: heyAyushh/setup-anchor@v3.12
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
@@ -96,7 +96,7 @@ jobs:
         shell: bash
       # Skip Building all Programs if it's a PR to main branch
       - name: Build All Anchor programs
-        if: github.event_name == 'schedule' || steps.changes.outputs.anchor_action == 'true'
+        if: github.event_name == 'schedule' || github.event_name == 'push' || steps.changes.outputs.anchor_action == 'true'
         run: |
           # Find all anchor projects and remove ignored projects
           declare -a ProjectDirs=($(find . -type d -name 'anchor' | sed 's|^\./||'| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
@@ -137,8 +137,8 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.18.8, stable]
-        anchor-version: [0.30.0]
+        solana-version: [1.18.17, stable]
+        anchor-version: [0.30.1]
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -153,8 +153,8 @@ jobs:
               - added|modified: '**/workflows/anchor.yml'
       # Skip Installing and Displaying versions if theres no change in anchor programs or anchor action workflow file or isn't a schedule event
       - name: Setup Anchor
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
-        uses: heyAyushh/setup-anchor@v3.10
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
+        uses: heyAyushh/setup-anchor@v3.12
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
@@ -180,8 +180,7 @@ jobs:
             Testing $projectDir
             ********"
             cd $projectDir
-            pnpm install --frozen-lockfile
-            if anchor test; then
+            if pnpm install --frozen-lockfile && anchor test; then
               echo "Tests succeeded for $projectDir."
               rm -rf target node_modules
             else
