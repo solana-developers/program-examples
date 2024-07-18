@@ -4,7 +4,7 @@
 # It also serves as a reference for the commands used for building & deploying Solana programs.
 # Run this bad boy with "bash cicd.sh" or "./cicd.sh"
 
-cargo build-bpf --bpf-out-dir=./target/so
+cargo build-sbf --bpf-out-dir=./target/so
 echo "Hand:"
 solana program deploy ./target/so/hand.so | grep "Program Id:"
 echo "Lever:"
