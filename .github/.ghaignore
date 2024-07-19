@@ -12,9 +12,6 @@ tokens/transfer-tokens/native
 tokens/spl-token-minter/native
 tokens/create-token/native
 tokens/create-token/anchor
-tokens/nft-minter/anchor
-tokens/pda-mint-authority/anchor
-tokens/spl-token-minter/anchor
 tokens/token-swap/anchor
 tokens/transfer-tokens/anchor
 
