@@ -16,7 +16,7 @@ describe('Create pool', () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
+    await program.methods.createAmm(values.id, values.fee).accountsPartial({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
 
     await mintingTokens({
       connection,
@@ -29,7 +29,7 @@ describe('Create pool', () => {
   it('Creation', async () => {
     await program.methods
       .createPool()
-      .accounts({
+      .accountsPartial({
         amm: values.ammKey,
         pool: values.poolKey,
         poolAuthority: values.poolAuthority,
@@ -58,7 +58,7 @@ describe('Create pool', () => {
     await expectRevert(
       program.methods
         .createPool()
-        .accounts({
+        .accountsPartial({
           amm: values.ammKey,
           pool: values.poolKey,
           poolAuthority: values.poolAuthority,

@@ -11,7 +11,6 @@ tokens/nft-minter/native
 tokens/transfer-tokens/native
 tokens/spl-token-minter/native
 tokens/create-token/native
-tokens/token-swap/anchor
 tokens/transfer-tokens/anchor
 
 # not building with stable solana
