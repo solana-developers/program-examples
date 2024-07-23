@@ -66,7 +66,7 @@ Close an account and get the Lamports back.
 
 [anchor](./basics/cross-program-invocation/anchor) [native](./basics/cross-program-invocation/native)
 
-### PDA pda-rent-payer
+### PDA rent-payer
 
 [Use a PDA to pay the rent for the creation of a new account.](./basics/pda-rent-payer/README.md)
 
