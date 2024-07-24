@@ -36,7 +36,7 @@ jobs:
 
       - name: Setup Anchor
         if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v3.12
+        uses: heyAyushh/setup-anchor@v4.0
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
@@ -154,13 +154,13 @@ jobs:
       # Skip Installing and Displaying versions if theres no change in anchor programs or anchor action workflow file or isn't a schedule event
       - name: Setup Anchor
         if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v3.12
+        uses: heyAyushh/setup-anchor@v4.0
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
           node-version: ${{ matrix.node-version }}
       - name: Display versions and Install pnpm
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
+        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
         run: |
           solana -V
           solana-keygen new --no-bip39-passphrase
@@ -201,7 +201,7 @@ jobs:
         shell: bash
       # Skip Testing all Programs if it's a CRON job or a change in the workflow file
       - name: Test All Anchor Programs
-        if: github.event_name == 'schedule' || steps.changes.outputs.anchor_action == 'true'
+        if: github.event_name == 'schedule' || github.event_name == 'push' || steps.changes.outputs.anchor_action == 'true'
         run: |
           declare -a ProjectDirs=($(find . -type d -name "anchor"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
           echo "Projects to Test:"
