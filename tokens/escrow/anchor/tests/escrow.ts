@@ -87,7 +87,7 @@ describe('escrow', async () => {
     const tx = new Transaction();
     tx.instructions = [...sendSolInstructions, ...createMintInstructions, ...mintTokensInstructions];
 
-    const transactionSignature = await provider.sendAndConfirm(tx, [tokenMintA, tokenMintB, alice, bob]);
+    await provider.sendAndConfirm(tx, [tokenMintA, tokenMintB, alice, bob]);
 
     // Save the accounts for later use
     accounts.maker = alice.publicKey;

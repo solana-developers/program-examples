@@ -1,4 +1,5 @@
 # Contribution Guidelines
+
 Thank you for considering contributing to the Solana Program Examples repository. We greatly appreciate your interest and efforts in helping us improve and expand this valuable resource for the Solana developer community.
 
 We believe that a welcoming and inclusive environment fosters collaboration and encourages participation from developers of all backgrounds and skill levels.
@@ -6,6 +7,7 @@ We believe that a welcoming and inclusive environment fosters collaboration and 
 To ensure a smooth and effective contribution process, please take a moment to review and follow the guidelines outlined below.
 
 ## How to Contribute
+
 We welcome contributions in the form of code, documentation, bug reports, feature requests, and other forms of feedback. Here are some ways you can contribute:
 
 - **Code Contributions:** You can contribute code examples in Rust, Python, or Solidity that demonstrate various Solana program functionalities. You can also contribute improvements to existing examples, such as bug fixes, optimizations, or additional features.
@@ -13,11 +15,12 @@ We welcome contributions in the form of code, documentation, bug reports, featur
 - **Bug Reports, Ideas or Feedback:** If you encounter any issues or have ideas for new examples, please submit a bug report or feature request. Your feedback is valuable and helps us improve the quality and relevance of the examples.
 
 ## Contributing code examples:
+
 When contributing code examples, please follow these guidelines to ensure programs build and test successfully:
 
-1. Use pnpm as the default package manager for the project. You can install pnpm by following the instructions [here](https://pnpm.io/installation). Commit pnpm-lock.yaml to the repository.
+1. Use pnpm as the default package manager for the project. You can [install pnpm by following the instructions](https://pnpm.io/installation). Commit `pnpm-lock.yaml` to the repository.
 
-2. Programs written for Solana Native should be in directory `native` and Anchor programs should be in directory `anchor`.
+2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`.
 
 3. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
 
@@ -37,13 +40,14 @@ When contributing code examples, please follow these guidelines to ensure progra
 6. Test command for anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
 
 7. TypeScript, JavaScript and JSON files are formatted and linted using
-[Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
+   [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
 ```bash
 pnpm check:fix
 ```
 
 ## Code of Conduct
+
 We are committed to providing a friendly, safe, and welcoming environment for all contributors, regardless of their background, experience level, or personal characteristics. As a contributor, you are expected to:
 
 Be respectful and inclusive in your interactions with others.
