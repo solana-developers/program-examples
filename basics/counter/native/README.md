@@ -4,7 +4,7 @@ This example program is written in Solana using only the Solana toolsuite.
 
 ## Setup
 
-1. Build the program with `cargo build-bpf`
+1. Build the program with `cargo build-sbf`
 2. Run tests + local validator with `yarn test`
 
 ## Debugging
