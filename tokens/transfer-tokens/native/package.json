@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts"
+    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts"
   },
   "dependencies": {
     "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
