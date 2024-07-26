@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
-    "@solana-developers/helpers": "^2.3.0",
+    "@solana-developers/helpers": "^2.4.0",
     "@solana/spl-token": "^0.4.6"
   },
   "license": "MIT",
