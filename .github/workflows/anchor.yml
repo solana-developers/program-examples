@@ -36,7 +36,7 @@ jobs:
 
       - name: Setup Anchor
         if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v3.13
+        uses: heyAyushh/setup-anchor@v4.0
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
@@ -154,7 +154,7 @@ jobs:
       # Skip Installing and Displaying versions if theres no change in anchor programs or anchor action workflow file or isn't a schedule event
       - name: Setup Anchor
         if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v3.13
+        uses: heyAyushh/setup-anchor@v4.0
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
