@@ -10,6 +10,8 @@ describe('Favorites', () => {
   // Use the cluster and the keypair from Anchor.toml
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
+
+  // See https://github.com/coral-xyz/anchor/issues/3122
   const user = (provider.wallet as anchor.Wallet).payer;
   const someRandomGuy = anchor.web3.Keypair.generate();
   const program = anchor.workspace.Favorites as Program<Favorites>;
