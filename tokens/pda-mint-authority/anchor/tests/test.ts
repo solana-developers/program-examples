@@ -22,7 +22,7 @@ describe('NFT Minter', () => {
   it('Create a token!', async () => {
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
-      .accounts({
+      .accountsPartial({
         payer: payer.publicKey,
       })
       .rpc();
@@ -32,7 +32,7 @@ describe('NFT Minter', () => {
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it('Mint 1 Token!', async () => {
+  it('Mint 100 Token!', async () => {
     // Derive the associated token address account for the mint and payer.
     const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintPDA, payer.publicKey);
 
@@ -41,7 +41,7 @@ describe('NFT Minter', () => {
 
     const transactionSignature = await program.methods
       .mintToken(amount)
-      .accounts({
+      .accountsPartial({
         payer: payer.publicKey,
         associatedTokenAccount: associatedTokenAccountAddress,
       })
