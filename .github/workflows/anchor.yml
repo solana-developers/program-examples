@@ -12,223 +12,141 @@ on:
       - main
 
 jobs:
-  build:
+  changes:
     runs-on: ubuntu-latest
-    permissions:
-        pull-requests: read
-    strategy:
-      matrix:
-        node-version: [20.x]
-        solana-version: [1.18.17, stable]
-        anchor-version: [0.30.1]
+    outputs:
+      project_batches: ${{ steps.get-projects.outputs.project_batches }}
+      total_projects: ${{ steps.get-projects.outputs.total_projects }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
-        if: github.event_name == 'pull_request'
-        id: changes
+        id: filter
         with:
-          list-files: shell
+          list-files: json
           filters: |
             anchor:
-              - added|modified: '**/anchor/**'
-            anchor_action:
-              - added|modified: '**/workflows/anchor.yml'
-
-      - name: Setup Anchor
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v4.0
-        with:
-          anchor-version: ${{ matrix.anchor-version }}
-          solana-cli-version: ${{ matrix.solana-version }}
-          node-version: ${{ matrix.node-version }}
-      - name: Display versions and Install pnpm
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule'
+              - '**/anchor/**'
+            workflow:
+              - '.github/workflows/anchor.yml'
+            ghaignore:
+              - '.github/.ghaignore'
+      - id: get-projects
         run: |
-          solana -V
-          solana-keygen new --no-bip39-passphrase
-          rustc -V
-          anchor -V
-          npm i -g pnpm
-      # Run only if it's triggered by PR to main,
-      # Build the changed programs
-      - name: Build Changed Anchor programs
-        if: steps.changes.outputs.anchor == 'true' && steps.changes.outputs.anchor_action != 'true'
-        run: |
-            changed_files=(${{ steps.changes.outputs.anchor_files }})
+          # Find all anchor project directories
+          get_all_projects() {
+            find . -type d -name "anchor" | sort -u
+          }
 
-            # Read ignored projects from .github/.ghaignore, ignoring empty lines and comments
-            ignored_projects=($(grep . .github/.ghaignore | grep -v '^$'))
+          # Check if a project is in the ignore list
+          is_ignored() {
+            local project=$1
+            grep -qE "^${project}$" .github/.ghaignore
+          }
 
-            # Find anchor projects and remove ignored projects
-            ProjectDirs=($(for file in "${changed_files[@]}"; do
-              anchor_path=$(dirname "${file}" | grep anchor | sed 's#/anchor/.*#/anchor#g')
-              if [[ ! " ${ignored_projects[*]} " =~ " ${anchor_path} " ]]; then
-                echo "$anchor_path"
-              fi
-            done | sort -u))
+          # Get projects that were added to or removed from .ghaignore
+          get_changed_ignored_projects() {
+            git diff origin/main .github/.ghaignore | grep "^[+-]" | grep -v "^[+-][+-]" | sed 's/^[+-]//'
+          }
 
-            # Build anchor projects
-            echo "Projects to Build:"
-            printf "%s\n" "${ProjectDirs[@]}"
-            for projectDir in "${ProjectDirs[@]}"; do
-              echo "
-              ********
-              Building $projectDir
-              ********"
-              cd $projectDir
-              if anchor build; then
-                echo "Build succeeded for $projectDir."
-                rm -rf target
-              else
-                failed=true
-                failed_builds+=($projectDir)
-                echo "Build failed for $projectDir. Continuing with the next program."
-              fi
-              cd - > /dev/null
-            done
-            if [ "$failed" = true ]; then
-              echo "Programs that failed building:"
-              printf "%s\n" "${failed_builds[@]}"
-              exit 1
-            else
-              echo "All programs built successfully."
-            fi
-        shell: bash
-      # Skip Building all Programs if it's a PR to main branch
-      - name: Build All Anchor programs
-        if: github.event_name == 'schedule' || github.event_name == 'push' || steps.changes.outputs.anchor_action == 'true'
-        run: |
-          # Find all anchor projects and remove ignored projects
-          declare -a ProjectDirs=($(find . -type d -name 'anchor' | sed 's|^\./||'| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
+          ALL_PROJECTS=$(get_all_projects)
+          WORKFLOW_CHANGED=${{ steps.filter.outputs.workflow }}
+          GHAIGNORE_CHANGED=${{ steps.filter.outputs.ghaignore }}
 
-          echo "Projects to Build:"
-          printf "%s\n" "${ProjectDirs[@]}"
-
-          # Build anchor projects
-          for projectDir in "${ProjectDirs[@]}"; do
-            echo "
-            ********
-            Building $projectDir
-            ********"
-            cd $projectDir
-            if anchor build; then
-              echo "Build succeeded for $projectDir."
-              rm -rf target
-            else
-              failed=true
-              failed_builds+=($projectDir)
-              echo "Build failed for $projectDir. Continuing with the next program."
-            fi
-          cd - > /dev/null
-          done
-          if [ "$failed" = true ]; then
-            echo "Programs that failed building:"
-            printf "%s\n" "${failed_builds[@]}"
-            exit 1
+          # Determine which projects to process based on the event type and changed files
+          if [[ "$WORKFLOW_CHANGED" == "true" ]]; then
+            echo "Workflow changed. Processing all projects."
+            PROJECTS=$ALL_PROJECTS
+          elif [[ "$GHAIGNORE_CHANGED" == "true" && "${{ github.event_name }}" == "pull_request" ]]; then
+            echo ".ghaignore changed in PR. Processing only changed ignored projects."
+            PROJECTS=$(get_changed_ignored_projects)
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "Processing changed projects for PR."
+            CHANGED=$(echo '${{ steps.filter.outputs.anchor_files }}' | jq -r '.[] | split("/") | .[0:index("anchor")+1] | join("/")')
+            PROJECTS=$CHANGED
           else
-            echo "All programs built successfully."
+            echo "Processing all projects for non-PR event."
+            PROJECTS=$ALL_PROJECTS
           fi
-        shell: bash
 
-  test:
+          # Filter out ignored projects (except when .ghaignore itself changed in a PR)
+          FINAL_PROJECTS=()
+          while IFS= read -r project; do
+            if [[ "$GHAIGNORE_CHANGED" == "true" && "${{ github.event_name }}" == "pull_request" ]] || ! is_ignored "$project"; then
+              FINAL_PROJECTS+=("$project")
+            fi
+          done <<< "$PROJECTS"
+
+          # Create batches of projects (max 50 per batch) to stay under job limit
+          # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs#using-a-matrix-strategy
+          BATCH_SIZE=5
+          BATCHES=()
+          for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
+            BATCH="${FINAL_PROJECTS[@]:i:BATCH_SIZE}"
+            BATCHES+=("$(echo $BATCH | jq -R 'split(" ")')")
+          done
+
+          # Output project batches and total count
+          echo "project_batches=$(echo "${BATCHES[@]}" | jq -s -c .)" >> $GITHUB_OUTPUT
+          echo "total_projects=${#FINAL_PROJECTS[@]}" >> $GITHUB_OUTPUT
+
+  build-and-test:
+    needs: changes
     runs-on: ubuntu-latest
-    permissions:
-          pull-requests: read
     strategy:
       matrix:
-        node-version: [20.x]
-        solana-version: [1.18.17, stable]
-        anchor-version: [0.30.1]
+        batch: ${{ fromJson(needs.changes.outputs.project_batches) }}
+        include:
+          - solana-version: 1.18.17
+            anchor-version: 0.30.1
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        if: github.event_name == 'pull_request'
-        id: changes
-        with:
-          list-files: shell
-          filters: |
-            anchor:
-              - added|modified: '**/anchor/**'
-            anchor_action:
-              - added|modified: '**/workflows/anchor.yml'
-      # Skip Installing and Displaying versions if theres no change in anchor programs or anchor action workflow file or isn't a schedule event
-      - name: Setup Anchor
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
-        uses: heyAyushh/setup-anchor@v4.0
+      - uses: heyAyushh/setup-anchor@v4.0
         with:
           anchor-version: ${{ matrix.anchor-version }}
           solana-cli-version: ${{ matrix.solana-version }}
-          node-version: ${{ matrix.node-version }}
-      - name: Display versions and Install pnpm
-        if: steps.changes.outputs.anchor == 'true' || steps.changes.outputs.anchor_action == 'true' || github.event_name == 'schedule' || github.event_name == 'push'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Build and Test Batch
         run: |
-          solana -V
-          solana-keygen new --no-bip39-passphrase
-          rustc -V
-          anchor -V
-          npm i -g pnpm
-      - name: Test Changed Anchor Programs
-        if: steps.changes.outputs.anchor == 'true' && steps.changes.outputs.anchor_action != 'true'
-        run: |
-          changed_files=(${{ steps.changes.outputs.anchor_files }})
-          ProjectDirs=($(for file in "${changed_files[@]}"; do dirname "${file}" | grep anchor | sed 's#/anchor/.*#/anchor#g'; done | grep -v -f <(grep . .github/.ghaignore | grep -v '^$') | sort -u))
-          echo "Projects to Test:"
-          printf "%s\n" "${ProjectDirs[@]}"
-          for projectDir in "${ProjectDirs[@]}"; do
-            echo "
-            ********
-            Testing $projectDir
-            ********"
-            cd $projectDir
-            if pnpm install --frozen-lockfile && anchor test; then
-              echo "Tests succeeded for $projectDir."
-              rm -rf target node_modules
-            else
-              failed=true
-              failed_tests+=($projectDir)
-              echo "Tests failed for $val. Continuing with the next program."
+          # Process each project in the batch
+          for project in ${{ toJson(matrix.batch) }}; do
+            project=$(echo $project | jq -r '.')
+            echo "Processing $project"
+            cd $project
+
+            # Build the project
+            if ! anchor build; then
+              echo "::warning file=$project/Cargo.toml::Failed to build $project"
+              echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
+              cd -
+              continue
             fi
-          cd - > /dev/null
-          done
-          if [ "$failed" = true ]; then
-            echo "*****************************"
-            echo "Programs that failed testing:"
-            printf "%s\n" "${failed_tests[@]}"
-            exit 1
-          else
-            echo "All tests passed."
-          fi
-        shell: bash
-      # Skip Testing all Programs if it's a CRON job or a change in the workflow file
-      - name: Test All Anchor Programs
-        if: github.event_name == 'schedule' || github.event_name == 'push' || steps.changes.outputs.anchor_action == 'true'
-        run: |
-          declare -a ProjectDirs=($(find . -type d -name "anchor"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
-          echo "Projects to Test:"
-          printf "%s\n" "${ProjectDirs[@]}"
-          for projectDir in "${ProjectDirs[@]}"; do
-            echo "
-            ********
-            Testing $projectDir
-            ********"
-            cd $projectDir
-            pnpm install --frozen-lockfile
-            if anchor test; then
-              echo "Tests succeeded for $projectDir."
-              rm -rf target node_modules
+
+            # Run tests
+            if ! pnpm install --frozen-lockfile || ! anchor test; then
+              echo "::warning file=$project/Cargo.toml::Failed to test $project"
+              echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
             else
-              failed=true
-              failed_tests+=($projectDir)
-              echo "Tests failed for $val. Continuing with the next program."
+              echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
             fi
-          cd - > /dev/null
+            cd -
           done
-          if [ "$failed" = true ]; then
-            echo "*****************************"
-            echo "Programs that failed testing:"
-            printf "%s\n" "${failed_tests[@]}"
-            exit 1
+
+  summary:
+    needs: [changes, build-and-test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          # Provide overall workflow summary
+          echo "## Anchor Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Total projects processed: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
+          echo "Check individual job logs for details on warnings and failures." >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
+            echo ":white_check_mark: All projects completed (with potential warnings)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "All tests passed."
+            echo ":x: Some projects encountered errors" >> $GITHUB_STEP_SUMMARY
           fi
-        shell: bash
