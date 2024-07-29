@@ -25,6 +25,7 @@ This project is based on [Dean Little's Anchor Escrow,](https://github.com/deanm
 One of the challenges when teaching is avoiding ambiguity — names have to be carefully chosen to be clear and not possible to confuse with other times.
 
 - Custom instructions were replaced by `@solana-developers/helpers` for many tasks to reduce the file size.
+- Shared functionality to transfer tokens is now in `instructions/shared.rs`
 - The upstream project has a custom file layout. We use the 'multiple files' Anchor layout.
 - Contexts are separate data structures from functions that use the contexts. There is no need for OO-like `impl` patterns here - there's no mutable state stored in the Context, and the 'methods' do not mutate that state. Besides, it's easier to type!
 - The name 'deposit' was being used in multiple contexts, and `deposit` can be tough because it's a verb and a noun:

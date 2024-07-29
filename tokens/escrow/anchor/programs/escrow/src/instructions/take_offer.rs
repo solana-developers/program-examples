@@ -10,6 +10,8 @@ use anchor_spl::{
 
 use crate::Offer;
 
+use super::transfer_tokens;
+
 #[derive(Accounts)]
 pub struct TakeOffer<'info> {
     #[account(mut)]
@@ -73,22 +75,13 @@ pub struct TakeOffer<'info> {
 }
 
 pub fn send_wanted_tokens_to_maker(ctx: &Context<TakeOffer>) -> Result<()> {
-    let transfer_accounts = TransferChecked {
-        from: ctx.accounts.taker_token_account_b.to_account_info(),
-        mint: ctx.accounts.token_mint_b.to_account_info(),
-        to: ctx.accounts.maker_token_account_b.to_account_info(),
-        authority: ctx.accounts.taker.to_account_info(),
-    };
-
-    let cpi_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        transfer_accounts,
-    );
-
-    transfer_checked(
-        cpi_ctx,
-        ctx.accounts.offer.token_b_wanted_amount,
-        ctx.accounts.token_mint_b.decimals,
+    transfer_tokens(
+        &ctx.accounts.taker_token_account_b,
+        &ctx.accounts.maker_token_account_b,
+        &ctx.accounts.offer.token_b_wanted_amount,
+        &ctx.accounts.token_mint_b,
+        &ctx.accounts.taker,
+        &ctx.accounts.token_program,
     )
 }
 
