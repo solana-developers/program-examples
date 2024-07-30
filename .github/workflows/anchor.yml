@@ -21,40 +21,55 @@ jobs:
         id: get-projects
         shell: bash
         run: |
+          set -e
           get_changed_projects() {
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
-            elif [[ "${{ github.event_name }}" == "push" ]]; then
-              git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
-            else
-              find . -type d -name "anchor"
-            fi
+              if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+                git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} || echo "Git diff failed"
+              elif [[ "${{ github.event_name }}" == "push" ]]; then
+                git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || echo "Git diff failed"
+              else
+                echo "Not a pull request or push event"
+              fi
           }
 
           create_ignore_regex() {
-            grep -v '^#' .github/.ghaignore | sed 's/^/^/' | sed 's/$/\//' | tr '\n' '|' | sed 's/|$//'
+              grep -v '^#' .github/.ghaignore 2>/dev/null | sed 's/^/^/' | sed 's/$/\//' | tr '\n' '|' | sed 's/|$//' || echo ""
           }
 
           filter_projects() {
-            local ignore_regex="$1"
-            if [[ -n "$ignore_regex" ]]; then
-              grep -vE "$ignore_regex" || true
-            else
-              cat
-            fi
+              local ignore_regex="$1"
+              if [[ -n "$ignore_regex" ]]; then
+                grep -vE "$ignore_regex" || true
+              else
+                cat
+              fi
           }
 
           batch_projects() {
-            local batch_size=5
-            jq -R -s 'split("\n")[:-1] | _nwise('"$batch_size"') | map(select(length > 0))'
+              local batch_size=5
+              jq -R -s 'split("\n")[:-1] | _nwise('"$batch_size"') | map(select(length > 0))'
           }
 
           ignore_regex=$(create_ignore_regex)
-          projects=$(get_changed_projects | filter_projects "$ignore_regex" | sort -u)
-          batches=$(echo "$projects" | batch_projects)
+          changed_files=$(get_changed_projects)
 
-          echo "project_batches=$batches" >> $GITHUB_OUTPUT
-          echo "::notice::Projects to process: $projects"
+          if [[ $changed_files == *"Git diff failed"* || $changed_files == *"Not a pull request or push event"* ]]; then
+              echo "::warning::Failed to get changed files. Processing all projects."
+              projects=$(find . -type d -name "anchor")
+          else
+              projects=$(echo "$changed_files" | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/' | sort -u)
+          fi
+
+          filtered_projects=$(echo "$projects" | filter_projects "$ignore_regex")
+
+          if [[ -z "$filtered_projects" ]]; then
+              echo "::notice::No projects to process after filtering."
+              echo "project_batches=[]" >> $GITHUB_OUTPUT
+          else
+              batches=$(echo "$filtered_projects" | batch_projects)
+              echo "project_batches=$batches" >> $GITHUB_OUTPUT
+              echo "::notice::Projects to process: $filtered_projects"
+          fi
 
   build-and-test:
     needs: changes
