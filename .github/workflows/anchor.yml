@@ -137,7 +137,7 @@ jobs:
           done
 
   summary:
-    needs: [changes, build-and-test]
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: always()
     steps:
