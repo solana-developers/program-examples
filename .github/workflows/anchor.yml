@@ -23,7 +23,9 @@ jobs:
         run: |
           get_changed_projects() {
             if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              git diff --name-only origin/${{ github.base_ref }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
+              git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
+            elif [[ "${{ github.event_name }}" == "push" ]]; then
+              git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
             else
               find . -type d -name "anchor"
             fi
