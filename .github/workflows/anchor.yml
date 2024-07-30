@@ -83,11 +83,13 @@ jobs:
           BATCHES=()
           for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
             BATCH="${FINAL_PROJECTS[@]:i:BATCH_SIZE}"
-            BATCHES+=("$(echo $BATCH | jq -R 'split(" ")')")
+            BATCHES+=("$BATCH")
           done
 
-          # Output project batches and total count
-          echo "project_batches=$(echo "${BATCHES[@]}" | jq -s -c .)" >> $GITHUB_OUTPUT
+          # Output project batches as space-separated strings and total count
+          echo "project_batches<<EOF" >> $GITHUB_OUTPUT
+          printf "%s\n" "${BATCHES[@]}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           echo "total_projects=${#FINAL_PROJECTS[@]}" >> $GITHUB_OUTPUT
 
   build-and-test:
@@ -110,19 +112,17 @@ jobs:
         with:
           version: 8
       - name: Build and Test Batch
-        shell: bash
         run: |
           # Process each project in the batch
-          for project in ${{ toJson(matrix.batch) }}; do
-            project=$(echo $project | jq -r '.')
+          for project in ${{ matrix.batch }}; do
             echo "Processing $project"
-            cd $project
+            cd "$project"
 
             # Build the project
             if ! anchor build; then
               echo "::warning file=$project/Cargo.toml::Failed to build $project"
               echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
-              cd -
+              cd - > /dev/null
               continue
             fi
 
@@ -133,7 +133,7 @@ jobs:
             else
               echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
             fi
-            cd -
+            cd - > /dev/null
           done
 
   summary:
