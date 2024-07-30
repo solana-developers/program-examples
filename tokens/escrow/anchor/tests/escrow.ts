@@ -45,67 +45,6 @@ describe('escrow', async () => {
   const tokenAOfferedAmount = new BN(1_000_000);
   const tokenBWantedAmount = new BN(1_000_000);
 
-  // We'll call this function from multiple tests, so let's seperate it out
-  const make = async () => {
-    // Pick a random ID for the offer we'll make
-    const offerId = getRandomBigNumber();
-
-    // Then determine the account addresses we'll use for the offer and the vault
-    const offer = PublicKey.findProgramAddressSync(
-      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
-      program.programId,
-    )[0];
-
-    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
-
-    accounts.offer = offer;
-    accounts.vault = vault;
-
-    const transactionSignature = await program.methods
-      .makeOffer(offerId, tokenAOfferedAmount, tokenBWantedAmount)
-      .accounts({ ...accounts })
-      .signers([alice])
-      .rpc();
-
-    await confirmTransaction(connection, transactionSignature);
-
-    // Check our vault contains the tokens offered
-    const vaultBalanceResponse = await connection.getTokenAccountBalance(vault);
-    const vaultBalance = new BN(vaultBalanceResponse.value.amount);
-    assert(vaultBalance.eq(tokenAOfferedAmount));
-
-    // Check our Offer account contains the correct data
-    const offerAccount = await program.account.offer.fetch(offer);
-
-    assert(offerAccount.maker.equals(alice.publicKey));
-    assert(offerAccount.tokenMintA.equals(accounts.tokenMintA));
-    assert(offerAccount.tokenMintB.equals(accounts.tokenMintB));
-    assert(offerAccount.tokenBWantedAmount.eq(tokenBWantedAmount));
-  };
-
-  // We'll call this function from multiple tests, so let's seperate it out
-  const take = async () => {
-    const transactionSignature = await program.methods
-      .takeOffer()
-      .accounts({ ...accounts })
-      .signers([bob])
-      .rpc();
-
-    await confirmTransaction(connection, transactionSignature);
-
-    // Check the offered tokens are now in Bob's account
-    // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
-    const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
-    assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
-
-    // Check the wanted tokens are now in Alice's account
-    // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
-    const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccountBalanceAfterResponse.value.amount);
-    assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
-  };
-
   before('Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users', async () => {
     const usersMintsAndTokenAccounts = await createAccountsMintsAndTokenAccounts(
       [
@@ -157,10 +96,61 @@ describe('escrow', async () => {
   });
 
   it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
-    await make();
+    // Pick a random ID for the offer we'll make
+    const offerId = getRandomBigNumber();
+
+    // Then determine the account addresses we'll use for the offer and the vault
+    const offer = PublicKey.findProgramAddressSync(
+      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
+      program.programId,
+    )[0];
+
+    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
+
+    accounts.offer = offer;
+    accounts.vault = vault;
+
+    const transactionSignature = await program.methods
+      .makeOffer(offerId, tokenAOfferedAmount, tokenBWantedAmount)
+      .accounts({ ...accounts })
+      .signers([alice])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    // Check our vault contains the tokens offered
+    const vaultBalanceResponse = await connection.getTokenAccountBalance(vault);
+    const vaultBalance = new BN(vaultBalanceResponse.value.amount);
+    assert(vaultBalance.eq(tokenAOfferedAmount));
+
+    // Check our Offer account contains the correct data
+    const offerAccount = await program.account.offer.fetch(offer);
+
+    assert(offerAccount.maker.equals(alice.publicKey));
+    assert(offerAccount.tokenMintA.equals(accounts.tokenMintA));
+    assert(offerAccount.tokenMintB.equals(accounts.tokenMintB));
+    assert(offerAccount.tokenBWantedAmount.eq(tokenBWantedAmount));
   }).slow(60 * SECONDS);
 
   it("Puts the tokens from the vault into Bob's account, and gives Alice Bob's tokens, when Bob takes an offer", async () => {
-    await take();
+    const transactionSignature = await program.methods
+      .takeOffer()
+      .accounts({ ...accounts })
+      .signers([bob])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    // Check the offered tokens are now in Bob's account
+    // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
+    const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
+    assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
+
+    // Check the wanted tokens are now in Alice's account
+    // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
+    const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
+    const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccountBalanceAfterResponse.value.amount);
+    assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   }).slow(60 * SECONDS);
 });
