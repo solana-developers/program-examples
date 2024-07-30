@@ -1,174 +1,118 @@
 name: Anchor
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened]
-    branches:
-      - main
+    branches: [main]
+
+env:
+  SOLANA_VERSION: 1.18.17
+  ANCHOR_VERSION: 0.30.1
 
 jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
       project_batches: ${{ steps.get-projects.outputs.project_batches }}
-      total_projects: ${{ steps.get-projects.outputs.total_projects }}
-      batch_count: ${{ steps.get-projects.outputs.batch_count }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          list-files: json
-          filters: |
-            anchor:
-              - '**/anchor/**'
-            workflow:
-              - '.github/workflows/anchor.yml'
-            ghaignore:
-              - '.github/.ghaignore'
-      - id: get-projects
+      - name: Get projects to process
+        id: get-projects
         shell: bash
         run: |
-          # Find all anchor project directories
-          get_all_projects() {
-            find . -type d -name "anchor" | sort -u
+          get_changed_projects() {
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              git diff --name-only origin/${{ github.base_ref }} | grep '/anchor/' | sed 's/\/anchor\/.*$/\/anchor/'
+            else
+              find . -type d -name "anchor"
+            fi
           }
 
-          # Check if a project is in the ignore list
-          is_ignored() {
-            local project=$1
-            grep -qE "^${project}$" .github/.ghaignore
+          create_ignore_regex() {
+            grep -v '^#' .github/.ghaignore | sed 's/^/^/' | sed 's/$/\//' | tr '\n' '|' | sed 's/|$//'
           }
 
-          # Get projects that were added to or removed from .ghaignore
-          get_changed_ignored_projects() {
-            git diff origin/main .github/.ghaignore | grep "^[+-]" | grep -v "^[+-][+-]" | sed 's/^[+-]//'
+          filter_projects() {
+            local ignore_regex="$1"
+            if [[ -n "$ignore_regex" ]]; then
+              grep -vE "$ignore_regex" || true
+            else
+              cat
+            fi
           }
 
-          ALL_PROJECTS=$(get_all_projects)
-          WORKFLOW_CHANGED=${{ steps.filter.outputs.workflow }}
-          GHAIGNORE_CHANGED=${{ steps.filter.outputs.ghaignore }}
+          batch_projects() {
+            local batch_size=5
+            jq -R -s 'split("\n")[:-1] | _nwise('"$batch_size"') | map(select(length > 0))'
+          }
 
-          # Determine which projects to process based on the event type and changed files
-          if [[ "$WORKFLOW_CHANGED" == "true" ]]; then
-            echo "Workflow changed. Processing all projects."
-            PROJECTS=$ALL_PROJECTS
-          elif [[ "$GHAIGNORE_CHANGED" == "true" && "${{ github.event_name }}" == "pull_request" ]]; then
-            echo ".ghaignore changed in PR. Processing only changed ignored projects."
-            PROJECTS=$(get_changed_ignored_projects)
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "Processing changed projects for PR."
-            CHANGED=$(echo '${{ steps.filter.outputs.anchor_files }}' | jq -r '.[] | split("/") | .[0:index("anchor")+1] | join("/")')
-            PROJECTS=$CHANGED
-          else
-            echo "Processing all projects for non-PR event."
-            PROJECTS=$ALL_PROJECTS
-          fi
+          ignore_regex=$(create_ignore_regex)
+          projects=$(get_changed_projects | filter_projects "$ignore_regex" | sort -u)
+          batches=$(echo "$projects" | batch_projects)
 
-          # Filter out ignored projects (except when .ghaignore itself changed in a PR)
-          FINAL_PROJECTS=()
-          while IFS= read -r project; do
-            if [[ "$GHAIGNORE_CHANGED" == "true" && "${{ github.event_name }}" == "pull_request" ]] || ! is_ignored "$project"; then
-              FINAL_PROJECTS+=("$project")
-            fi
-          done <<< "$PROJECTS"
-
-          # Debug output
-          echo "Final projects to process:"
-          printf '%s\n' "${FINAL_PROJECTS[@]}"
-
-          # Create batches of projects (max 5 per batch) to stay under job limit
-          BATCH_SIZE=5
-          BATCHES="["
-          BATCH_COUNT=0
-          for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
-            if [ $i -ne 0 ]; then
-              BATCHES="${BATCHES},"
-            fi
-            END=$((i + BATCH_SIZE))
-            if [ $END -gt ${#FINAL_PROJECTS[@]} ]; then
-              END=${#FINAL_PROJECTS[@]}
-            fi
-            BATCH=$(printf '%s\n' "${FINAL_PROJECTS[@]:i:BATCH_SIZE}" | jq -R . | jq -s .)
-            BATCHES="${BATCHES}${BATCH}"
-            BATCH_COUNT=$((BATCH_COUNT + 1))
-          done
-          BATCHES="${BATCHES}]"
-
-          # Debug output
-          echo "Total projects: ${#FINAL_PROJECTS[@]}"
-          echo "Total batches: $BATCH_COUNT"
-          echo "Batches created:"
-          echo "$BATCHES" | jq .
-
-          # Output project batches as JSON array and total count
-          echo "project_batches=$BATCHES" >> $GITHUB_OUTPUT
-          echo "total_projects=${#FINAL_PROJECTS[@]}" >> $GITHUB_OUTPUT
-          echo "batch_count=$BATCH_COUNT" >> $GITHUB_OUTPUT
+          echo "project_batches=$batches" >> $GITHUB_OUTPUT
+          echo "::notice::Projects to process: $projects"
 
   build-and-test:
     needs: changes
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        batch: ${{ fromJson(needs.changes.outputs.project_batches) }}
-        include:
-          - solana-version: 1.18.17
-            anchor-version: 0.30.1
+        projects: ${{ fromJson(needs.changes.outputs.project_batches) }}
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - uses: heyAyushh/setup-anchor@v4.0
+      - name: Setup Anchor and Solana
+        uses: heyAyushh/setup-anchor@v4.0
         with:
-          anchor-version: ${{ matrix.anchor-version }}
-          solana-cli-version: ${{ matrix.solana-version }}
+          anchor-version: ${{ env.ANCHOR_VERSION }}
+          solana-cli-version: ${{ env.SOLANA_VERSION }}
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - name: Build and Test Batch
+      - name: Build and Test Projects
         run: |
-          echo "Processing batch: ${{ toJson(matrix.batch) }}"
-          for project in ${{ toJson(matrix.batch) }}; do
-            project=$(echo $project | jq -r '.')
+          process_project() {
+            local project=$1
             echo "Processing $project"
             cd "$project"
 
             # Build the project
             if ! anchor build; then
-              echo "::warning file=$project/Cargo.toml::Failed to build $project"
-              echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
-              cd - > /dev/null
-              continue
+              echo "::error file=$project/Cargo.toml::Failed to build $project"
+              echo "- :x: $project (Build Failed)" >> $GITHUB_STEP_SUMMARY
+              return 1
             fi
 
             # Run tests
             if ! pnpm install --frozen-lockfile || ! anchor test; then
-              echo "::warning file=$project/Cargo.toml::Failed to test $project"
-              echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
+              echo "::error file=$project/Cargo.toml::Failed to test $project"
+              echo "- :x: $project (Test Failed)" >> $GITHUB_STEP_SUMMARY
+              return 1
             fi
+            echo "- :white_check_mark: $project" >> $GITHUB_STEP_SUMMARY
             cd - > /dev/null
+          }
+
+          echo "## Project Results" >> $GITHUB_STEP_SUMMARY
+          for project in ${{ toJson(matrix.projects) }}; do
+            process_project "$project"
           done
 
   summary:
-    needs: [changes, build-and-test]
+    needs: build-and-test
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Summary
         run: |
           echo "## Anchor Workflow Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Total projects processed: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
-          echo "Total batches: ${{ needs.changes.outputs.batch_count }}" >> $GITHUB_STEP_SUMMARY
-          echo "Check individual job logs for details on warnings and failures." >> $GITHUB_STEP_SUMMARY
+          echo "Solana Version: ${{ env.SOLANA_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "Anchor Version: ${{ env.ANCHOR_VERSION }}" >> $GITHUB_STEP_SUMMARY
           if [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
-            echo ":white_check_mark: All projects completed (with potential warnings)" >> $GITHUB_STEP_SUMMARY
+            echo ":white_check_mark: All projects completed successfully" >> $GITHUB_STEP_SUMMARY
           else
             echo ":x: Some projects encountered errors" >> $GITHUB_STEP_SUMMARY
           fi
+          echo "Check individual job logs for details on errors and failures." >> $GITHUB_STEP_SUMMARY
