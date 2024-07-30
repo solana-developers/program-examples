@@ -72,50 +72,38 @@ jobs:
           fi
 
   build-and-test:
-    needs: changes
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        projects: ${{ fromJson(needs.changes.outputs.project_batches) }}
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Anchor and Solana
-        uses: heyAyushh/setup-anchor@v4.0
-        with:
-          anchor-version: ${{ env.ANCHOR_VERSION }}
-          solana-cli-version: ${{ env.SOLANA_VERSION }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - name: Build and Test Projects
-        run: |
-          process_project() {
-            local project=$1
+      needs: changes
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          project: ${{ fromJson(format('[{0}]', needs.changes.outputs.projects)) }}
+        fail-fast: false
+      steps:
+        - uses: actions/checkout@v4
+        - name: Setup Anchor and Solana
+          uses: heyAyushh/setup-anchor@v4.0
+          with:
+            anchor-version: ${{ env.ANCHOR_VERSION }}
+            solana-cli-version: ${{ env.SOLANA_VERSION }}
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 8
+        - name: Build and Test Project
+          run: |
+            project="${{ matrix.project }}"
             echo "Processing $project"
             cd "$project"
-
-            # Build the project
             if ! anchor build; then
               echo "::error file=$project/Cargo.toml::Failed to build $project"
               echo "- :x: $project (Build Failed)" >> $GITHUB_STEP_SUMMARY
-              return 1
+              exit 1
             fi
-
-            # Run tests
             if ! pnpm install --frozen-lockfile || ! anchor test; then
               echo "::error file=$project/Cargo.toml::Failed to test $project"
               echo "- :x: $project (Test Failed)" >> $GITHUB_STEP_SUMMARY
-              return 1
+              exit 1
             fi
             echo "- :white_check_mark: $project" >> $GITHUB_STEP_SUMMARY
-            cd - > /dev/null
-          }
-
-          echo "## Project Results" >> $GITHUB_STEP_SUMMARY
-          for project in ${{ toJson(matrix.projects) }}; do
-            process_project "$project"
-          done
 
   summary:
     needs: build-and-test
