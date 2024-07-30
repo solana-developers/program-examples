@@ -86,12 +86,13 @@ pub fn send_wanted_tokens_to_maker(ctx: &Context<TakeOffer>) -> Result<()> {
 }
 
 pub fn withdraw_and_close_vault(ctx: Context<TakeOffer>) -> Result<()> {
-    let signer_seeds: [&[&[u8]]; 1] = [&[
+    let seeds = &[
         b"offer",
         ctx.accounts.maker.to_account_info().key.as_ref(),
         &ctx.accounts.offer.id.to_le_bytes()[..],
         &[ctx.accounts.offer.bump],
-    ]];
+    ];
+    let signer_seeds: [&[&[u8]]; 1] = [&seeds[..]];
 
     let accounts = TransferChecked {
         from: ctx.accounts.vault.to_account_info(),
