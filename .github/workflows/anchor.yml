@@ -77,19 +77,38 @@ jobs:
             fi
           done <<< "$PROJECTS"
 
-          # Create batches of projects (max 50 per batch) to stay under job limit
-          # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs#using-a-matrix-strategy
-          BATCH_SIZE=5
-          BATCHES=()
-          for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
-            BATCH="${FINAL_PROJECTS[@]:i:BATCH_SIZE}"
-            BATCHES+=("$BATCH")
-          done
+          # Debug output
+          echo "Final projects to process:"
+          printf '%s\n' "${FINAL_PROJECTS[@]}"
 
-          # Output project batches as space-separated strings and total count
-          echo "project_batches<<EOF" >> $GITHUB_OUTPUT
-          printf "%s\n" "${BATCHES[@]}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Ensure we always have at least one batch, even if it's empty
+          if [ ${#FINAL_PROJECTS[@]} -eq 0 ]; then
+            echo "No projects to process, creating EMPTY batch."
+            BATCHES='[["EMPTY"]]'
+          else
+            # Create batches of projects (max 5 per batch) to stay under job limit
+            BATCH_SIZE=5
+            BATCHES="["
+            for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
+              if [ $i -ne 0 ]; then
+                BATCHES="${BATCHES},"
+              fi
+              END=$((i + BATCH_SIZE))
+              if [ $END -gt ${#FINAL_PROJECTS[@]} ]; then
+                END=${#FINAL_PROJECTS[@]}
+              fi
+              BATCH=$(printf '%s\n' "${FINAL_PROJECTS[@]:i:BATCH_SIZE}" | jq -R . | jq -s .)
+              BATCHES="${BATCHES}${BATCH}"
+            done
+            BATCHES="${BATCHES}]"
+          fi
+
+          # Debug output
+          echo "Batches created:"
+          echo "$BATCHES"
+
+          # Output project batches as JSON array and total count
+          echo "project_batches=$BATCHES" >> $GITHUB_OUTPUT
           echo "total_projects=${#FINAL_PROJECTS[@]}" >> $GITHUB_OUTPUT
 
   build-and-test:
@@ -113,28 +132,32 @@ jobs:
           version: 8
       - name: Build and Test Batch
         run: |
-          # Process each project in the batch
-          for project in ${{ matrix.batch }}; do
-            echo "Processing $project"
-            cd "$project"
+          if [ "${{ contains(matrix.batch, 'EMPTY') }}" = "true" ]; then
+            echo "No projects to process in this batch."
+          else
+            # Process each project in the batch
+            for project in ${{ join(matrix.batch, ' ') }}; do
+              echo "Processing $project"
+              cd "$project"
 
-            # Build the project
-            if ! anchor build; then
-              echo "::warning file=$project/Cargo.toml::Failed to build $project"
-              echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
+              # Build the project
+              if ! anchor build; then
+                echo "::warning file=$project/Cargo.toml::Failed to build $project"
+                echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
+                cd - > /dev/null
+                continue
+              fi
+
+              # Run tests
+              if ! pnpm install --frozen-lockfile || ! anchor test; then
+                echo "::warning file=$project/Cargo.toml::Failed to test $project"
+                echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
+              fi
               cd - > /dev/null
-              continue
-            fi
-
-            # Run tests
-            if ! pnpm install --frozen-lockfile || ! anchor test; then
-              echo "::warning file=$project/Cargo.toml::Failed to test $project"
-              echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
-            fi
-            cd - > /dev/null
-          done
+            done
+          fi
 
   summary:
     needs: build-and-test
