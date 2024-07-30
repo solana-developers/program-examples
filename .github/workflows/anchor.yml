@@ -17,6 +17,7 @@ jobs:
     outputs:
       project_batches: ${{ steps.get-projects.outputs.project_batches }}
       total_projects: ${{ steps.get-projects.outputs.total_projects }}
+      batch_count: ${{ steps.get-projects.outputs.batch_count }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -81,35 +82,34 @@ jobs:
           echo "Final projects to process:"
           printf '%s\n' "${FINAL_PROJECTS[@]}"
 
-          # Ensure we always have at least one batch, even if it's empty
-          if [ ${#FINAL_PROJECTS[@]} -eq 0 ]; then
-            echo "No projects to process, creating EMPTY batch."
-            BATCHES='[["EMPTY"]]'
-          else
-            # Create batches of projects (max 5 per batch) to stay under job limit
-            BATCH_SIZE=5
-            BATCHES="["
-            for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
-              if [ $i -ne 0 ]; then
-                BATCHES="${BATCHES},"
-              fi
-              END=$((i + BATCH_SIZE))
-              if [ $END -gt ${#FINAL_PROJECTS[@]} ]; then
-                END=${#FINAL_PROJECTS[@]}
-              fi
-              BATCH=$(printf '%s\n' "${FINAL_PROJECTS[@]:i:BATCH_SIZE}" | jq -R . | jq -s .)
-              BATCHES="${BATCHES}${BATCH}"
-            done
-            BATCHES="${BATCHES}]"
-          fi
+          # Create batches of projects (max 5 per batch) to stay under job limit
+          BATCH_SIZE=5
+          BATCHES="["
+          BATCH_COUNT=0
+          for ((i=0; i<${#FINAL_PROJECTS[@]}; i+=BATCH_SIZE)); do
+            if [ $i -ne 0 ]; then
+              BATCHES="${BATCHES},"
+            fi
+            END=$((i + BATCH_SIZE))
+            if [ $END -gt ${#FINAL_PROJECTS[@]} ]; then
+              END=${#FINAL_PROJECTS[@]}
+            fi
+            BATCH=$(printf '%s\n' "${FINAL_PROJECTS[@]:i:BATCH_SIZE}" | jq -R . | jq -s .)
+            BATCHES="${BATCHES}${BATCH}"
+            BATCH_COUNT=$((BATCH_COUNT + 1))
+          done
+          BATCHES="${BATCHES}]"
 
           # Debug output
+          echo "Total projects: ${#FINAL_PROJECTS[@]}"
+          echo "Total batches: $BATCH_COUNT"
           echo "Batches created:"
-          echo "$BATCHES"
+          echo "$BATCHES" | jq .
 
           # Output project batches as JSON array and total count
           echo "project_batches=$BATCHES" >> $GITHUB_OUTPUT
           echo "total_projects=${#FINAL_PROJECTS[@]}" >> $GITHUB_OUTPUT
+          echo "batch_count=$BATCH_COUNT" >> $GITHUB_OUTPUT
 
   build-and-test:
     needs: changes
@@ -132,43 +132,40 @@ jobs:
           version: 8
       - name: Build and Test Batch
         run: |
-          if [ "${{ contains(matrix.batch, 'EMPTY') }}" = "true" ]; then
-            echo "No projects to process in this batch."
-          else
-            # Process each project in the batch
-            for project in ${{ join(matrix.batch, ' ') }}; do
-              echo "Processing $project"
-              cd "$project"
+          echo "Processing batch: ${{ toJson(matrix.batch) }}"
+          for project in ${{ toJson(matrix.batch) }}; do
+            project=$(echo $project | jq -r '.')
+            echo "Processing $project"
+            cd "$project"
 
-              # Build the project
-              if ! anchor build; then
-                echo "::warning file=$project/Cargo.toml::Failed to build $project"
-                echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
-                cd - > /dev/null
-                continue
-              fi
-
-              # Run tests
-              if ! pnpm install --frozen-lockfile || ! anchor test; then
-                echo "::warning file=$project/Cargo.toml::Failed to test $project"
-                echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
-              else
-                echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
-              fi
+            # Build the project
+            if ! anchor build; then
+              echo "::warning file=$project/Cargo.toml::Failed to build $project"
+              echo "$project - :x: Build Failed" >> $GITHUB_STEP_SUMMARY
               cd - > /dev/null
-            done
-          fi
+              continue
+            fi
+
+            # Run tests
+            if ! pnpm install --frozen-lockfile || ! anchor test; then
+              echo "::warning file=$project/Cargo.toml::Failed to test $project"
+              echo "$project - :x: Test Failed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "$project - :white_check_mark: Passed" >> $GITHUB_STEP_SUMMARY
+            fi
+            cd - > /dev/null
+          done
 
   summary:
-    needs: build-and-test
+    needs: [changes, build-and-test]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Summary
         run: |
-          # Provide overall workflow summary
           echo "## Anchor Workflow Summary" >> $GITHUB_STEP_SUMMARY
           echo "Total projects processed: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
+          echo "Total batches: ${{ needs.changes.outputs.batch_count }}" >> $GITHUB_STEP_SUMMARY
           echo "Check individual job logs for details on warnings and failures." >> $GITHUB_STEP_SUMMARY
           if [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
             echo ":white_check_mark: All projects completed (with potential warnings)" >> $GITHUB_STEP_SUMMARY
