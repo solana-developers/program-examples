@@ -20,7 +20,7 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
 anchor-spl = { version = "0.30.0" }
 session-keys = { version = "2.0.3", features = ["no-entrypoint"] }
-solana-program = "1.17.25"
+solana-program = "1.18.17"
 spl-token-2022 = { version="2.0.1", features = [ "no-entrypoint" ] }
 spl-token = { version = "4.0.1", features = [ "no-entrypoint" ] }
 spl-token-metadata-interface = { version = "0.2.1"}

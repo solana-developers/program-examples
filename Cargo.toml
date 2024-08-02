@@ -12,7 +12,6 @@ members = [
     "basics/counter/mpl-stack",
     "basics/create-account/native/program",
     "basics/create-account/anchor/programs/create-system-account",
-    "basics/cross-program-invocation/native/programs/*",
     "basics/cross-program-invocation/anchor/programs/*",
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
@@ -34,7 +33,7 @@ members = [
     "tokens/token-2022/non-transferable/native/program",
     "tokens/token-2022/default-account-state/native/program",
     "tokens/token-2022/transfer-fee/native/program",
-    "tokens/token-2022/multiple-extensions/native/program"
+    "tokens/token-2022/multiple-extensions/native/program",
 ]
 resolver = "2"
 

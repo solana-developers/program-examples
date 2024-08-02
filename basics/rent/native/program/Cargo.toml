@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.9.1"
-solana-program = "=1.17.25"
+solana-program = "=1.18.17"
 
 [lib]
 crate-type = ["cdylib", "lib"]
