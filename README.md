@@ -238,6 +238,11 @@ Create tokens with an inbuilt transfer fee.
 
 [anchor](./tokens/token-2022/transfer-fee/anchor) [native](./tokens/token-2022/transfer-fee/native)
 
+### Transfer Hook - Create tokens with a stop feature.
+
+Transfer hook that allows the authority to enable or disable token transfers using the mint metadata to store the current transferrability state.
+
+[anchor](./tokens/token-2022/transfer-fee/anchor) [native](./tokens/token-2022/transfer-fee/native)
 </details>
 <details>
 
