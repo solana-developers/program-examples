@@ -7,13 +7,15 @@ This repo contains Solana onchain programs (referred to as 'Smart Contracts' in 
 > [!NOTE]
 > If you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, sending tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making account or transferring SOL) or the token program (for creating tokens and NFTs). See the [Solana Developer site](https://solana.com/developers) to learn more.
 
-Each folder includes examples for one or more of the following
+Each folder includes examples for one or more of the following:
 
 - `anchor` - Written using [Anchor](https://www.anchor-lang.com/), the most popular framework for Solana Development, which uses Rust. Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 - `native` - Written using Solana's native Rust crates and vanilla Rust. Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
 - `seahorse` - Written using the [Seahorse framework](https://seahorse-lang.org/), which converts your Python code to Anchor Rust. Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
-**If a given example is missing, please send us a PR to add it!** Our aim is to have every examples available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
+**If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
+
+## The example programs
 
 <details>
   <summary>Basics</summary>
