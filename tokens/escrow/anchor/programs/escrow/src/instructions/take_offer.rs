@@ -92,7 +92,7 @@ pub fn withdraw_and_close_vault(ctx: Context<TakeOffer>) -> Result<()> {
         &ctx.accounts.offer.id.to_le_bytes()[..],
         &[ctx.accounts.offer.bump],
     ];
-    let signer_seeds: [&[&[u8]]; 1] = [&seeds[..]];
+    let signer_seeds = [&seeds[..]];
 
     let accounts = TransferChecked {
         from: ctx.accounts.vault.to_account_info(),
