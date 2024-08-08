@@ -13,4 +13,4 @@ default = []
 
 [dependencies]
 borsh = "0.9.3"
-solana-program = "=1.17.25"
+solana-program = "=1.18.17"

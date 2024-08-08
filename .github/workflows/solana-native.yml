@@ -67,7 +67,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        solana-version: [1.17.25, stable]
+        solana-version: [1.18.17, stable]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}

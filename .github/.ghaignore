@@ -18,23 +18,19 @@ tokens/spl-token-minter/anchor
 tokens/token-swap/anchor
 tokens/transfer-tokens/anchor
 
-# not building with stable solana
-tokens/token-2022/mint-close-authority/native
-tokens/token-2022/non-transferable/native
-tokens/token-2022/default-account-state/native
-tokens/token-2022/transfer-fee/native
-tokens/token-2022/multiple-extensions/native
-
 # not building
 oracles/pyth/anchor
+
+# avm broke hence can't build
+# can't use anchor.toml [toolchain] with stable rust
+# update these programs to use latest anchor version to fix
+tokens/token-2022/group/anchor
+tokens/token-2022/immutable-owner/anchor
+tokens/token-2022/interest-bearing/anchor
+tokens/token-2022/memo-transfer/anchor
 
 # not building
 compression/cutils/anchor
 compression/cnft-vault/anchor
 # builds but need to test on localhost
 compression/cnft-burn/anchor
-
-# not building due to > spl 2.0 dependency issue
-tokens/token-2022/group/anchor
-tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor
-tokens/escrow/anchor
