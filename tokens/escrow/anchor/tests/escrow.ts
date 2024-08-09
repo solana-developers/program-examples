@@ -73,19 +73,27 @@ describe('escrow', async () => {
       payer,
     );
 
+    // Alice will be the maker (creator) of the offer
+    // Bob will be the taker (acceptor) of the offer
     const users = usersMintsAndTokenAccounts.users;
     alice = users[0];
     bob = users[1];
 
+    // tokenMintA represents the token Alice is offering
+    // tokenMintB represents the token Alice wants in return
     const mints = usersMintsAndTokenAccounts.mints;
     tokenMintA = mints[0];
     tokenMintB = mints[1];
 
     const tokenAccounts = usersMintsAndTokenAccounts.tokenAccounts;
 
+    // aliceTokenAccountA is Alice's account for tokenA (the token she's offering)
+    // aliceTokenAccountB is Alice's account for tokenB (the token she wants)
     const aliceTokenAccountA = tokenAccounts[0][0];
     const aliceTokenAccountB = tokenAccounts[0][1];
 
+    // bobTokenAccountA is Bob's account for tokenA (the token Alice is offering)
+    // bobTokenAccountB is Bob's account for tokenB (the token Alice wants)
     const bobTokenAccountA = tokenAccounts[1][0];
     const bobTokenAccountB = tokenAccounts[1][1];
 
