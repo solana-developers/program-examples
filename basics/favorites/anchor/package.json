@@ -5,10 +5,13 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
-    "@solana-developers/helpers": "^2.0.0"
+    "@solana-developers/helpers": "^2.0.0",
+    "@solana/web3.js": "^1.95.2"
   },
   "license": "MIT",
   "devDependencies": {
+    "anchor-bankrun": "^0.4.0",
+    "solana-bankrun": "^0.3.0",
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.0.0",

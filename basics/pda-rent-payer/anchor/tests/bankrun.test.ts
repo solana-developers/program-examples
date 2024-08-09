@@ -1,14 +1,21 @@
+import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
 import { assert } from 'chai';
+import { startAnchor } from 'solana-bankrun';
 import type { PdaRentPayer } from '../target/types/pda_rent_payer';
 
-describe('PDA Rent-Payer', () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+const IDL = require('../target/idl/pda_rent_payer.json');
+const PROGRAM_ID = new PublicKey(IDL.address);
+
+describe('PDA Rent-Payer', async () => {
+  const context = await startAnchor('', [{ name: 'pda_rent_payer', programId: PROGRAM_ID }], []);
+  const provider = new BankrunProvider(context);
+  const program = new anchor.Program<PdaRentPayer>(IDL, provider);
+
   const wallet = provider.wallet as anchor.Wallet;
   const connection = provider.connection;
-  const program = anchor.workspace.PdaRentPayer as anchor.Program<PdaRentPayer>;
 
   // PDA for the Rent Vault
   const [rentVaultPDA] = PublicKey.findProgramAddressSync([Buffer.from('rent_vault')], program.programId);
