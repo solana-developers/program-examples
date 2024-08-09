@@ -1,12 +1,18 @@
+import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { Keypair, LAMPORTS_PER_SOL, type PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
+import { startAnchor } from 'solana-bankrun';
 import type { TransferSol } from '../target/types/transfer_sol';
 
-describe('transfer-sol', () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+const IDL = require('../target/idl/transfer_sol.json');
+const PROGRAM_ID = new PublicKey(IDL.address);
+
+describe('Bankrun example', async () => {
+  const context = await startAnchor('', [{ name: 'transfer_sol', programId: PROGRAM_ID }], []);
+  const provider = new BankrunProvider(context);
   const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.TransferSol as anchor.Program<TransferSol>;
+  const program = new anchor.Program<TransferSol>(IDL, provider);
 
   // 1 SOL
   const transferAmount = 1 * LAMPORTS_PER_SOL;

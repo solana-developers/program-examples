@@ -119,7 +119,6 @@ describe('PDAs', async () => {
     await client.processTransaction(tx);
   });
 
-  // commented because couldn't get different blockhash
   test('Visit the page!', async () => {
     const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
     const ix = new TransactionInstruction({
