@@ -54,7 +54,9 @@ describe('Favorites', () => {
   it('Updates the favorites', async () => {
     const newFavoriteHobbies = ['skiing', 'skydiving', 'biking', 'swimming'];
     try {
-      await program.methods.setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies).signers([user]).rpc();
+      const signature = await program.methods.setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies).signers([user]).rpc();
+
+      console.log(`Transaction signature: ${signature}`);
     } catch (error) {
       console.error((error as Error).message);
       const customErrorMessage = getCustomErrorMessage(systemProgramErrors, error);
