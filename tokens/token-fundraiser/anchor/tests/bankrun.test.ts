@@ -17,23 +17,9 @@ import type { Fundraiser } from '../target/types/fundraiser';
 
 const IDL = require('../target/idl/fundraiser.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
-const PYTH_SOLANA_RECIEVER_PROGRAM_ID = new PublicKey('7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE');
 
 describe('fundraiser bankrun', async () => {
-  const context = await startAnchor(
-    '',
-    [
-      {
-        name: 'fundraiser',
-        programId: PROGRAM_ID,
-      },
-      {
-        name: 'pyth_solana_reciever',
-        programId: PYTH_SOLANA_RECIEVER_PROGRAM_ID,
-      },
-    ],
-    [],
-  );
+  const context = await startAnchor('', [{ name: 'fundraiser', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
   anchor.setProvider(provider);
   const wallet = provider.wallet as anchor.Wallet;
