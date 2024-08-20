@@ -52,6 +52,6 @@
   },
   "files": {
     "ignore": ["node_modules"],
-    "include": ["**/*.ts", "**/*.js", "**/*.json"]
+    "include": ["**/*.ts", "**/*.js", "**/*.json", "**/*.mjs"]
   }
 }
