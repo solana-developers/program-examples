@@ -12,7 +12,7 @@ const web3 = anchor.web3;
 const IDL = require('../target/idl/favorites.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Favorites', async () => {
+describe('Favorites Bankrun', async () => {
   // Use the cluster and the keypair from Anchor.toml
   // Load programs into anchor-bankrun
   const context = await startAnchor('', [{ name: 'favorites', programId: PROGRAM_ID }], []);
@@ -29,13 +29,11 @@ describe('Favorites', async () => {
   const favoriteHobbies = ['skiing', 'skydiving', 'biking'];
 
   // We don't need to airdrop if we're using the local cluster
-  // because the local cluster gives us 85 billion dollars worth of SOL
-  before(async () => {
-    const balance = await provider.connection.getBalance(user.publicKey);
-    const balanceInSOL = balance / web3.LAMPORTS_PER_SOL;
-    const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
-    console.log(`Balance: ${formattedBalance} SOL`);
-  });
+  // because the local cluster gives us 1,000,000 SOL
+  const balance = await context.banksClient.getBalance(user.publicKey);
+  const balanceInSOL = balance / BigInt(web3.LAMPORTS_PER_SOL);
+  const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
+  console.log(`Balance: ${formattedBalance} SOL`);
 
   it('Writes our favorites to the blockchain', async () => {
     await program.methods

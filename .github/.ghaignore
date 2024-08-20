@@ -22,3 +22,10 @@ compression/cutils/anchor
 compression/cnft-vault/anchor
 # builds but need to test on localhost
 compression/cnft-burn/anchor
+
+# test failing
+# https://github.com/solana-developers/helpers/issues/40
+tokens/escrow/anchor
+
+# not live
+tokens/token-2022/group/anchor

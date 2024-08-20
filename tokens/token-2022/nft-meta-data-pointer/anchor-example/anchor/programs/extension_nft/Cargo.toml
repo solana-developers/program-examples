@@ -23,4 +23,4 @@ session-keys = { version = "2.0.3", features = ["no-entrypoint"] }
 solana-program = "1.18.17"
 spl-token-2022 = { version="2.0.1", features = [ "no-entrypoint" ] }
 spl-token = { version = "4.0.1", features = [ "no-entrypoint" ] }
-spl-token-metadata-interface = { version = "0.2.1"}
+spl-token-metadata-interface = { version = "=0.3.5"}
