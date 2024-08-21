@@ -1,15 +1,19 @@
+import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import type { Program } from '@coral-xyz/anchor';
-import { sendAndConfirmTransaction } from '@solana/web3.js';
+import { PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
+import { startAnchor } from 'solana-bankrun';
 import type { Anchor } from '../target/types/anchor';
 
-describe('anchor', () => {
-  // Configure the client to use the local cluster.
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+const IDL = require('../target/idl/anchor.json');
+const PROGRAM_ID = new PublicKey(IDL.address);
 
-  const program = anchor.workspace.Anchor as Program<Anchor>;
-  const connection = program.provider.connection;
+describe('anchor', async () => {
+  const context = await startAnchor('', [{ name: 'anchor', programId: PROGRAM_ID }], []);
+  const provider = new BankrunProvider(context);
+  anchor.setProvider(provider);
+  const program = new anchor.Program<Anchor>(IDL, provider);
+  const client = context.banksClient;
   const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
   const wallet = provider.wallet as anchor.Wallet;
   const ATA_PROGRAM_ID = new anchor.web3.PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
@@ -32,9 +36,10 @@ describe('anchor', () => {
   );
 
   it('Create Token-2022 Token', async () => {
-    await connection.requestAirdrop(receiver.publicKey, 1000000000);
-    await connection.requestAirdrop(wallet.publicKey, 1000000000);
+    // await connection.requestAirdrop(receiver.publicKey, 1000000000);
+    // await connection.requestAirdrop(wallet.publicKey, 1000000000);
     const tx = new anchor.web3.Transaction();
+    const [blockhash, _height] = await client.getLatestBlockhash();
 
     const ix = await program.methods
       .createToken(tokenName)
@@ -44,14 +49,16 @@ describe('anchor', () => {
       })
       .instruction();
 
+    tx.recentBlockhash = blockhash;
     tx.add(ix);
-
-    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    tx.sign(wallet.payer);
+    const sig = await client.processTransaction(tx);
     console.log('Your transaction signature', sig);
   });
 
   it('Initialize payer ATA', async () => {
     const tx = new anchor.web3.Transaction();
+    const [blockhash, _height] = await client.getLatestBlockhash();
 
     const ix = await program.methods
       .createAssociatedTokenAccount()
@@ -63,9 +70,10 @@ describe('anchor', () => {
       })
       .instruction();
 
+    tx.recentBlockhash = blockhash;
     tx.add(ix);
-
-    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    tx.sign(wallet.payer);
+    const sig = await client.processTransaction(tx);
     console.log('Your transaction signature', sig);
   });
 
@@ -96,6 +104,7 @@ describe('anchor', () => {
 
   it('Mint Token to payer', async () => {
     const tx = new anchor.web3.Transaction();
+    const [blockhash, _height] = await client.getLatestBlockhash();
 
     const ix = await program.methods
       .mintToken(new anchor.BN(200000000))
@@ -107,15 +116,17 @@ describe('anchor', () => {
       })
       .instruction();
 
+    tx.recentBlockhash = blockhash;
     tx.add(ix);
-
-    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    tx.sign(wallet.payer);
+    const sig = await client.processTransaction(tx);
     console.log('Your transaction signature', sig);
   });
 
   // Using init in the transfer instruction, as init if needed is bot working with Token 2022 yet.
   it('Transfer Token', async () => {
     const tx = new anchor.web3.Transaction();
+    const [blockhash, _height] = await client.getLatestBlockhash();
 
     const ix = await program.methods
       .transferToken(new anchor.BN(100))
@@ -129,9 +140,10 @@ describe('anchor', () => {
       })
       .instruction();
 
+    tx.recentBlockhash = blockhash;
     tx.add(ix);
-
-    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    tx.sign(wallet.payer);
+    const sig = await client.processTransaction(tx);
     console.log('Your transaction signature', sig);
   });
 });
