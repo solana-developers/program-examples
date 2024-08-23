@@ -22,7 +22,6 @@ describe("nft-staking", () => {
   let nftMint: KeypairSigner = generateSigner(umi);
   let collectionMint: KeypairSigner = generateSigner(umi);
 
-
   const creatorWallet = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(payer.payer.secretKey));
   const creator = createSignerFromKeypair(umi, creatorWallet);
   umi.use(keypairIdentity(creator));
@@ -177,6 +176,6 @@ describe("nft-staking", () => {
     console.log("Your transaction signature", tx);
 
     let account = await program.account.userAccount.fetch(userAccount)
-    console.log("user points: ", account.points);
+    console.log("User points: ", account.points);
   })
 });

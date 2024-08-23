@@ -1,7 +1,24 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{metadata::{mpl_token_metadata::instructions::{FreezeDelegatedAccountCpi, FreezeDelegatedAccountCpiAccounts}, MasterEditionAccount, Metadata, MetadataAccount}, token::{approve, Approve, Mint, Token, TokenAccount}};
+use anchor_spl::{
+    metadata::{
+        mpl_token_metadata::instructions::{
+            FreezeDelegatedAccountCpi, 
+            FreezeDelegatedAccountCpiAccounts
+        }, 
+        MasterEditionAccount, 
+        Metadata, 
+        MetadataAccount
+    }, 
+    token::{
+        approve, 
+        Approve, 
+        Mint, 
+        Token, 
+        TokenAccount
+    }
+};
 
-use crate::state::{StakeAccount, StakeConfig, UserAccount};
+use crate::{errors::StakeError, state::{StakeAccount, StakeConfig, UserAccount}};
 
 #[derive(Accounts)]
 pub struct Stake<'info> {
@@ -65,6 +82,8 @@ pub struct Stake<'info> {
 impl<'info> Stake<'info> {
     pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
 
+        require!(self.user_account.amount_staked < self.config.max_stake, StakeError::MaxStakeReached);
+
         self.stake_account.set_inner(StakeAccount {
             owner: self.user.key(),
             mint: self.mint.key(),
@@ -111,7 +130,6 @@ impl<'info> Stake<'info> {
             },
         ).invoke_signed(signer_seeds)?;
 
-        //require!(self.user_account.amount_staked < self.config.max_stake, "Max stake reached");
         self.user_account.amount_staked += 1;
 
         Ok(())

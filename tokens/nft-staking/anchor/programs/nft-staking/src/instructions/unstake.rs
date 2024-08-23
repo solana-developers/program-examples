@@ -1,7 +1,23 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{metadata::{mpl_token_metadata::instructions::{ThawDelegatedAccountCpi, ThawDelegatedAccountCpiAccounts}, MasterEditionAccount, Metadata}, token::{revoke, Mint, Revoke, Token, TokenAccount}};
+use anchor_spl::{
+    metadata::{
+        mpl_token_metadata::instructions::{
+            ThawDelegatedAccountCpi, 
+            ThawDelegatedAccountCpiAccounts
+        }, 
+        MasterEditionAccount, 
+        Metadata
+    }, 
+    token::{
+        revoke, 
+        Mint, 
+        Revoke, 
+        Token, 
+        TokenAccount
+    }
+};
 
-use crate::state::{StakeAccount, StakeConfig, UserAccount};
+use crate::{errors::StakeError, state::{StakeAccount, StakeConfig, UserAccount}};
 
 #[derive(Accounts)]
 pub struct Unstake<'info> {
@@ -49,7 +65,7 @@ impl<'info> Unstake<'info> {
 
         let time_elapsed = ((Clock::get()?.unix_timestamp - self.stake_account.last_update) / 86400) as u32;
 
-        //require!(time_elapsed >= self.config.freeze_period, "Cannot unstake yet");
+        require!(time_elapsed >= self.config.freeze_period, StakeError::FreezePeriodNotPassed);
 
         self.user_account.points += time_elapsed as u32 * self.config.points_per_stake as u32;
 
