@@ -4,10 +4,11 @@ use anchor_lang::prelude::*;
 pub struct StakeAccount {
     pub owner: Pubkey,
     pub mint: Pubkey,
+    pub collection: Pubkey,
     pub last_update: i64,
     pub bump: u8,
 }
 
 impl Space for StakeAccount {
-    const INIT_SPACE: usize = 8 + 32 + 32 + 8 + 1;
+    const INIT_SPACE: usize = 8 + 32 + 32 + 32 + 8 + 1;
 }

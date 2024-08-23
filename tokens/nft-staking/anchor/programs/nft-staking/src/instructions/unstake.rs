@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{metadata::{mpl_token_metadata::instructions::{ThawDelegatedAccountCpi, ThawDelegatedAccountCpiAccounts}, MasterEditionAccount, Metadata, MetadataAccount}, token::{revoke, Mint, Revoke, Token, TokenAccount}};
+use anchor_spl::{metadata::{mpl_token_metadata::instructions::{ThawDelegatedAccountCpi, ThawDelegatedAccountCpiAccounts}, MasterEditionAccount, Metadata}, token::{revoke, Mint, Revoke, Token, TokenAccount}};
 
 use crate::state::{StakeAccount, StakeConfig, UserAccount};
 
@@ -14,16 +14,6 @@ pub struct Unstake<'info> {
         associated_token::authority = user,
     )]
     pub mint_ata: Account<'info, TokenAccount>,
-    #[account(
-        seeds = [
-            b"metadata",
-            metadata_program.key().as_ref(),
-            mint.key().as_ref()
-        ],
-        seeds::program = metadata_program.key(),
-        bump,
-    )]
-    pub metadata: Account<'info, MetadataAccount>,
     #[account(
         seeds = [
             b"metadata",
