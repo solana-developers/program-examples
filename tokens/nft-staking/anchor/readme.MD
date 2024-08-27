@@ -2,7 +2,7 @@
 
 This example demonstrates how to stake a NFT using the Token Metadata Program.
 
-In this example, a user will be able to stake a NFT of a certain collection, get points, and mint rewards.
+In this example, a user will be able to stake a NFT of a certain collection (for simplicity of the example, all collections are equally allowed), get points, and mint rewards.
 
 ---
 
