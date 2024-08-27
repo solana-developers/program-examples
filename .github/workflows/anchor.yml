@@ -125,12 +125,14 @@ jobs:
           function build_and_test() {
             local project=$1
             echo "Building and Testing $project"
-            cd "$project"
+            cd "$project" || return 1
 
             # Run anchor build
             if ! anchor build; then
               echo "::error::anchor build failed for $project"
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              rm -rf target
+              cd - > /dev/null
               return 1
             fi
 
@@ -138,6 +140,7 @@ jobs:
             if ! pnpm install --frozen-lockfile; then
               echo "::error::pnpm install failed for $project"
               echo "$project: pnpm install failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              cd - > /dev/null
               return 1
             fi
 
@@ -145,11 +148,14 @@ jobs:
             if ! anchor test; then
               echo "::error::anchor test failed for $project"
               echo "$project: anchor test failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              rm -rf target node_modules
+              cd - > /dev/null
               return 1
             fi
 
             echo "Build and tests succeeded for $project."
             rm -rf target node_modules
+            cd - > /dev/null
             return 0
           }
 

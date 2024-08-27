@@ -1,5 +1,6 @@
 import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import { sendAndConfirmTransaction } from '@solana/web3.js';
 import type { Anchor } from '../target/types/anchor';
 
 describe('anchor', () => {
@@ -45,7 +46,7 @@ describe('anchor', () => {
 
     tx.add(ix);
 
-    const sig = await anchor.web3.sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
     console.log('Your transaction signature', sig);
   });
 
@@ -64,7 +65,7 @@ describe('anchor', () => {
 
     tx.add(ix);
 
-    const sig = await anchor.web3.sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
     console.log('Your transaction signature', sig);
   });
 
@@ -108,7 +109,7 @@ describe('anchor', () => {
 
     tx.add(ix);
 
-    const sig = await anchor.web3.sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
     console.log('Your transaction signature', sig);
   });
 
@@ -130,7 +131,7 @@ describe('anchor', () => {
 
     tx.add(ix);
 
-    const sig = await anchor.web3.sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
+    const sig = await sendAndConfirmTransaction(program.provider.connection, tx, [wallet.payer]);
     console.log('Your transaction signature', sig);
   });
 });
