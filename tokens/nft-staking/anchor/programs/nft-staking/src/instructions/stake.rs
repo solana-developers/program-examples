@@ -56,14 +56,14 @@ pub struct Stake<'info> {
     )]
     pub edition: Account<'info, MasterEditionAccount>,
     #[account(
-        seeds = [b"config".as_ref(), collection_mint.key().as_ref()],
+        seeds = [b"config".as_ref()],
         bump = config.bump,
     )]
     pub config: Account<'info, StakeConfig>,
     #[account(
         init,
         payer = user,
-        space = StakeAccount::INIT_SPACE,
+        space = 8 + StakeAccount::INIT_SPACE,
         seeds = [b"stake".as_ref(), mint.key().as_ref(), config.key().as_ref()],
         bump,
     )]
@@ -87,8 +87,7 @@ impl<'info> Stake<'info> {
         self.stake_account.set_inner(StakeAccount {
             owner: self.user.key(),
             mint: self.mint.key(),
-            collection: self.collection_mint.key(),
-            last_update: Clock::get()?.unix_timestamp,
+            staked_at: Clock::get()?.unix_timestamp,
             bump: bumps.stake_account,
         });
 

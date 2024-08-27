@@ -7,7 +7,6 @@ use crate::state::{StakeConfig, UserAccount};
 pub struct Claim<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
-    pub collection_mint: Account<'info, Mint>,
     #[account(
         mut,
         seeds = [b"user".as_ref(), user.key().as_ref()],
@@ -21,7 +20,7 @@ pub struct Claim<'info> {
     )]
     pub rewards_mint: Account<'info, Mint>,
     #[account(
-        seeds = [b"config".as_ref(), collection_mint.key().as_ref()],
+        seeds = [b"config".as_ref()],
         bump = config.bump,
     )]
     pub config: Account<'info, StakeConfig>,
@@ -44,7 +43,6 @@ impl<'info> Claim<'info> {
 
         let seeds = &[
             b"config".as_ref(),
-            self.collection_mint.to_account_info().key.as_ref(),
             &[self.config.bump]
         ];     
         let signer_seeds = &[&seeds[..]];

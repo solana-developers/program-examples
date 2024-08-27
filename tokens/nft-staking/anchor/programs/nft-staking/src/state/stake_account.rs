@@ -1,14 +1,10 @@
 use anchor_lang::prelude::*;
 
 #[account]
+#[derive(InitSpace)]
 pub struct StakeAccount {
     pub owner: Pubkey,
     pub mint: Pubkey,
-    pub collection: Pubkey,
-    pub last_update: i64,
+    pub staked_at: i64,
     pub bump: u8,
-}
-
-impl Space for StakeAccount {
-    const INIT_SPACE: usize = 8 + 32 + 32 + 32 + 8 + 1;
 }

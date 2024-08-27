@@ -29,7 +29,7 @@ describe("nft-staking", () => {
 
   const collection: anchor.web3.PublicKey = new anchor.web3.PublicKey(collectionMint.publicKey.toString());
 
-  const config = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("config"), collection.toBuffer()], program.programId)[0];
+  const config = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("config")], program.programId)[0];
 
   const rewardsMint = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from("rewards"), config.toBuffer()], program.programId)[0];
 
@@ -84,7 +84,6 @@ describe("nft-staking", () => {
     const tx = await program.methods.initializeConfig(10, 10, 0)
     .accountsPartial({
       admin: provider.wallet.publicKey,
-      collectionMint: collectionMint.publicKey,
       config,
       rewardsMint,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -161,7 +160,6 @@ describe("nft-staking", () => {
     const tx = await program.methods.claim()
     .accountsPartial({
       user: provider.wallet.publicKey,
-      collectionMint: collectionMint.publicKey,
       userAccount,
       rewardsMint,
       config,

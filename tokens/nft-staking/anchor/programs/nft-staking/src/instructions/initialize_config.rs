@@ -10,14 +10,13 @@ pub struct InitializeConfig<'info> {
     #[account(
         init, 
         payer = admin,
-        seeds = [b"config".as_ref(), collection_mint.key().as_ref()],
+        seeds = [b"config".as_ref()],
         bump,
-        space = StakeConfig::INIT_SPACE,
+        space = 8 + StakeConfig::INIT_SPACE,
     )]
     pub config: Account<'info, StakeConfig>,
-    pub collection_mint: Account<'info, Mint>,
     #[account(
-        init,
+        init_if_needed,
         payer = admin,
         seeds = [b"rewards".as_ref(), config.key().as_ref()],
         bump,
