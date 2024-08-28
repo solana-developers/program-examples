@@ -2,10 +2,12 @@ use anchor_lang::prelude::*;
 
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
+    token_interface::{Mint, TokenAccount, TokenInterface},
 };
 
 use crate::{Offer, ANCHOR_DISCRIMINATOR};
+
+use super::transfer_tokens;
 
 // See https://www.anchor-lang.com/docs/account-constraints#instruction-attribute
 #[derive(Accounts)]
@@ -56,22 +58,13 @@ pub fn send_offered_tokens_to_vault(
     context: &Context<MakeOffer>,
     token_a_offered_amount: u64,
 ) -> Result<()> {
-    let transfer_accounts = TransferChecked {
-        from: context.accounts.maker_token_account_a.to_account_info(),
-        mint: context.accounts.token_mint_a.to_account_info(),
-        to: context.accounts.vault.to_account_info(),
-        authority: context.accounts.maker.to_account_info(),
-    };
-
-    let cpi_context = CpiContext::new(
-        context.accounts.token_program.to_account_info(),
-        transfer_accounts,
-    );
-
-    transfer_checked(
-        cpi_context,
-        token_a_offered_amount,
-        context.accounts.token_mint_a.decimals,
+    transfer_tokens(
+        &context.accounts.maker_token_account_a,
+        &context.accounts.vault,
+        &token_a_offered_amount,
+        &context.accounts.token_mint_a,
+        &context.accounts.maker,
+        &context.accounts.token_program,
     )
 }
 

@@ -1,20 +1,27 @@
+import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import type { Program } from '@coral-xyz/anchor';
 import { getCustomErrorMessage } from '@solana-developers/helpers';
+import { PublicKey } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
 import { assert } from 'chai';
+import { startAnchor } from 'solana-bankrun';
 import type { Favorites } from '../target/types/favorites';
 import { systemProgramErrors } from './system-errors';
+
 const web3 = anchor.web3;
+const IDL = require('../target/idl/favorites.json');
+const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Favorites', () => {
+describe('Favorites Bankrun', async () => {
   // Use the cluster and the keypair from Anchor.toml
-  const provider = anchor.AnchorProvider.env();
+  // Load programs into anchor-bankrun
+  const context = await startAnchor('', [{ name: 'favorites', programId: PROGRAM_ID }], []);
+  const provider = new BankrunProvider(context);
   anchor.setProvider(provider);
-
-  // See https://github.com/coral-xyz/anchor/issues/3122
   const user = (provider.wallet as anchor.Wallet).payer;
   const someRandomGuy = anchor.web3.Keypair.generate();
-  const program = anchor.workspace.Favorites as Program<Favorites>;
+
+  const program = new anchor.Program<Favorites>(IDL, provider);
 
   // Here's what we want to write to the blockchain
   const favoriteNumber = new anchor.BN(23);
@@ -22,13 +29,11 @@ describe('Favorites', () => {
   const favoriteHobbies = ['skiing', 'skydiving', 'biking'];
 
   // We don't need to airdrop if we're using the local cluster
-  // because the local cluster gives us 85 billion dollars worth of SOL
-  before(async () => {
-    const balance = await provider.connection.getBalance(user.publicKey);
-    const balanceInSOL = balance / web3.LAMPORTS_PER_SOL;
-    const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
-    console.log(`Balance: ${formattedBalance} SOL`);
-  });
+  // because the local cluster gives us 1,000,000 SOL
+  const balance = await context.banksClient.getBalance(user.publicKey);
+  const balanceInSOL = balance / BigInt(web3.LAMPORTS_PER_SOL);
+  const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
+  console.log(`Balance: ${formattedBalance} SOL`);
 
   it('Writes our favorites to the blockchain', async () => {
     await program.methods

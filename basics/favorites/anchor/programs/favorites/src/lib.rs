@@ -13,8 +13,8 @@ pub mod favorites {
 
     // Our instruction handler! It sets the user's favorite number and color
     pub fn set_favorites(context: Context<SetFavorites>, number: u64, color: String, hobbies: Vec<String>) -> Result<()> {
-        let user_public_key = context.accounts.user.key();
         msg!("Greetings from {}", context.program_id);
+        let user_public_key = context.accounts.user.key();
         msg!(
             "User {user_public_key}'s favorite number is {number}, favorite color is: {color}, and their hobbies are {hobbies:?}",
         );
@@ -53,7 +53,8 @@ pub struct SetFavorites<'info> {
         payer = user, 
         space = ANCHOR_DISCRIMINATOR_SIZE + Favorites::INIT_SPACE, 
         seeds=[b"favorites", user.key().as_ref()],
-    bump)]
+        bump
+    )]
     pub favorites: Account<'info, Favorites>,
 
     pub system_program: Program<'info, System>,

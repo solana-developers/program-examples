@@ -12,7 +12,7 @@ nft_minter = "52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

@@ -16,7 +16,6 @@ describe('PDAs', () => {
       .createPageVisits()
       .accounts({
         payer: payer.publicKey,
-        pageVisits: pageVisitPDA,
       })
       .rpc();
   });
@@ -26,7 +25,6 @@ describe('PDAs', () => {
       .incrementPageVisits()
       .accounts({
         user: payer.publicKey,
-        pageVisits: pageVisitPDA,
       })
       .rpc();
   });
@@ -36,7 +34,6 @@ describe('PDAs', () => {
       .incrementPageVisits()
       .accounts({
         user: payer.publicKey,
-        pageVisits: pageVisitPDA,
       })
       .rpc();
   });
