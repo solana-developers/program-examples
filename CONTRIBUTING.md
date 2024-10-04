@@ -14,13 +14,15 @@ We welcome contributions in the form of code, documentation, bug reports, featur
 
 - **Bug Reports, Ideas or Feedback:** If you encounter any issues or have ideas for new examples, please submit a bug report or feature request. Your feedback is valuable and helps us improve the quality and relevance of the examples.
 
-## Contributing code examples:
+## General coding and writing guidelines
 
-When contributing code examples, please follow these guidelines to ensure programs build and test successfully:
+Please follow the [Contributing and Style Guide from the Developer Content Repo](https://github.com/solana-foundation/developer-content/blob/main/CONTRIBUTING.md). 
+
+Specifically for code in this repo:
 
 1. Use pnpm as the default package manager for the project. You can [install pnpm by following the instructions](https://pnpm.io/installation). Commit `pnpm-lock.yaml` to the repository.
 
-2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`.
+2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `posidon` and Python in `seahorse.
 
 3. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
 
