@@ -18,7 +18,7 @@ Each folder includes examples for one or more of the following:
 ## The example programs
 
 <details>
-  <summary>Basics</summary>
+  <summary>### Basics</summary>
 
 ### Hello world
 
@@ -112,7 +112,7 @@ How to store state that changes size in Solana.
 
 </details>
 <details>
-  <summary>Tokens</summary>
+  <summary>### Tokens</summary>
 
 ### Creating tokens
 
@@ -160,7 +160,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 <details>
 
-  <summary>Token Extensions</summary>
+  <summary>### Token Extensions</summary>
 
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
@@ -243,7 +243,7 @@ Create tokens with an inbuilt transfer fee.
 </details>
 <details>
 
-<summary>Compression</summary>
+<summary>### Compression</summary>
 
 ### Cnft-burn
 
@@ -267,7 +267,7 @@ Work with Metaplex compressed NFTs.
 
 <details>
 
-<summary>Oracles</summary>
+<summary>### Oracles</summary>
 
 ### pyth
 
