@@ -33,7 +33,7 @@ jobs:
       - name: Install pnpm
         run: |
           npm install --global pnpm
-      - name: Build Native programs
+      - name: Build Steel native programs
         run: |
           declare -a ProjectDirs=($(find . -type d -name "steel"| grep -v -f <(grep . .github/.ghaignore | grep -v '^$')))
           echo "Projects to Build:"
@@ -83,7 +83,7 @@ jobs:
       - name: Install pnpm
         run: |
           npm install --global pnpm
-      - name: Test solana native programs
+      - name: Test Steel native programs
         run: |
           solana -V
           rustc -V
