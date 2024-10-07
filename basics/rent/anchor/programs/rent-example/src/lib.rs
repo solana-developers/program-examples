@@ -14,18 +14,22 @@ pub mod rent_example {
         address_data: AddressData,
     ) -> Result<()> {
         msg!("Program invoked. Creating a system account...");
+
+        // Determine the necessary minimum rent based on the account size
+        let account_data_size = address_data.try_to_vec()?.len();
+        let lamports_required = Rent::get()
+            .map_err(|_| RentError::RentCalculationFailed)?
+            .minimum_balance(account_data_size);
+
+        if **ctx.accounts.payer.try_borrow_lamports()? < lamports_required {
+            return Err(RentError::InsufficientLamports.into());
+        }
+
+        msg!("Account size: {} bytes", account_data_size);
         msg!(
-            "  New public key will be: {}",
-            &ctx.accounts.new_account.key().to_string()
+            "Lamports required for rent exemption: {}",
+            lamports_required
         );
-
-        // Determine the necessary minimum rent by calculating the account's size
-        //
-        let account_span = (address_data.try_to_vec()?).len();
-        let lamports_required = (Rent::get()?).minimum_balance(account_span);
-
-        msg!("Account span: {}", &account_span);
-        msg!("Lamports required: {}", &lamports_required);
 
         system_program::create_account(
             CpiContext::new(
@@ -36,11 +40,15 @@ pub mod rent_example {
                 },
             ),
             lamports_required,
-            account_span as u64,
+            account_data_size as u64,
             &ctx.accounts.system_program.key(),
         )?;
 
-        msg!("Account created succesfully.");
+        msg!(
+            "Account successfully created with public key: {}",
+            ctx.accounts.new_account.key()
+        );
+
         Ok(())
     }
 }
@@ -58,4 +66,12 @@ pub struct CreateSystemAccount<'info> {
 pub struct AddressData {
     name: String,
     address: String,
+}
+
+#[error_code]
+pub enum RentError {
+    #[msg("Failed to calculate rent required.")]
+    RentCalculationFailed,
+    #[msg("Account creation failed due to insufficient lamports.")]
+    InsufficientLamports,
 }
