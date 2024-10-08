@@ -25,10 +25,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: true
-      - uses: heyAyushh/setup-solana@v5.4
+      - uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: ${{ matrix.solana-version }}
-      - run: solana block
+      - run: solana -V
         shell: bash
       - name: Install pnpm
         run: |

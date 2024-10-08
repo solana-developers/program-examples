@@ -104,10 +104,10 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: heyAyushh/setup-anchor@v4.2
+      - uses: heyAyushh/setup-anchor@v4.4
         with:
           anchor-version: 0.30.1
-          solana-cli-version: 1.18.17
+          solana-cli-version: stable
           node-version: 20.x
           use-avm: false
       - name: Display Versions and Install pnpm
