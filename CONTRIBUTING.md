@@ -24,11 +24,11 @@ Specifically for code in this repo:
 
 2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `posidon` and Python in `seahorse.
 
-3. Tests for Solana native and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
+3. Tests for Solana native, Steel and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
 
-4. Tests for solana native programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
+4. Tests for solana native programs and steel framework programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
 
-5. For Solana native programs ensure adding these mandatory pnpm run scripts to your `package.json`. file for successful ci/cd builds:
+5. For Solana native programs and Steel framework programs ensure adding these mandatory pnpm run scripts to your `package.json`. file for successful ci/cd builds:
 
 ```json
 "scripts": {
