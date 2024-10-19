@@ -10,10 +10,16 @@ cargo build-sbf
 ```
 ## Tests
 
-To run the test suit, use the Solana toolchain:
+This project includes both:
+- Rust tests: [`program/tests`](/program/tests) directory.
+- Node.js tests using [Bankrun](https://kevinheavey.github.io/solana-bankrun/): [`tests`](/tests) directory.
 
 ```sh
-cargo test-sbf         
-```
+# rust tests
+cargo test-sbf 
 
-The tests can be found in the [`program/tests`](/program/tests) directory.
+# node tests
+pnpm build-and-test # this will also build the program
+#or 
+pnpm test # if you have already built the program
+```
