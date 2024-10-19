@@ -1,15 +1,13 @@
 use anchor_lang::prelude::*;
 
-declare_id!("BHJvP5fFucNNQNTpN8gfq7xTNEhaHxea2e38ab4AzLKr");
+declare_id!("2phbC62wekpw95XuBk4i1KX4uA8zBUWmYbiTMhicSuBV");
 
 #[program]
-pub mod hello_solana {
+pub mod hello_solana_program {
     use super::*;
-
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn hello(ctx: Context<HelloContext>) -> Result<()> {
         Ok(())
     }
 }
-
 #[derive(Accounts)]
-pub struct Initialize {}
+pub struct HelloContext<'info> {}
