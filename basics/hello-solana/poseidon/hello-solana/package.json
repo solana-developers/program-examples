@@ -5,7 +5,9 @@
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.29.0",
-        "@solanaturbine/poseidon": "^0.0.4"
+        "@solanaturbine/poseidon": "^0.0.4",
+        "anchor-bankrun": "^0.5.0",
+        "solana-bankrun": "^0.4.0"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.0",

@@ -1,16 +1,26 @@
+import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { HelloSolana } from "../target/types/hello_solana";
+import { PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { startAnchor } from "solana-bankrun";
 
-describe("hello-solana", () => {
-  // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+import { HelloSolanaProgram } from "../target/types/hello_solana_program";
 
-  const program = anchor.workspace.HelloSolana as Program<HelloSolana>;
+const IDL = require("../target/idl/hello_solana.json");
+const PROGRAM_ID = new PublicKey(IDL.address);
 
-  it("Is initialized!", async () => {
-    // Add your test here.
-    const tx = await program.methods.initialize().rpc();
-    console.log("Your transaction signature", tx);
+describe("hello-solana", async () => {
+  // Set up Anchor with Bankrun and load the program IDL
+  const context = await startAnchor(
+    "",
+    [{ name: "hello_solana", programId: PROGRAM_ID }],
+    []
+  );
+  const provider = new BankrunProvider(context);
+  const program = new anchor.Program<HelloSolanaProgram>(IDL, provider);
+
+  it("Say hello!", async () => {
+    // Call the "hello" method from the IDL to run the transaction
+    await program.methods.hello().accounts({}).rpc();
   });
 });
