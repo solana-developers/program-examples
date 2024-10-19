@@ -1,10 +1,15 @@
 use counter_api::prelude::*;
 use steel::*;
 
+use solana_program::msg;
+
 pub fn process_increment(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
+    msg!("Processing Increment instruction");
+
     // Parse args.
     let args = Increment::try_from_bytes(data)?;
     let amount = u64::from_le_bytes(args.amount);
+    msg!("Parsed amount: {}", amount);
 
     // Load accounts.
     let [signer_info, counter_info] = accounts else {
@@ -18,5 +23,6 @@ pub fn process_increment(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramRe
     // Update state
     counter.value += amount;
 
+    msg!("Final amount: {}", counter.value);
     Ok(())
 }
