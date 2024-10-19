@@ -10,7 +10,6 @@ crate-type = ["cdylib", "lib"]
 steel-api.workspace = true
 solana-program.workspace = true
 steel.workspace = true
-solana-sdk.workspace = true
 
 
 [dev-dependencies]

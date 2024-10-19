@@ -1,4 +1,4 @@
-use solana_sdk::msg;
+use solana_program::msg;
 use steel::*;
 
 pub fn process_hello(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
