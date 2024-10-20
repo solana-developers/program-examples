@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-declare_id!("7yvcNv9BAHHZYPgDag1YFSLEbXiwBTmVmuE4eArSSEKH");
+declare_id!("EvcknV23Y3dkbSa4afZNGw2PgoowcfxCy4qvP8Ghogwu");
 #[program]
 pub mod counter_program {
     use super::*;
@@ -11,10 +11,14 @@ pub mod counter_program {
         ctx.accounts.counter.count = ctx.accounts.counter.count + 1;
         Ok(())
     }
+    pub fn decrement(ctx: Context<DecrementContext>) -> Result<()> {
+        ctx.accounts.counter.count = ctx.accounts.counter.count - 1;
+        Ok(())
+    }
 }
 #[derive(Accounts)]
 pub struct InitializeCounterContext<'info> {
-    #[account(mut, seeds = [b"count"], bump)]
+    #[account(init, payer = payer, space = 17, seeds = [b"count"], bump)]
     pub counter: Account<'info, Counter>,
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -22,6 +26,12 @@ pub struct InitializeCounterContext<'info> {
 }
 #[derive(Accounts)]
 pub struct IncrementContext<'info> {
+    #[account(mut, seeds = [b"count"], bump)]
+    pub counter: Account<'info, Counter>,
+    pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+pub struct DecrementContext<'info> {
     #[account(mut, seeds = [b"count"], bump)]
     pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,

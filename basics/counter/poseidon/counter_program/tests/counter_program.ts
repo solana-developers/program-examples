@@ -1,10 +1,10 @@
-import * as anchor from '@coral-xyz/anchor';
-import { Program } from '@coral-xyz/anchor';
-import { Keypair } from '@solana/web3.js';
-import { assert } from 'chai';
-import { CounterProgram } from '../target/types/counter_program';
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { Keypair } from "@solana/web3.js";
+import { assert } from "chai";
+import { CounterProgram } from "../target/types/counter_program";
 
-describe('counter_program', () => {
+describe("counter_program", () => {
   // Configure the client to use the local cluster.
 
   const provider = anchor.AnchorProvider.env();
@@ -14,52 +14,119 @@ describe('counter_program', () => {
 
   const program = anchor.workspace.CounterProgram as Program<CounterProgram>;
 
-  // Generate a new keypair for the counter account
-  const counterKeypair = new Keypair();
+  const [counterState, _] = anchor.web3.PublicKey.findProgramAddressSync(
+      [anchor.utils.bytes.utf8.encode("count")],
+      program.programId
+    );
 
-  it('Initialize Counter', async () => {
+  it("Initialize Counter", async () => {
     await program.methods
       .initializeCounter()
       .accounts({
-        counter: counterKeypair.publicKey,
         payer: payer.publicKey,
       })
-      .signers([counterKeypair])
       .rpc();
 
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey);
+    const currentCount = await program.account.counter.fetch(
+      counterState
+    );
 
-    assert(currentCount.count.toNumber() === 0, 'Expected initialized count to be 0');
+    assert(
+      currentCount.count.toNumber() === 0,
+      "Expected initialized count to be 0"
+    );
   });
 
-  it('Initialize Counter', async () => {
+
+  it("Increment Counter", async () => {
     await program.methods
-      .initializeCounter()
-      .accounts({
-        counter: counterKeypair.publicKey,
-        payer: payer.publicKey,
-      })
-      .signers([counterKeypair])
+      .increment()
+      .accounts({})
       .rpc();
 
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey);
+    const currentCount = await program.account.counter.fetch(
+      counterState
+    );
 
-    assert(currentCount.count.toNumber() === 0, 'Expected initialized count to be 0');
+    assert(currentCount.count.toNumber() === 1, "Expected  count to be 1");
   });
 
-  it('Increment Counter', async () => {
-    await program.methods.increment().accounts({ counter: counterKeypair.publicKey }).rpc();
+  it("Increment Counter Again", async () => {
+    await program.methods
+      .increment()
+      .accounts({ counter: counterState })
+      .rpc();
 
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey);
+    const currentCount = await program.account.counter.fetch(
+      counterState
+    );
 
-    assert(currentCount.count.toNumber() === 1, 'Expected  count to be 1');
+    assert(currentCount.count.toNumber() === 2, "Expected  count to be 2");
   });
+    it("Decrement counter", async () => {
+      await program.methods
+        .decrement()
+        .accounts({})
+        .rpc();
 
-  it('Increment Counter Again', async () => {
-    await program.methods.increment().accounts({ counter: counterKeypair.publicKey }).rpc();
+      const currentCount = await program.account.counter.fetch(
+        counterState
+      );
+      assert(currentCount.count.toNumber() === 1, "Expected  count to be 1");
+    });
+    it("Increment and decrement multiple times", async () => {
+      // Increment the counter 5 times
+      for (let i = 0; i < 5; i++) {
+        await program.methods
+          .increment()
+          .accounts({})
+          .rpc();
+      }
 
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey);
+      let currentCount = await program.account.counter.fetch(
+        counterState
+      );
+      assert.strictEqual(
+        currentCount.count.toNumber(),
+        6,
+        "Expected count to be 6 after 5 increments"
+      );
 
-    assert(currentCount.count.toNumber() === 2, 'Expected  count to be 2');
-  });
+      // Decrement the counter 4 times
+      for (let i = 0; i < 4; i++) {
+        await program.methods
+          .decrement()
+          .accounts({})
+          .rpc();
+      }
+
+      currentCount = await program.account.counter.fetch(
+        counterState
+      );
+      assert.strictEqual(
+        currentCount.count.toNumber(),
+        2,
+        "Expected count to be 2 after 4 decrements"
+      );
+    });
+
+    it("Cannot decrement below 0", async () => {
+      // Decrement the counter to 0
+      await program.methods
+        .decrement()
+        .accounts({})
+        .rpc();
+      await program.methods
+        .decrement()
+        .accounts({})
+        .rpc();
+      const currentCount = await program.account.counter.fetch(
+        counterState
+      );
+      assert.strictEqual(
+        currentCount.count.toNumber(),
+        0,
+        "Expected count to be 0 after multiple decrements"
+      );
+    });
 });
