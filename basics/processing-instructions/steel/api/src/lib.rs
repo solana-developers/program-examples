@@ -1,8 +1,6 @@
-pub mod instruction;
 pub mod sdk;
 
 pub mod prelude {
-    pub use crate::instruction::*;
     pub use crate::sdk::*;
 }
 
