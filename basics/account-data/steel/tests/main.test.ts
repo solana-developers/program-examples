@@ -83,7 +83,7 @@ const toAddressInfoAccount = (
   };
 };
 
-describe('counter program', async () => {
+describe('Account data program', async () => {
   const PROGRAM_ID = new PublicKey(
     'z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35',
   );
@@ -144,9 +144,9 @@ describe('counter program', async () => {
     // process the transaction
     await client.processTransaction(tx);
 
-    // fetch the counter account data
+    // fetch the account data
     const accountInfo = await client.getAccount(pda);
-    assert(accountInfo !== null, 'counter account should exist');
+    assert(accountInfo !== null, 'account should exist');
 
     // deserialize the account data
     const rawAccountData = borsh.deserialize(
@@ -165,7 +165,7 @@ describe('counter program', async () => {
     );
     assert(
       accountData.data.house_number === addressInfoData.house_number,
-      `counter value should be ${addressInfoData.house_number} but we got ${accountData.data.house_number}`,
+      `house number should be ${addressInfoData.house_number} but we got ${accountData.data.house_number}`,
     );
     assert(
       accountData.data.street === addressInfoData.street,
