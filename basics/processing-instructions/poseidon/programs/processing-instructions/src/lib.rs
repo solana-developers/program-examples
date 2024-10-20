@@ -13,7 +13,7 @@ pub mod processing_instructions_program {
         // With Anchor, you can just put instruction data in the function signature!
 
         msg!("Welcome to the arena, {}!");
-        if height > 5 {
+        if height > 8 {
             msg!("You can jump from this height length");
         } else {
             msg!("you can not jump because you are too short to handle height");
