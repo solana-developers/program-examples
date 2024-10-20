@@ -8,4 +8,7 @@ pub mod hello_solana {
     }
 }
 #[derive(Accounts)]
-pub struct HelloContext {}
+pub struct HelloContext<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+}
