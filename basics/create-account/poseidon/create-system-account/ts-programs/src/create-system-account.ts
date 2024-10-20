@@ -1,37 +1,28 @@
-import { Account, Pubkey, Result, Signer, SystemAccount, SystemProgram, UncheckedAccount, u8 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, Result, Signer, u8 } from "@solanaturbine/poseidon";
 
 export default class CreateSystemAccountProgram {
-  static PROGRAM_ID = new Pubkey('HiodPTcV4ZBV8GkqNPRhJKuVoBAxzEQYxK2Mbv9i9vY4');
+  static PROGRAM_ID = new Pubkey(
+    "31q9ivi4955rsL3F4gU7tHMfeJ3hquWFJCQaeD3XKf19"
+  );
 
-  // Initialize a new system account
-  initialize(state: AccountState, owner: Signer, auth: UncheckedAccount): Result {
-    // Create a new account with derived state
-    state.derive(['account']).init();
+  // Method to initialize a new system account
+  createSystemAccount(account: AccountState, owner: Signer): Result {
+    console.log("Program invoked. Creating a system account...");
 
-    // Set the owner of the account
-    state.owner = owner.key;
+    // Generate a new account using a derived address and initialize it
+    account.derive(["account"]).init();
 
-    // Store bumps for the account
-    state.authBump = auth.getBump();
-    state.accountBump = state.getBump();
-  }
+    // Assign the provided signer as the account's owner
+    account.owner = owner.key;
 
-  // Update account state
-  update(state: AccountState, newValue: u8): Result {
-    state.derive(['account']); // Ensure we're working with the correct derived account
-    state.value = newValue; // Update the account state with the new value
-  }
+    // Store the bump seed used for generating the derived account address
+    account.accountBump = account.getBump();
 
-  delete(state: AccountState, signer: Signer): Result {
-    // Derive the correct account and check ownership
-    state.derive(['account']).has([signer.key]).close(signer);
+    console.log("Account created succesfully.");
   }
 }
 
-// Define the custom account state interface
 export interface AccountState extends Account {
-  owner: Pubkey; // Owner of the account
-  value: u8; // Value to store in the account
-  accountBump: u8; // Bump for the derived account
-  authBump: u8; // Bump for the authentication
+  owner: Pubkey; // Public key that owns the account
+  accountBump: u8; // Bump seed used in address derivation
 }
