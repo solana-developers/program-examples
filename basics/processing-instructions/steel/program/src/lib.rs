@@ -11,7 +11,7 @@ pub fn process_instruction(
 
     let instruction = GoToTheParkData::try_from_bytes(instruction_data)?;
 
-    msg!("Welcome to the park, {}", instruction.name());
+    msg!("Welcome to the park, {}!", instruction.name());
 
     if instruction.height() > 5 {
         msg!("You are tall enough to ride this ride. Congratulations.");
