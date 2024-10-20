@@ -44,13 +44,14 @@ Specifically for code in this repo:
 7. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
+```bash
+pnpm check:fix
+```
+
 8. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
 When removing or updating an example, please ensure that the example is removed from the `.gitignore` file
 and there's a change in that example's directory.
 
-```bash
-pnpm check:fix
-```
 
 ## Code of Conduct
 
