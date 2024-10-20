@@ -2,7 +2,7 @@ import { Account, Pubkey, Result, Signer, u8 } from "@solanaturbine/poseidon";
 
 export default class CreateSystemAccountProgram {
   static PROGRAM_ID = new Pubkey(
-    "31q9ivi4955rsL3F4gU7tHMfeJ3hquWFJCQaeD3XKf19"
+    "J3h2xRJr7i3dUiLsPu9ZhFGKkNnnxvWAvRNXdKUx5wvi"
   );
 
   // Method to initialize a new system account

@@ -1,11 +1,13 @@
 use anchor_lang::prelude::*;
-declare_id!("2Gs21s6ovwaHddKdPZvGpowpVJJBohdy3DrjoX77rqiY");
+
+declare_id!("J3h2xRJr7i3dUiLsPu9ZhFGKkNnnxvWAvRNXdKUx5wvi");
+
 #[program]
 pub mod create_system_account_program {
+
     use super::*;
-    pub fn create_system_account(
-        ctx: Context<CreateSystemAccountContext>,
-    ) -> Result<()> {
+
+    pub fn create_system_account(ctx: Context<CreateSystemAccountContext>) -> Result<()> {
         ctx.accounts.account.owner = ctx.accounts.owner.key();
         ctx.accounts.account.account_bump = ctx.bumps.account;
         Ok(())
