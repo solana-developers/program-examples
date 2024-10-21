@@ -6,10 +6,7 @@ use anchor_lang::system_program::{
     transfer, 
 };
 use anchor_spl::token::spl_token::instruction::transfer as spl_transfer;
-use anchor_spl::associated_token::{
-    get_associated_token_address, 
-    AssociatedToken
-};
+use anchor_spl::associated_token::get_associated_token_address;
 use anchor_spl::metadata::{
     MasterEditionAccount, 
     Metadata, 
