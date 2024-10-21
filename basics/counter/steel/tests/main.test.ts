@@ -1,29 +1,18 @@
-import { describe, it } from 'mocha';
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import { assert } from 'chai';
-import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
+import { describe, it } from 'mocha';
+import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
 
 describe('counter program', async () => {
-  const PROGRAM_ID = new PublicKey(
-    'z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35',
-  );
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
 
   before(async () => {
-    context = await start(
-      [{ name: 'counter_program', programId: PROGRAM_ID }],
-      [],
-    );
+    context = await start([{ name: 'counter_program', programId: PROGRAM_ID }], []);
     client = context.banksClient;
     payer = context.payer;
   });
@@ -69,12 +58,12 @@ describe('counter program', async () => {
     };
 
     // deserialize the counter account data
-    const counterData = borsh.deserialize(counterSchema, accountInfo!.data) as {
+    const counterData = borsh.deserialize(counterSchema, accountInfo?.data) as {
       value: bigint;
     };
 
     // check the counter value is 0
-    assert(counterData.value === BigInt(0), `counter value should be 0`);
+    assert(counterData.value === BigInt(0), 'counter value should be 0');
 
     // increment (must be a number between 0 and 255)
     const amount = BigInt(42);
@@ -82,10 +71,7 @@ describe('counter program', async () => {
     amountBuffer.writeBigUInt64LE(amount);
 
     // data for the increment instruction
-    const incrementData = Buffer.concat([
-      instructionDiscriminators.increment,
-      amountBuffer,
-    ]);
+    const incrementData = Buffer.concat([instructionDiscriminators.increment, amountBuffer]);
 
     // create the increment instruction
     const incrementIx = new TransactionInstruction({
@@ -110,14 +96,8 @@ describe('counter program', async () => {
     assert(updatedAccountInfo !== null, 'counter account should exist');
 
     // deserialize the updated counter account data
-    const updatedCounterData = borsh.deserialize(
-      counterSchema,
-      updatedAccountInfo!.data,
-    ) as { value: bigint };
+    const updatedCounterData = borsh.deserialize(counterSchema, updatedAccountInfo?.data) as { value: bigint };
 
-    assert(
-      updatedCounterData.value === BigInt(amount),
-      `counter value should be ${amount} but we got ${updatedCounterData.value}`,
-    );
+    assert(updatedCounterData.value === BigInt(amount), `counter value should be ${amount} but we got ${updatedCounterData.value}`);
   });
 });
