@@ -1,12 +1,6 @@
-import { describe, it } from 'mocha';
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { assert } from 'chai';
+import { describe, it } from 'mocha';
 import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
 
 type GoToTheParkData = {
@@ -49,19 +43,14 @@ const toGoToTheParkData = (data: GoToTheParkDataRaw): GoToTheParkData => {
 };
 
 describe('processing instructions', async () => {
-  const PROGRAM_ID = new PublicKey(
-    'z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35',
-  );
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
 
   before(async () => {
-    context = await start(
-      [{ name: 'processing_instructions_program', programId: PROGRAM_ID }],
-      [],
-    );
+    context = await start([{ name: 'processing_instructions_program', programId: PROGRAM_ID }], []);
     client = context.banksClient;
     payer = context.payer;
   });
@@ -108,26 +97,12 @@ describe('processing instructions', async () => {
     // - Welcome to the park, {name}!
     // - You are NOT tall enough... and You are tall enough...
 
-    assert(
-      !!result.logMessages.find((msg) =>
-        msg.includes(`Welcome to the park, ${jimmy.name}!`),
-      ),
-    );
+    assert(!!result.logMessages.find((msg) => msg.includes(`Welcome to the park, ${jimmy.name}!`)));
 
-    assert(
-      !!result.logMessages.find((msg) =>
-        msg.includes(`You are NOT tall enough`),
-      ),
-    );
+    assert(!!result.logMessages.find((msg) => msg.includes('You are NOT tall enough')));
 
-    assert(
-      !!result.logMessages.find((msg) =>
-        msg.includes(`Welcome to the park, ${mary.name}!`),
-      ),
-    );
+    assert(!!result.logMessages.find((msg) => msg.includes(`Welcome to the park, ${mary.name}!`)));
 
-    assert(
-      !!result.logMessages.find((msg) => msg.includes(`You are tall enough`)),
-    );
+    assert(!!result.logMessages.find((msg) => msg.includes('You are tall enough')));
   });
 });
