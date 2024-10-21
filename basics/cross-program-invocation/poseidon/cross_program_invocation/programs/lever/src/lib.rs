@@ -1,15 +1,9 @@
 use anchor_lang::prelude::*;
-declare_id!("D4aA71us8bTcdXeZQpXyXidW2xPugVwUuoXx3b1bnvXa");
+declare_id!("9aM9w7ozrZwXx9bQHbBx6QjWc6F46tdN9ayt86vt9uLL");
 #[program]
-pub mod cross_program_invocation {
+pub mod lever {
     use super::*;
     pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> {
-        Ok(())
-    }
-    pub fn switch_power(ctx: Context<SwitchPowerContext>, name: String) -> Result<()> {
-        Ok(())
-    }
-    pub fn pull_lever(ctx: Context<PullLeverContext>, name: String) -> Result<()> {
         Ok(())
     }
     pub fn initialize_lever(ctx: Context<InitializeLeverContext>) -> Result<()> {
@@ -20,25 +14,18 @@ pub mod cross_program_invocation {
     }
 }
 #[derive(Accounts)]
-pub struct InitializeContext<'info> {}
-#[derive(Accounts)]
-pub struct SwitchPowerContext<'info> {}
-#[derive(Accounts)]
-pub struct PullLeverContext<'info> {
-    #[account()]
-    pub lever_program: Account<'info, Lever>,
+pub struct InitializeContext<'info> {
+    #[account(mut)]
+    pub power: Signer<'info>,
     #[account(mut)]
     pub user: Signer<'info>,
-    #[account()]
-    pub power: Account<'info, PowerStatus>,
-    pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
 pub struct InitializeLeverContext<'info> {
-    #[account(init, payer = user, space = 8, seeds = [b"power"], bump)]
-    pub power: Account<'info, PowerStatus>,
     #[account(mut)]
     pub user: Signer<'info>,
+    #[account(init, payer = user, space = 8, seeds = [b"lever"], bump)]
+    pub power: Account<'info, PowerStatus>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
@@ -51,5 +38,3 @@ pub struct SetPowerStatusContext<'info> {
 }
 #[account]
 pub struct PowerStatus {}
-#[account]
-pub struct Lever {}
