@@ -1,0 +1,18 @@
+[workspace]
+# Define the programs folder as a member of the workspace
+members = [
+    "programs"
+]
+resolver = "2"  # Ensure the latest dependency resolution algorithm is used
+
+[profile.release]
+# Enable additional checks and optimizations for release builds
+overflow-checks = true
+lto = "fat"  # Link-time optimization to improve performance
+codegen-units = 1  # Single codegen unit for better optimization
+
+[profile.release.build-override]
+# Fine-tune build options for release
+opt-level = 3  # Maximum optimization level
+incremental = false  # Disable incremental compilation in release mode
+codegen-units = 1  # Use a single codegen unit for maximum optimization

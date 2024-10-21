@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.localnet]
+processing_instructions_poseidon = "DgoL5J44aspizyUs9fcnpGEUJjWTLJRCfx8eYtUMYczf"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
