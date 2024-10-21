@@ -1,14 +1,8 @@
-import { describe, it } from 'mocha';
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from '@solana/web3.js';
-import { assert } from 'chai';
-import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
+import { describe, it } from 'mocha';
+import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
 
 const instructionDiscriminators = {
   createAddressInfo: Buffer.from([0]),
@@ -70,9 +64,7 @@ const createAddressInfo = (data: AddressInfoAccount['data']): Buffer => {
   return Buffer.concat([name, house_number, street, city]);
 };
 
-const toAddressInfoAccount = (
-  data: AddressInfoAccountRaw,
-): AddressInfoAccount => {
+const toAddressInfoAccount = (data: AddressInfoAccountRaw): AddressInfoAccount => {
   return {
     data: {
       name: decodeString(data.data.name),
@@ -84,19 +76,14 @@ const toAddressInfoAccount = (
 };
 
 describe('Account data program', async () => {
-  const PROGRAM_ID = new PublicKey(
-    'z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35',
-  );
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
 
   before(async () => {
-    context = await start(
-      [{ name: 'account_data_program', programId: PROGRAM_ID }],
-      [],
-    );
+    context = await start([{ name: 'account_data_program', programId: PROGRAM_ID }], []);
     client = context.banksClient;
     payer = context.payer;
   });
@@ -120,10 +107,7 @@ describe('Account data program', async () => {
     const addressInfoDataBuffer = createAddressInfo(addressInfoData);
 
     // data for the instruction
-    const data = Buffer.concat([
-      instructionDiscriminators.createAddressInfo,
-      addressInfoDataBuffer,
-    ]);
+    const data = Buffer.concat([instructionDiscriminators.createAddressInfo, addressInfoDataBuffer]);
 
     // create the instruction
     const ix = new TransactionInstruction({
@@ -149,31 +133,19 @@ describe('Account data program', async () => {
     assert(accountInfo !== null, 'account should exist');
 
     // deserialize the account data
-    const rawAccountData = borsh.deserialize(
-      addressInfoSchema,
-      accountInfo!.data,
-    ) as AddressInfoAccountRaw;
+    const rawAccountData = borsh.deserialize(addressInfoSchema, accountInfo.data) as AddressInfoAccountRaw;
 
     assert.isNotNull(rawAccountData, 'account data should exist');
 
     const accountData = toAddressInfoAccount(rawAccountData);
 
     // check the data
-    assert(
-      accountData.data.name === addressInfoData.name,
-      `name should be ${addressInfoData.name} but we got ${accountData.data.name}`,
-    );
+    assert(accountData.data.name === addressInfoData.name, `name should be ${addressInfoData.name} but we got ${accountData.data.name}`);
     assert(
       accountData.data.house_number === addressInfoData.house_number,
       `house number should be ${addressInfoData.house_number} but we got ${accountData.data.house_number}`,
     );
-    assert(
-      accountData.data.street === addressInfoData.street,
-      `street should be ${addressInfoData.street} but we got ${accountData.data.street}`,
-    );
-    assert(
-      accountData.data.city === addressInfoData.city,
-      `city should be ${addressInfoData.city} but we got ${accountData.data.city}`,
-    );
+    assert(accountData.data.street === addressInfoData.street, `street should be ${addressInfoData.street} but we got ${accountData.data.street}`);
+    assert(accountData.data.city === addressInfoData.city, `city should be ${addressInfoData.city} but we got ${accountData.data.city}`);
   });
 });
