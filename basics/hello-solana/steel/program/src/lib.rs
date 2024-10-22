@@ -1,16 +1,22 @@
-use solana_program::msg;
+mod hello;
+
+use hello::*;
+       
+use steel_api::prelude::*;
 use steel::*;
 
-entrypoint!(process_instruction);
-
-fn process_instruction(
+pub fn process_instruction(
     program_id: &Pubkey,
-    _accounts: &[AccountInfo],
-    _instruction_data: &[u8],
+    accounts: &[AccountInfo],
+    data: &[u8],
 ) -> ProgramResult {
-    msg!("Hello, Solana!");
+    let (ix, data) = parse_instruction(&steel_api::ID, program_id, data)?;
 
-    msg!("Our program's Program ID: {}", &program_id);
+    match ix {
+        SteelInstruction::HelloSolana => process_hello(accounts, data)?,
+    }
 
     Ok(())
 }
+
+entrypoint!(process_instruction);
