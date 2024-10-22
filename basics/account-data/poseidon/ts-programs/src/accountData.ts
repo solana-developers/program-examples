@@ -7,20 +7,20 @@ export default class AccountData {
 
 	createAddressInfo(
 		addressInfo: AddressInfo,
-		name: String,
+		name: Uint8Array,
 		houseNumber: u8,
-		street: String,
-		city: String
+		// street: String,
+		// city: String
 	): Result {
-		addressInfo.name = name;
+		// addressInfo.name = name;
 		addressInfo.houseNumber = houseNumber;
-		addressInfo.street = street;
-		addressInfo.city = city;
+		// addressInfo.street = street;
+		// addressInfo.city = city;
 	}
 }
 
 export interface AddressInfo extends Account {
-	name: String;
+	name: Uint8Array;
 	houseNumber: u8;
 	street: String;
 	city: String;
