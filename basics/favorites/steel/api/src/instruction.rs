@@ -11,11 +11,9 @@ pub enum SteelInstruction {
 pub struct SetFavorites {
     pub number: [u8; 8],
 
-    // pub color: String,
-    pub color: [u8; 64],
+    pub color: [u8; 32],
 
-    // pub hobbies: Vec<String>,
-    pub hobbies: [[u8; 64]; 5],
+    pub hobbies: [[u8; 32]; 3],
 }
 
 instruction!(SteelInstruction, SetFavorites);

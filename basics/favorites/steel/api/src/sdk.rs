@@ -2,18 +2,10 @@ use steel::*;
 
 use crate::prelude::*;
 
-pub fn set_favorites(
-    signer: Pubkey,
-    number: u64,
-    color: String,
-    hobbies: Vec<String>,
-) -> Instruction {
-    let color_bytes: [u8; 64] = color
-        .as_bytes()
-        .try_into()
-        .expect("String wrong length, expected 32 bytes");
+pub fn set_favorites(signer: Pubkey, number: u64, color: &str, hobbies: Vec<&str>) -> Instruction {
+    let color_bytes: [u8; 32] = string_to_bytes32_padded(color).unwrap();
 
-    let hobbies_bytes = convert_vec_to_byte_arrays(hobbies);
+    let hobbies_bytes = strings_to_bytes32_array_padded(hobbies).unwrap();
 
     Instruction {
         program_id: crate::ID,
@@ -29,21 +21,4 @@ pub fn set_favorites(
         }
         .to_bytes(),
     }
-}
-
-fn convert_vec_to_byte_arrays(strings: Vec<String>) -> [[u8; 64]; 5] {
-    let mut result = [[0u8; 64]; 5];
-
-    // Ensure we have exactly 5 strings
-    assert_eq!(strings.len(), 5, "Expected exactly 5 strings");
-
-    // Convert each string to a fixed-size byte array
-    for (i, string) in strings.into_iter().enumerate() {
-        result[i] = string.as_bytes().try_into().expect(&format!(
-            "String at index {} wrong length, expected 64 bytes",
-            i
-        ));
-    }
-
-    result
 }

@@ -7,11 +7,9 @@ use super::SteelAccount;
 pub struct Favorites {
     pub number: u64,
 
-    // pub color: String,
-    pub color: [u8; 64],
+    pub color: [u8; 32],
 
-    // pub hobbies: Vec<String>,
-    pub hobbies: [[u8; 64]; 5],
+    pub hobbies: [[u8; 32]; 3],
 }
 
 account!(SteelAccount, Favorites);
