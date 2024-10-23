@@ -1,4 +1,4 @@
-use crate::state::AddressInfo;
+use crate::{constants::constants::ANCHOR_DESCRIMINATOR_SIZE, state::AddressInfo};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -9,7 +9,7 @@ pub struct CreateAddressInfo<'info> {
     #[account(
         init,
         payer = payer,
-        space = 8 + AddressInfo::INIT_SPACE,
+        space = ANCHOR_DESCRIMINATOR_SIZE + AddressInfo::INIT_SPACE,
     )]
     address_info: Account<'info, AddressInfo>,
     system_program: Program<'info, System>,
