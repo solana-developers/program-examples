@@ -22,7 +22,7 @@ Specifically for code in this repo:
 
 1. Use pnpm as the default package manager for the project. You can [install pnpm by following the instructions](https://pnpm.io/installation). Commit `pnpm-lock.yaml` to the repository.
 
-2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `posidon` and Python in `seahorse`.
+2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `poseidon` and Python in `seahorse`.
 
 3. Tests for Solana native, Steel and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
 
@@ -44,13 +44,14 @@ Specifically for code in this repo:
 7. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
-8. Some projects can be ignored from the building and testing process by adding the project name to the `.ghaignore` file.
-When removing or updating an example, please ensure that the example is removed from the `.ghaignore` file
-and there's a change in that example's directory.
-
 ```bash
 pnpm check:fix
 ```
+
+8. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
+When removing or updating an example, please ensure that the example is removed from the `.gitignore` file
+and there's a change in that example's directory.
+
 
 ## Code of Conduct
 
