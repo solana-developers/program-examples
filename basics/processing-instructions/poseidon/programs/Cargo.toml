@@ -1,0 +1,23 @@
+[package]
+name = "processing-instructions-poseidon"
+version = "0.1.0"
+description = "Processing instructions using Poseidon"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "processing_instructions_poseidon"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.30.0"
+light-poseidon = "0.2.0"  # Check for the latest version on crates.io
+ark-bn254 = "0.4.0"       # Required for BN254 curve support
+ark-ff = "0.4.0"   
