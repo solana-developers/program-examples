@@ -27,8 +27,9 @@ describe("Close an account", async () => {
   );
 
   it("Can create an account", async () => {
+    const userId = anchor.BN(76362)
     await program.methods
-      .createUser("John Doe")
+      .createUser(userId)
       .accounts({
         user: payer.publicKey,
       })

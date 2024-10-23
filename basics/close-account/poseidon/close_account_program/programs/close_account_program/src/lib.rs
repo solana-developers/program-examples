@@ -3,7 +3,7 @@ declare_id!("2q4uoWExFAbZjeDe4n3miipsT9bX9vLnkSetCfZYF2VT");
 #[program]
 pub mod close_account {
     use super::*;
-    pub fn create_user(ctx: Context<CreateUserContext>, name: u8) -> Result<()> {
+    pub fn create_user(ctx: Context<CreateUserContext>, name: u32) -> Result<()> {
         ctx.accounts.user_account.user_bump = ctx.bumps.user_account;
         ctx.accounts.user_account.user = ctx.accounts.user.key();
         ctx.accounts.user_account.name = name;
@@ -39,6 +39,6 @@ pub struct CloseUserContext<'info> {
 #[account]
 pub struct UserAccount {
     pub user_bump: u8,
-    pub name: u8,
+    pub name: u32,
     pub user: Pubkey,
 }
