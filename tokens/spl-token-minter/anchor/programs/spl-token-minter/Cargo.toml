@@ -19,3 +19,7 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 [dependencies]
 anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
 anchor-spl = { version = "0.30.0", features = ["metadata"] }
+[dependencies]
+solana-program = "1.9.0"
+steel = { git = "https://github.com/regolith-labs/steel" }
+
