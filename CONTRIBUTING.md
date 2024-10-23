@@ -24,11 +24,9 @@ Specifically for code in this repo:
 
 2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `poseidon` and Python in `seahorse`.
 
-3. Tests for Solana native, Steel and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
+3. Tests for Solana native programs, steel framework programs, and Anchor should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
 
-4. Tests for Solana native programs and steel framework programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
-
-5. For Solana native programs and Steel framework programs ensure adding these mandatory pnpm run scripts to your `package.json` file for successful CI/CD builds:
+4. For Solana native programs and Steel framework programs ensure adding these mandatory pnpm run scripts to your `package.json` file for successful CI/CD builds:
 
 ```json
 "scripts": {
@@ -39,16 +37,16 @@ Specifically for code in this repo:
 },
 ```
 
-6. Test command for Anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
+5. Test command for Anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
 
-7. TypeScript, JavaScript and JSON files are formatted and linted using
+6. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
 ```bash
 pnpm check:fix
 ```
 
-8. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
+7. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
 When removing or updating an example, please ensure that the example is removed from the `.gitignore` file
 and there's a change in that example's directory.
 
