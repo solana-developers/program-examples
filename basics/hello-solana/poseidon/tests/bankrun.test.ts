@@ -3,7 +3,7 @@ import * as anchor from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
-import { HelloWorldProgram } from "../target/types/hello_world_program";
+import { HelloWorldProgram } from '../target/types/hello_world_program';
 
 const IDL = require('../target/idl/hello_world_program.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
@@ -21,5 +21,3 @@ describe('hello-solana', async () => {
     await program.methods.helloSolana().accounts({}).rpc();
   });
 });
-
-
