@@ -1,7 +1,6 @@
 use solana_program::hash::Hash;
 use solana_program_test::{processor, BanksClient, ProgramTest};
 use solana_sdk::{signature::Keypair, signer::Signer, transaction::Transaction};
-use steel::*;
 use steel_api::prelude::*;
 
 async fn setup() -> (BanksClient, Keypair, Hash) {

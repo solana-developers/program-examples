@@ -13,7 +13,7 @@ steel.workspace = true
 
 
 [dev-dependencies]
-bs64 = "0.1.2"
+base64 = "0.21"
 rand = "0.8.5"
 solana-program-test = "1.18"
 solana-sdk = "1.18"
