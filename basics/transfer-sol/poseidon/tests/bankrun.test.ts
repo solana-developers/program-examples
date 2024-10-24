@@ -3,7 +3,7 @@ import * as anchor from '@coral-xyz/anchor';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
-import { TransferSolProgram } from "../target/types/transfer_sol_program";
+import { TransferSolProgram } from '../target/types/transfer_sol_program';
 
 const IDL = require('../target/idl/transfer_sol.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
@@ -20,7 +20,6 @@ describe('Bankrun example', async () => {
   // Generate a new keypair for the recipient
   const recipient = new Keypair();
 
-
   it('Transfer SOL with CPI', async () => {
     await getBalances(payer.publicKey, recipient.publicKey, 'Beginning');
 
@@ -34,7 +33,6 @@ describe('Bankrun example', async () => {
 
     await getBalances(payer.publicKey, recipient.publicKey, 'Resulting');
   });
-
 
   async function getBalances(payerPubkey: PublicKey, recipientPubkey: PublicKey, timeframe: string) {
     const payerBalance = await provider.connection.getBalance(payerPubkey);
