@@ -21,7 +21,7 @@ pub fn with_program(payer: Pubkey, receiver: Pubkey, amount: u64) -> Instruction
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(payer, true),
+            AccountMeta::new(payer, false),
             AccountMeta::new(receiver, false),
         ],
         data: WithProgram {

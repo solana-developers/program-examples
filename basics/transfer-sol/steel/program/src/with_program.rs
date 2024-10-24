@@ -10,18 +10,20 @@ pub fn proces_with_program(accounts: &[AccountInfo<'_>], data: &[u8]) -> Program
     let amount = u64::from_le_bytes(args.amount);
 
     // Load accounts
-    let [signer_info, receiver_info] = accounts else {
+    let [payer_info, receiver_info] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    signer_info.is_signer()?.is_writable()?;
+    payer_info.is_writable()?;
     receiver_info.is_writable()?;
 
-    receiver_info.collect(amount, signer_info)?;
+    **payer_info.try_borrow_mut_lamports()? -= amount;
+    **receiver_info.try_borrow_mut_lamports()? += amount;
 
-    // invoke(
-    //     &system_instruction::transfer(payer.key, recipient.key, amount),
-    //     &[payer.clone(), recipient.clone(), system_program.clone()],
-    // )?;
+    // signer_info.send(amount, receiver_info);
+
+    //     **payer.try_borrow_mut_lamports()? -= amount;
+    //     **recipient.try_borrow_mut_lamports()? += amount;
+
     Ok(())
 }
