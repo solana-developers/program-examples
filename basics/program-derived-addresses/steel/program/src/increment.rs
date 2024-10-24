@@ -10,7 +10,7 @@ pub fn process_increment(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramR
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    let info = page_visit_info.to_account_mut::<PageVisits>(&program_derived_addresses_api::ID)?;
+    let info = page_visit_info.as_account_mut::<PageVisits>(&program_derived_addresses_api::ID)?;
 
     // increment page visits
     info.increment_visits();

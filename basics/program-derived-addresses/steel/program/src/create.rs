@@ -14,14 +14,10 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    // get expected pda
-    let pda = page_visits_pda(user_info.key);
-
     // validations
     signer_info.is_signer()?;
     pages_visit_info.is_empty()?.is_writable()?.has_seeds(
         &[SEED, &user_info.key.as_ref()],
-        pda.1,
         &program_derived_addresses_api::ID,
     )?;
     system_program.is_program(&system_program::ID)?;
@@ -29,13 +25,13 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     // create account
     create_account::<PageVisits>(
         pages_visit_info,
-        &program_derived_addresses_api::ID,
-        &[SEED, user_info.key.as_ref(), &[pda.1]],
         system_program,
         signer_info,
+        &program_derived_addresses_api::ID,
+        &[SEED, user_info.key.as_ref()],
     )?;
 
-    let info = pages_visit_info.to_account_mut::<PageVisits>(&program_derived_addresses_api::ID)?;
+    let info = pages_visit_info.as_account_mut::<PageVisits>(&program_derived_addresses_api::ID)?;
     info.page_visits = page_visits.page_visits;
     info.bump = page_visits.bump;
 
