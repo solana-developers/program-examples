@@ -17,8 +17,8 @@ pub fn process_increment(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramRe
     };
     signer_info.is_signer()?;
     let counter = counter_info
-        .to_account_mut::<Counter>(&counter_api::ID)?
-        .check_mut(|c| c.value < 100)?;
+        .as_account_mut::<Counter>(&counter_api::ID)?
+        .assert_mut(|c| c.value < 100)?;
 
     // Update state
     counter.value += amount;
