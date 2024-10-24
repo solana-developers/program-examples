@@ -7,16 +7,13 @@ import {
 import { assert } from "chai";
 import { start } from "solana-bankrun";
 
-// Constants for program identification
-const PROGRAM_ID = new PublicKey("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
 
 describe("hello-solana", async () => {
   // load program in solana-bankrun
   // const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "steel_program", programId: PROGRAM_ID }],
-    [],
-  );
+  // Constants for program identification
+  const PROGRAM_ID = new PublicKey("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
+  const context = await start([{ name: 'steel_hello_solana', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
