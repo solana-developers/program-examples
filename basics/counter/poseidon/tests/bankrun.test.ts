@@ -1,20 +1,16 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
-import { assert } from "chai";
-import { startAnchor } from "solana-bankrun";
-import type { CounterProgramPoseidon } from "../target/types/counter_program_poseidon";
+import * as anchor from '@coral-xyz/anchor';
+import { Keypair, PublicKey } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
+import { assert } from 'chai';
+import { startAnchor } from 'solana-bankrun';
+import type { CounterProgramPoseidon } from '../target/types/counter_program_poseidon';
 
-const IDL = require("../target/idl/counter_program.json");
+const IDL = require('../target/idl/counter_program.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe("counter_program", async () => {
+describe('counter_program', async () => {
   // Configure the client to use the anchor-bankrun
-  const context = await startAnchor(
-    "",
-    [{ name: "counter_program", programId: PROGRAM_ID }],
-    []
-  );
+  const context = await startAnchor('', [{ name: 'counter_program', programId: PROGRAM_ID }], []);
 
   const provider = new BankrunProvider(context);
 
@@ -25,7 +21,7 @@ describe("counter_program", async () => {
   // Generate a new keypair for the counter account
   const counterKeypair = new Keypair();
 
-  it("Initialize Counter", async () => {
+  it('Initialize Counter', async () => {
     await program.methods
       .initializeCounter()
       .accounts({
@@ -35,44 +31,24 @@ describe("counter_program", async () => {
       })
       .rpc();
 
-    const currentCount = await program.account.counterState.fetch(
-      counterKeypair.publicKey
-    );
+    const currentCount = await program.account.counterState.fetch(counterKeypair.publicKey);
 
-    assert(
-      currentCount.count.toNumber() === 0,
-      "Expected initialized count to be 0"
-    );
+    assert(currentCount.count.toNumber() === 0, 'Expected initialized count to be 0');
   });
 
-  it("Increment Counter", async () => {
-    await program.methods
-      .incrementCounter()
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
+  it('Increment Counter', async () => {
+    await program.methods.incrementCounter().accounts({ counter: counterKeypair.publicKey }).rpc();
 
-    const currentCount = await program.account.counterState.fetch(
-      counterKeypair.publicKey
-    );
+    const currentCount = await program.account.counterState.fetch(counterKeypair.publicKey);
 
-    assert(currentCount.count.toNumber() === 1, "Expected count to be 1");
+    assert(currentCount.count.toNumber() === 1, 'Expected count to be 1');
   });
 
-  it("Decrement Counter", async () => {
-    await program.methods
-      .decrementCounter()
-      .accounts({ counter: counterKeypair.publicKey })
-      .rpc();
+  it('Decrement Counter', async () => {
+    await program.methods.decrementCounter().accounts({ counter: counterKeypair.publicKey }).rpc();
 
-    const currentCount = await program.account.counterState.fetch(
-      counterKeypair.publicKey
-    );
+    const currentCount = await program.account.counterState.fetch(counterKeypair.publicKey);
 
-    assert(
-      currentCount.count.toNumber() === 0,
-      "Expected count to be 0 after decrement"
-    );
+    assert(currentCount.count.toNumber() === 0, 'Expected count to be 0 after decrement');
   });
-
-
 });
