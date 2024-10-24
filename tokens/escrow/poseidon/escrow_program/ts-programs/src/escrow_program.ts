@@ -1,24 +1,22 @@
 import {
   Account,
+  AssociatedTokenAccount,
+  Mint,
   Pubkey,
   type Result,
-  i64,
-  u8,
+  Seeds,
   Signer,
-  u64,
-  Mint,
-  TokenAccount,
-  AssociatedTokenAccount,
   SystemAccount,
+  TokenAccount,
   TokenProgram,
   UncheckedAccount,
-  Seeds,
-} from "@solanaturbine/poseidon";
+  i64,
+  u8,
+  u64,
+} from '@solanaturbine/poseidon';
 
 export default class EscrowProgram {
-  static PROGRAM_ID = new Pubkey(
-    "8b7Pshe6L28ee9oCTjGHCYTugFCQjKSBGfbaXZt9f3EF"
-  );
+  static PROGRAM_ID = new Pubkey('8b7Pshe6L28ee9oCTjGHCYTugFCQjKSBGfbaXZt9f3EF');
 
   make_offer(
     maker: Signer,
@@ -30,15 +28,14 @@ export default class EscrowProgram {
     escrow: Escrow,
     token_a_offered_amount: u64,
     token_b_wanted_amount: u64,
-    id: u64
+    id: u64,
   ): Result {
     //Derive PDAs for constraints
     maker_token_account_a.derive(token_mint_a, maker.key);
 
-    auth.derive(["auth"]);
-    vault.derive(["vault", escrow.key], token_mint_a, auth.key).init()
-    escrow
-      .derive(["escrow", maker.key, id.toBytes()]).init()
+    auth.derive(['auth']);
+    vault.derive(['vault', escrow.key], token_mint_a, auth.key).init();
+    escrow.derive(['escrow', maker.key, id.toBytes()]).init();
 
     //Set state of the account
     escrow.authBump = auth.getBump();
@@ -57,14 +54,14 @@ export default class EscrowProgram {
       maker_token_account_a, //from
       vault, //to
       maker, // authority
-      token_a_offered_amount // amount to be transferred
+      token_a_offered_amount, // amount to be transferred
     );
   }
 
   take_offer(
     taker: Signer,
     maker: SystemAccount,
-    maker_token_account_a:AssociatedTokenAccount,
+    maker_token_account_a: AssociatedTokenAccount,
     taker_token_account_a: AssociatedTokenAccount,
     taker_token_account_b: AssociatedTokenAccount,
     token_mint_a: Mint,
@@ -81,32 +78,21 @@ export default class EscrowProgram {
 
     //Close account and send lamports to maker
     escrow
-      .derive(["escrow", maker.key, escrow.id.toBytes()])
+      .derive(['escrow', maker.key, escrow.id.toBytes()])
       .has([maker, token_mint_a, token_mint_b]) // the has method will make sure that all the pubkeys in the list which is the Custom_Acc(escrow) holds is same as Acc's pubkey in the function(in this case `take`) arguements
       .close(maker);
 
     //Derive PDAs for constraints
-    auth.derive(["auth"]);
+    auth.derive(['auth']);
 
-    vault.derive(["vault", escrow.key], token_mint_a, auth.key)
+    vault.derive(['vault', escrow.key], token_mint_a, auth.key);
 
     // Send wanted tokens to maker
-    TokenProgram.transfer(
-      taker_token_account_a,
-      maker_token_account_a,
-      taker,
-      escrow.token_b_wanted_amount
-    );
+    TokenProgram.transfer(taker_token_account_a, maker_token_account_a, taker, escrow.token_b_wanted_amount);
 
-    let seeds:Seeds = ["auth", escrow.authBump.toBytes()]
+    const seeds: Seeds = ['auth', escrow.authBump.toBytes()];
 
-    TokenProgram.transfer(
-        vault, 
-        taker_token_account_b,
-        auth,
-        escrow.token_b_wanted_amount,
-        seeds
-    );
+    TokenProgram.transfer(vault, taker_token_account_b, auth, escrow.token_b_wanted_amount, seeds);
   }
 }
 
