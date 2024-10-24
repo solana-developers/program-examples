@@ -1,9 +1,5 @@
 {
-  "scripts": {
-    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "ts-mocha": "ts-mocha --project tsconfig.json"
-  },
+  "scripts": {},
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
     "@solana/web3.js": "^1.95.2"
@@ -18,6 +14,5 @@
     "mocha": "^9.0.3",
     "ts-mocha": "^10.0.0",
     "typescript": "^4.3.5"
-  
   }
 }

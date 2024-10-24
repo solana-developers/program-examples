@@ -1,14 +1,12 @@
-import { Account, Pubkey, Result, u8, Signer } from "@solanaturbine/poseidon";
+import { Account, Pubkey, Result, Signer, u8 } from '@solanaturbine/poseidon';
 
 export default class closeAccountProgram {
-  static PROGRAM_ID = new Pubkey(
-    "7U4SZvsUMjGYCwnzqGGE9enJactKhVPF2EaE7VHtBLTd"
-  );
+  static PROGRAM_ID = new Pubkey('7U4SZvsUMjGYCwnzqGGE9enJactKhVPF2EaE7VHtBLTd');
 
   // create user account
 
   create_user(user_account: closeAccountState, user: Signer): Result {
-    user_account.derive(["user", user.key]).init();
+    user_account.derive(['user', user.key]).init();
 
     // Set the initial value to the `user_account` fields
     user_account.user = user.key;
