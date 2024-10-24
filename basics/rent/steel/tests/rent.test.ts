@@ -70,7 +70,7 @@ describe("rent program", () => {
 		return new TextDecoder().decode(array).replace(/\0+$/, "");
 	};
 
-	it("initialize and increment the counter", async () => {
+	it("initialize account", async () => {
 		const [accountPDA] = PublicKey.findProgramAddressSync(
 			[Buffer.from(ACCOUNT_SEED)],
 			PROGRAM_ID,
@@ -99,7 +99,7 @@ describe("rent program", () => {
 		await client.processTransaction(initializeTx);
 
 		const accountInfo = await client.getAccount(accountPDA);
-		assert(accountInfo !== null, "counter account should exist");
+		assert(accountInfo !== null, "account should exist");
 
 		const data = accountInfo.data.slice(8); // Skip the 8-byte discriminator
 
