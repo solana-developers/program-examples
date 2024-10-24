@@ -23,7 +23,7 @@ enum Discriminator {
 	INIT = 0,
 }
 
-describe("account data program", () => {
+describe("checking account program", () => {
 	let context: ProgramTestContext;
 	let client: BanksClient;
 	let payer: Keypair;
@@ -48,16 +48,11 @@ describe("account data program", () => {
 		return new TextDecoder().decode(array).replace(/\0+$/, "");
 	};
 
-	it("initialize account data", async () => {
+	it("process", async () => {
 		const [accountPDA] = PublicKey.findProgramAddressSync(
 			[Buffer.from(ACCOUNT_SEED)],
 			PROGRAM_ID,
 		);
-
-		const name = "John Doe";
-		const house_number = 3;
-		const city = "Anytown";
-		const street = "Main St";
 
 		const instructionData = createInitializeInstructionData();
 

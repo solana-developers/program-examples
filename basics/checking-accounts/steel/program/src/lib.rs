@@ -12,7 +12,7 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&checking_account_api::ID, program_id, data)?;
 
     match ix {
-        AccountInstruction::InitializeAccount => process_initialize_account(accounts, data)?,
+        AccountInstruction::InitializeAccount => process_accounts(accounts, data)?,
     }
 
     Ok(())

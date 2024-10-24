@@ -6,7 +6,7 @@ use solana_program::{
 use steel::*;
 
 
-pub fn process_initialize_account(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
+pub fn process_accounts(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
 
     // unpack 3 accounts exactly or throw an error
     let [signer_info, new_account_info, system_program] = accounts else {
