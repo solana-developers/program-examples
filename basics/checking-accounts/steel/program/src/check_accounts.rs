@@ -1,11 +1,7 @@
 use solana_program::msg;
 use steel::*;
-use steel_api::prelude::*;
 
 pub fn process_check_accounts(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
-    // Get expected pda bump.
-    let account_to_change_bump = account_to_change_pda().1;
-
     // Load accounts.
     // You can verify the list has the correct number of accounts.
     let [signer_info, account_to_create_info, account_to_change_info, system_program] = accounts
@@ -30,13 +26,6 @@ pub fn process_check_accounts(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Pro
         return Err(ProgramError::AccountAlreadyInitialized);
     };
     // (Create account...)
-    create_account::<AccountToChange>(
-        account_to_change_info,
-        &steel_api::ID,
-        &[ACCOUNT_TO_CHANGE, &[account_to_change_bump]],
-        system_program,
-        signer_info,
-    )?;
 
     // You can also make sure an account has been initialized.
     msg!("Account to change: {}", account_to_change_info.key);
