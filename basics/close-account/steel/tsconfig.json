@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"types": ["mocha", "chai", "node"],
+		"typeRoots": ["./node_modules/@types"],
+		"lib": ["es2020", "dom"],
+		"module": "esnext",
+		"target": "es2020",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"strict": true,
+		"sourceMap": true,
+		"outDir": "./dist",
+		"baseUrl": ".",
+		"paths": {
+			"*": ["node_modules/*", "src/types/*"]
+		}
+	},
+	"include": ["src/**/*", "tests/**/*"],
+	"exclude": ["node_modules"]
+}
