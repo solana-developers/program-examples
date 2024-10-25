@@ -6,7 +6,6 @@
 
 - [`Consts`](api/src/consts.rs) – Program constants.
 - [`Error`](api/src/error.rs) – Custom program errors.
-- [`Event`](api/src/event.rs) – Custom program events.
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions
@@ -17,16 +16,28 @@
 
 - [`AddressInfoData`](api/src/state/address_info.rs) – Account data structure.
 
-## Get started
+## How to?
 
 Compile your program:
 
 ```sh
-steel build
+pnpm build
 ```
 
-Run unit and integration tests:
+Run tests:
 
 ```sh
-steel test
+pnpm test
+```
+
+Run build and test
+
+```sh
+pnpm build-and-test
+```
+
+Deploy your program:
+
+```sh
+pnpm deploy
 ```

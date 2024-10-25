@@ -1,17 +1,11 @@
-import { describe, it } from "mocha";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
-import { assert } from "chai";
-import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
-import * as borsh from "borsh";
-import { decodeString, encodeString } from "./utils";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as borsh from 'borsh';
+import { assert } from 'chai';
+import { describe, it } from 'mocha';
+import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
+import { decodeString, encodeString } from './utils';
 
-const PROGRAM_ID = new PublicKey("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
+const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
 // Define DataAccount type for deserialization
 type DataAccount = {
@@ -36,20 +30,20 @@ type DataAccountRaw = {
 // Define the schema for the account data
 const counterAccountSchema: borsh.Schema = {
   struct: {
-    discriminator: "u64",
+    discriminator: 'u64',
     data: {
       struct: {
-        name: { array: { type: "u8", len: 64 } },
-        house_number: "u8",
-        street: { array: { type: "u8", len: 64 } },
-        city: { array: { type: "u8", len: 64 } },
+        name: { array: { type: 'u8', len: 64 } },
+        house_number: 'u8',
+        street: { array: { type: 'u8', len: 64 } },
+        city: { array: { type: 'u8', len: 64 } },
       },
     },
   },
 };
 
 // Define the functions to deserialize the account data read from the account
-const deserializeDataAccount = (data: DataAccountRaw["data"]): DataAccount => {
+const deserializeDataAccount = (data: DataAccountRaw['data']): DataAccount => {
   return {
     data: {
       name: decodeString(data.name),
@@ -61,7 +55,7 @@ const deserializeDataAccount = (data: DataAccountRaw["data"]): DataAccount => {
 };
 
 // Define the function to serialize the get instruction data for the Initialize instruction
-const getInitializeInstructionData = (data: DataAccount["data"]): Buffer => {
+const getInitializeInstructionData = (data: DataAccount['data']): Buffer => {
   const name = encodeString(data.name, 64);
   const house_number = Buffer.from([data.house_number]);
   const street = encodeString(data.street, 64);
@@ -80,34 +74,28 @@ const instructionDiscriminators = {
   Initialize: Buffer.from([0]),
 };
 
-describe("Account Data Program", () => {
+describe('Account Data Program', () => {
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
   let dataAcountPda: PublicKey;
 
   before(async () => {
-    context = await start(
-      [{ name: "account_data_program", programId: PROGRAM_ID }],
-      []
-    );
+    context = await start([{ name: 'account_data_program', programId: PROGRAM_ID }], []);
     client = context.banksClient;
     payer = context.payer;
 
-    [dataAcountPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("account"), payer.publicKey.toBuffer()],
-      PROGRAM_ID
-    );
+    [dataAcountPda] = PublicKey.findProgramAddressSync([Buffer.from('account'), payer.publicKey.toBuffer()], PROGRAM_ID);
   });
 
-  it("Should create the address info account successfully", async () => {
+  it('Should create the address info account successfully', async () => {
     // declare the data to be stored in the account
     const addressInfoData: DataAccount = {
       data: {
-        name: "Joe C",
+        name: 'Joe C',
         house_number: 136,
-        street: "Mile High Dr.",
-        city: "Solana Beach",
+        street: 'Mile High Dr.',
+        city: 'Solana Beach',
       },
     };
 
@@ -125,8 +113,8 @@ describe("Account Data Program", () => {
             isWritable: false,
           },
         ],
-        data: getInitializeInstructionData(addressInfoData["data"]),
-      })
+        data: getInitializeInstructionData(addressInfoData.data),
+      }),
     );
     tx.recentBlockhash = context.lastBlockhash;
     tx.sign(payer);
@@ -136,12 +124,9 @@ describe("Account Data Program", () => {
 
     const account = await client.getAccount(dataAcountPda);
     assert.isNotNull(account);
-    const rawAccountData = borsh.deserialize(
-      counterAccountSchema,
-      account?.data
-    ) as DataAccountRaw;
+    const rawAccountData = borsh.deserialize(counterAccountSchema, account?.data) as DataAccountRaw;
 
-    const deserializedData = deserializeDataAccount(rawAccountData["data"]);
+    const deserializedData = deserializeDataAccount(rawAccountData.data);
     assert.deepEqual(deserializedData, addressInfoData);
   });
 });
