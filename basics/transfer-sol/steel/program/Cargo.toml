@@ -1,0 +1,26 @@
+[package]
+name = "transfer-sol-program"
+description = ""
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+transfer-sol-api.workspace = true
+solana-program.workspace = true
+steel.workspace = true
+
+[dev-dependencies]
+bs64 = "0.1.2"
+rand = "0.8.5"
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1.35", features = ["full"] }
