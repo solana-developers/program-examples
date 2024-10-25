@@ -28,5 +28,7 @@ pub fn process_with_cpi(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramRes
         ],
     )?;
 
+    // collect?
+
     Ok(())
 }

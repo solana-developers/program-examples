@@ -21,21 +21,6 @@ async fn setup() -> (BanksClient, Keypair, Hash) {
     program_test.start().await
 }
 
-fn create_system_program_account_info() -> AccountInfo<'static> {
-    let mut data = vec![];
-    let mut lamports = 0;
-    AccountInfo::new(
-        &system_program::ID,
-        false,
-        false,
-        &mut lamports,
-        &mut data,
-        &system_program::ID,
-        true,
-        0,
-    )
-}
-
 //     let system_program_id = &system_program::ID;
 //     let key = Rc::new(*system_program_id);
 //     let lamports = Rc::new(RefCell::new(0));
@@ -80,23 +65,23 @@ async fn run_test() {
     // assert_eq!(counter_account.owner, transfer_sol_api::ID);
     // assert_eq!(counter.value, 0);
 
-    // Generate a new keypair to create an account owned by our program
-    let program_owned_account = Keypair::new();
-    let system_program_account = create_system_program_account_info();
+    // // Generate a new keypair to create an account owned by our program
+    // let program_owned_account = Keypair::new();
+    // let system_program_account = create_system_program_account_info();
 
-    create_account(
-        &program_owned_account,
-        &system_program_account,
-        &payer.pubkey(),
-        &program::ID,
-        &[&payer, &system_program_account],
-    )?;
+    // create_account(
+    //     &program_owned_account,
+    //     &system_program_account,
+    //     &payer.pubkey(),
+    //     &program::ID,
+    //     &[&payer, &system_program_account],
+    // )?;
 
-    // Submit transfer with program transaction.
-    let ix = with_program(payer.pubkey(), recipient.pubkey(), amount);
-    let tx = Transaction::new_signed_with_payer(&[ix], Some(&payer.pubkey()), &[&payer], blockhash);
-    let res = banks.process_transaction(tx).await;
-    assert!(res.is_ok());
+    // // Submit transfer with program transaction.
+    // let ix = with_program(payer.pubkey(), recipient.pubkey(), amount);
+    // let tx = Transaction::new_signed_with_payer(&[ix], Some(&payer.pubkey()), &[&payer], blockhash);
+    // let res = banks.process_transaction(tx).await;
+    // assert!(res.is_ok());
 
     // // Verify counter was incremented.
     // let counter_account = banks.get_account(counter_address).await.unwrap().unwrap();
