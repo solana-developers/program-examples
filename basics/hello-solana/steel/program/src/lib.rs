@@ -1,9 +1,9 @@
 use solana_program::msg;
 use steel::*;
 
-entrypoint!(process_instruction);
+entrypoint!(hello_solana);
 
-fn process_instruction(
+fn hello_solana(
     program_id: &Pubkey,
     _accounts: &[AccountInfo],
     _instruction_data: &[u8],
