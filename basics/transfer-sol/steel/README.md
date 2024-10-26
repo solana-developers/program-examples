@@ -1,28 +1,45 @@
 # TransferSol
 
 **TransferSol** is a ...
-        
+
 ## API
-- [`Consts`](api/src/consts.rs) – Program constants.
+
 - [`Error`](api/src/error.rs) – Custom program errors.
-- [`Event`](api/src/event.rs) – Custom program events.
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions
-- [`Add`](program/src/add.rs) – Add ...
-- [`Initialize`](program/src/initialize.rs) – Initialize ...
 
-## State
-- [`Counter`](api/src/state/counter.rs) – Counter ...
+- [`TransferSolWithCpi`](program/src/transfer_sol_with_cpi.rs) – Invoke transfer SOL via CPI
+- [`TransferSolWithProgram`](program/src/transfer_sol_with_program.rs) – Invoke transfer SOL via program
 
-## Get started
+## How to run
 
 Compile your program:
+
 ```sh
-steel build
+pnpm build
 ```
 
 Run unit and integration tests:
+
 ```sh
 steel test
+```
+
+or
+
+```sh
+pnpm test
+```
+
+Run build and test
+
+```sh
+pnpm build-and-test
+```
+
+Deploy your program:
+
+```sh
+pnpm deploy
 ```

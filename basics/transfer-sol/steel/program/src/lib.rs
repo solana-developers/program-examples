@@ -1,11 +1,11 @@
-mod add;
-mod initialize;
-
-use add::*;
-use initialize::*;
-        
-use transfer_sol_api::prelude::*;
 use steel::*;
+use transfer_sol_api::prelude::*;
+
+pub mod transfer_sol_with_cpi;
+pub mod transfer_sol_with_program;
+
+pub use transfer_sol_with_cpi::*;
+pub use transfer_sol_with_program::*;
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -15,8 +15,12 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&transfer_sol_api::ID, program_id, data)?;
 
     match ix {
-        TransferSolInstruction::Initialize => process_initialize(accounts, data)?,
-        TransferSolInstruction::Add => process_add(accounts, data)?,
+        TransferSolInstruction::TransferSolWithCpi => {
+            process_transfer_sol_with_cpi(accounts, data)?
+        }
+        TransferSolInstruction::TransferSolWithProgram => {
+            process_transfer_sol_with_program(accounts, data)?
+        }
     }
 
     Ok(())
