@@ -1,10 +1,11 @@
+use solana_program::program_pack::Pack;
 use spl_token::state::Mint;
 use steel::*;
 use token_swap_api::prelude::*;
 
 pub fn process_create_pool(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
     // Load accounts.
-    let [payer_info, amm_info, pool_info, pool_authority_info, mint_liquidity_info, mint_a_info, mint_b_info, pool_account_a_info, pool_account_b_info, token_program, system_program] =
+    let [payer_info, amm_info, pool_info, pool_authority_info, mint_liquidity_info, mint_a_info, mint_b_info, pool_account_a_info, pool_account_b_info, token_program, system_program, rent_sysvar] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -40,7 +41,7 @@ pub fn process_create_pool(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Progra
     )?;
 
     // Check mint_liquidity account
-    mint_liquidity_info.is_empty()?.has_seeds(
+    mint_liquidity_info.is_empty()?.is_writable()?.has_seeds(
         &[
             &amm_info.key.to_bytes(),
             &mint_a_info.key.to_bytes(),
@@ -77,5 +78,39 @@ pub fn process_create_pool(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Progra
     pool_info_data.amm = *amm_info.key;
     pool_info_data.mint_a = *mint_a_info.key;
     pool_info_data.mint_b = *mint_b_info.key;
+
+    let (_, bump) = mint_liquidity_pda(*amm_info.key, *mint_a_info.key, *mint_b_info.key);
+    // allocate mint_liquidity account
+    allocate_account_with_bump(
+        mint_liquidity_info,
+        system_program,
+        payer_info,
+        Mint::LEN,
+        &spl_token::ID,
+        &[
+            amm_info.key.as_ref(),
+            mint_a_info.key.as_ref(),
+            mint_b_info.key.as_ref(),
+            LIQUIDITY_SEED,
+        ],
+        bump,
+    )?;
+
+    // init mint_liquidity account
+    solana_program::program::invoke(
+        &spl_token::instruction::initialize_mint(
+            &spl_token::ID,
+            mint_liquidity_info.key,
+            pool_authority_info.key,
+            Some(pool_authority_info.key),
+            9,
+        )?,
+        &[
+            token_program.clone(),
+            mint_liquidity_info.clone(),
+            pool_authority_info.clone(),
+            rent_sysvar.clone(),
+        ],
+    )?;
     Ok(())
 }
