@@ -17,6 +17,7 @@ crate-type = ["cdylib", "lib"]
 token-swap-api.workspace = true
 solana-program.workspace = true
 steel.workspace = true
+spl-token.workspace = true
 
 [dev-dependencies]
 bs64 = "0.1.2"

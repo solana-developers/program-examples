@@ -13,17 +13,18 @@
   "author": "Leo Pham <hongthaipro@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@solana/spl-token": "^0.4.9",
     "@solana/web3.js": "^1.95.4"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.7",
     "@types/mocha": "^10.0.9",
     "@types/node": "^22.7.9",
     "borsh": "^2.0.0",
+    "chai": "^4.3.7",
     "mocha": "^10.7.3",
     "solana-bankrun": "^0.4.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^5.6.3",
-    "chai": "^4.3.7",
-    "@types/chai": "^4.3.7"
+    "typescript": "^5.6.3"
   }
 }
