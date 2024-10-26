@@ -17,13 +17,7 @@ pub fn proces_with_program(accounts: &[AccountInfo<'_>], data: &[u8]) -> Program
     payer_info.is_writable()?;
     receiver_info.is_writable()?;
 
-    **payer_info.try_borrow_mut_lamports()? -= amount;
-    **receiver_info.try_borrow_mut_lamports()? += amount;
-
-    // signer_info.send(amount, receiver_info);
-
-    //     **payer.try_borrow_mut_lamports()? -= amount;
-    //     **recipient.try_borrow_mut_lamports()? += amount;
+    payer_info.send(amount, receiver_info);
 
     Ok(())
 }

@@ -1,5 +1,4 @@
 use solana_program::msg;
-use solana_program::{program::invoke, system_instruction};
 use steel::*;
 use transfer_sol_api::prelude::*;
 
@@ -19,16 +18,7 @@ pub fn process_with_cpi(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramRes
     receiver_info.is_writable()?;
     system_program.is_program(&system_program::ID)?;
 
-    invoke(
-        &system_instruction::transfer(&signer_info.key, &receiver_info.key, amount),
-        &[
-            signer_info.clone(),
-            receiver_info.clone(),
-            system_program.clone(),
-        ],
-    )?;
-
-    // collect?
+    receiver_info.collect(amount, signer_info)?;
 
     Ok(())
 }

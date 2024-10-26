@@ -1,13 +1,9 @@
-use std::vec;
-
 use solana_program::hash::Hash;
 
 use solana_program_test::{processor, BanksClient, ProgramTest};
 use solana_sdk::{
-    config::program, lamports, native_token::LAMPORTS_PER_SOL, signature::Keypair, signer::Signer,
-    transaction::Transaction,
+    native_token::LAMPORTS_PER_SOL, signature::Keypair, signer::Signer, transaction::Transaction,
 };
-use steel::*;
 use transfer_sol_api::prelude::*;
 
 async fn setup() -> (BanksClient, Keypair, Hash) {
@@ -21,28 +17,65 @@ async fn setup() -> (BanksClient, Keypair, Hash) {
     program_test.start().await
 }
 
-//     let system_program_id = &system_program::ID;
-//     let key = Rc::new(*system_program_id);
-//     let lamports = Rc::new(RefCell::new(0));
-//     let data = Rc::new(RefCell::new(vec![]));
-//     let owner = system_program_id;
-//     let is_signer = false;
-//     let is_writable = false;
+#[tokio::test]
+async fn transfer_with_program_works() {
+    // Setup test
+    let (mut banks, payer, blockhash) = setup().await;
 
-//     AccountInfo {
-//         key: &*key,
-//         is_signer,
-//         is_writable,
-//         lamports,
-//         data,
-//         owner,
-//         executable: true,
-//         rent_epoch: 0,
-//     }
-// }
+    // 1 SOL
+    let amount = 1 * LAMPORTS_PER_SOL;
+
+    // Generate a couple of keypairs to create accounts owned by our program
+    let acc_1 = Keypair::new();
+    let acc_2 = Keypair::new();
+
+    // Create the program accounts
+    let create_account_instruction = |pubkey| {
+        solana_program::system_instruction::create_account(
+            &payer.pubkey(),
+            pubkey,
+            amount,
+            0,
+            &transfer_sol_api::ID,
+        )
+    };
+
+    let tx_create_accounts = Transaction::new_signed_with_payer(
+        &[
+            create_account_instruction(&acc_1.pubkey()),
+            create_account_instruction(&acc_2.pubkey()),
+        ],
+        Some(&payer.pubkey()),
+        &[&payer, &acc_1, &acc_2],
+        blockhash,
+    );
+
+    let res = banks.process_transaction(tx_create_accounts).await;
+    assert!(res.is_ok());
+
+    // Let's transfer some lamports from acc_1 to acc_2
+    let latest_blockhash = banks.get_latest_blockhash().await.unwrap();
+
+    let ix = with_program(acc_1.pubkey(), acc_2.pubkey(), amount);
+    let tx = Transaction::new_signed_with_payer(
+        &[ix],
+        Some(&payer.pubkey()),
+        &[&payer],
+        latest_blockhash,
+    );
+
+    let res = banks.process_transaction(tx).await;
+    assert!(res.is_ok());
+
+    // Now, let's check the balances
+    let acc_1_balance = banks.get_balance(acc_1.pubkey()).await.unwrap();
+    assert_eq!(acc_1_balance, 0);
+    let acc_2_balance = banks.get_balance(acc_2.pubkey()).await.unwrap();
+    assert_eq!(acc_2_balance, 2 * amount);
+}
 
 #[tokio::test]
-async fn run_test() {
+async fn transfer_with_cpi_works() {
     // Setup test
     let (mut banks, payer, blockhash) = setup().await;
 
@@ -58,33 +91,6 @@ async fn run_test() {
     let res = banks.process_transaction(tx).await;
     assert!(res.is_ok());
 
-    // // Verify counter was initialized.
-    // let counter_address = counter_pda().0;
-    // let counter_account = banks.get_account(counter_address).await.unwrap().unwrap();
-    // let counter = Counter::try_from_bytes(&counter_account.data).unwrap();
-    // assert_eq!(counter_account.owner, transfer_sol_api::ID);
-    // assert_eq!(counter.value, 0);
-
-    // // Generate a new keypair to create an account owned by our program
-    // let program_owned_account = Keypair::new();
-    // let system_program_account = create_system_program_account_info();
-
-    // create_account(
-    //     &program_owned_account,
-    //     &system_program_account,
-    //     &payer.pubkey(),
-    //     &program::ID,
-    //     &[&payer, &system_program_account],
-    // )?;
-
-    // // Submit transfer with program transaction.
-    // let ix = with_program(payer.pubkey(), recipient.pubkey(), amount);
-    // let tx = Transaction::new_signed_with_payer(&[ix], Some(&payer.pubkey()), &[&payer], blockhash);
-    // let res = banks.process_transaction(tx).await;
-    // assert!(res.is_ok());
-
-    // // Verify counter was incremented.
-    // let counter_account = banks.get_account(counter_address).await.unwrap().unwrap();
-    // let counter = Counter::try_from_bytes(&counter_account.data).unwrap();
-    // assert_eq!(counter.value, 42);
+    let balance = banks.get_balance(recipient.pubkey()).await.unwrap();
+    assert_eq!(balance, amount);
 }
