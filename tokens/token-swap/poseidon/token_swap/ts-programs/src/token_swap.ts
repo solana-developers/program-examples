@@ -1,35 +1,31 @@
 import {
   Account,
-  Pubkey,
-  Signer,
-  u8,
-  u64,
-  u16,
-  Constraint,
-  PoseidonError,
-  Mint,
-  TokenAccount,
   AssociatedTokenAccount,
-  TokenProgram,
+  Constraint,
+  Mint,
+  PoseidonError,
+  Pubkey,
   Seeds,
+  Signer,
+  TokenAccount,
+  TokenProgram,
   i64,
-} from "@solanaturbine/poseidon";
+  u8,
+  u16,
+  u64,
+} from '@solanaturbine/poseidon';
 
-//Poseidon cannot support custom instructions currently , so most of the amm logic has been commented out 
+//Poseidon cannot support custom instructions currently , so most of the amm logic has been commented out
 export default class tokenSwap {
-  static PROGRAM_ID = new Pubkey(
-    "3dDaJxmPcmQVfSx9rX4xHyP5rJvkwdKcNujcX2z9KB9h"
-  );
+  static PROGRAM_ID = new Pubkey('3dDaJxmPcmQVfSx9rX4xHyP5rJvkwdKcNujcX2z9KB9h');
 
   create_amm(payer: Signer, amm: AMM, admin: Admin, id: u64, fee: u16) {
     amm
       .derive([id.toBytes()])
       //Custom constraints don't transpile to corresponding anchor constraints yet
-      .constraints([
-        new Constraint(fee < new u16(10000), new PoseidonError("invalid fee")),
-      ])
+      .constraints([new Constraint(fee < new u16(10000), new PoseidonError('invalid fee'))])
       .init();
-    admin.derive(["admin"]).init();
+    admin.derive(['admin']).init();
     amm.id = id;
     amm.admin = admin.key;
     amm.fee = fee;
@@ -45,14 +41,12 @@ export default class tokenSwap {
     mint_liquidity: Mint,
     mint_a: Mint,
     mint_b: Mint,
-    id: u64
+    id: u64,
   ) {
     amm.derive([id.toBytes()]).init();
     pool.derive([amm.key, mint_a.key, mint_b.key]).init();
-    pool_authority.derive([amm.key, mint_a.key, mint_b.key, "authority"]);
-    mint_liquidity
-      .derive([amm.key, mint_a.key, mint_b.key, "liquidity"])
-      .init();
+    pool_authority.derive([amm.key, mint_a.key, mint_b.key, 'authority']);
+    mint_liquidity.derive([amm.key, mint_a.key, mint_b.key, 'liquidity']).init();
     pool_account_a.derive(mint_a, pool_authority.key).init();
     pool_account_b.derive(mint_b, pool_authority.key).init();
 
@@ -77,15 +71,13 @@ export default class tokenSwap {
     mint_a: Mint,
     mint_b: Mint,
     amount_a: u64,
-    amount_b: u64
+    amount_b: u64,
   ) {
     pool.derive([amm.key, mint_a.key, mint_b.key]).has([mint_a, mint_b]);
 
-    pool_authority.derive([amm.key, mint_a.key, mint_b.key, "authority"]);
+    pool_authority.derive([amm.key, mint_a.key, mint_b.key, 'authority']);
 
-    mint_liquidity
-      .derive([amm.key, mint_a.key, mint_b.key, "liquidity"])
-      .init();
+    mint_liquidity.derive([amm.key, mint_a.key, mint_b.key, 'liquidity']).init();
 
     pool_account_a.derive(mint_a, pool_authority.key).init();
     pool_account_b.derive(mint_b, pool_authority.key).init();
@@ -189,11 +181,11 @@ export default class tokenSwap {
     // swap_a:bool
     input_amount: u64,
     min_input_amount: u64,
-    id: u64
+    id: u64,
   ) {
     amm.derive([id.toBytes()]);
     pool.derive([amm.key, mint_a.key, mint_b.key]).has([amm, mint_a, mint_b]);
-    pool_authority.derive([amm.key, mint_a.key, mint_b.key, "authority"]);
+    pool_authority.derive([amm.key, mint_a.key, mint_b.key, 'authority']);
     pool_account_a.derive(mint_a, pool_authority.key).init();
     pool_account_b.derive(mint_b, pool_authority.key).init();
     trader_account_a.derive(mint_a, trader.key).init();
@@ -293,11 +285,11 @@ export default class tokenSwap {
     mint_a: Mint,
     mint_b: Mint,
     amount: u64,
-    id: u64
+    id: u64,
   ) {
     amm.derive([id.toBytes()]);
     pool.derive([amm.key, mint_a.key, mint_b.key]).has([mint_a, mint_b]);
-    pool_authority.derive([amm.key, mint_a.key, mint_b.key, "authority"]);
+    pool_authority.derive([amm.key, mint_a.key, mint_b.key, 'authority']);
     pool_account_a.derive(mint_a, pool_authority.key).init();
     pool_account_b.derive(mint_b, pool_authority.key).init();
 
@@ -348,7 +340,7 @@ export default class tokenSwap {
 }
 
 export interface AMM extends Account {
-  /// The primary key of the AMM 
+  /// The primary key of the AMM
   id: u64;
 
   /// Account that has admin authority over the AMM
@@ -374,7 +366,4 @@ export interface Pool extends Account {
 export interface Admin extends Account {}
 
 //Read only authority
-export interface PoolAuthority extends Account {
-
-}
-
+export interface PoolAuthority extends Account {}
