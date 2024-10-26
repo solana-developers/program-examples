@@ -4,13 +4,26 @@
 // import { expect } from "chai";
 // import type { SwapExample } from "../target/types/token_swap";
 // import { type TestValues, createValues, mintingTokens } from "./utils";
+// import { startAnchor } from "solana-bankrun";
+// import { BankrunProvider } from "anchor-bankrun";
 
-// describe("Swap", () => {
-//   const provider = anchor.AnchorProvider.env();
-//   const connection = provider.connection;
-//   anchor.setProvider(provider);
+// const IDL = require("../target/idl/token_swap.json");
+// const PROGRAM_ID = new PublicKey(IDL.address);
 
-//   const program = anchor.workspace.SwapExample as Program<SwapExample>;
+// describe("Swap", async () => {
+//  const context = await startAnchor(
+//    "",
+//    [{ name: "token_swap", programId: PROGRAM_ID }],
+//    []
+//  );
+
+//  const provider = new BankrunProvider(context);
+
+//  const connection = provider.connection;
+
+//  const payer = provider.wallet as anchor.Wallet;
+
+//  const program = new anchor.Program<TokenSwap>(IDL, provider);
 
 //   let values: TestValues;
 

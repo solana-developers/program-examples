@@ -12,6 +12,7 @@ import {
   type Signer,
 } from "@solana/web3.js";
 import { BN } from "bn.js";
+import { randomUUID } from "crypto";
 
 export async function sleep(seconds: number) {
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
@@ -110,7 +111,7 @@ export const mintingTokens = async ({
 };
 
 export interface TestValues {
-  id: PublicKey;
+  id : number;
   fee: number;
   admin: Keypair;
   mintAKeypair: Keypair;
@@ -134,11 +135,12 @@ type TestValuesDefaults = {
   [K in keyof TestValues]+?: TestValues[K];
 };
 export function createValues(defaults?: TestValuesDefaults): TestValues {
-  const id = defaults?.id || Keypair.generate().publicKey;
+  // const id = defaults?.id || Keypair.generate().publicKey;
+  const id = Math.random()
   const admin = Keypair.generate();
   const ammKey = PublicKey.findProgramAddressSync(
-    [id.toBuffer()],
-    anchor.workspace.SwapExample.programId
+    [Buffer.alloc(id)], //create a buffer from the id 
+    anchor.workspace.TokenSwap.programId
   )[0];
 
   // Making sure tokens are in the right order
@@ -159,7 +161,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintBKeypair.publicKey.toBuffer(),
       Buffer.from("authority"),
     ],
-    anchor.workspace.SwapExample.programId
+    anchor.workspace.TokenSwap.programId
   )[0];
   const mintLiquidity = PublicKey.findProgramAddressSync(
     [
@@ -168,7 +170,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintBKeypair.publicKey.toBuffer(),
       Buffer.from("liquidity"),
     ],
-    anchor.workspace.SwapExample.programId
+    anchor.workspace.TokenSwap.programId
   )[0];
   const poolKey = PublicKey.findProgramAddressSync(
     [
@@ -176,7 +178,7 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
       mintAKeypair.publicKey.toBuffer(),
       mintBKeypair.publicKey.toBuffer(),
     ],
-    anchor.workspace.SwapExample.programId
+    anchor.workspace.TokenSwap.programId
   )[0];
   return {
     id,

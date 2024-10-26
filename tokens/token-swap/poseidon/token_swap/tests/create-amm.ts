@@ -1,15 +1,30 @@
 import * as anchor from "@coral-xyz/anchor";
 import type { Program } from "@coral-xyz/anchor";
 import { expect } from "chai";
-import type { SwapExample } from "../target/types/token_swap";
+import type { TokenSwap } from "../target/types/token_swap";
 import { type TestValues, createValues, expectRevert } from "./utils";
+import { PublicKey } from "@solana/web3.js";
+import { startAnchor } from "solana-bankrun";
+import { BankrunProvider } from "anchor-bankrun";
 
-describe("Create AMM", () => {
-  const provider = anchor.AnchorProvider.env();
+const IDL = require("../target/idl/token_swap.json");
+const PROGRAM_ID = new PublicKey(IDL.address);
+
+describe("Create AMM", async () => {
+  // Configure the client to use the anchor-bankrun
+  const context = await startAnchor(
+    "",
+    [{ name: "token_swap", programId: PROGRAM_ID }],
+    []
+  );
+
+  const provider = new BankrunProvider(context);
+
   const connection = provider.connection;
-  anchor.setProvider(provider);
 
-  const program = anchor.workspace.SwapExample as Program<SwapExample>;
+  const payer = provider.wallet as anchor.Wallet;
+
+  const program = new anchor.Program<TokenSwap>(IDL, provider);
 
   let values: TestValues;
 
@@ -18,9 +33,13 @@ describe("Create AMM", () => {
   });
 
   it("Creation", async () => {
+    const id = new anchor.BN(values.id);
+    const fee = values.fee;
     await program.methods
-      .createAmm(values.id, values.fee)
-      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .createAmm(id, fee)
+      .accounts({ 
+        payer:payer.publicKey,
+      })
       .rpc();
 
     const ammAccount = await program.account.amm.fetch(values.ammKey);
@@ -32,12 +51,18 @@ describe("Create AMM", () => {
   });
 
   it("Invalid fee", async () => {
+    const id = new anchor.BN(values.id);
     values.fee = 10000;
 
     await expectRevert(
       program.methods
-        .createAmm(values.id, values.fee)
-        .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+        .createAmm(
+          id, 
+          values.fee
+        )
+        .accounts({ 
+          payer:payer.publicKey
+        })
         .rpc()
     );
   });

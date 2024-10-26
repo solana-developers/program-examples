@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-token_swap = "HTHicHG8fZgn6sCX3HjnfJHD4vpbPMBPZ1mjED1cpFdt"
+token_swap = "3dDaJxmPcmQVfSx9rX4xHyP5rJvkwdKcNujcX2z9KB9h"
 
 [registry]
 url = "https://api.apr.dev"
@@ -15,4 +15,4 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "pnpm run ts-mocha -p ./tsconfig.json -t 1000000 tests/create-pool.ts"

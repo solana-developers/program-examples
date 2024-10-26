@@ -1,29 +1,45 @@
 import * as anchor from "@coral-xyz/anchor";
 import type { Program } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import type { SwapExample } from "../target/types/token_swap";
+import type { TokenSwap } from "../target/types/token_swap";
 import {
   type TestValues,
   createValues,
   expectRevert,
   mintingTokens,
 } from "./utils";
+import { startAnchor } from "solana-bankrun";
+import { BankrunProvider } from "anchor-bankrun";
 
-describe("Create pool", () => {
-  const provider = anchor.AnchorProvider.env();
-  const connection = provider.connection;
-  anchor.setProvider(provider);
+const IDL = require("../target/idl/token_swap.json");
+const PROGRAM_ID = new PublicKey(IDL.address);
 
-  const program = anchor.workspace.SwapExample as Program<SwapExample>;
+describe("Create pool", async () => {
+ const context = await startAnchor(
+   "",
+   [{ name: "token_swap", programId: PROGRAM_ID }],
+   []
+ );
+
+ const provider = new BankrunProvider(context);
+
+const connection = provider.connection;
+
+ const payer = provider.wallet as anchor.Wallet;
+
+ const program = new anchor.Program<TokenSwap>(IDL, provider);
 
   let values: TestValues;
 
   beforeEach(async () => {
     values = createValues();
-
+    const id = new anchor.BN(values.id)
+    const fee = values.fee
     await program.methods
-      .createAmm(values.id, values.fee)
-      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .createAmm(id, fee)
+      .accounts({
+        // admin: values.admin.publicKey 
+      })
       .rpc();
 
     await mintingTokens({
@@ -35,17 +51,18 @@ describe("Create pool", () => {
   });
 
   it("Creation", async () => {
+    const id = new anchor.BN(values.id);
     await program.methods
-      .createPool()
+      .createPool(id)
       .accounts({
-        amm: values.ammKey,
-        pool: values.poolKey,
-        poolAuthority: values.poolAuthority,
-        mintLiquidity: values.mintLiquidity,
+        // amm: values.ammKey,
+        // pool: values.poolKey,
+        // poolAuthority: values.poolAuthority,
+        // mintLiquidity: values.mintLiquidity,
         mintA: values.mintAKeypair.publicKey,
         mintB: values.mintBKeypair.publicKey,
-        poolAccountA: values.poolAccountA,
-        poolAccountB: values.poolAccountB,
+        // poolAccountA: values.poolAccountA,
+        // poolAccountB: values.poolAccountB,
       })
       .rpc({ skipPreflight: true });
   });
@@ -55,7 +72,7 @@ describe("Create pool", () => {
       mintBKeypair: values.mintAKeypair,
       poolKey: PublicKey.findProgramAddressSync(
         [
-          values.id.toBuffer(),
+          Buffer.alloc(values.id),
           values.mintAKeypair.publicKey.toBuffer(),
           values.mintBKeypair.publicKey.toBuffer(),
         ],
@@ -63,7 +80,7 @@ describe("Create pool", () => {
       )[0],
       poolAuthority: PublicKey.findProgramAddressSync(
         [
-          values.id.toBuffer(),
+          Buffer.alloc(values.id),
           values.mintAKeypair.publicKey.toBuffer(),
           values.mintBKeypair.publicKey.toBuffer(),
           Buffer.from("authority"),
@@ -71,19 +88,19 @@ describe("Create pool", () => {
         program.programId
       )[0],
     });
-
+ const id = new anchor.BN(values.id);
     await expectRevert(
       program.methods
-        .createPool()
+        .createPool(id)
         .accounts({
-          amm: values.ammKey,
-          pool: values.poolKey,
-          poolAuthority: values.poolAuthority,
-          mintLiquidity: values.mintLiquidity,
+          // amm: values.ammKey,
+          // pool: values.poolKey,
+          // poolAuthority: values.poolAuthority,
+          // mintLiquidity: values.mintLiquidity,
           mintA: values.mintAKeypair.publicKey,
           mintB: values.mintBKeypair.publicKey,
-          poolAccountA: values.poolAccountA,
-          poolAccountB: values.poolAccountB,
+          // poolAccountA: values.poolAccountA,
+          // poolAccountB: values.poolAccountB,
         })
         .rpc()
     );
