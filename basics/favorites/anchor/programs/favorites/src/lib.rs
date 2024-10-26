@@ -25,9 +25,14 @@ pub mod favorites {
             hobbies
         });
         Ok(())
-    }
-
+    }    
     // We can also add a get_favorites instruction handler to return the user's favorite number and color
+    pub fn get_favorites(context: Context<GetFavourites>) -> Result<()> {
+        msg!("I'm inside get_favorites");
+        let favorites = &context.accounts.favorites;
+        msg!("GET: User {}'s favorite number is {}, favorite color is: {}, and their hobbies are {:#?}", context.accounts.user.key(), favorites.number, favorites.color, favorites.hobbies );
+        Ok(()) 
+    }
 }
 
 // What we will put inside the Favorites PDA
@@ -58,4 +63,16 @@ pub struct SetFavorites<'info> {
     pub favorites: Account<'info, Favorites>,
 
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct GetFavourites<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    #[account(
+        seeds = [b"favorites", user.key().as_ref()],
+        bump
+    )]
+    pub favorites: Account<'info, Favorites>
 }

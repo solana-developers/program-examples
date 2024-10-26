@@ -1,12 +1,12 @@
-import * as anchor from '@coral-xyz/anchor';
-import type { Program } from '@coral-xyz/anchor';
-import { getCustomErrorMessage } from '@solana-developers/helpers';
-import { assert } from 'chai';
-import type { Favorites } from '../target/types/favorites';
-import { systemProgramErrors } from './system-errors';
+import * as anchor from "@coral-xyz/anchor";
+import type { Program } from "@coral-xyz/anchor";
+import { getCustomErrorMessage } from "@solana-developers/helpers";
+import { assert } from "chai";
+import type { Favorites } from "../target/types/favorites";
+import { systemProgramErrors } from "./system-errors";
 const web3 = anchor.web3;
 
-describe('Favorites', () => {
+describe("Favorites", () => {
   // Use the cluster and the keypair from Anchor.toml
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -18,8 +18,8 @@ describe('Favorites', () => {
 
   // Here's what we want to write to the blockchain
   const favoriteNumber = new anchor.BN(23);
-  const favoriteColor = 'purple';
-  const favoriteHobbies = ['skiing', 'skydiving', 'biking'];
+  const favoriteColor = "purple";
+  const favoriteHobbies = ["skiing", "skydiving", "biking"];
 
   // We don't need to airdrop if we're using the local cluster
   // because the local cluster gives us 85 billion dollars worth of SOL
@@ -30,7 +30,8 @@ describe('Favorites', () => {
     console.log(`Balance: ${formattedBalance} SOL`);
   });
 
-  it('Writes our favorites to the blockchain', async () => {
+  it("Writes our favorites to the blockchain", async () => {
+    console.log("Writes our fav.****");
     await program.methods
       // set_favourites in Rust becomes setFavorites in TypeScript
       .setFavorites(favoriteNumber, favoriteColor, favoriteHobbies)
@@ -40,7 +41,10 @@ describe('Favorites', () => {
       .rpc();
 
     // Find the PDA for the user's favorites
-    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync([Buffer.from('favorites'), user.publicKey.toBuffer()], program.programId);
+    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("favorites"), user.publicKey.toBuffer()],
+      program.programId
+    );
     const favoritesPda = favoritesPdaAndBump[0];
     const dataFromPda = await program.account.favorites.fetch(favoritesPda);
     // And make sure it matches!
@@ -51,20 +55,28 @@ describe('Favorites', () => {
     assert.deepEqual(dataFromPda.hobbies, favoriteHobbies);
   });
 
-  it('Updates the favorites', async () => {
-    const newFavoriteHobbies = ['skiing', 'skydiving', 'biking', 'swimming'];
+  it("Updates the favorites", async () => {
+    console.log("Update the fav.******");
+    const newFavoriteHobbies = ["skiing", "skydiving", "biking", "swimming"];
     try {
-      const signature = await program.methods.setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies).signers([user]).rpc();
+      const signature = await program.methods
+        .setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies)
+        .signers([user])
+        .rpc();
 
       console.log(`Transaction signature: ${signature}`);
     } catch (error) {
       console.error((error as Error).message);
-      const customErrorMessage = getCustomErrorMessage(systemProgramErrors, error);
+      const customErrorMessage = getCustomErrorMessage(
+        systemProgramErrors,
+        error
+      );
       throw new Error(customErrorMessage);
     }
   });
 
-  it('Rejects transactions from unauthorized signers', async () => {
+  it("Rejects transactions from unauthorized signers", async () => {
+    console.log("Rejects the txn.*****");
     try {
       await program.methods
         // set_favourites in Rust becomes setFavorites in TypeScript
@@ -75,7 +87,25 @@ describe('Favorites', () => {
         .rpc();
     } catch (error) {
       const errorMessage = (error as Error).message;
-      assert.isTrue(errorMessage.includes('unknown signer'));
+      assert.isTrue(errorMessage.includes("unknown signer"));
     }
+  });
+
+  it("Reads the favorites", async () => {
+    console.log("Reads the fav.****");
+    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("favorites"), user.publicKey.toBuffer()],
+      program.programId
+    );
+    const favoritesPda = favoritesPdaAndBump[0];
+
+    await program.methods
+      .getFavorites()
+      .accountsStrict({
+        favorites: favoritesPda,
+        user: user.publicKey,
+      })
+      .signers([user])
+      .rpc();
   });
 });

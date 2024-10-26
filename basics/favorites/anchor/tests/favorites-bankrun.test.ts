@@ -1,21 +1,25 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { getCustomErrorMessage } from '@solana-developers/helpers';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { assert } from 'chai';
-import { startAnchor } from 'solana-bankrun';
-import type { Favorites } from '../target/types/favorites';
-import { systemProgramErrors } from './system-errors';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import { getCustomErrorMessage } from "@solana-developers/helpers";
+import { PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { assert } from "chai";
+import { startAnchor } from "solana-bankrun";
+import type { Favorites } from "../target/types/favorites";
+import { systemProgramErrors } from "./system-errors";
 
 const web3 = anchor.web3;
-const IDL = require('../target/idl/favorites.json');
+const IDL = require("../target/idl/favorites.json");
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Favorites Bankrun', async () => {
+describe("Favorites Bankrun", async () => {
   // Use the cluster and the keypair from Anchor.toml
   // Load programs into anchor-bankrun
-  const context = await startAnchor('', [{ name: 'favorites', programId: PROGRAM_ID }], []);
+  const context = await startAnchor(
+    "",
+    [{ name: "favorites", programId: PROGRAM_ID }],
+    []
+  );
   const provider = new BankrunProvider(context);
   anchor.setProvider(provider);
   const user = (provider.wallet as anchor.Wallet).payer;
@@ -25,8 +29,8 @@ describe('Favorites Bankrun', async () => {
 
   // Here's what we want to write to the blockchain
   const favoriteNumber = new anchor.BN(23);
-  const favoriteColor = 'purple';
-  const favoriteHobbies = ['skiing', 'skydiving', 'biking'];
+  const favoriteColor = "purple";
+  const favoriteHobbies = ["skiing", "skydiving", "biking"];
 
   // We don't need to airdrop if we're using the local cluster
   // because the local cluster gives us 1,000,000 SOL
@@ -35,7 +39,7 @@ describe('Favorites Bankrun', async () => {
   const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
   console.log(`Balance: ${formattedBalance} SOL`);
 
-  it('Writes our favorites to the blockchain', async () => {
+  it("Writes our favorites to the blockchain", async () => {
     await program.methods
       // set_favourites in Rust becomes setFavorites in TypeScript
       .setFavorites(favoriteNumber, favoriteColor, favoriteHobbies)
@@ -45,7 +49,10 @@ describe('Favorites Bankrun', async () => {
       .rpc();
 
     // Find the PDA for the user's favorites
-    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync([Buffer.from('favorites'), user.publicKey.toBuffer()], program.programId);
+    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("favorites"), user.publicKey.toBuffer()],
+      program.programId
+    );
     const favoritesPda = favoritesPdaAndBump[0];
     const dataFromPda = await program.account.favorites.fetch(favoritesPda);
     // And make sure it matches!
@@ -56,18 +63,24 @@ describe('Favorites Bankrun', async () => {
     assert.deepEqual(dataFromPda.hobbies, favoriteHobbies);
   });
 
-  it('Updates the favorites', async () => {
-    const newFavoriteHobbies = ['skiing', 'skydiving', 'biking', 'swimming'];
+  it("Updates the favorites", async () => {
+    const newFavoriteHobbies = ["skiing", "skydiving", "biking", "swimming"];
     try {
-      await program.methods.setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies).signers([user]).rpc();
+      await program.methods
+        .setFavorites(favoriteNumber, favoriteColor, newFavoriteHobbies)
+        .signers([user])
+        .rpc();
     } catch (error) {
       console.error((error as Error).message);
-      const customErrorMessage = getCustomErrorMessage(systemProgramErrors, error);
+      const customErrorMessage = getCustomErrorMessage(
+        systemProgramErrors,
+        error
+      );
       throw new Error(customErrorMessage);
     }
   });
 
-  it('Rejects transactions from unauthorized signers', async () => {
+  it("Rejects transactions from unauthorized signers", async () => {
     try {
       await program.methods
         // set_favourites in Rust becomes setFavorites in TypeScript
@@ -78,7 +91,33 @@ describe('Favorites Bankrun', async () => {
         .rpc();
     } catch (error) {
       const errorMessage = (error as Error).message;
-      assert.isTrue(errorMessage.includes('unknown signer'));
+      assert.isTrue(errorMessage.includes("unknown signer"));
+    }
+  });
+
+  it("Reads the favorites", async () => {
+    const favoritesPdaAndBump = web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("favorites"), user.publicKey.toBuffer()],
+      program.programId
+    );
+    const favoritesPda = favoritesPdaAndBump[0];
+
+    try {
+      await program.methods
+        .getFavorites()
+        .accountsStrict({
+          favorites: favoritesPda,
+          user: user.publicKey,
+        })
+        .signers([user])
+        .rpc();
+    } catch (error) {
+      console.error((error as Error).message);
+      const customErrorMessage = getCustomErrorMessage(
+        systemProgramErrors,
+        error
+      );
+      throw new Error(customErrorMessage);
     }
   });
 });

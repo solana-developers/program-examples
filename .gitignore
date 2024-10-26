@@ -18,3 +18,5 @@ node_modules/
 **/*/yarn.lock
 
 /target
+
+basics/favorites/native
