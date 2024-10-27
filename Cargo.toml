@@ -34,7 +34,7 @@ members = [
     "tokens/token-2022/non-transferable/native/program",
     "tokens/token-2022/default-account-state/native/program",
     "tokens/token-2022/transfer-fee/native/program",
-    "tokens/token-2022/multiple-extensions/native/program",
+    "tokens/token-2022/multiple-extensions/native/program", "basics/create-account/steel",
 ]
 resolver = "2"
 
