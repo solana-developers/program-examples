@@ -1,0 +1,29 @@
+{
+  "name": "poseidon-hello-solana",
+  "version": "1.0.0",
+  "description": "hello world with poseidon framework for solana",
+  "scripts": {
+    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+  },
+  "keywords": [],
+  "author": "Aaliyah Junaid",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^22.7.4",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.3",
+    "solana-bankrun": "^0.3.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.3",
+    "@solanaturbine/poseidon": "^0.0.6",
+    "anchor-bankrun": "^0.5.0"
+  },
+  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2"
+}
