@@ -7,7 +7,6 @@ export default class AccountDataProgram {
   create_address_info(payer: Signer, state: AddressInfo, houseNumber: u8, street: u8, cityCode: u32, name: string): Result {
     // Use nit() for initialization
     state.derive(['address_info', payer.key]).init();
-
     // Store the account data
     state.name = name;
     state.houseNumber = houseNumber;
