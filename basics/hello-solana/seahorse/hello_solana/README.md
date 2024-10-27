@@ -20,7 +20,7 @@ Take note of the program Id. Compare the one shown in ***Anchor.toml***.
 
 <img src="img/anchor_deploy.png" alt="Anchor Deploy">
 
-If these 2 IDs are different, update the ID in both the ***programs_py/hello_solan.py*** and ***Anchor.toml***. These IDs have to be the same. Save the changes and run *"seahorse build"*, and then *"anchor deploy"* again.
+If these 2 IDs are different, update the ID in both the ***programs_py/hello_solan.py*** and ***Anchor.toml***. These IDs have to be the same as the one outputted in *"anchor deploy"*. Save the changes and run *"seahorse build"*, and then *"anchor deploy"* again.
 
 <img src="img/program_id.png" alt="program id">
 
