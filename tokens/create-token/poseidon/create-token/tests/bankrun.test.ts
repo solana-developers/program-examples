@@ -1,3 +1,4 @@
+import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
 import { getMint } from '@solana/spl-token';
