@@ -43,7 +43,7 @@ Specifically for code in this repo:
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
 ```bash
-pnpm check:fix
+pnpm lint:fix
 ```
 
 7. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
