@@ -1,32 +1,27 @@
 from seahorse.prelude import *
 
-declare_id('Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS')
+declare_id('4uQFcoLe2AWRFShXRk18skBzrHJtg8TUHdgjRKHSwDz3')
 
-class Counter(Account):
-    authority: Pubkey
-    value: u8
-
+class Message(Account):
+    owner: Pubkey
+    value: str
 
 @instruction
 def initialize(
     authority: Signer, 
-    counter: Empty[Counter]
+    message: Empty[Message]
 ):
-    # Initialize the counter and set the authority
-    counter = counter.init(
+    message = message.init(
         payer = authority,
-        seeds = ['new_delhi_hh', authority]
+        seeds = ['Message', authority]
     )
-
-    counter.authority = authority.key()
-    counter.value = 0
+    message.owner = authority.key()
+    message.value = ""
     
-    print("Hello, Solana from Seahorse!")
-
 
 @instruction
-def increment(
-    authority: Signer, 
-    counter: Counter
-):
-    counter.value += 1
+def hello(owner: Signer, message:Message):
+    print (f"{owner.key} vs {message.owner}")
+    assert owner.key() == message.owner, 'This is not your message'
+    message.value = "Hello GM!"
+
