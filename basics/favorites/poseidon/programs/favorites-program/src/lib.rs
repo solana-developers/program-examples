@@ -23,7 +23,7 @@ pub struct SetFavoritesContext<'info> {
     #[account(
         init,
         payer = payer,
-        space = 217,
+        space = 75,
         seeds = [b"favorites",
         payer.key().as_ref()],
         bump,
