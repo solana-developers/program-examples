@@ -5,6 +5,7 @@ import { BanksClient, ProgramTestContext, Rent, start , } from 'solana-bankrun';
 import { BN } from 'bn.js';
 import * as borsh from "borsh"
 
+// This is a helper class to assign properties to the class
 class Assignable {
   constructor(properties) {
     for (const [key, value] of Object.entries(properties)) {

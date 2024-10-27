@@ -12,7 +12,9 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*": ["biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"]
+    "*": [
+      "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"
+    ]
   },
   "keywords": [],
   "author": "Solana Foundation",
@@ -31,5 +33,6 @@
     "anchor-bankrun": "^0.4.0",
     "chai": "^5.1.1",
     "solana-bankrun": "^0.3.0"
-  }
+  },
+  "packageManager": "pnpm@9.8.0+sha512.8e4c3550fb500e808dbc30bb0ce4dd1eb614e30b1c55245f211591ec2cdf9c611cabd34e1364b42f564bd54b3945ed0f49d61d1bbf2ec9bd74b866fcdc723276"
 }
