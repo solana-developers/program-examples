@@ -12,6 +12,7 @@ members = [
     "basics/counter/mpl-stack",
     "basics/create-account/native/program",
     "basics/create-account/anchor/programs/create-system-account",
+    "basics/create-account/steel/program",
     "basics/cross-program-invocation/anchor/programs/*",
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
