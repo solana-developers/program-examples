@@ -4,7 +4,7 @@ use steel::*;
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 pub enum LeverInstruction {
     Initialize = 0,
-    Add = 1
+    SetPowerStatus = 1,
 }
 
 #[repr(C)]
@@ -13,9 +13,9 @@ pub struct Initialize {}
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct Add {
-    pub amount: [u8; 8]
+pub struct SetPowerStatus {
+    pub name: [u8; 32],
 }
 
 instruction!(LeverInstruction, Initialize);
-instruction!(LeverInstruction, Add);
+instruction!(LeverInstruction, SetPowerStatus);

@@ -1,9 +1,9 @@
-mod add;
 mod initialize;
+mod switch_power;
 
-use add::*;
 use initialize::*;
-        
+use switch_power::*;
+
 use lever_api::prelude::*;
 use steel::*;
 
@@ -16,7 +16,7 @@ pub fn process_instruction(
 
     match ix {
         LeverInstruction::Initialize => process_initialize(accounts, data)?,
-        LeverInstruction::Add => process_add(accounts, data)?,
+        LeverInstruction::SetPowerStatus => process_switch_power(accounts, data)?,
     }
 
     Ok(())

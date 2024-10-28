@@ -2,27 +2,24 @@ use steel::*;
 
 use crate::prelude::*;
 
-pub fn initialize(signer: Pubkey) -> Instruction {
+pub fn initialize(user: Pubkey, power_account: Pubkey) -> Instruction {
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(signer, true),
-            AccountMeta::new(counter_pda().0, false),
+            AccountMeta::new(user, true),
+            AccountMeta::new(power_account, true),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: Initialize {}.to_bytes()
+        data: Initialize {}.to_bytes(),
     }
 }
 
-pub fn add(signer: Pubkey, amount: u64) -> Instruction {
+pub fn switch_power(power_account: Pubkey, name: &str) -> Instruction {
     Instruction {
         program_id: crate::ID,
-        accounts: vec![
-            AccountMeta::new(signer, true),
-            AccountMeta::new(counter_pda().0, false),
-        ],
-        data: Add {
-            amount: amount.to_le_bytes(),
+        accounts: vec![AccountMeta::new(power_account, false)],
+        data: SetPowerStatus {
+            name: str_to_bytes(name),
         }
         .to_bytes(),
     }

@@ -3,26 +3,15 @@ use steel::*;
 
 pub fn process_initialize(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
     // Load accounts.
-    let [signer_info, counter_info, system_program] = accounts else {
-        return Err(ProgramError::NotEnoughAccountKeys);        
+    let [signer_info, power_info, system_program] = accounts else {
+        return Err(ProgramError::NotEnoughAccountKeys);
     };
     signer_info.is_signer()?;
-    counter_info.is_empty()?.is_writable()?.has_seeds(
-        &[COUNTER],
-        &lever_api::ID
-    )?;
+    power_info.is_empty()?.is_writable()?;
     system_program.is_program(&system_program::ID)?;
 
-    // Initialize counter.
-    create_account::<Counter>(
-        counter_info,
-        system_program,
-        signer_info,
-        &lever_api::ID,
-        &[COUNTER],
-    )?;
-    let counter = counter_info.as_account_mut::<Counter>(&lever_api::ID)?;
-    counter.value = 0;
+    // Initialize power.
+    create_account::<PowerStatus>(power_info, system_program, signer_info, &lever_api::ID, &[])?;
 
     Ok(())
 }

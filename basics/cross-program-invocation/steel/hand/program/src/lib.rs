@@ -1,8 +1,6 @@
-mod initialize;
-mod set_power_status;
+mod pull_lever;
 
-use initialize::*;
-use set_power_status::*;
+use pull_lever::*;
 
 use hand_api::prelude::*;
 use steel::*;
@@ -15,8 +13,7 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&hand_api::ID, program_id, data)?;
 
     match ix {
-        HandInstruction::Initialize => process_initialize(accounts, data)?,
-        HandInstruction::SetPowerStatus => process_set_power_status(accounts, data)?,
+        HandInstruction::PullLever => process_pull_lever(accounts, data)?,
     }
 
     Ok(())

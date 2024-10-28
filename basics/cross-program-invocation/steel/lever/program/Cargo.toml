@@ -13,6 +13,10 @@ keywords.workspace = true
 [lib]
 crate-type = ["cdylib", "lib"]
 
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+
 [dependencies]
 lever-api.workspace = true
 solana-program.workspace = true

@@ -1,24 +1,18 @@
+use lever_api::prelude::*;
 use steel::*;
 
 use crate::prelude::*;
 
-pub fn initialize(signer: Pubkey, power_account: Pubkey) -> Instruction {
+pub fn pull_lever(power_account: Pubkey, name: &str) -> Instruction {
+    // pub fn pull_lever(power_account: Pubkey, lever_program: Pubkey, name: &str) -> Instruction {
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(signer, true),
-            AccountMeta::new(power_account, true),
-            AccountMeta::new_readonly(system_program::ID, false),
+            AccountMeta::new(power_account, false),
+            // AccountMeta::new(lever_program, false),
+            AccountMeta::new_readonly(lever_api::ID, false),
         ],
-        data: Initialize {}.to_bytes(),
-    }
-}
-
-pub fn set_power_status(power_account: Pubkey, name: &str) -> Instruction {
-    Instruction {
-        program_id: crate::ID,
-        accounts: vec![AccountMeta::new(power_account, false)],
-        data: SetPowerStatus {
+        data: PullLever {
             name: str_to_bytes(name),
         }
         .to_bytes(),

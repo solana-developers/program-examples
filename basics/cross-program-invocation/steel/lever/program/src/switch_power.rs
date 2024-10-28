@@ -1,8 +1,8 @@
-use hand_api::prelude::*;
+use lever_api::prelude::*;
 use solana_program::msg;
 use steel::*;
 
-pub fn process_set_power_status(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
+pub fn process_switch_power(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     // Parse args.
     let args = SetPowerStatus::try_from_bytes(data)?;
     let name = bytes_to_str(&args.name);
@@ -15,7 +15,7 @@ pub fn process_set_power_status(accounts: &[AccountInfo<'_>], data: &[u8]) -> Pr
     power_info.is_writable()?;
 
     let power = power_info
-        .as_account_mut::<PowerStatus>(&hand_api::ID)?
+        .as_account_mut::<PowerStatus>(&lever_api::ID)?
         .assert_mut(|c| c.is_on <= 1)?;
 
     match power.is_on {
