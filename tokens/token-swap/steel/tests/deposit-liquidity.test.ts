@@ -1,21 +1,13 @@
-import { BN } from "@coral-xyz/anchor";
-import { BankrunProvider } from "anchor-bankrun";
-import { expect } from "chai";
-import { beforeEach, describe, it } from "node:test";
-import { AccountInfoBytes, start } from "solana-bankrun";
-import {
-  createAmmTransactionInstruction,
-  createDepositInstruction,
-  createPoolInstruction,
-} from "./transactions";
-import { TokenAccount, TokenLayout } from "./types";
-import { createValues, mintingTokens, PROGRAM_ID, TestValues } from "./utils";
+import { beforeEach, describe, it } from 'node:test';
+import { BankrunProvider } from 'anchor-bankrun';
+import { expect } from 'chai';
+import { AccountInfoBytes, start } from 'solana-bankrun';
+import { createAmmTransactionInstruction, createDepositInstruction, createPoolInstruction } from './transactions';
+import { TokenAccount, TokenLayout } from './types';
+import { PROGRAM_ID, TestValues, createValues, mintingTokens } from './utils';
 
-describe("Testing Deposit Liquidity", async () => {
-  const context = await start(
-    [{ name: "token_swap_program", programId: PROGRAM_ID }],
-    []
-  );
+describe('Testing Deposit Liquidity', async () => {
+  const context = await start([{ name: 'token_swap_program', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
   const client = context.banksClient;
   const payer = context.payer;
@@ -37,31 +29,20 @@ describe("Testing Deposit Liquidity", async () => {
     await client.processTransaction(tx);
   });
 
-  it("deposits equal amounts to the pool successfully", async () => {
+  it('deposits equal amounts to the pool successfully', async () => {
     const tx = createDepositInstruction(values, payer, context, true);
     await client.processTransaction(tx);
 
-    let depositTokenAccountLiquditiy: TokenAccount | AccountInfoBytes =
-      await client.getAccount(values.liquidityAccount);
-    depositTokenAccountLiquditiy = TokenLayout.decode(
-      depositTokenAccountLiquditiy.data
-    );
-    expect(depositTokenAccountLiquditiy.amount.toString()).to.equal(
-      values.depositAmountA.sub(values.minimumLiquidity).toString()
-    );
+    let depositTokenAccountLiquditiy: TokenAccount | AccountInfoBytes = await client.getAccount(values.liquidityAccount);
+    depositTokenAccountLiquditiy = TokenLayout.decode(depositTokenAccountLiquditiy.data);
+    expect(depositTokenAccountLiquditiy.amount.toString()).to.equal(values.depositAmountA.sub(values.minimumLiquidity).toString());
 
-    let depositTokenAccountA: TokenAccount | AccountInfoBytes =
-      await client.getAccount(values.holderAccountA);
+    let depositTokenAccountA: TokenAccount | AccountInfoBytes = await client.getAccount(values.holderAccountA);
     depositTokenAccountA = TokenLayout.decode(depositTokenAccountA.data);
-    expect(depositTokenAccountA.amount.toString()).to.equal(
-      values.defaultSupply.sub(values.depositAmountA).toString()
-    );
+    expect(depositTokenAccountA.amount.toString()).to.equal(values.defaultSupply.sub(values.depositAmountA).toString());
 
-    let depositTokenAccountB: TokenAccount | AccountInfoBytes =
-      await client.getAccount(values.holderAccountB);
+    let depositTokenAccountB: TokenAccount | AccountInfoBytes = await client.getAccount(values.holderAccountB);
     depositTokenAccountB = TokenLayout.decode(depositTokenAccountB.data);
-    expect(depositTokenAccountB.amount.toString()).to.equal(
-      values.defaultSupply.sub(values.depositAmountA).toString()
-    );
+    expect(depositTokenAccountB.amount.toString()).to.equal(values.defaultSupply.sub(values.depositAmountA).toString());
   });
 });
