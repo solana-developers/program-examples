@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, unpackAccount } from '@solana/spl-token';
+import { AccountLayout, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, MintLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
@@ -10,20 +10,21 @@ import {
   getCreateAmmInstructionData,
   getCreatePoolInstructionData,
   getDepositLiquidityInstructionData,
-  getWithdrawLiquidityInstructionData,
+  getSwapInstructionData,
   mintTo,
 } from './utils';
 
 const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
-describe('Account Data Program', () => {
+describe('Token Swap Program: Create and swap', () => {
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
   const mint_a = Keypair.generate();
   const mint_b = Keypair.generate();
   const admin = Keypair.generate();
-  const fee = 1000; // 10%
+  const trader = Keypair.generate();
+  const fee = 500; // 5%
 
   const id = Keypair.generate();
   const [ammPda] = PublicKey.findProgramAddressSync([id.publicKey.toBuffer()], PROGRAM_ID);
@@ -47,10 +48,14 @@ describe('Account Data Program', () => {
   let depositorAccountLp: PublicKey;
   let depositorAccountA: PublicKey;
   let depositorAccountB: PublicKey;
+  let traderAccountA: PublicKey;
+  let traderAccountB: PublicKey;
+
+  const MINIMUM_LIQUIDITY = 100;
 
   const amountA = BigInt(4 * 10 ** 9);
   const amountB = BigInt(1 * 10 ** 9);
-  const amountLp = BigInt(2 * 10 ** 9) - BigInt(100);
+  const amountLp = BigInt(Math.sqrt(Number(amountA) * Number(amountB)) - MINIMUM_LIQUIDITY);
 
   before(async () => {
     context = await start([{ name: 'token_swap_program', programId: PROGRAM_ID }], []);
@@ -66,8 +71,14 @@ describe('Account Data Program', () => {
 
     depositorAccountB = getAssociatedTokenAddressSync(mint_b.publicKey, payer.publicKey, false);
 
+    traderAccountA = getAssociatedTokenAddressSync(mint_a.publicKey, trader.publicKey, false);
+
+    traderAccountB = getAssociatedTokenAddressSync(mint_b.publicKey, trader.publicKey, false);
+
     await mintTo(context, payer, payer.publicKey, mint_a.publicKey);
     await mintTo(context, payer, payer.publicKey, mint_b.publicKey);
+    await mintTo(context, payer, trader.publicKey, mint_a.publicKey);
+    await mintTo(context, payer, trader.publicKey, mint_b.publicKey);
   });
 
   it('Should create a new amm successfully', async () => {
@@ -201,26 +212,49 @@ describe('Account Data Program', () => {
 
     // process the transaction
     await client.processTransaction(tx);
+
+    const rawDepositorAccountLp = await client.getAccount(depositorAccountLp);
+    assert.isNotNull(rawDepositorAccountLp);
+    const decodedDepositorAccountLp = AccountLayout.decode(rawDepositorAccountLp?.data);
+    assert.equal(decodedDepositorAccountLp.amount, amountLp);
+
+    const expectedLpAmount = Math.sqrt(Number(amountA) * Number(amountB)) - MINIMUM_LIQUIDITY;
+
+    const rawLiquidityMint = await client.getAccount(mintLiquidityPda);
+    assert.isNotNull(rawLiquidityMint);
+    const decodedLiquidityMint = MintLayout.decode(rawLiquidityMint.data);
+    assert.equal(decodedLiquidityMint.supply, BigInt(expectedLpAmount));
+
+    const rawPoolAccountA = await client.getAccount(poolAccountA);
+    assert.isNotNull(rawPoolAccountA);
+    const decodedPoolAccountA = AccountLayout.decode(rawPoolAccountA?.data);
+    assert.equal(decodedPoolAccountA.amount, amountA);
+
+    const rawPoolAccountB = await client.getAccount(poolAccountB);
+    assert.isNotNull(rawPoolAccountB);
+    const decodedPoolAccountB = AccountLayout.decode(rawPoolAccountB?.data);
+    assert.equal(decodedPoolAccountB.amount, amountB);
   });
 
-  it('Should withdraw liquidity successfully', async () => {
+  it('Should swap successfully', async () => {
+    const swapAmount = BigInt(10 ** 9);
+    const minimunAmountOut = BigInt(100);
     const tx = new Transaction();
     tx.add(
       new TransactionInstruction({
         programId: PROGRAM_ID,
         keys: [
           { pubkey: payer.publicKey, isSigner: true, isWritable: true },
-          { pubkey: payer.publicKey, isSigner: true, isWritable: true },
+          { pubkey: trader.publicKey, isSigner: true, isWritable: true },
+          { pubkey: ammPda, isSigner: false, isWritable: true },
           { pubkey: poolPda, isSigner: false, isWritable: true },
           { pubkey: poolAuthorityPda, isSigner: false, isWritable: false },
-          { pubkey: mintLiquidityPda, isSigner: false, isWritable: true },
           { pubkey: mint_a.publicKey, isSigner: false, isWritable: false },
           { pubkey: mint_b.publicKey, isSigner: false, isWritable: false },
           { pubkey: poolAccountA, isSigner: false, isWritable: true },
           { pubkey: poolAccountB, isSigner: false, isWritable: true },
-          { pubkey: depositorAccountLp, isSigner: false, isWritable: true },
-          { pubkey: depositorAccountA, isSigner: false, isWritable: true },
-          { pubkey: depositorAccountB, isSigner: false, isWritable: true },
+          { pubkey: traderAccountA, isSigner: false, isWritable: true },
+          { pubkey: traderAccountB, isSigner: false, isWritable: true },
           {
             pubkey: TOKEN_PROGRAM_ID,
             isSigner: false,
@@ -237,13 +271,24 @@ describe('Account Data Program', () => {
             isWritable: false,
           },
         ],
-        data: getWithdrawLiquidityInstructionData(amountLp),
+        data: getSwapInstructionData(true, swapAmount, minimunAmountOut),
       }),
     );
     tx.recentBlockhash = context.lastBlockhash;
-    tx.sign(payer);
+    tx.sign(payer, trader);
 
     // process the transaction
     await client.processTransaction(tx);
+
+    const rawTraderAccountA = await client.getAccount(traderAccountA);
+    assert.isNotNull(rawTraderAccountA);
+    const decodedTraderAccountA = AccountLayout.decode(rawTraderAccountA?.data);
+
+    assert.equal(decodedTraderAccountA.amount, BigInt(999000000000));
+
+    const rawTraderAccountB = await client.getAccount(traderAccountB);
+    assert.isNotNull(rawTraderAccountB);
+    const decodedTraderAccountB = AccountLayout.decode(rawTraderAccountB?.data);
+    assert.equal(decodedTraderAccountB.amount, BigInt(1000191919191));
   });
 });

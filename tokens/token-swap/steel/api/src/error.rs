@@ -11,6 +11,10 @@ pub enum TokenSwapError {
     InvalidAccount = 2,
     #[error("Deposit too small")]
     DepositTooSmall = 3,
+    #[error("Withdrawal too small")]
+    OutputTooSmall,
+    #[error("Invariant violated")]
+    InvariantViolated,
 }
 
 error!(TokenSwapError);

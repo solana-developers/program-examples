@@ -35,8 +35,8 @@ export const getWithdrawLiquidityInstructionData = (amountLp: bigint) => {
   return Buffer.concat([instructionDiscriminators.WithdrawLiquidity, encodeBigint(amountLp)]);
 };
 
-export const getSwapInstructionData = () => {
-  return Buffer.concat([instructionDiscriminators.Swap]);
+export const getSwapInstructionData = (swapA: boolean, inputAmount: bigint, minimunAmountOut: bigint) => {
+  return Buffer.concat([instructionDiscriminators.Swap, Buffer.from([swapA ? 1 : 0]), encodeBigint(inputAmount), encodeBigint(minimunAmountOut)]);
 };
 
 export const getCreateAmmInstructionData = (id: PublicKey, fee: number) => {
@@ -72,7 +72,7 @@ export const mintTo = async (context: ProgramTestContext, payer: Keypair, owner:
   const tx = new Transaction();
   tx.add(
     createAssociatedTokenAccountInstruction(payer.publicKey, tokenAccount, owner, mint),
-    createMintToInstruction(mint, tokenAccount, payer.publicKey, 1_000_000 * LAMPORTS_PER_SOL),
+    createMintToInstruction(mint, tokenAccount, payer.publicKey, 1_000 * LAMPORTS_PER_SOL),
   );
   tx.recentBlockhash = context.lastBlockhash;
   tx.sign(payer);
