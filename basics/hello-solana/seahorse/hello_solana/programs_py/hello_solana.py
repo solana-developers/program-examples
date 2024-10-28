@@ -21,7 +21,6 @@ def initialize(
 
 @instruction
 def hello(owner: Signer, message:Message):
-    print (f"{owner.key} vs {message.owner}")
     assert owner.key() == message.owner, 'This is not your message'
     message.value = "Hello GM!"
 

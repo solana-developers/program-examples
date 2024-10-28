@@ -53,11 +53,6 @@ pub fn hello_handler<'info>(
     mut owner: SeahorseSigner<'info, '_>,
     mut message: Mutable<LoadedMessage<'info, '_>>,
 ) -> () {
-    solana_program::msg!(
-        "{}",
-        format!("{:?} vs {:?}", owner.key, message.borrow().owner)
-    );
-
     if !(owner.key() == message.borrow().owner) {
         panic!("This is not your message");
     }
