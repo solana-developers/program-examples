@@ -27,15 +27,9 @@ pub fn process_initialize_account(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
         return Err(ProgramError::NotEnoughAccountKeys);
     };
     
-    let bump = account_pda().1;
-    
     // validate accounts
     signer_info.is_signer()?;
-    new_account_info.is_empty()?.is_writable()?.has_seeds(
-        &[ACCOUNT],
-        bump,
-        &rent_api::ID
-    )?;
+    new_account_info.is_empty()?.is_writable()?;
     system_program.is_program(&system_program::ID)?;
 
     msg!("Program invoked. Creating a system account...");
@@ -49,15 +43,16 @@ pub fn process_initialize_account(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
 
     // create account
     create_account::<Data>(
-        new_account_info,
-        &ID,
-        &[ACCOUNT, &[bump]],
-        system_program,
-        signer_info,
+        new_account_info, 
+        system_program, 
+        signer_info, 
+        &ID, 
+        &[ACCOUNT]
     )?;
     
     // set data
-    let data_account = new_account_info.to_account_mut::<Data>(&ID)?;
+    let data_account = new_account_info.as_account_mut::<Data>(&ID)?;
+
     data_account.name = args.name;
     data_account.address = args.address;
     
