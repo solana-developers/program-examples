@@ -1,4 +1,4 @@
-import { Account, Pubkey, Result, Signer, SystemAccount, u8 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, Result, Signer, String as PoseidonString, u8 } from '@solanaturbine/poseidon';
 
 // Realloc Program:
 // This program demonstrates how to handle dynamic fields stored in PDAs (Program Derived Addresses).
@@ -8,7 +8,7 @@ import { Account, Pubkey, Result, Signer, SystemAccount, u8 } from '@solanaturbi
 export default class ReallocExample {
   static PROGRAM_ID = new Pubkey('2TVLNyk3jZCVNQ5UVJQRFPdjY3APCToU77isidjB3re4');
 
-  initialize(payer: Signer, account: MessageAccountState, input: string): Result {
+  initialize(payer: Signer, account: MessageAccountState, input: PoseidonString): Result {
     account.derive(['message']).init();
 
     account.message = input;
@@ -16,7 +16,7 @@ export default class ReallocExample {
     account.bump = account.getBump();
   }
 
-  update(payer: Signer, account: MessageAccountState, input: string): Result {
+  update(payer: Signer, account: MessageAccountState, input: PoseidonString): Result {
     account.derive(['message']);
 
     account.message = input;
@@ -24,7 +24,7 @@ export default class ReallocExample {
 }
 
 export interface MessageAccountState extends Account {
-  message: string;
+  message: PoseidonString;
 
   bump: u8;
 }
