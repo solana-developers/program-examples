@@ -1,10 +1,12 @@
 mod make_offer;
+mod refund;
 mod take_offer;
 
-use make_offer::*;
-use take_offer::*;
 use escrow_api::prelude::*;
+use make_offer::*;
+use refund::*;
 use steel::*;
+use take_offer::*;
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -16,6 +18,7 @@ pub fn process_instruction(
     match ix {
         AccountInstruction::MakeOffer => process_make_offer(accounts, data)?,
         AccountInstruction::TakeOffer => process_take_offer(accounts, data)?,
+        AccountInstruction::Refund => process_refund(accounts)?,
     }
 
     Ok(())

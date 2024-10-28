@@ -61,6 +61,8 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
             .amount,
         signer_seeds,
     )?;
+
+    //Close the vault account.
     let close_instruction = &spl_token::instruction::close_account(
         token_program.key,
         vault.key,
@@ -76,6 +78,7 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
         signer_seeds,
         offer_data.bump as u8,
     )?;
+    
 
     Ok(())
 }

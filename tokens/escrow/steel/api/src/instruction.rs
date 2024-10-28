@@ -5,6 +5,7 @@ use steel::*;
 pub enum AccountInstruction {
     MakeOffer = 0,
     TakeOffer = 1,
+    Refund = 2,
 }
 
 #[repr(C)]
@@ -20,5 +21,10 @@ pub struct MakeOffer {
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct TakeOffer {}
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct Refund {}
+
 instruction!(AccountInstruction, MakeOffer);
 instruction!(AccountInstruction, TakeOffer);
+instruction!(AccountInstruction, Refund);

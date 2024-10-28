@@ -1,15 +1,14 @@
 mod offer;
 
+use crate::consts::*;
 pub use offer::*;
 use steel::*;
-use crate::consts::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
 pub enum SteelAccount {
     Offer = 0,
 }
-
 
 /// Fetch PDA of the offer account.
 pub fn offer_pda(maker: Pubkey, id: u64) -> (Pubkey, u8) {

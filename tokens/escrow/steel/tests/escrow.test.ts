@@ -5,7 +5,6 @@ import { makeKeypairs } from '@solana-developers/helpers';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   MINT_SIZE,
-  // TOKEN_2022_PROGRAM_ID as TOKEN_PROGRAM,
   TOKEN_PROGRAM_ID as TOKEN_PROGRAM,
   createAssociatedTokenAccountIdempotentInstruction,
   createInitializeMint2Instruction,
@@ -13,7 +12,7 @@ import {
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
 } from '@solana/spl-token';
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { serialize } from 'borsh';
 import { assert, expect } from 'chai';
@@ -36,11 +35,6 @@ describe('escrow-example', async () => {
   const accounts: Record<string, PublicKey> = {
     tokenProgram: TOKEN_PROGRAM,
   };
-
-  // let alice: Keypair;
-  // let bob: Keypair;
-  // let tokenMintA: Keypair;
-  // let tokenMintB: Keypair;
 
   const [alice, bob, tokenMintA, tokenMintB] = makeKeypairs(4);
 
@@ -261,14 +255,12 @@ describe('escrow-example', async () => {
     await client.processTransaction(tx);
 
     /**Check alice's account for the tokens wanted*/
-    const aliceBalanceResponse = await connection.getAccountInfo(accounts.makerTokenAccountB);
-    const datas = T.decodeAccount(aliceBalanceResponse.data);
-    const aliceBalance = new BN(datas.amount.toString());
+    const AliceAccountData = T.decodeAccount((await connection.getAccountInfo(accounts.makerTokenAccountB)).data);
+    const aliceBalance = new BN(AliceAccountData.amount.toString());
     assert(aliceBalance.eq(tokenBWantedAmount));
 
     /**Check bobs's account for the tokens offered*/
-    const bobBalanceResponse = await connection.getAccountInfo(accounts.takerTokenAccountA);
-    const bobsData = T.decodeAccount(bobBalanceResponse.data);
+    const bobsData = T.decodeAccount((await connection.getAccountInfo(accounts.takerTokenAccountA)).data);
     const bobsBalance = new BN(bobsData.amount.toString());
     assert.strictEqual(bobsBalance.toString(), tokenAOfferedAmount.toString());
   };
@@ -285,6 +277,121 @@ describe('escrow-example', async () => {
       await connection.getAccountInfo(accounts.vault);
     } catch (error: any) {
       expect(error.toString()).to.include(`Could not find ${accounts.vault.toString()}`);
+    }
+  });
+
+  it('Refunds the token amount from the vault if the maker chooses to', async () => {
+    await make();
+    const ix = new TransactionInstruction({
+      data: Buffer.alloc(1, 2),
+      keys: [
+        { pubkey: alice.publicKey, isSigner: true, isWritable: true },
+        { pubkey: accounts.tokenMintA, isSigner: false, isWritable: true },
+        {
+          pubkey: accounts.makerTokenAccountA,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: accounts.offer,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: accounts.vault,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: TOKEN_PROGRAM,
+          isSigner: false,
+          isWritable: false,
+        },
+        {
+          pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+          isSigner: false,
+          isWritable: false,
+        },
+        {
+          pubkey: SystemProgram.programId,
+          isSigner: false,
+          isWritable: false,
+        },
+      ],
+      programId: PROGRAM_ID,
+    });
+
+    const blockhash = context.lastBlockhash;
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix);
+    tx.sign(alice);
+    await client.processTransaction(tx);
+
+    /**Check alice's account for the tokens wanted*/
+    const AliceAccountData = T.decodeAccount((await connection.getAccountInfo(accounts.makerTokenAccountA)).data);
+    const aliceBalance = new BN(AliceAccountData.amount.toString());
+    expect(aliceBalance.toString()).to.equal(new BN(1_000_000_000).sub(tokenAOfferedAmount).toString());
+
+    /**Check that the Vault account does not exist */
+    try {
+      await connection.getAccountInfo(accounts.vault);
+    } catch (error: any) {
+      expect(error.toString()).to.include(`Could not find ${accounts.vault.toString()}`);
+    }
+  });
+
+  it('should fail when Bob tries to withdraw Alices funds without depositing', async () => {
+    await make();
+    const ix = new TransactionInstruction({
+      data: Buffer.alloc(1, 2),
+      keys: [
+        { pubkey: bob.publicKey, isSigner: true, isWritable: true },
+        { pubkey: accounts.tokenMintA, isSigner: false, isWritable: true },
+        {
+          pubkey: accounts.takerTokenAccountA,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: accounts.offer,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: accounts.vault,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: TOKEN_PROGRAM,
+          isSigner: false,
+          isWritable: false,
+        },
+        {
+          pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+          isSigner: false,
+          isWritable: false,
+        },
+        {
+          pubkey: SystemProgram.programId,
+          isSigner: false,
+          isWritable: false,
+        },
+      ],
+      programId: PROGRAM_ID,
+    });
+
+    const blockhash = context.lastBlockhash;
+    const tx = new Transaction();
+    tx.recentBlockhash = blockhash;
+    tx.add(ix);
+    tx.sign(bob);
+
+    try {
+      await client.processTransaction(tx);
+    } catch (error) {
+      expect(error.message).to.include('Error');
     }
   });
 });

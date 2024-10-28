@@ -66,3 +66,26 @@ pub fn take_offer(
         data: TakeOffer {}.to_bytes(),
     }
 }
+
+pub fn refund(
+    maker: Pubkey,
+    token_mint_a: Pubkey,
+    maker_token_account_a: Pubkey,
+    vault: Pubkey,
+    id:u64,
+) -> Instruction {
+    Instruction {
+        program_id: crate::ID,
+        accounts: vec![
+            AccountMeta::new(maker, true),
+            AccountMeta::new(token_mint_a, false),
+            AccountMeta::new(maker_token_account_a, false),
+            AccountMeta::new(offer_pda(maker, id).0, false),
+            AccountMeta::new(vault, false),
+            AccountMeta::new_readonly(spl_token::ID, false),
+            AccountMeta::new_readonly(spl_associated_token_account::ID, false),
+            AccountMeta::new_readonly(system_program::ID, false),
+        ],
+        data: Refund {}.to_bytes(),
+    }
+}

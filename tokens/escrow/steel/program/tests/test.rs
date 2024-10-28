@@ -54,7 +54,7 @@ async fn make_offer_and_take_offer_successful() {
     let offer_id = get_random_big_number(8);
     let offer_pubkey = offer_pda(alice.pubkey(), offer_id).0;
     let offer_bump = offer_pda(alice.pubkey(), offer_id).1;
-    
+
     // Calculate Associated Token Accounts for alice (maker), bob (taker) and the vault
     let alice_token_account_a =
         get_associated_token_address(&alice.pubkey(), &token_mint_a.pubkey());
@@ -63,7 +63,6 @@ async fn make_offer_and_take_offer_successful() {
     let bob_token_account_a = get_associated_token_address(&bob.pubkey(), &token_mint_a.pubkey());
     let bob_token_account_b = get_associated_token_address(&bob.pubkey(), &token_mint_b.pubkey());
     let vault = get_associated_token_address(&offer_pubkey, &token_mint_a.pubkey());
-
 
     let _accounts = HashMap::from([
         ("maker", alice.pubkey()),
