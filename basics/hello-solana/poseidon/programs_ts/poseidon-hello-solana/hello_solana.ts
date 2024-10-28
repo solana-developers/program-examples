@@ -5,7 +5,7 @@ export default class HelloSolana {
 
   initialize(authority: Signer, counter: Counter) {
     // Initialize the counter
-    counter.derive(['counter', authority.key]).init();
+    counter.derive(['counter', authority.key]).initIfNeeded();
 
     // Set the counter authority
     counter.authority = authority.key;
