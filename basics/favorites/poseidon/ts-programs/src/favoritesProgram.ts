@@ -1,10 +1,10 @@
 // biome-ignore lint/suspicious/noShadowRestrictedNames: Solana Turbine explicitly uses String as a type name
-import { Account, Pubkey, Result, Signer, String, u8, u64 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, Result, Signer, String, Vec, u8, u64 } from '@solanaturbine/poseidon';
 
 export default class FavoritesProgram {
   static PROGRAM_ID = new Pubkey('HMYL9ABJz8fpw6XUnkRAYVsXor4JxosiZqHBd38ZgCqS');
 
-  setFavorites(favorites: Favorites, payer: Signer, number: u64, color: String, hobbies: String[]): Result {
+  setFavorites(favorites: Favorites, payer: Signer, number: u64, color: String<8>, hobbies: Vec<String<8>, 5>): Result {
     favorites.derive(['favorites', payer.key]).init();
     favorites.number = number;
     favorites.color = color;
@@ -15,7 +15,7 @@ export default class FavoritesProgram {
 
 export interface Favorites extends Account {
   number: u64;
-  color: String;
-  hobbies: String[];
+  color: String<7>;
+  hobbies: Vec<String<7>, 5>;
   bump: u8;
 }
