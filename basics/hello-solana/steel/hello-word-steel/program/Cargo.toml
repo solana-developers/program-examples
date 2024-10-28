@@ -1,0 +1,21 @@
+[package]
+name = "my-steel-project-program"
+description = "The main program for My Steel Project"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+my-steel-project-api = { path = "../api" }
+solana-program = "1.18"
+steel = "2.0"
+bytemuck = "1.7" 
+
+[dev-dependencies]
+bs64 = "0.1.2"
+rand = "0.8.5"
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1.35", features = ["full"] }

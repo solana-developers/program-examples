@@ -1,0 +1,12 @@
+[package]
+name = "my-steel-project-api"
+description = "API for interacting with the MySteelProject program"
+version = "0.1.0" 
+edition = "2021" 
+
+[dependencies]
+bytemuck = "1.14"               
+num_enum = "0.7"                
+solana-program = "1.18"         
+steel = "2.0"                   
+thiserror = "1.0"               
