@@ -20,3 +20,12 @@ describe('hello_solana', () => {
       .rpc();
   });
 });
+
+
+
+
+
+
+
+
+
