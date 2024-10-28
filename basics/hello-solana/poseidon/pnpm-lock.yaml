@@ -11,9 +11,6 @@ importers:
       '@solana/web3.js':
         specifier: ^1.95.3
         version: 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@solanaturbine/poseidon':
-        specifier: ^0.0.6
-        version: 0.0.6
       anchor-bankrun:
         specifier: ^0.5.0
         version: 0.5.0(@coral-xyz/anchor@0.30.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(solana-bankrun@0.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -80,9 +77,6 @@ packages:
 
   '@solana/web3.js@1.95.4':
     resolution: {integrity: sha512-sdewnNEA42ZSMxqkzdwEWi6fDgzwtJHaQa5ndUGEJYtoOnM6X5cvPmjoTUp7/k7bRrVAxfBgDnvQQHD6yhlLYw==}
-
-  '@solanaturbine/poseidon@0.0.6':
-    resolution: {integrity: sha512-BhXss4c8+Gebj+pDZhZcvK12LM/2/O9iEr1mGCYbcUtKA81/H9ae5ePA1nZJHrHaiLURewXw08KdNf5bRfq1sQ==}
 
   '@swc/helpers@0.5.13':
     resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
@@ -821,8 +815,6 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
-
-  '@solanaturbine/poseidon@0.0.6': {}
 
   '@swc/helpers@0.5.13':
     dependencies:

@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
+import { expect } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import { HelloSolana } from '../target/types/hello_solana';
 
@@ -20,5 +21,23 @@ describe('hello-solana', async () => {
   it('Say hello!', async () => {
     // Just run Anchor's IDL method to build a transaction!
     await program.methods.initialize().accounts({}).signers([payer.payer]).rpc();
+  });
+
+  it('Increment', async () => {
+    const [counterAddress] = PublicKey.findProgramAddressSync([Buffer.from('counter'), payer.publicKey.toBuffer()], PROGRAM_ID);
+
+    await program.methods.increment().accounts({ counter: counterAddress }).signers([payer.payer]).rpc();
+
+    const counter = await program.account.counter.fetch(counterAddress);
+    expect(counter.value).equal(1);
+  });
+
+  it('Increment again', async () => {
+    const [counterAddress] = PublicKey.findProgramAddressSync([Buffer.from('counter'), payer.publicKey.toBuffer()], PROGRAM_ID);
+
+    await program.methods.increment().accounts({ counter: counterAddress }).signers([payer.payer]).rpc();
+
+    const counter = await program.account.counter.fetch(counterAddress);
+    expect(counter.value).equal(2);
   });
 });

@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.3",
-    "@solanaturbine/poseidon": "^0.0.6",
     "anchor-bankrun": "^0.5.0"
   },
   "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2"

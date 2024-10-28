@@ -16,7 +16,7 @@ export default class HelloSolana {
   }
 
   increment(authority: Signer, counter: Counter) {
-    counter.value.add(1);
+    counter.value = counter.value.add(1);
   }
 }
 

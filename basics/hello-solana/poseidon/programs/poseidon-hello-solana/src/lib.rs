@@ -8,11 +8,14 @@ pub mod hello_solana {
         Ok(())
     }
     pub fn increment(ctx: Context<IncrementContext>) -> Result<()> {
+        ctx.accounts.counter.value = ctx.accounts.counter.value + 1;
         Ok(())
     }
 }
 #[derive(Accounts)]
 pub struct InitializeContext<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
     #[account(
         init,
         payer = authority,
@@ -22,16 +25,14 @@ pub struct InitializeContext<'info> {
         bump,
     )]
     pub counter: Account<'info, Counter>,
-    #[account(mut)]
-    pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
 pub struct IncrementContext<'info> {
     #[account(mut)]
-    pub authority: Signer<'info>,
-    #[account()]
     pub counter: Account<'info, Counter>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[account]
