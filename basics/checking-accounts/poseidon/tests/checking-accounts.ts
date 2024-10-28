@@ -24,7 +24,7 @@ describe("checking-accounts", () => {
     // Airdrop 1 SOL to the user
     const airdropUser = await provider.connection.requestAirdrop(
       user.publicKey,
-      5 * LAMPORTS_PER_SOL
+      1 * LAMPORTS_PER_SOL
     );
     await provider.connection.confirmTransaction({
       blockhash: latestBlockHash.blockhash,
