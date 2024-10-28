@@ -20,3 +20,4 @@ solana-program = "1.18"
 steel = { version = "2.0", features = ["spl"] }
 thiserror = "1.0"
 spl-token = "^4"
+spl-math = { version = "0.3.0", features = ["no-entrypoint"] }

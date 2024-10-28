@@ -6,16 +6,37 @@ import {
   createMintToInstruction,
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
-import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import * as borsh from 'borsh';
 import { ProgramTestContext } from 'solana-bankrun';
 
 export const instructionDiscriminators = {
   CreateAmm: Buffer.from([0]),
   CreatePool: Buffer.from([1]),
+  DepositLiquidity: Buffer.from([2]),
+  WithdrawLiquidity: Buffer.from([3]),
+  Swap: Buffer.from([4]),
 };
 export const getCreatePoolInstructionData = () => {
   return Buffer.concat([instructionDiscriminators.CreatePool]);
+};
+
+export const encodeBigint = (value: bigint) => {
+  const buffer = Buffer.alloc(8);
+  buffer.writeBigUInt64LE(value);
+  return Uint8Array.from(buffer);
+};
+
+export const getDepositLiquidityInstructionData = (amountA: bigint, amountB: bigint) => {
+  return Buffer.concat([instructionDiscriminators.DepositLiquidity, encodeBigint(amountA), encodeBigint(amountB)]);
+};
+
+export const getWithdrawLiquidityInstructionData = (amountLp: bigint) => {
+  return Buffer.concat([instructionDiscriminators.WithdrawLiquidity, encodeBigint(amountLp)]);
+};
+
+export const getSwapInstructionData = () => {
+  return Buffer.concat([instructionDiscriminators.Swap]);
 };
 
 export const getCreateAmmInstructionData = (id: PublicKey, fee: number) => {
@@ -51,7 +72,7 @@ export const mintTo = async (context: ProgramTestContext, payer: Keypair, owner:
   const tx = new Transaction();
   tx.add(
     createAssociatedTokenAccountInstruction(payer.publicKey, tokenAccount, owner, mint),
-    createMintToInstruction(mint, tokenAccount, payer.publicKey, 1_000_000),
+    createMintToInstruction(mint, tokenAccount, payer.publicKey, 1_000_000 * LAMPORTS_PER_SOL),
   );
   tx.recentBlockhash = context.lastBlockhash;
   tx.sign(payer);

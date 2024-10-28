@@ -17,3 +17,4 @@ solana-program.workspace = true
 steel.workspace = true
 thiserror.workspace = true
 spl-token.workspace = true
+spl-math.workspace = true
