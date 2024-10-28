@@ -29,7 +29,10 @@ pub fn process_initialize_account(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
     
     // validate accounts
     signer_info.is_signer()?;
-    new_account_info.is_empty()?.is_writable()?;
+    new_account_info.is_empty()?.is_writable()?.has_seeds(
+        &[ACCOUNT],
+        &ID
+    )?;
     system_program.is_program(&system_program::ID)?;
 
     msg!("Program invoked. Creating a system account...");
