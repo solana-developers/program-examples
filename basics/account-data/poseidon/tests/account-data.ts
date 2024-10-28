@@ -42,20 +42,20 @@ describe("account-data", () => {
   it("Creates an address info account", async () => {
     // Defined the address info data
     const addressInfo = {
-      name: "John Doe",
-      houseNum: 120,
-      street: 9,
-      cityZipCode: 12345,
+      name: "Joe C",
+      houseNum: 136,
+      street: "Mile High Dr.",
+      city: "Solana Beach",
     };
 
     // Invoke the Create Address Info instruction from the program
     // Parameters: houseNumber, streetNumber, cityZipCode, name
     await program.methods
       .createAddressInfo(
+        addressInfo.name,
         addressInfo.houseNum,
         addressInfo.street,
-        addressInfo.cityZipCode,
-        addressInfo.name
+        addressInfo.city
       )
       .accountsPartial({
         payer: user.publicKey,
@@ -77,13 +77,13 @@ describe("account-data", () => {
       "House Number does not match"
     );
     assert.strictEqual(
-      account.streetNumber,
+      account.street,
       addressInfo.street,
       "Street Number does not match"
     );
     assert.strictEqual(
-      account.cityZipCode,
-      addressInfo.cityZipCode,
+      account.city,
+      addressInfo.city,
       "City Zip Code does not match"
     );
   });

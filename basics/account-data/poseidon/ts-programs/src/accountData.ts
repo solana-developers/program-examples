@@ -19,10 +19,10 @@ export default class AccountData {
 
     payer: Signer,
     address_info: AddressInfoState,
+    name: String<25>,
     house_number: u8,
-    street_number: u8,
-    cityZipCode: u32,
-    name: String<25>
+    street: String<25>,
+    city: String<25>
   ): Result {
     // CONTEXT
 
@@ -33,14 +33,15 @@ export default class AccountData {
     // Store the data to the account
     address_info.name = name;
     address_info.house_number = house_number;
-    address_info.street_number = street_number;
-    address_info.cityZipCode = cityZipCode;
+    address_info.street = street;
+    address_info.city = city;
   }
 }
 
 export interface AddressInfoState extends Account {
+  // String<MAX_LENGTH>; therefore, name, house_number, street and city are maximum 25 bytes each
+  name: String<25>;
   house_number: u8;
-  name: String<25>; // The name has a MAX_LENGTH of 25 bytes
-  street_number: u8;
-  cityZipCode: u32;
+  street: String<25>;
+  city: String<25>;
 }
