@@ -1,3 +1,5 @@
+use close_account_api::prelude::*;
+use close_account_api::ID;
 use solana_program::{
     account_info::AccountInfo,
     msg,
@@ -15,7 +17,10 @@ pub fn process_close(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResul
     
     // validate
     signer_info.is_signer()?;
-    account_info.is_writable()?;
+    account_info.is_writable()?.has_seeds(
+        &[ACCOUNT],
+        &ID
+    )?;
     
     msg!("Program invoked. Closing a system account...");
     

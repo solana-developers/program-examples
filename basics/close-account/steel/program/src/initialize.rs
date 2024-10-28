@@ -1,4 +1,5 @@
 use close_account_api::prelude::*;
+use close_account_api::ID;
 use solana_program::{
     account_info::AccountInfo,
     msg,
@@ -16,7 +17,10 @@ pub fn process_init(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult 
     
     // validate
     signer_info.is_signer()?;
-    new_account_info.is_empty()?.is_writable()?;
+    new_account_info.is_empty()?.is_writable()?.has_seeds(
+        &[ACCOUNT],
+        &ID
+    )?;
     system_program.is_program(&system_program::ID)?;
 
     let args = InitializeAccount::try_from_bytes(data)?;
