@@ -86,7 +86,7 @@ pub struct MintContext<'info> {
     pub recipient: SystemAccount<'info>,
     #[account(
         init_if_needed,
-        payer = mint_authority,   // Explicitly set payer to mint_authority due to Poseidon issue. Here poseidon added payer as mintAuthority but it should be mint_authority
+        payer = mint_authority,   // Explicitly set payer to mint_authority due to Poseidon transpilation issue. Here poseidon added payer as mintAuthority but it should be mint_authority
         associated_token::mint = mint_account,
         associated_token::authority = recipient,
     )]
