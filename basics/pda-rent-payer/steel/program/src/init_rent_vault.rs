@@ -1,27 +1,36 @@
-use steel_api::prelude::*;
+use pda_rent_payer_api::prelude::*;
+use solana_program::msg;
 use steel::*;
 
 pub fn process_initialize_vault(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
+    // // Parse args
+    // let args = data[..8].try_into().expect("Ma chud gayi");
+    // let amount = u64::from_le_bytes(args);
+
     // Load and validate accounts.
-    let [signer_info, rent_vault_info, system_program] = accounts else {
+    let [payer_info, rent_vault_info, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);        
     };
-    signer_info.is_signer()?;
+    payer_info.is_signer()?.is_writable()?;
     rent_vault_info.is_empty()?.is_writable()?.has_seeds(
         &[RENT_VAULT],
-        &pda_rent_payer_api::ID
+        &pda_rent_payer_api::ID,
     )?;
     system_program.is_program(&system_program::ID)?;
 
-    // Initialize counter.
-    create_account::<Counter>(
+    // Initialize vault.
+    create_account::<RentVault>(
         rent_vault_info,
         system_program,
-        signer_info,
+        payer_info,
         &pda_rent_payer_api::ID,
         &[RENT_VAULT],
     )?;
-    let rent_vault = rent_vault_info.as_account_mut::<RentVault>(&pda_rent_payer_api::ID)?;
+
+    let _ = rent_vault_info.as_account_mut::<RentVault>(&pda_rent_payer_api::ID)?;
+
+    msg!("Initialized rent vault.");
+    msg!("PDA: {:?}", rent_vault_info.key);
 
     Ok(())
 }

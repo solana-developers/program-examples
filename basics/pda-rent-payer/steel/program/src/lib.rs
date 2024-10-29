@@ -12,6 +12,8 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
+    /// Parse instruction automatically detects which instruction is being called
+    /// based on the discriminator and returns the instruction and the data
     let (ix ,data) = parse_instruction(&pda_rent_payer_api::ID, program_id, data)?;
 
     match ix {

@@ -2,28 +2,27 @@ use steel::*;
 
 use crate::prelude::*;
 
-pub fn initialize(signer: Pubkey) -> Instruction {
+pub fn init_rent_vault(signer_info: Pubkey, system_program: Pubkey) -> Instruction {
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(signer, true),
-            AccountMeta::new(counter_pda().0, false),
+            AccountMeta::new(signer_info, true),
+            AccountMeta::new(rent_vault_pda().0, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: Initialize {}.to_bytes()
+        data: InitializeRentVault {}.to_bytes(),
     }
 }
 
-pub fn add(signer: Pubkey, amount: u64) -> Instruction {
+pub fn create_new_account(rent_vault: Pubkey, new_account: Pubkey) -> Instruction {
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(signer, true),
-            AccountMeta::new(counter_pda().0, false),
+            AccountMeta::new(rent_vault, false),
+            AccountMeta::new(new_account, true),
+            AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: Add {
-            amount: amount.to_le_bytes(),
-        }
-        .to_bytes(),
+        data: CreateNewAccount {}.to_bytes()
     }
 }
+

@@ -9,8 +9,12 @@ pub enum PdaRentPayerInstruction {
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct InitializeRentVault {
-    pub fund_lamports: u64,
+pub struct InitializeRentVault {}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct DepositRent {
+    pub amount: u64,
 }
 
 #[repr(C)]

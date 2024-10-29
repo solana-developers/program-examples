@@ -13,3 +13,4 @@ pub struct RentVault {}
 pub struct NewAccount {}
 
 account!(PdaRentPayerAccount, RentVault);
+account!(PdaRentPayerAccount, NewAccount);

@@ -4,10 +4,10 @@
   "type": "module",
   "description": "Use a PDA to pay the rent for the creation of a new account.",
   "scripts": {
-    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.test.ts",
+    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
     "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
     "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
-    "deploy": "solana program deploy ./program/target/so/create_account_program.so"
+    "deploy": "solana program deploy ./program/target/so/pda_rent_payer_program.so"
   },
   "keywords": [
     "solana"

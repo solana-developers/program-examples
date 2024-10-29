@@ -18,7 +18,7 @@ pub fn rent_vault_pda() -> (Pubkey, u8) {
     Pubkey::find_program_address(&[RENT_VAULT], &crate::id())            
 }
 
-/// Fetch PDA of the newly_created account.
-pub fn new_account_pda() -> (Pubkey, u8) {
-    Pubkey::find_program_address(&[NEW_ACCOUNT], &crate::id())            
-}
+// Fetch PDA of the newly_created account.
+// pub fn new_account_pda() -> (Pubkey, u8) {
+//     Pubkey::find_program_address(&[NEW_ACCOUNT], &crate::id())            
+// }
