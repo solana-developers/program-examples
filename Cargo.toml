@@ -25,6 +25,7 @@ members = [
     "basics/realloc/native/program",
     "basics/realloc/anchor/programs/*",
     "basics/rent/native/program",
+    "basics/rent/steel/program",
     "basics/rent/anchor/programs/*",
     "basics/repository-layout/native/program",
     "basics/repository-layout/anchor/programs/*",
