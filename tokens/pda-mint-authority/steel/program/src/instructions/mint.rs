@@ -37,11 +37,8 @@ impl MintTo {
         }
         msg!("Associated Token Address: {}", associated_token_account.key);
 
-        // Now initialize that account as a Mint (standard Mint)
-        //
-        msg!("Initializing mint account...");
-        msg!("Mint: {}", mint_account.key);
 
+        msg!("Minting NFT to associated token account...");
         mint_to_signed(
             mint_account,
             associated_token_account,
@@ -51,10 +48,10 @@ impl MintTo {
             &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
         )?;
 
-        // Now create the account for that Mint's metadata
+        // We can make this a Limited Edition NFT through Metaplex,
+        // which will disable minting by setting the Mint & Freeze Authorities to the
+        // Edition Account.
         //
-        msg!("Creating metadata account...");
-
         let ix = &mpl_instruction::CreateMasterEditionV3 {
             edition: *edition_account.key,
             metadata: *metadata_account.key,
@@ -85,7 +82,7 @@ impl MintTo {
             &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
         )?;
 
-        msg!("Token mint created successfully.");
+        msg!("NFT minted successfully.");
 
         Ok(())
     }
