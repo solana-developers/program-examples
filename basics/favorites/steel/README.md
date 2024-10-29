@@ -1,6 +1,6 @@
-# TokenSwap
+# Favorites
 
-**TokenSwap** is a ...
+**Favorites** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

@@ -1,6 +1,6 @@
-# TokenSwap
+# Realloc
 
-**TokenSwap** is a ...
+**Realloc** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

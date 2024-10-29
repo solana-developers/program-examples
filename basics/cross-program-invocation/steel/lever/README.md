@@ -1,6 +1,6 @@
-# TokenSwap
+# Lever
 
-**TokenSwap** is a ...
+**Lever** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

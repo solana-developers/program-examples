@@ -1,6 +1,6 @@
-# TokenSwap
+# CheckingAccounts
 
-**TokenSwap** is a ...
+**CheckingAccounts** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

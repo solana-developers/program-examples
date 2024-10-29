@@ -1,6 +1,6 @@
-# TokenSwap
+# Rent
 
-**TokenSwap** is a ...
+**Rent** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
