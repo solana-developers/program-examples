@@ -1,7 +1,5 @@
-import { randomBytes } from 'node:crypto';
-import { before, describe, it } from 'node:test';
-import { BN } from '@coral-xyz/anchor';
-import { makeKeypairs } from '@solana-developers/helpers';
+import { BN } from "@coral-xyz/anchor";
+import { makeKeypairs } from "@solana-developers/helpers";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   MINT_SIZE,
@@ -11,22 +9,35 @@ import {
   createMintToInstruction,
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
-} from '@solana/spl-token';
-import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { serialize } from 'borsh';
-import { assert, expect } from 'chai';
-import { start } from 'solana-bankrun';
-import * as T from './types';
+} from "@solana/spl-token";
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { serialize } from "borsh";
+import { assert, expect } from "chai";
+import { randomBytes } from "node:crypto";
+import { before, describe, it } from "node:test";
+import { start } from "solana-bankrun";
+import * as T from "./types";
 
 const getRandomBigNumber = (size = 8) => {
   return new BN(randomBytes(size));
 };
 
-describe('escrow-example', async () => {
+describe("escrow-example", async () => {
   // load program in solana-bankrun
-  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
-  const context = await start([{ name: 'escrow_program', programId: PROGRAM_ID }], []);
+  const PROGRAM_ID = new PublicKey(
+    "z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35"
+  );
+  const context = await start(
+    [{ name: "escrow_program", programId: PROGRAM_ID }],
+    []
+  );
   const provider = new BankrunProvider(context);
   const connection = provider.connection;
   const client = context.banksClient;
@@ -42,29 +53,47 @@ describe('escrow-example', async () => {
   const tokenBWantedAmount = new BN(1_000_000);
 
   before(async () => {
-    const [aliceTokenAccountA, aliceTokenAccountB, bobTokenAccountA, bobTokenAccountB] = [alice, bob].flatMap((keypair) =>
-      [tokenMintA, tokenMintB].map((mint) => getAssociatedTokenAddressSync(mint.publicKey, keypair.publicKey, false, TOKEN_PROGRAM)),
+    const [
+      aliceTokenAccountA,
+      aliceTokenAccountB,
+      bobTokenAccountA,
+      bobTokenAccountB,
+    ] = [alice, bob].flatMap((keypair) =>
+      [tokenMintA, tokenMintB].map((mint) =>
+        getAssociatedTokenAddressSync(
+          mint.publicKey,
+          keypair.publicKey,
+          false,
+          TOKEN_PROGRAM
+        )
+      )
     );
 
     // Airdrops to users, and creates two tokens mints 'A' and 'B'"
-    const minimumLamports = await getMinimumBalanceForRentExemptMint(connection);
-
-    const sendSolInstructions: Array<TransactionInstruction> = [alice, bob].map((account) =>
-      SystemProgram.transfer({
-        fromPubkey: provider.publicKey,
-        toPubkey: account.publicKey,
-        lamports: 10 * LAMPORTS_PER_SOL,
-      }),
+    const minimumLamports = await getMinimumBalanceForRentExemptMint(
+      connection
     );
 
-    const createMintInstructions: Array<TransactionInstruction> = [tokenMintA, tokenMintB].map((mint) =>
+    const sendSolInstructions: Array<TransactionInstruction> = [alice, bob].map(
+      (account) =>
+        SystemProgram.transfer({
+          fromPubkey: provider.publicKey,
+          toPubkey: account.publicKey,
+          lamports: 10 * LAMPORTS_PER_SOL,
+        })
+    );
+
+    const createMintInstructions: Array<TransactionInstruction> = [
+      tokenMintA,
+      tokenMintB,
+    ].map((mint) =>
       SystemProgram.createAccount({
         fromPubkey: provider.publicKey,
         newAccountPubkey: mint.publicKey,
         lamports: minimumLamports,
         space: MINT_SIZE,
         programId: TOKEN_PROGRAM,
-      }),
+      })
     );
 
     // Make tokenA and tokenB mints, mint tokens and create ATAs
@@ -80,14 +109,37 @@ describe('escrow-example', async () => {
         ata: bobTokenAccountB,
       },
     ].flatMap((mintDetails) => [
-      createInitializeMint2Instruction(mintDetails.mint, 6, mintDetails.authority, null, TOKEN_PROGRAM),
-      createAssociatedTokenAccountIdempotentInstruction(provider.publicKey, mintDetails.ata, mintDetails.authority, mintDetails.mint, TOKEN_PROGRAM),
-      createMintToInstruction(mintDetails.mint, mintDetails.ata, mintDetails.authority, 1_000_000_000, [], TOKEN_PROGRAM),
+      createInitializeMint2Instruction(
+        mintDetails.mint,
+        6,
+        mintDetails.authority,
+        null,
+        TOKEN_PROGRAM
+      ),
+      createAssociatedTokenAccountIdempotentInstruction(
+        provider.publicKey,
+        mintDetails.ata,
+        mintDetails.authority,
+        mintDetails.mint,
+        TOKEN_PROGRAM
+      ),
+      createMintToInstruction(
+        mintDetails.mint,
+        mintDetails.ata,
+        mintDetails.authority,
+        1_000_000_000,
+        [],
+        TOKEN_PROGRAM
+      ),
     ]);
 
     // Add all these instructions to our transaction
     const tx = new Transaction();
-    tx.instructions = [...sendSolInstructions, ...createMintInstructions, ...mintTokensInstructions];
+    tx.instructions = [
+      ...sendSolInstructions,
+      ...createMintInstructions,
+      ...mintTokensInstructions,
+    ];
     const blockhash = context.lastBlockhash;
 
     tx.recentBlockhash = blockhash;
@@ -111,11 +163,21 @@ describe('escrow-example', async () => {
 
     // Then determine the account addresses we'll use for the offer and the vault
     const [offer, bump] = PublicKey.findProgramAddressSync(
-      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
-      PROGRAM_ID,
+      [
+        Buffer.from("offer"),
+        accounts.maker.toBuffer(),
+        offerId.toArrayLike(Buffer, "le", 8),
+      ],
+      PROGRAM_ID
     );
 
-    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM, ASSOCIATED_TOKEN_PROGRAM_ID);
+    const vault = getAssociatedTokenAddressSync(
+      accounts.tokenMintA,
+      offer,
+      true,
+      TOKEN_PROGRAM,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    );
 
     accounts.offer = offer;
     accounts.vault = vault;
@@ -123,11 +185,11 @@ describe('escrow-example', async () => {
     const data = serialize(
       {
         struct: {
-          discriminator: 'u8',
-          id: 'u64',
-          token_a_offered_amount: 'u64',
-          token_b_wanted_amount: 'u64',
-          bump: 'u8',
+          discriminator: "u8",
+          id: "u64",
+          token_a_offered_amount: "u64",
+          token_b_wanted_amount: "u64",
+          bump: "u8",
         },
       },
       {
@@ -136,7 +198,7 @@ describe('escrow-example', async () => {
         token_a_offered_amount: tokenAOfferedAmount,
         token_b_wanted_amount: tokenBWantedAmount,
         bump,
-      },
+      }
     );
 
     const ix = new TransactionInstruction({
@@ -255,17 +317,21 @@ describe('escrow-example', async () => {
     await client.processTransaction(tx);
 
     /**Check alice's account for the tokens wanted*/
-    const AliceAccountData = T.decodeAccount((await connection.getAccountInfo(accounts.makerTokenAccountB)).data);
+    const AliceAccountData = T.decodeAccount(
+      (await connection.getAccountInfo(accounts.makerTokenAccountB)).data
+    );
     const aliceBalance = new BN(AliceAccountData.amount.toString());
     assert(aliceBalance.eq(tokenBWantedAmount));
 
     /**Check bobs's account for the tokens offered*/
-    const bobsData = T.decodeAccount((await connection.getAccountInfo(accounts.takerTokenAccountA)).data);
+    const bobsData = T.decodeAccount(
+      (await connection.getAccountInfo(accounts.takerTokenAccountA)).data
+    );
     const bobsBalance = new BN(bobsData.amount.toString());
     assert.strictEqual(bobsBalance.toString(), tokenAOfferedAmount.toString());
   };
 
-  it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
+  it("Puts the tokens Alice offers into the vault when Alice makes an offer", async () => {
     await make();
   });
 
@@ -276,11 +342,13 @@ describe('escrow-example', async () => {
     try {
       await connection.getAccountInfo(accounts.vault);
     } catch (error: any) {
-      expect(error.toString()).to.include(`Could not find ${accounts.vault.toString()}`);
+      expect(error.toString()).to.include(
+        `Could not find ${accounts.vault.toString()}`
+      );
     }
   });
 
-  it('Refunds the token amount from the vault if the maker chooses to', async () => {
+  it("Refunds the token amount from the vault if the maker chooses to", async () => {
     await make();
     const ix = new TransactionInstruction({
       data: Buffer.alloc(1, 2),
@@ -329,19 +397,25 @@ describe('escrow-example', async () => {
     await client.processTransaction(tx);
 
     /**Check alice's account for the tokens wanted*/
-    const AliceAccountData = T.decodeAccount((await connection.getAccountInfo(accounts.makerTokenAccountA)).data);
+    const AliceAccountData = T.decodeAccount(
+      (await connection.getAccountInfo(accounts.makerTokenAccountA)).data
+    );
     const aliceBalance = new BN(AliceAccountData.amount.toString());
-    expect(aliceBalance.toString()).to.equal(new BN(1_000_000_000).sub(tokenAOfferedAmount).toString());
+    expect(aliceBalance.toString()).to.equal(
+      new BN(1_000_000_000).sub(tokenAOfferedAmount).toString()
+    );
 
     /**Check that the Vault account does not exist */
     try {
       await connection.getAccountInfo(accounts.vault);
     } catch (error: any) {
-      expect(error.toString()).to.include(`Could not find ${accounts.vault.toString()}`);
+      expect(error.toString()).to.include(
+        `Could not find ${accounts.vault.toString()}`
+      );
     }
   });
 
-  it('should fail when Bob tries to withdraw Alices funds without depositing', async () => {
+  it("should fail when Bob tries to withdraw Alices funds without depositing", async () => {
     await make();
     const ix = new TransactionInstruction({
       data: Buffer.alloc(1, 2),
@@ -391,7 +465,7 @@ describe('escrow-example', async () => {
     try {
       await client.processTransaction(tx);
     } catch (error) {
-      expect(error.message).to.include('Error');
+      expect(error.message).to.include("Error");
     }
   });
 });
