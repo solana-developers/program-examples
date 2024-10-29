@@ -1,0 +1,18 @@
+[package]
+name = "cross-program-invocation-steel-hand"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+
+[dependencies]
+solana-program = "=1.18.17"
+steel = "2.0"
+bytemuck = "1.14"
+num_enum = "0.7"
+cross-program-invocation-steel-lever = { path = "../lever", features = ["cpi"] }
