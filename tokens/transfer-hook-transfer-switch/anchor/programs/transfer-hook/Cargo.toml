@@ -14,12 +14,10 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build"]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
+anchor-lang = {version = "0.30.1", features = ["interface-instructions", "init-if-needed"]}
 anchor-spl = "0.30.1"
-anchor-lang = "0.30.1"
-solana-program = "1.17"
-spl-transfer-hook-interface = "0.8.2"
-spl-tlv-account-resolution = "0.8.1"
-spl-type-length-value = "0.6.0"
+spl-tlv-account-resolution = "0.6.3"
+spl-transfer-hook-interface = "0.6.3"

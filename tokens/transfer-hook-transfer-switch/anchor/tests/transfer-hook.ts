@@ -1,89 +1,97 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { assert } from "chai";
-import { TransferHookExample } from "../target/types/transfer_hook";
+import { PublicKey, SystemProgram } from "@solana/web3.js";
+import { TransferHook } from "../target/types/transfer_hook";
 
-describe("transfer-hook-example", () => {
-  const provider = anchor.AnchorProvider.local();
+describe("transfer_hook", () => {
+  // Configure the client to use the local cluster.
+  const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const program = anchor.workspace
-    .TransferHookExample as Program<TransferHookExample>;
+  const program = anchor.workspace.TransferHook as Program<TransferHook>;
 
-  let walletState = anchor.web3.Keypair.generate();
-  let walletOwner = provider.wallet as anchor.Wallet;
+  let walletState: PublicKey;
+  let extraAccountMetaList: PublicKey;
+  const mint = new PublicKey("YourMintAddressHere"); // Replace with your Mint address
 
   before(async () => {
-    const lamports = await provider.connection.getMinimumBalanceForRentExemption(8);
-
-    const tx = new anchor.web3.Transaction().add(
-      anchor.web3.SystemProgram.createAccount({
-        fromPubkey: walletOwner.publicKey,
-        newAccountPubkey: walletState.publicKey,
-        lamports,
-        space: 8,
-        programId: program.programId,
-      })
+    // Derive the PDA for wallet state and extra account metadata list
+    [walletState] = await PublicKey.findProgramAddress(
+      [Buffer.from("wallet_state")],
+      program.programId
     );
 
-    await provider.sendAndConfirm(tx, [walletState]);
+    [extraAccountMetaList] = await PublicKey.findProgramAddress(
+      [Buffer.from("extra-account-metas"), mint.toBuffer()],
+      program.programId
+    );
   });
 
-  it("Enables transfers for a wallet", async () => {
+  it("Initializes the extra account meta list and wallet state", async () => {
     await program.methods
-      .setTransferPermission(true)
+      .initializeExtraAccountMetaList()
       .accounts({
-        walletState: walletState.publicKey,
-        owner: walletOwner.publicKey,
+        payer: provider.wallet.publicKey,
       })
-      .signers([walletOwner.payer])
+      .signers([])
       .rpc();
 
-    const walletStateAccount = await program.account.walletState.fetch(walletState.publicKey);
-    assert.isTrue(walletStateAccount.isTransferEnabled, "Transfer should be enabled");
+    const walletStateAccount = await program.account.walletState.fetch(walletState);
+    assert.isTrue(walletStateAccount.isTransferEnabled, "Transfer should be enabled by default");
   });
 
-  it("Allows token transfer when enabled", async () => {
+  it("Disables transfers for the wallet", async () => {
     await program.methods
-      .transferHook(Buffer.from([])) // Empty buffer for mock input
+      .toggleWalletPermission()
       .accounts({
-        walletState: walletState.publicKey,
-        mint: walletOwner.publicKey, // Replace with actual mint
-        extraAccountMetas: walletOwner.publicKey, // Replace with actual PDA
-        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        walletState,
       })
       .rpc();
-  });
 
-  it("Disables transfers for a wallet", async () => {
-    await program.methods
-      .setTransferPermission(false)
-      .accounts({
-        walletState: walletState.publicKey,
-        owner: walletOwner.publicKey,
-      })
-      .signers([walletOwner.payer])
-      .rpc();
-
-    const walletStateAccount = await program.account.walletState.fetch(walletState.publicKey);
+    const walletStateAccount = await program.account.walletState.fetch(walletState);
     assert.isFalse(walletStateAccount.isTransferEnabled, "Transfer should be disabled");
   });
 
-  it("Fails token transfer when disabled", async () => {
+  it("Fails transfer when transfer permission is disabled", async () => {
     try {
       await program.methods
-        .transferHook(Buffer.from([])) // Empty buffer for mock input
+        .transferHook(new anchor.BN(1000)) // Amount is just an example
         .accounts({
-          walletState: walletState.publicKey,
-          mint: walletOwner.publicKey, // Replace with actual mint
-          extraAccountMetas: walletOwner.publicKey, // Replace with actual PDA
-          tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+          sourceToken: provider.wallet.publicKey, // Replace with actual token account
+          destinationToken: new PublicKey("DestinationTokenAccountHere"), // Replace with actual destination
         })
         .rpc();
+      assert.fail("Expected transfer to fail, but it succeeded");
+    } catch (error) {
+      assert.isTrue(error.message.includes("Transfer not allowed"), "Expected transfer failure due to disabled permission");
+    }
+  });
 
-      assert.fail("Transfer should have been rejected, but it succeeded");
-    } catch (err) {
-      assert.include(err.message, "Token transfer is not allowed", "Transfer should fail");
+  it("Enables transfers for the wallet", async () => {
+    await program.methods
+      .toggleWalletPermission()
+      .accounts({
+        walletState,
+      })
+      .rpc();
+
+    const walletStateAccount = await program.account.walletState.fetch(walletState);
+    assert.isTrue(walletStateAccount.isTransferEnabled, "Transfer should be enabled");
+  });
+
+  it("Succeeds transfer when transfer permission is enabled", async () => {
+    try {
+      await program.methods
+        .transferHook(new anchor.BN(1000)) // Amount is just an example
+        .accounts({
+          sourceToken: provider.wallet.publicKey, // Replace with actual token account
+          destinationToken: new PublicKey("DestinationTokenAccountHere"), // Replace with actual destination
+        })
+        .rpc();
+      console.log("Transfer succeeded with enabled permission");
+    } catch (error) {
+      assert.fail("Expected transfer to succeed, but it failed");
     }
   });
 });
