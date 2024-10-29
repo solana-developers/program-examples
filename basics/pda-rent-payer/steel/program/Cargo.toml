@@ -1,0 +1,13 @@
+[package]
+name = "pda-rent-payer-steel-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+solana-program = "=1.18.17"
+steel = "2.1"
+bytemuck = "1.4"
+num_enum = "0.7"
