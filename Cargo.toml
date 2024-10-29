@@ -6,6 +6,7 @@ members = [
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
     "basics/close-account/native/program",
+    "basics/close-account/steel/program",
     "basics/close-account/anchor/programs/close-account",
     "basics/counter/native/program",
     "basics/counter/anchor/programs/counter_anchor",
