@@ -1,10 +1,11 @@
 use anchor_lang::prelude::*;
-declare_id!("EvcknV23Y3dkbSa4afZNGw2PgoowcfxCy4qvP8Ghogwu");
+declare_id!("3DRpGvotDMHtXzHahF1jdzYEiYa52cwpQcqGiNPw9vRd");
 #[program]
 pub mod counter_program {
     use super::*;
     pub fn initialize_counter(ctx: Context<InitializeCounterContext>) -> Result<()> {
         ctx.accounts.counter.count = 0;
+        ctx.accounts.counter.payer = ctx.accounts.payer.key();
         Ok(())
     }
     pub fn increment(ctx: Context<IncrementContext>) -> Result<()> {
@@ -18,26 +19,34 @@ pub mod counter_program {
 }
 #[derive(Accounts)]
 pub struct InitializeCounterContext<'info> {
-    #[account(init, payer = payer, space = 17, seeds = [b"count"], bump)]
-    pub counter: Account<'info, Counter>,
     #[account(mut)]
     pub payer: Signer<'info>,
+    #[account(
+        init,
+        payer = payer,
+        space = 49,
+        seeds = [b"count",
+        payer.key().as_ref()],
+        bump,
+    )]
+    pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
 pub struct IncrementContext<'info> {
-    #[account(mut, seeds = [b"count"], bump)]
+    #[account(mut)]
     pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
 pub struct DecrementContext<'info> {
-    #[account(mut, seeds = [b"count"], bump)]
+    #[account(mut)]
     pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,
 }
 #[account]
 pub struct Counter {
+    pub payer: Pubkey,
     pub count: u64,
     pub bump: u8,
 }

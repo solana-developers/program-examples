@@ -1,23 +1,24 @@
 import { Account, Pubkey, Signer, u8, u64 } from '@solanaturbine/poseidon';
 
-export interface Counter extends Account {
-  count: u64;
-  bump: u8;
-}
+export default class CounterProgram {
+  static PROGRAM_ID = new Pubkey('3DRpGvotDMHtXzHahF1jdzYEiYa52cwpQcqGiNPw9vRd');
 
-export default class counter_program {
-  static PROGRAM_ID = new Pubkey('EvcknV23Y3dkbSa4afZNGw2PgoowcfxCy4qvP8Ghogwu');
-
-  initializeCounter(counter: Counter, payer: Signer) {
-    counter.derive(['count']).init();
+  initializeCounter(payer: Signer, counter: Counter) {
+    counter.derive(['count', payer.key]).init();
     counter.count = new u64(0);
+
+    counter.payer = payer.key;
   }
   increment(counter: Counter) {
-    counter.derive(['count']);
     counter.count = counter.count.add(1);
   }
   decrement(counter: Counter) {
-    counter.derive(['count']);
     counter.count = counter.count.sub(1);
   }
+}
+
+export interface Counter extends Account {
+  payer: Pubkey;
+  count: u64;
+  bump: u8;
 }
