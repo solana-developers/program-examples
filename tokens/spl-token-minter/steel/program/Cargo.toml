@@ -1,0 +1,17 @@
+[package]
+name = "spl-token-minter-steel-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+solana-program = "=1.18.17"
+steel = {version = "2.0", features = ["spl"]}
+bytemuck = "1.4"
+num_enum = "0.7"
+borsh = "1.5.1"
+spl-token = { version = "4.0.0", features = [ "no-entrypoint" ] }
+spl-associated-token-account = { version = "2.0.3", features = [ "no-entrypoint" ] }
+mpl-token-metadata = { version = "4.1.2" }
