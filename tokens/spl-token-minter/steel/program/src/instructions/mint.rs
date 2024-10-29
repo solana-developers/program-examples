@@ -39,10 +39,8 @@ impl MintTo {
         }
         msg!("Associated Token Address: {}", associated_token_account.key);
 
-        // Now initialize that account as a Mint (standard Mint)
-        //
-        msg!("Initializing mint account...");
-        msg!("Mint: {}", mint_account.key);
+        let quantity = args.quantity;
+        msg!("Minting {} tokens to associated token account...", quantity);
 
         invoke(
             &token_instruction::mint_to(
@@ -61,7 +59,7 @@ impl MintTo {
             ],
         )?;
 
-        msg!("Token mint created successfully.");
+        msg!("Tokens minted to wallet successfully.");
         Ok(())
     }
 }
