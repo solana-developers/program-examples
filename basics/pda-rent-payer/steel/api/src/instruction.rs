@@ -4,16 +4,12 @@ use steel::*;
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 pub enum PdaRentPayerInstruction {
     InitializeRentVault = 0,
-    CreateNewAccount = 1
+    CreateNewAccount = 1,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct InitializeRentVault {}
-
-#[repr(C)]
-#[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct DepositRent {
+pub struct InitializeRentVault {
     pub amount: u64,
 }
 

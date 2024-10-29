@@ -24,13 +24,11 @@ const LOAD_LAMPORTS = LAMPORTS_PER_SOL; // 1 SOL
 
 const instructionDiscriminators = {
     InitializeRentVault: Buffer.from([0]),
-    DepositRent: Buffer.from([1]),
-    CreateNewAccount: Buffer.from([2]),
+    CreateNewAccount: Buffer.from([1]),
 }
 
 describe("Pay the rent for an account using a PDA", () => {
   let context: ProgramTestContext;
-  let lastBlock: Blockhash;
   let client: BanksClient;
   let payer: Keypair;
   
@@ -46,16 +44,18 @@ describe("Pay the rent for an account using a PDA", () => {
     );
     client = context.banksClient;
     payer = context.payer;
-    lastBlock = context.lastBlockhash;
     
   });
 
   it("should initialize rent vault PDA", async () => {
-    const data = Buffer.concat([instructionDiscriminators.InitializeRentVault]);
+    const amount = Buffer.alloc(8);
+    amount.writeBigInt64BE(BigInt(LOAD_LAMPORTS), 0);
+    const data = Buffer.concat([instructionDiscriminators.InitializeRentVault, amount]);
+    
     const ix = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: false },
-        { pubkey: vault_pda, isSigner: true, isWritable: true },
+        { pubkey: vault_pda, isSigner: false, isWritable: true },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
@@ -63,15 +63,11 @@ describe("Pay the rent for an account using a PDA", () => {
     });
 
     const tx = new Transaction();
-    tx.recentBlockhash = lastBlock;
+    tx.recentBlockhash = context.lastBlockhash;
     tx.add(ix).sign(payer);
 
     // Process Transaction with all the instructions
     await client.processTransaction(tx);
-  });
-
-  it("should deposit rent into the vault", async () => {
-
   });
 
   it("should create new account using rent vault", async () => {
@@ -83,7 +79,6 @@ describe("Pay the rent for an account using a PDA", () => {
     keys: [
         { pubkey: vault_pda, isSigner: false, isWritable: true },
         { pubkey: new_account.publicKey, isSigner: true, isWritable: true },
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
     ],
     programId: PROGRAM_ID,
     data,
