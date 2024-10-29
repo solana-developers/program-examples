@@ -11,6 +11,7 @@ members = [
     "basics/counter/anchor/programs/counter_anchor",
     "basics/counter/mpl-stack",
     "basics/create-account/native/program",
+    "basics/create-account/steel/program",
     "basics/create-account/anchor/programs/create-system-account",
     "basics/cross-program-invocation/anchor/programs/*",
     "basics/hello-solana/native/program",
