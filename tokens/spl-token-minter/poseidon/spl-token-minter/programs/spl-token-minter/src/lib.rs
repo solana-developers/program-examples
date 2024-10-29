@@ -1,16 +1,63 @@
 use anchor_lang::prelude::*;
-
+use anchor_spl::{
+    token::{mint_to, Mint, MintTo, Token, TokenAccount},
+    associated_token::AssociatedToken,
+};
 declare_id!("DmrXSUGWYaqtWg8sbi9JQN48yVZ1y2m7HvWXbND52Mcw");
-
 #[program]
 pub mod spl_token_minter {
     use super::*;
-
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
+    pub fn create_token_mint(
+        ctx: Context<CreateTokenMintContext>,
+        decimals: u8,
+        freeze_authority: Pubkey,
+    ) -> Result<()> {
+        Ok(())
+    }
+    pub fn mint(ctx: Context<MintContext>, amount: u64) -> Result<()> {
+        let cpi_ctx = CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            MintTo {
+                mint: ctx.accounts.mint_account.to_account_info(),
+                to: ctx.accounts.associated_token_account.to_account_info(),
+                authority: ctx.accounts.mint_authority.to_account_info(),
+            },
+        );
+        mint_to(cpi_ctx, amount)?;
         Ok(())
     }
 }
-
 #[derive(Accounts)]
-pub struct Initialize {}
+#[instruction(decimals: u8)]
+pub struct CreateTokenMintContext<'info> {
+    #[account(mut)]
+    pub mint_authority: Signer<'info>,
+    #[account(
+        init,
+        payer = mint_authority,
+        mint::decimals = decimals,
+        mint::authority = mint_authority.key(),
+    )]
+    pub mint_account: Account<'info, Mint>,
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+}
+#[derive(Accounts)]
+pub struct MintContext<'info> {
+    #[account(mut)]
+    pub mint_account: Account<'info, Mint>,
+    #[account(mut)]
+    pub mint_authority: Signer<'info>,
+    #[account(mut)]
+    pub recipient: SystemAccount<'info>,
+    #[account(
+        init_if_needed,
+        payer = mint_authority,
+        associated_token::mint = mint_account,
+        associated_token::authority = recipient,
+    )]
+    pub associated_token_account: Account<'info, TokenAccount>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+}
