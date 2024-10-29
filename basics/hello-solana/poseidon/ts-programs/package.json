@@ -1,0 +1,7 @@
+{
+  "name": "ts-programs",
+  "version": "1.0.0",
+  "dependencies": {
+    "@solanaturbine/poseidon": "^0.0.6"
+  }
+}
