@@ -36,8 +36,8 @@ describe('Create a system account', async () => {
     const lamports = await connection.getMinimumBalanceForRentExemption(0);
 
     // Check that the account was created
-    // const accountInfo = await connection.getAccountInfo(accountState);
-    // assert.isNotNull(accountInfo, 'Account should be created');
-    // assert(accountInfo.lamports >= lamports, 'Account must have the minimum amount of lamports required for rent');
+    const accountInfo = await connection.getAccountInfo(accountState);
+    assert.isNotNull(accountInfo, 'Account should be created');
+    assert(accountInfo.lamports >= lamports, 'Account must have the minimum amount of lamports required for rent');
   });
 });
