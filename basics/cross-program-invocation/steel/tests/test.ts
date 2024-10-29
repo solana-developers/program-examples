@@ -39,7 +39,7 @@ describe('CPI Example', async () => {
       return Buffer.from(borsh.serialize(PowerStatusSchema, this));
     }
   }
-  const PowerStatusSchema = new Map([[PowerStatus, { kind: 'struct', fields: [['status', 'u8']] }]]);
+  const PowerStatusSchema = new Map([[PowerStatus, { kind: 'struct', fields: [['on', 'u8']] }]]);
 
   class SetPowerStatus {
     name: Uint8Array;
@@ -67,7 +67,10 @@ describe('CPI Example', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: LEVER_PROGRAM_ID,
-      data: Buffer.from([0]), // the instruction discriminator
+      data: Buffer.concat([
+        Buffer.from([0]), // the instruction discriminator
+        new PowerStatus({ on: true }).toBuffer(),
+      ]),
     });
 
     const blockhash = context.lastBlockhash;

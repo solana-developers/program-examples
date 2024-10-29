@@ -15,11 +15,15 @@ pub enum SteelInstruction {
 instruction!(SteelInstruction, InitializeLever);
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct InitializeLever {}
+pub struct InitializeLever {
+    on: u8,
+}
 
 impl InitializeLever {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
-        let [power, user, system_program] = accounts else {
+    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+        let on = Self::try_from_bytes(data)?.on;
+
+        let [power_info, user, system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
@@ -30,13 +34,24 @@ impl InitializeLever {
         invoke(
             &system_instruction::create_account(
                 user.key,
-                power.key,
+                power_info.key,
                 lamports_required,
                 account_span as u64,
                 program_id,
             ),
-            &[user.clone(), power.clone(), system_program.clone()],
-        )
+            &[user.clone(), power_info.clone(), system_program.clone()],
+        )?;
+
+        let power = power_info.as_account_mut::<PowerStatus>(program_id)?;
+
+        power.on = on;
+
+        match power.is_on()? {
+            true => msg!("The power is now on."),
+            false => msg!("The power is now off!"),
+        };
+
+        Ok(())
     }
 }
 
