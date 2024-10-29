@@ -11,10 +11,26 @@ pub fn process_create_amm(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramR
     let [signer_info, amm_info, admin_infos, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
-    if fee > 1000 {
-        return Err(TutorialError::InvalidFee.into());
-    }
 
+    // validating accounts and input
+    signer_info.is_signer()?;
+    amm_info
+        .is_empty()?
+        .is_writable()?
+        .has_seeds(&[id.as_ref()], &token_swap_api::ID)?;
+    assert(
+        admin_infos.is_writable == false,
+        TutorialError::ValidationBreached,
+        "Admin account should be read only",
+    )?;
+    assert(
+        fee < 1000,
+        TutorialError::InvalidFee,
+        &TutorialError::InvalidFee.to_string(),
+    )?;
+    system_program.is_program(&system_program::ID)?;
+
+    // - Program Logic - create Amm account and populate fields
     create_account::<Amm>(
         amm_info,
         system_program,

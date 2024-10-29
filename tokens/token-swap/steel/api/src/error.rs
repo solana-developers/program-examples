@@ -18,6 +18,9 @@ pub enum TutorialError {
 
     #[error("Invariant does not hold")]
     InvariantViolated = 4,
+
+    #[error("Account Validation breached")]
+    ValidationBreached = 5,
 }
 
 impl TutorialError {
@@ -28,6 +31,7 @@ impl TutorialError {
             TutorialError::DepositTooSmall => msg!("Error: Depositing too little liquidity"),
             TutorialError::OutputTooSmall => msg!("Error: Output is below the minimum expected"),
             TutorialError::InvariantViolated => msg!("Error: Invariant does not hold"),
+            TutorialError::ValidationBreached => msg!("Error: Account validation breached"),
         }
     }
 }

@@ -29,6 +29,12 @@ Compile your program:
 steel build
 ```
 
+Install ts/js dependecies for testing:
+
+```sh
+pnpm install
+```
+
 Run unit and integration tests (native):
 
 ```sh
