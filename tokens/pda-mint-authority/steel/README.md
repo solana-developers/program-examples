@@ -1,6 +1,6 @@
-# Steel
+# PdaMintAuthority
 
-**Steel** is a ...
+**PdaMintAuthority** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
@@ -9,20 +9,14 @@
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions
-- [`Add`](program/src/add.rs) – Add ...
-- [`Initialize`](program/src/initialize.rs) – Initialize ...
+- [`Hello`](program/src/hello.rs) – Hello ...
 
 ## State
-- [`Counter`](api/src/state/counter.rs) – Counter ...
+- [`User`](api/src/state/user.rs) – User ...
 
-## Get started
+## Tests
 
-Compile your program:
-```sh
-steel build
+To run the test suit, use the Solana toolchain:
 ```
-
-Run unit and integration tests:
-```sh
-steel test
+cargo test-sbf         
 ```

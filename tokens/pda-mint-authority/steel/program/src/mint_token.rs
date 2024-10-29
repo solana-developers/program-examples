@@ -61,6 +61,16 @@ pub fn process_mint_token(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramR
         solana_program::msg!("Associated token account exists.");
     }
 
+    // Mint tokens
+    // let mint_authority_seeds = &[b"mint", &[bump]];
+    // mint_to(
+    //     mint_account.key(),
+    //     associated_token_account,
+    //     mint_account,
+    //     token_program,
+    //     args.amount,
+    //     &[&mint_authority_seeds],
+    // )?;
 
     solana_program::msg!("Minting Token to associated token account...");
     solana_program::program::invoke_signed(

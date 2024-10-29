@@ -1,6 +1,6 @@
 use steel::*;
 
-use super::ReallocAccount;
+use crate::consts::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]

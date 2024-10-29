@@ -17,7 +17,7 @@ pub fn initialize(
             AccountMeta::new(message_account, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: MessageArgs {
+        data: Initialize {
             message_len: input.len() as u32,
             message: message_bytes,
         }.to_bytes(),
@@ -39,7 +39,7 @@ pub fn update(
             AccountMeta::new(message_account, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: MessageArgs {
+        data: Update {
             message_len: input.len() as u32,
             message: message_bytes,
         }.to_bytes(),

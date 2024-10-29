@@ -1,7 +1,4 @@
-mod add;
 mod create_system_account;
-
-use add::*;
 use create_system_account::*;
         
 use rent_api::prelude::*;
@@ -15,7 +12,7 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&rent_api::ID, program_id, data)?;
 
     match ix {
-        RentInstruction::CreateSystemAccount => process_create_system_account(accounts, data)?,
+        RentInstruction::CreateSystemAccountArgs => process_create_system_account(accounts, data)?,
     }
 
     Ok(())

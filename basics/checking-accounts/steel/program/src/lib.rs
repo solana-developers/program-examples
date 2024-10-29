@@ -13,7 +13,7 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&checking_accounts_api::ID, program_id, data)?;
 
     match ix {
-        ValidationInstruction::CheckAccounts => process_check_accounts(accounts, data)?
+        ValidationInstruction::CheckAccountsArgs => process_check_accounts(accounts, data)?
     }
 
     Ok(())

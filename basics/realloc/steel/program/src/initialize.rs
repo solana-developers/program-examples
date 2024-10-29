@@ -12,7 +12,7 @@ pub fn process_initialize(accounts: &[AccountInfo], data: &[u8]) -> ProgramResul
     system_program.is_program(&system_program::ID)?;
 
     // Parse instruction data
-    let args = MessageArgs::try_from_bytes(data)?;
+    let args = Initialize::try_from_bytes(data)?;
 
     // Calculate required space
     let required_space = Message::required_space(args.message_len as usize);

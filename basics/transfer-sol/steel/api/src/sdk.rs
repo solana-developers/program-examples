@@ -14,7 +14,7 @@ pub fn transfer_sol_with_cpi(
             AccountMeta::new(recipient, false),
             AccountMeta::new_readonly(system_program::ID, false),
         ],
-        data: TransferArgs { amount }.to_bytes(),
+        data: TransferSolWithCpi { amount }.to_bytes(),
     }
 }
 
@@ -29,6 +29,6 @@ pub fn transfer_sol_with_program(
             AccountMeta::new(payer, false),
             AccountMeta::new(recipient, false),
         ],
-        data: TransferArgs { amount }.to_bytes(),
+        data: TransferSolWithProgram { amount }.to_bytes(),
     }
 }

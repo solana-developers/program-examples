@@ -14,7 +14,7 @@ pub fn process_update(accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
     system_program.is_program(&system_program::ID)?;
 
     // Parse instruction data
-    let args = MessageArgs::try_from_bytes(data)?;
+    let args = Update::try_from_bytes(data)?;
 
     // Calculate new required space
     let new_space = Message::required_space(args.message_len as usize);

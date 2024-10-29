@@ -14,8 +14,8 @@ pub fn create_system_account(
     }
 
     // Convert strings to fixed-size arrays
-    let mut name_bytes = [0u8; STRING_MAX_SIZE];
-    let mut address_bytes = [0u8; STRING_MAX_SIZE];
+    let mut name_bytes = [0u8; 32];
+    let mut address_bytes = [0u8; 32];
 
     name_bytes[..name.len()].copy_from_slice(name.as_bytes());
     address_bytes[..address.len()].copy_from_slice(address.as_bytes());

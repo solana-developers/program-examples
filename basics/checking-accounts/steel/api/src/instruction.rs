@@ -3,7 +3,7 @@ use steel::*;
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 pub enum ValidationInstruction {
-    CheckAccounts = 0,
+    CheckAccountsArgs = 0,
 }
 
 #[repr(C)]

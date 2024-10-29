@@ -1,14 +1,7 @@
 [package]
-name = "steel-api"
-description = "API for interacting with the Steel program"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-homepage.workspace = true
-documentation.workspace = true
-repository.workspace = true
-readme.workspace = true
-keywords.workspace = true
+name = "api"
+version = "0.1.0"
+edition = "2021"
 
 [dependencies]
 bytemuck.workspace = true
@@ -16,3 +9,6 @@ num_enum.workspace = true
 solana-program.workspace = true
 steel.workspace = true
 thiserror.workspace = true
+spl-token.workspace = true
+spl-associated-token-account.workspace = true
+mpl-token-metadata.workspace = true

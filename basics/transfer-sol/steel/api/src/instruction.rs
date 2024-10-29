@@ -9,8 +9,15 @@ pub enum TransferInstruction {
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
-pub struct TransferArgs {
+pub struct TransferSolWithCpi {
     pub amount: u64,
 }
 
-instruction!(TransferInstruction, TransferArgs);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct TransferSolWithProgram {
+    pub amount: u64,
+}
+
+instruction!(TransferInstruction, TransferSolWithCpi);
+instruction!(TransferInstruction, TransferSolWithProgram);

@@ -352,18 +352,20 @@ async fn test_create_token() {
 use api::prelude::*;
 use solana_program::program_pack::Pack;
 use solana_sdk::{
-    commitment_config::CommitmentConfig,
+    // commitment_config::CommitmentConfig,
     compute_budget::ComputeBudgetInstruction,
     signature::Keypair,
     signer::Signer,
     transaction::Transaction,
+    signer::keypair::read_keypair_file
 };
 use spl_token::state::Mint;
 use solana_program::program_option::COption;
 use mpl_token_metadata::accounts::Metadata;
-use solana_client::rpc_client::RpcClient;
+use solana_client::nonblocking::rpc_client::RpcClient;
 use std::error::Error;
 use steel::*;
+use std::env;
 
 // Helper function to get PDA addresses (unchanged)
 fn get_addresses(_mint_seed: &[u8]) -> (Pubkey, Pubkey, u8) {
@@ -384,15 +386,15 @@ fn get_addresses(_mint_seed: &[u8]) -> (Pubkey, Pubkey, u8) {
     (mint_pda, metadata_pda, bump)
 }
 
-async fn request_airdrop(client: &RpcClient, pubkey: &Pubkey, amount: u64) -> Result<(), Box<dyn Error>> {
-    let signature = client.request_airdrop(pubkey, amount)?;
-    let commitment = CommitmentConfig::confirmed();
-    client.confirm_transaction_with_commitment(&signature, commitment)?;
-    Ok(())
-}
+// async fn request_airdrop(client: &RpcClient, pubkey: &Pubkey, amount: u64) -> Result<(), Box<dyn Error>> {
+//     let signature = client.request_airdrop(pubkey, amount).await?;
+//     let commitment = CommitmentConfig::confirmed();
+//     client.confirm_transaction_with_commitment(&signature, commitment).await?;
+//     Ok(())
+// }
 
 async fn verify_program_deployment(client: &RpcClient, program_id: Pubkey) -> Result<(), Box<dyn Error>> {
-    match client.get_account(&program_id) {
+    match client.get_account(&program_id).await {
         Ok(account) => {
             println!("Program found: {:?}", program_id);
             println!("Program owner: {:?}", account.owner);
@@ -403,7 +405,7 @@ async fn verify_program_deployment(client: &RpcClient, program_id: Pubkey) -> Re
     }
 }
 
-fn debug_transaction(client: &RpcClient, tx: &Transaction) {
+async fn debug_transaction(client: &RpcClient, tx: &Transaction) {
     println!("\n=== Transaction Debug Info ===");
     println!("Number of signatures: {}", tx.signatures.len());
     println!("Signing pubkeys: {:?}", tx.message.header.num_required_signatures);
@@ -411,7 +413,7 @@ fn debug_transaction(client: &RpcClient, tx: &Transaction) {
     println!("Readonly non-signers: {:?}", tx.message.header.num_readonly_unsigned_accounts);
     
     for (i, acc) in tx.message.account_keys.iter().enumerate() {
-        if let Ok(account) = client.get_account(acc) {
+        if let Ok(account) = client.get_account(acc).await {
             println!("\nAccount #{}: {:?}", i, acc);
             println!("  Owner: {:?}", account.owner);
             println!("  Lamports: {}", account.lamports);
@@ -425,25 +427,43 @@ fn debug_transaction(client: &RpcClient, tx: &Transaction) {
     }
 }
 
+// Helper function to load keypair from file
+fn load_keypair() -> Result<Keypair, Box<dyn Error>> {
+    // Try to get keypair path from environment variable
+    let keypair_path = env::var("KEYPAIR_PATH")
+        .unwrap_or_else(|_| format!("{}/.config/solana/id.json", env::var("HOME").unwrap()));
+    
+    println!("Loading keypair from: {}", keypair_path);
+    Ok(read_keypair_file(&keypair_path)
+        .map_err(|e| format!("Failed to load keypair: {}", e))?)
+}
+
 #[tokio::test]
 async fn test_create_token() -> Result<(), Box<dyn Error>> {
-    // Set up RpcClient with devnet URL
-    let client = RpcClient::new_with_commitment(
-        "https://api.devnet.solana.com".to_string(),
-        CommitmentConfig::confirmed(),
-    );
+    // Set up RpcClient with devnet URL using the nonblocking client
+    let client = RpcClient::new("https://api.devnet.solana.com".to_string());
 
-    let payer = Keypair::new();
+    // Load wallet keypair
+    let payer = load_keypair()?;
+    println!("Using wallet address: {}", payer.pubkey());
     
-    // Request airdrop for testing
-    println!("Requesting airdrop for payer...");
-    request_airdrop(&client, &payer.pubkey(), 2_000_000_000).await?;
+    // Check wallet balance
+    let balance = client.get_balance(&payer.pubkey()).await?;
+    println!("Wallet balance: {} SOL", balance as f64 / 1_000_000_000.0);
+    
+    if balance < 1_000_000_000 {  // 1 SOL
+        println!("Warning: Wallet balance is low. You may need more SOL for transactions.");
+    }
     
     // Verify program deployments
     println!("Verifying program deployments...");
-    verify_program_deployment(&client, api::ID).await?;
+    println!("Verifying mpl_token_metadata::ID");
     verify_program_deployment(&client, mpl_token_metadata::ID).await?;
+    println!("Verifying spl_token::ID");
     verify_program_deployment(&client, spl_token::id()).await?;
+    println!("Verifying api::ID");
+    verify_program_deployment(&client, api::ID).await?;
+    println!("Verified all deployments");
 
     // Set up token info
     let token_name = "Test".to_string();
@@ -469,7 +489,7 @@ async fn test_create_token() -> Result<(), Box<dyn Error>> {
     let compute_budget_ix = ComputeBudgetInstruction::set_compute_unit_limit(400_000);
     let set_price_ix = ComputeBudgetInstruction::set_compute_unit_price(1);
 
-    let recent_blockhash = client.get_latest_blockhash()?;
+    let recent_blockhash = client.get_latest_blockhash().await?;
     
     let tx = Transaction::new_signed_with_payer(
         &[
@@ -483,14 +503,14 @@ async fn test_create_token() -> Result<(), Box<dyn Error>> {
     );
 
     // Debug transaction before sending
-    debug_transaction(&client, &tx);
+    debug_transaction(&client, &tx).await;
 
     // Send and confirm transaction
-    let signature = client.send_and_confirm_transaction_with_spinner(&tx)?;
+    let signature = client.send_and_confirm_transaction(&tx).await?;
     println!("Transaction signature: {}", signature);
 
     // Verify mint account
-    let mint_account = client.get_account(&mint_pda)?;
+    let mint_account = client.get_account(&mint_pda).await?;
     assert_eq!(mint_account.owner, spl_token::ID, "Mint account should be owned by Token program");
     
     let mint_data = Mint::unpack(&mint_account.data)?;
@@ -526,7 +546,7 @@ async fn test_create_token() -> Result<(), Box<dyn Error>> {
         mint_amount,
     )?;
 
-    let recent_blockhash = client.get_latest_blockhash()?;
+    let recent_blockhash = client.get_latest_blockhash().await?;
     
     let mint_transaction = Transaction::new_signed_with_payer(
         &[create_ata_ix, mint_tokens_ix],
@@ -535,16 +555,16 @@ async fn test_create_token() -> Result<(), Box<dyn Error>> {
         recent_blockhash,
     );
 
-    let mint_signature = client.send_and_confirm_transaction_with_spinner(&mint_transaction)?;
+    let mint_signature = client.send_and_confirm_transaction(&mint_transaction).await?;
     println!("Mint transaction signature: {}", mint_signature);
 
     // Verify token account
-    let token_account_info = client.get_account(&token_account)?;
+    let token_account_info = client.get_account(&token_account).await?;
     let token_account_data = spl_token::state::Account::unpack(&token_account_info.data)?;
     assert_eq!(token_account_data.amount, mint_amount, "We should have exactly the amount we minted");
 
     // Verify metadata
-    let metadata_account = client.get_account(&metadata_pda)?;
+    let metadata_account = client.get_account(&metadata_pda).await?;
     assert_eq!(
         metadata_account.owner,
         mpl_token_metadata::ID,
@@ -561,5 +581,4 @@ async fn test_create_token() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
 
