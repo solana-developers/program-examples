@@ -22,7 +22,12 @@ pub fn process_make_offer(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramR
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
+    //Validating Accounts
     signer_maker_info.is_signer()?;
+    token_mint_a.as_mint()?;
+    token_mint_b.as_mint()?;
+    maker_token_account_a.as_associated_token_account(signer_maker_info.key, token_mint_a.key)?;
+    vault.is_empty()?.is_writable()?;
     offer.is_empty()?.is_writable()?.has_seeds(
         &[
             OFFER,

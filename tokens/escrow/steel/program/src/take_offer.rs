@@ -1,5 +1,6 @@
 use escrow_api::prelude::*;
 use steel::*;
+use solana_program::msg;
 
 pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
     // Load accounts.
@@ -10,21 +11,30 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
     };
 
     taker_signer.is_signer()?;
+    token_mint_a.as_mint()?;
+    token_mint_b.as_mint()?;
+    taker_token_account_b.as_associated_token_account(taker_signer.key, token_mint_b.key)?;
     system_program.is_program(&system_program::ID)?;
     token_program.is_program(&spl_token::ID)?;
     associated_token_program.is_program(&spl_associated_token_account::ID)?;
 
-    // create ATA's for maker_token_b and taker_token_a
-    create_associated_token_account(
-        taker_signer,
-        maker,
-        maker_token_account_b,
-        token_mint_b,
-        system_program,
-        token_program,
-        associated_token_program,
-    )?;
-    create_associated_token_account(
+    // create ATA's for maker_token_b and taker_token_a if needed
+
+    match maker_token_account_b.as_associated_token_account(maker.key, token_mint_b.key) {
+        Ok(_) => msg!("maker token account already exists"),
+        Err(_) => create_associated_token_account(
+            taker_signer,
+            maker,
+            maker_token_account_b,
+            token_mint_b,
+            system_program,
+            token_program,
+            associated_token_program,
+        )?,
+    };
+    match taker_token_account_a.as_associated_token_account(taker_signer.key, token_mint_a.key) {
+        Ok(_) => msg!("maker token account already exists"),
+        Err(_) =>   create_associated_token_account(
         taker_signer,
         taker_signer,
         taker_token_account_a,
@@ -32,7 +42,10 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
         system_program,
         token_program,
         associated_token_program,
-    )?;
+    )?
+    };
+
+  
 
     let offer_data: &Offer = offer.as_account::<Offer>(&escrow_api::ID)?;
 
@@ -62,7 +75,7 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
         signer_seeds,
     )?;
 
-    //Close the vault account.
+    //Close the vault and offer accounts.
     let close_instruction = &spl_token::instruction::close_account(
         token_program.key,
         vault.key,
@@ -78,7 +91,7 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
         signer_seeds,
         offer_data.bump as u8,
     )?;
-    
+    offer.close(maker)?;
 
     Ok(())
 }

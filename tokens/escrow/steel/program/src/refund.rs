@@ -39,6 +39,8 @@ pub fn process_refund(accounts: &[AccountInfo<'_>]) -> ProgramResult {
             .amount,
         signer_seeds,
     )?;
+
+    // close the vault and offer accounts
     let close_instruction = &spl_token::instruction::close_account(
         token_program.key,
         vault.key,
@@ -54,6 +56,6 @@ pub fn process_refund(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         signer_seeds,
         offer_data.bump as u8,
     )?;
-
+offer.close(signer_maker_info)?;
     Ok(())
 }
