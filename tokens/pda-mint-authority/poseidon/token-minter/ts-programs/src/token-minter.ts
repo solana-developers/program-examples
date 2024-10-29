@@ -2,6 +2,7 @@ import {
   Account,
   AssociatedTokenAccount,
   Mint,
+  String as PoseidonString,
   Pubkey,
   Seeds,
   Signer,
@@ -9,44 +10,29 @@ import {
   TokenAccount,
   TokenProgram,
   UncheckedAccount,
-  u64,
   u8,
-} from "@solanaturbine/poseidon";
+  u64,
+} from '@solanaturbine/poseidon';
 
 export default class TokenMinter {
-  static PROGRAM_ID = new Pubkey(
-    "EWEURHBPCLgFnxMV6yKmmj2xS9386Rcr2ixBah8Pyjjv"
-  );
+  static PROGRAM_ID = new Pubkey('AMXNdYTyDpcLLJ9CzVJQ1kw5gqE4JeZxjtUbH2MwntdD');
 
-//Creating token metadata is not supported in poseidon currently so that will be done in the tests
-//so for creating metadata and signing as pda, we will have to populate the anchor code manually 
-//  createToken(
-//     maker: Signer,
-//     makerMint: Mint,
-//     makerAssociatedTokenAccount: AssociatedTokenAccount,
-//     auth: UncheckedAccount,
-//     token_name: String,
-//     token_symbol: String,
-//     token_uri: String,
-//  ) {
-//  }
-  mintToken(
+  //Creating token metadata is not supported in poseidon currently
+  createToken(
     maker: Signer,
-    makerMintAccount: Mint,
+    makerMint: Mint,
     makerAssociatedTokenAccount: AssociatedTokenAccount,
     auth: UncheckedAccount,
-    amount: u64
+    token_name: PoseidonString<10>,
+    token_symbol: PoseidonString<10>,
+    token_uri: PoseidonString<10>,
   ) {
-
-    TokenProgram.initializeMint(
-        
-    )
-    makerMintAccount.derive(["mint"]);
-
-    makerAssociatedTokenAccount
-      .derive(makerMintAccount, auth.key)
-      .has([maker, makerMintAccount])
-      .initIfNeeded();
+    //create_metadata_accounts_v3 function not yet implemented in poseidon
+  }
+  mint(payer: Signer, makerMint: Mint, makerAta: AssociatedTokenAccount) {
+    makerMint.derive(['mint']);
+    makerAta.derive(makerMint, payer.key).initIfNeeded(payer);
+    TokenProgram.initializeMint(makerMint, new u8(8), payer);
   }
 }
 

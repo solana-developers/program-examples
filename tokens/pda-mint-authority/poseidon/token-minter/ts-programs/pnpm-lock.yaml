@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@solanaturbine/poseidon':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^0.0.9
+        version: 0.0.9
 
 packages:
 
-  '@solanaturbine/poseidon@0.0.4':
-    resolution: {integrity: sha512-VNQRtqobzBT+Wkh8fdPb0WVt12aIlgRJuGDxptclkphXi5w+VHUfMPcBshWSFPZg1nheXYgJABwvffYcyirw1g==}
+  '@solanaturbine/poseidon@0.0.9':
+    resolution: {integrity: sha512-WH4klRUmLXpejXPBmLQ50nusj7tA/gDw87txLCWJIcVbwrj2Nart0YxzFxR1YZG4aR1WFj6xOunL8sIrLGvgyw==}
 
 snapshots:
 
-  '@solanaturbine/poseidon@0.0.4': {}
+  '@solanaturbine/poseidon@0.0.9': {}

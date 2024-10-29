@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-token_minter = "EWEURHBPCLgFnxMV6yKmmj2xS9386Rcr2ixBah8Pyjjv"
+token_minter = "AMXNdYTyDpcLLJ9CzVJQ1kw5gqE4JeZxjtUbH2MwntdD"
 
 [registry]
 url = "https://api.apr.dev"
