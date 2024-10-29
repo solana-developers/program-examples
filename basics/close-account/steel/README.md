@@ -1,28 +1,41 @@
 # CloseAccount
 
-**CloseAccount** is a ...
+**CloseAccount** is a example program show you how to close account
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
 - [`Error`](api/src/error.rs) – Custom program errors.
-- [`Event`](api/src/event.rs) – Custom program events.
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions
-- [`Add`](program/src/add.rs) – Add ...
-- [`Initialize`](program/src/initialize.rs) – Initialize ...
+- [`CreateUser`](program/src/create_user.rs) – Create user state account ...
+- [`CloseUser`](program/src/close_user.rs) – Close user state account ...
 
 ## State
-- [`Counter`](api/src/state/counter.rs) – Counter ...
+- [`UserState`](api/src/state/user_state.rs) – Counter ...
 
-## Get started
+## How to?
 
 Compile your program:
+
 ```sh
-steel build
+pnpm build
 ```
 
-Run unit and integration tests:
+Run tests:
+
 ```sh
-steel test
+pnpm test
+```
+
+Run build and test
+
+```sh
+pnpm build-and-test
+```
+
+Deploy your program:
+
+```sh
+pnpm deploy
 ```
