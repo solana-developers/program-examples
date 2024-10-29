@@ -49,7 +49,7 @@ describe('close-account', async () => {
     // Close User Account instruction invoked from the program
     await program.methods
       .closeUser()
-      .accountsPartial({
+      .accounts({
         user: user.publicKey, // User's public key
       })
       .signers([user.payer]) // Sign the transaction with the user's keypair
