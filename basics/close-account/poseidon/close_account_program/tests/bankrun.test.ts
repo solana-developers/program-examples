@@ -1,53 +1,96 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { PublicKey } from '@solana/web3.js';
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+  sendAndConfirmTransaction,
+} from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { CloseAccountProgram } from '../target/types/close_account_program';
+import { BanksClient, BanksTransactionResultWithMeta, startAnchor } from 'solana-bankrun';
+import type { CloseAccount } from '../target/types/close_account';
 
-const IDL = require('../target/idl/close_account_program.json');
+const IDL = require('../target/idl/close_account');
 const PROGRAM_ID = new PublicKey(IDL.address);
+
+async function createAndProcessTransaction(
+  client: BanksClient,
+  payer: Keypair,
+  instruction: TransactionInstruction,
+  additionalSigners: Keypair[] = [],
+): Promise<BanksTransactionResultWithMeta> {
+  const tx = new Transaction();
+  // Get the latest blockhash and minimum rent-exempt balance
+  const [latestBlockhash] = await client.getLatestBlockhash();
+  tx.recentBlockhash = latestBlockhash;
+  // Add transaction instructions
+  tx.add(instruction);
+  tx.feePayer = payer.publicKey;
+  //Add signers
+  tx.sign(payer, ...additionalSigners);
+  const result = await client.tryProcessTransaction(tx);
+  return result;
+}
 
 describe('Close an account', async () => {
   // Configure the client to use the local cluster.
-  const context = await startAnchor('', [{ name: 'close_account', programId: PROGRAM_ID }], []);
+  const context = await startAnchor('', [{ name: 'close_account_program', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
 
   const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<CloseAccountProgram>(IDL, provider);
+  const program = new anchor.Program<CloseAccount>(IDL, provider);
   // Derive the PDA for the user's account.
-  const [userAccountAddress] = PublicKey.findProgramAddressSync([Buffer.from('USER'), payer.publicKey.toBuffer()], program.programId);
+  const user = Keypair.generate(); // Generate a new user keypair
+
+  //Transfer SOL to the user account to cover rent
+  const transferInstruction = SystemProgram.transfer({
+    fromPubkey: payer.publicKey,
+    toPubkey: user.publicKey,
+    lamports: 2 * LAMPORTS_PER_SOL,
+  });
+
+  await createAndProcessTransaction(context.banksClient, payer.payer, transferInstruction, [payer.payer]);
+
+  const [userAccount, userAccountBump] = PublicKey.findProgramAddressSync([Buffer.from('USER'), user.publicKey.toBuffer()], program.programId);
 
   it('Can create an account', async () => {
-    const userId = anchor.BN(76362);
     await program.methods
-      .createUser(userId)
+      .createUser('Jacob')
       .accounts({
-        user: payer.publicKey,
+        user: user.publicKey,
       })
+      .signers([user])
       .rpc();
 
     // Fetch the account data
-    const userAccount = await program.account.userAccount.fetch(userAccountAddress);
-    assert.notEqual(userAccount, null);
+    const userAccountData = await program.account.userState.fetch(userAccount);
+    assert.equal(userAccountData.name, 'Jacob');
+    assert.equal(userAccountData.user.toBase58(), user.publicKey.toBase58());
+    assert.notEqual(userAccountData, null);
   });
 
   it('Can close an Account', async () => {
     await program.methods
       .closeUser()
       .accounts({
-        user: payer.publicKey,
+        user: user.publicKey,
       })
+      .signers([user])
       .rpc();
 
     // The account should no longer exist, returning null.
     try {
-      const userAccount = await program.account.userAccount.fetchNullable(userAccountAddress);
-      assert.equal(userAccount, null);
+      const userAccountData = await program.account.userState.fetchNullable(userAccount);
+      assert.equal(userAccountData, null);
     } catch (err) {
       // Won't return null and will throw an error in anchor-bankrun'
-      assert.equal(err.message, `Could not find ${userAccountAddress}`);
+      assert.equal(err.message, `Could not find ${userAccount}`);
     }
   });
 });
