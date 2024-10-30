@@ -6,8 +6,11 @@ import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, Tra
 import { start } from 'solana-bankrun';
 import { CreateTokenArgs, InitArgs, MintToArgs, NftMinterInstruction } from './instructions';
 
-describe('Create Tokens!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+describe('PDA Mint Authority!', async () => {
+  // your program ID
+  //
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
+
   const context = await start(
     [
       { name: 'pda_mint_authority_steel_program', programId: PROGRAM_ID },
@@ -45,8 +48,7 @@ describe('Create Tokens!', async () => {
     await client.processTransaction(tx);
 
     console.log('Success!');
-    console.log(`   Mint Address: ${nftMintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
+    console.log(`   Mint Authority Address: ${mintAuthorityPublicKey}`);
   });
 
   test('Create an NFT!', async () => {
@@ -92,7 +94,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${nftMintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Mint the NFT to your wallet!', async () => {
@@ -151,6 +152,5 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-    console.log(`   Tx Signature: ${tx}`);
   });
 });
