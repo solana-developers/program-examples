@@ -51,7 +51,7 @@ pub fn process_instruction(
     account_to_change.has_owner(program_id)?;
 
     // You can also check pubkeys against constants.
-    system_program.is_program(&system_program::ID)?;
+    system_program.has_address(&system_program::ID)?;
 
     Ok(())
 }

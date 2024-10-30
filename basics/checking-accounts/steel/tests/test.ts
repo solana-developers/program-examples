@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
