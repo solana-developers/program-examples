@@ -4,8 +4,6 @@ import BN from 'bn.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
-const COUNTER_ACCOUNT_SIZE = 8 + 8; // 8 byte u64 count + 8 byte disciminator
-
 type Counter = {
   count: BN;
 };
@@ -20,9 +18,14 @@ function deserializeCounterAccount(data: Uint8Array): Counter {
   };
 }
 
+enum CounterInstruction {
+  Initialize = 0,
+  Increment = 1,
+}
+
 describe('Counter Solana Steel!', async () => {
-  // Randomly generate the program keypair and load the program to solana-bankrun
-  const PROGRAM_ID = PublicKey.unique();
+  // Load the program id
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
   const context = await start([{ name: 'counter_solana_steel', programId: PROGRAM_ID }], []);
 
@@ -31,6 +34,30 @@ describe('Counter Solana Steel!', async () => {
   const payer = context.payer;
   // Get the rent object to calculate rent for the accounts
   const rent = await client.getRent();
+
+  function createInitializeInstruction(counter: PublicKey): TransactionInstruction {
+    return new TransactionInstruction({
+      programId: PROGRAM_ID,
+      keys: [
+        {
+          pubkey: counter,
+          isSigner: true, // will need to sign create an account
+          isWritable: true, // set to true so we can modify its data
+        },
+        {
+          pubkey: payer.publicKey, // payer publickey
+          isSigner: true, // make sure it is a signer
+          isWritable: true, // make sure it is writable
+        },
+        {
+          pubkey: SystemProgram.programId,
+          isSigner: false,
+          isWritable: true,
+        },
+      ],
+      data: Buffer.from([CounterInstruction.Initialize]),
+    });
+  }
 
   function createIncrementInstruction(counter: PublicKey): TransactionInstruction {
     return new TransactionInstruction({
@@ -42,30 +69,20 @@ describe('Counter Solana Steel!', async () => {
           isWritable: true,
         },
       ],
-      data: Buffer.from([0x0]),
+      data: Buffer.from([CounterInstruction.Increment]),
     });
   }
 
+  // Randomly generate the account key
+  // to sign for setting up the Counter state
   const counterKeypair = Keypair.generate();
   const counter = counterKeypair.publicKey;
 
-  test('Test allocate counter + increment tx', async () => {
-    // Randomly generate the account key
-    // to sign for setting up the Counter state
+  test('Initialize counter', async () => {
+    // Let's create the initialize counter instruction
+    const incrementIx = createInitializeInstruction(counter);
 
-    // Create a TransactionInstruction to interact with our counter program
-    const allocIx = SystemProgram.createAccount({
-      fromPubkey: payer.publicKey,
-      newAccountPubkey: counter,
-      lamports: Number(rent.minimumBalance(BigInt(COUNTER_ACCOUNT_SIZE))),
-      space: COUNTER_ACCOUNT_SIZE,
-      programId: PROGRAM_ID,
-    });
-
-    const incrementIx = createIncrementInstruction(counter);
-
-    // create the counter, and then increment the count
-    const tx = new Transaction().add(allocIx).add(incrementIx);
+    const tx = new Transaction().add(incrementIx);
 
     // Explicitly set the feePayer to be our wallet (this is set to first signer by default)
     tx.feePayer = payer.publicKey;
@@ -86,23 +103,13 @@ describe('Counter Solana Steel!', async () => {
 
     // Deserialize the counter & check count has been incremented
     const counterAccount = deserializeCounterAccount(counterAccountInfo.data);
+    assert(counterAccount.count.toNumber() === 0, 'Expected count to have been 0');
 
-    assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
-    console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
+    console.log(`[initialize] count is: ${counterAccount.count.toNumber()}`);
   });
 
-  test('Increment the counter again', async () => {
-    let counterAccountInfo = await client.getAccount(counter);
-
-    assert(counterAccountInfo, 'Expected counter account to have been created');
-
-    let counterAccount = deserializeCounterAccount(counterAccountInfo.data);
-
-    assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
-
-    console.log(`[before-increment] count is: ${counterAccount.count.toNumber()}`);
-
-    // Check increment tx
+  test('Increment counter!', async () => {
+    // let's create the increment counter instruction
     const incrementIx: TransactionInstruction = createIncrementInstruction(counter);
 
     const tx = new Transaction().add(incrementIx);
@@ -114,13 +121,11 @@ describe('Counter Solana Steel!', async () => {
 
     await client.processTransaction(tx);
 
-    counterAccountInfo = await client.getAccount(counter);
-
+    const counterAccountInfo = await client.getAccount(counter);
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
-    counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
-
-    assert(counterAccount.count.toNumber() === 2, 'Expected count to have been 2');
+    const counterAccount = deserializeCounterAccount(counterAccountInfo.data);
+    assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
 
     console.log(`[increment] count is: ${counterAccount.count.toNumber()}`);
   });

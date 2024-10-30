@@ -1,7 +1,3 @@
-mod state;
-
-use solana_program::msg;
-use state::*;
 use steel::*;
 
 declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
@@ -11,39 +7,91 @@ entrypoint!(process_instruction);
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    instruction_data: &[u8],
+    data: &[u8],
 ) -> ProgramResult {
-    let (instruction_discriminant, instruction_data_inner) = instruction_data.split_at(1);
-    
-    match instruction_discriminant[0] {
-        0 => {
-            msg!("Instruction: Increment");
-            process_increment_counter(program_id, accounts, instruction_data_inner)?;
-        }
-        _ => {
-            msg!("Error: unknown instruction")
-        }
+    // Use `crate::ID` for program_id in your program instead:
+    //
+    // e.g parse_instruction(&crate::ID, program_id, data)
+    //  or  counter_account.as_account_mut::<Counter>(&crate::ID)?
+    //
+    let (ix, _data) = parse_instruction(program_id, program_id, data)?;
+
+    match ix {
+        CounterInstruction::Initialize => Initialize::process(program_id, accounts),
+        CounterInstruction::Increment => Increment::process(program_id, accounts),
     }
-    Ok(())
 }
 
-pub fn process_increment_counter(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    _instruction_data: &[u8],
-) -> Result<(), ProgramError> {
-    let [counter_info] = accounts else {
-        return Err(ProgramError::NotEnoughAccountKeys);
-    };
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
+pub enum CounterInstruction {
+    Initialize = 0,
+    Increment = 1,
+}
 
-    counter_info.is_writable()?;
+instruction!(CounterInstruction, Initialize);
+// Initialize
+#[repr(C, packed)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct Initialize {}
 
-    let counter = counter_info.as_account_mut::<Counter>(program_id)?;
+impl Initialize {
+    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+        let [counter_account, payer, system_program] = accounts else {
+            return Err(ProgramError::NotEnoughAccountKeys);
+        };
 
-    counter.count += 1;
+        payer.is_writable()?.is_signer()?; // make use payer is writable and signer
+        system_program.is_program(&system_program::ID)?; // system program check
+        counter_account.is_writable()?; // check the account is writable
 
-    let count = counter.count;
+        // create the counter account
+        create_account::<Counter>(counter_account, system_program, payer, program_id, &[])?;
 
-    msg!("Counter state incremented to {:?}", count);
-    Ok(())
+        let counter = counter_account.as_account::<Counter>(program_id)?;
+        let count = counter.count;
+
+        solana_program::msg!("Counter initialized! Count is {}", count);
+
+        Ok(())
+    }
+}
+
+instruction!(CounterInstruction, Increment);
+// Increment
+#[repr(C, packed)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+pub struct Increment {}
+
+impl Increment {
+    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+        let [counter_account] = accounts else {
+            return Err(ProgramError::NotEnoughAccountKeys);
+        };
+
+        counter_account.is_writable()?; // check the account is writable
+
+        let counter = counter_account.as_account_mut::<Counter>(program_id)?;
+        counter.count += 1;
+
+        let count = counter.count;
+
+        solana_program::msg!("Counter state incremented to {:?}", count);
+
+        Ok(())
+    }
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
+pub enum CounterAccount {
+    Counter = 0,
+}
+
+account!(CounterAccount, Counter);
+// Counter
+#[repr(C, packed)]
+#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
+pub struct Counter {
+    pub count: u64,
 }
