@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-create_account_program = "Da8ZQ19giGFQgPmxS2vAKkNM5oxsypxWSRN61FeXWAxi"
+create_account_program = "2QW7eymLrxC1TJmjTqtfnwvD8ND4dmVuHziX5p6sWzjj"
 
 [registry]
 url = "https://api.apr.dev"
