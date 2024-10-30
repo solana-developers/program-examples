@@ -5,16 +5,13 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token};
 
-declare_id!("FThBfjqE8JBZYX8SdiJtDZwwGuVaQVMFfcR9JEsxS2A");
+declare_id!("7ZpQnmMWwNbuSRnBpq2E4RTKMgN5tDNopF7BHvSJZfwU");
 
 #[program]
 pub mod create_token {
     use super::*;
 
     pub fn create_token_mint(_ctx: Context<CreateTokenMintContext>, _decimals: u8) -> Result<()> {
-        // Workaround implementation for initializing the token mint
-        // Note: Poseidon's transpiler does not support initializeMint yet,
-        // so this is done manually using Anchor's InitializeMint.
         
         Ok(())
     }
@@ -26,6 +23,9 @@ pub struct CreateTokenMintContext<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     // Create new mint account
+    // Workaround implementation for initializing the token mint
+    // Note: Poseidon's transpiler does not support initializeMint yet,
+    // so this is done manually using Anchor's InitializeMint.
     #[account(
         init,
         payer = payer,

@@ -10,6 +10,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@solanaturbine/poseidon": "^0.0.4"
+    "@solanaturbine/poseidon": "^0.0.10"
   }
 }
