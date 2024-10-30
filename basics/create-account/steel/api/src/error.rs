@@ -1,6 +1,6 @@
 use steel::*;
 
-/// Declare custom error enum 
+/// Declare custom error enum
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq, IntoPrimitive)]
 #[repr(u32)]
 pub enum CreateAccountError {

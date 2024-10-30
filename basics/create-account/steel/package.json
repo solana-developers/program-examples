@@ -10,9 +10,7 @@
     "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
     "deploy": "solana program deploy ./program/target/so/create_account_program.so"
   },
-  "keywords": [
-    "solana"
-  ],
+  "keywords": ["solana"],
   "author": "",
   "license": "MIT",
   "dependencies": {

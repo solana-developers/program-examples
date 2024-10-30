@@ -1,36 +1,45 @@
 use create_account_api::prelude::*;
 use solana_program::msg;
+use steel::sysvar::rent::Rent;
 use steel::*;
 
 pub fn process_initialize(accounts: &[AccountInfo<'_>]) -> ProgramResult {
-
-    // Validate accounts
+    // Load accounts
     let [payer, new_account, system_program] = accounts else {
+        msg!("Not enough accounts provided");
         return Err(ProgramError::NotEnoughAccountKeys);
     };
-    payer.is_signer()?;
-    new_account
-        .is_empty()?
-        .is_writable()?
-        .has_seeds(&[CREATE_ACCOUNT, payer.key.as_ref()], &create_account_api::ID)?;
+
+    // Validate accounts
+    payer
+        .is_signer()
+        .map_err(|_| ProgramError::MissingRequiredSignature)?;
+
+    new_account.is_signer()?.is_empty()?.is_writable()?;
+
     system_program.is_program(&system_program::ID)?;
 
-    // Initialize the account.
-    create_account::<NewAccount>(
-        new_account,
-        system_program,
-        payer,
-        &create_account_api::ID,
-        &[CREATE_ACCOUNT, payer.key.as_ref()],
+    // The helper "create_account" will create an account
+    // owned by our program and not the system program
+
+    // Calculate the minimum balance needed for the account
+    // Space required is the size of our NewAccount struct
+    let space_required = std::mem::size_of::<NewAccount>() as u64;
+    let lamports_required = (Rent::get()?).minimum_balance(space_required as usize);
+
+    // Create the account by invoking a create_account system instruction
+    solana_program::program::invoke(
+        &solana_program::system_instruction::create_account(
+            payer.key,
+            new_account.key,
+            lamports_required,
+            space_required,
+            &system_program::ID,
+        ),
+        &[payer.clone(), new_account.clone(), system_program.clone()],
     )?;
 
-    // Fetch the newly created account and give it
-    // an arbitrary user id
-    let created_account = new_account.as_account_mut::<NewAccount>(&create_account_api::ID)?;
-    created_account.user_id = 1;
-
     msg!("A new account has been created and initialized!");
-    msg!("Your user id is: {}", created_account.user_id);
 
     Ok(())
 }
