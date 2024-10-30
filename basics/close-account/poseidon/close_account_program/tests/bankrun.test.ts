@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import {before, describe, it} from "node:test"
+import { before, describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import {
   Keypair,
@@ -41,11 +41,7 @@ async function createAndProcessTransaction(
 
 describe('Close an account', async () => {
   // Configure the client to use the local cluster.
-  const context = await startAnchor(
-    "",
-    [{ name: "close_account_program", programId: PROGRAM_ID }],
-    []
-  );
+  const context = await startAnchor('', [{ name: 'close_account_program', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
 
   const payer = provider.wallet as anchor.Wallet;
@@ -61,23 +57,15 @@ describe('Close an account', async () => {
       lamports: 2 * LAMPORTS_PER_SOL,
     });
 
-    await createAndProcessTransaction(
-      context.banksClient,
-      payer.payer,
-      transferInstruction,
-      [payer.payer]
-    );
+    await createAndProcessTransaction(context.banksClient, payer.payer, transferInstruction, [payer.payer]);
   });
 
   // Derive the PDA for the user's account.
-  const [userAccount, userAccountBump] = PublicKey.findProgramAddressSync(
-    [Buffer.from("USER"), user.publicKey.toBuffer()],
-    program.programId
-  );
+  const [userAccount, userAccountBump] = PublicKey.findProgramAddressSync([Buffer.from('USER'), user.publicKey.toBuffer()], program.programId);
 
-  it("Can create an account", async () => {
+  it('Can create an account', async () => {
     await program.methods
-      .createUser("Jacob")
+      .createUser('Jacob')
       .accounts({
         user: user.publicKey,
       })
@@ -86,12 +74,12 @@ describe('Close an account', async () => {
 
     // Fetch the account data
     const userAccountData = await program.account.userState.fetch(userAccount);
-    assert.equal(userAccountData.name, "Jacob");
+    assert.equal(userAccountData.name, 'Jacob');
     assert.equal(userAccountData.user.toBase58(), user.publicKey.toBase58());
     assert.notEqual(userAccountData, null);
   });
 
-  it("Can close an Account", async () => {
+  it('Can close an Account', async () => {
     await program.methods
       .closeUser()
       .accounts({
@@ -102,9 +90,7 @@ describe('Close an account', async () => {
 
     // The account should no longer exist, returning null.
     try {
-      const userAccountData = await program.account.userState.fetchNullable(
-        userAccount
-      );
+      const userAccountData = await program.account.userState.fetchNullable(userAccount);
       assert.equal(userAccountData, null);
     } catch (err) {
       // Won't return null and will throw an error in anchor-bankrun'
