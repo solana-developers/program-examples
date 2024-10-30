@@ -13,9 +13,9 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    // Use crate::ID for program_id instead: 
+    // Use `crate::ID` for program_id in your program instead:
+    //  
     // e.g parse_instruction(&crate::ID, program_id, data)
-    // using program_id for testing purposes
     //
     let (ix, data) = parse_instruction(program_id, program_id, data)?;
 

@@ -4,7 +4,7 @@ import { start } from 'solana-bankrun';
 import { createCloseUserInstruction, createCreateUserInstruction } from '../ts';
 
 describe('Close Account!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'close_account_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
