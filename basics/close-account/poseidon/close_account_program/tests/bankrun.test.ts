@@ -16,7 +16,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { BanksClient, BanksTransactionResultWithMeta, startAnchor } from 'solana-bankrun';
 import type { CloseAccount } from '../target/types/close_account';
 
-const IDL = require('../target/idl/close_account');
+const IDL = require('../target/idl/close_account.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 async function createAndProcessTransaction(
