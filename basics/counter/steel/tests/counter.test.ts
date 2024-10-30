@@ -10,7 +10,7 @@ type Counter = {
   count: BN;
 };
 
-function deserializeCounterAccount(data: Buffer): Counter {
+function deserializeCounterAccount(data: Uint8Array): Counter {
   if (data.byteLength !== 16) {
     throw Error('Need exactly 16 bytes to deserialize counter');
   }
@@ -20,7 +20,7 @@ function deserializeCounterAccount(data: Buffer): Counter {
   };
 }
 
-describe('Counter Solana Native', async () => {
+describe('Counter Solana Steel!', async () => {
   // Randomly generate the program keypair and load the program to solana-bankrun
   const PROGRAM_ID = PublicKey.unique();
 
@@ -85,7 +85,7 @@ describe('Counter Solana Native', async () => {
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
     // Deserialize the counter & check count has been incremented
-    const counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
+    const counterAccount = deserializeCounterAccount(counterAccountInfo.data);
 
     assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
     console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
@@ -96,11 +96,11 @@ describe('Counter Solana Native', async () => {
 
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
-    let counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
+    let counterAccount = deserializeCounterAccount(counterAccountInfo.data);
 
     assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
 
-    console.log(`[allocate] count is: ${counterAccount.count.toNumber()}`);
+    console.log(`[before-increment] count is: ${counterAccount.count.toNumber()}`);
 
     // Check increment tx
     const incrementIx: TransactionInstruction = createIncrementInstruction(counter);
