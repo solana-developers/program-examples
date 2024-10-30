@@ -7,8 +7,8 @@ import { BN } from 'bn.js';
 import { start } from 'solana-bankrun';
 import { CreateTokenArgs, MintToArgs, MyInstruction } from './instructions';
 
-describe('Create Tokens!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+describe('SPL Token Minter!', async () => {
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start(
     [
       { name: 'spl_token_minter_steel_program', programId: PROGRAM_ID },
@@ -68,7 +68,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${tokenMintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Mint some tokens to your wallet!', async () => {
@@ -114,6 +113,5 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 });

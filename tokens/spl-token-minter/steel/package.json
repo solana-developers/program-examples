@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
-    "@solana/spl-token": "^0.3.7",
-    "@solana/web3.js": "^1.73.0",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.95.4",
     "borsh": "^0.7.0",
     "buffer": "^6.0.3",
     "fs": "^0.0.1-security"
@@ -21,7 +21,7 @@
     "borsh": "0.7.0",
     "chai": "^4.3.4",
     "mocha": "^9.0.3",
-    "solana-bankrun": "^0.3.0",
+    "solana-bankrun": "^0.4.0",
     "ts-mocha": "^10.0.0",
     "typescript": "^4.3.5",
     "zx": "^8.1.4"

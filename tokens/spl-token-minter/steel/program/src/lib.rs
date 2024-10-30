@@ -13,11 +13,11 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    // Use crate::ID for program_id instead: 
+    // Use `crate::ID` for program_id in your program 
+    // 
     // e.g parse_instruction(&crate::ID, program_id, data)
-    // using program_id for testing purposes
     //
-    let (ix, data) = parse_instruction(program_id, program_id, data)?;
+    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::CreateToken => CreateToken::process(accounts, data)?,
