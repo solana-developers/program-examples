@@ -126,14 +126,14 @@ type TestValuesDefaults = {
 };
 
 export function createValues(defaults?: TestValuesDefaults): TestValues {
-  const programId = PublicKey.unique();
+  const programId = defaults.programId ?? PublicKey.unique();
   const id = defaults?.id || new BN(0);
-  const maker = Keypair.generate();
-  const taker = Keypair.generate();
+  const maker = defaults?.maker ?? Keypair.generate();
+  const taker = defaults?.taker ?? Keypair.generate();
 
   // Making sure tokens are in the right order
-  const mintAKeypair = Keypair.generate();
-  let mintBKeypair = Keypair.generate();
+  const mintAKeypair = defaults?.mintAKeypair ?? Keypair.generate();
+  let mintBKeypair = defaults?.mintBKeypair ?? Keypair.generate();
   while (new BN(mintBKeypair.publicKey.toBytes()).lt(new BN(mintAKeypair.publicKey.toBytes()))) {
     mintBKeypair = Keypair.generate();
   }

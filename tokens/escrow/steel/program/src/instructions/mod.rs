@@ -8,7 +8,7 @@ use steel::*;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
-pub enum SteelInstruction {
+pub enum EscrowInstruction {
     MakeOffer = 0,
     TakeOffer = 1,
 }

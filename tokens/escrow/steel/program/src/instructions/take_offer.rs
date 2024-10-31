@@ -1,9 +1,9 @@
 use {
-    crate::{state::*, SteelInstruction},
+    crate::{state::*, EscrowInstruction},
     steel::*,
 };
 
-instruction!(SteelInstruction, TakeOffer);
+instruction!(EscrowInstruction, TakeOffer);
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -17,11 +17,26 @@ impl TakeOffer {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        maker.is_writable()?;
-        system_program.is_program(&system_program::ID)?;
+        // Ensure the taker is a signer
+        //
+        taker.is_signer()?;
 
-        let offer = offer_info.as_account_mut::<Offer>(program_id)?;
+        // Validate the offer
+        //
+        let offer = offer_info
+            .as_account::<Offer>(program_id)?
+            .assert(|offer| {
+                offer.maker == *maker.key
+                    && offer.token_mint_a == *token_mint_a.key
+                    && offer.token_mint_b == *token_mint_b.key
+            })?;
 
+        // these seeds will validate the offer account, during signing
+        //
+        let offer_seeds = &[Offer::SEEDS, maker.key.as_ref(), &offer.id.to_be_bytes()];
+
+        // Create taker token a account, if needed
+        //
         if taker_token_account_a.lamports() == 0 {
             create_associated_token_account(
                 payer,
@@ -34,6 +49,8 @@ impl TakeOffer {
             )?;
         }
 
+        // Create maker token b account, if needed
+        //
         if maker_token_account_b.lamports() == 0 {
             create_associated_token_account(
                 payer,
@@ -46,38 +63,86 @@ impl TakeOffer {
             )?;
         }
 
-        solana_program::msg!("Vault A Balance Before Transfer: {}", vault.as_token_account()?.amount);
-        solana_program::msg!("Taker A Balance Before Transfer: {}", taker_token_account_a.as_token_account()?.amount);
-        solana_program::msg!("Maker B Balance Before Transfer: {}", maker_token_account_b.as_token_account()?.amount);
-        solana_program::msg!("Taker B Balance Before Transfer: {}", taker_token_account_b.as_token_account()?.amount);
-        
+        // Validate the token accounts, then get the current amounts
+        //
+        let vault_amount = vault
+            .as_associated_token_account(offer_info.key, token_mint_a.key)?
+            .amount;
+        let taker_a_amount_before_transfer = taker_token_account_a
+            .as_associated_token_account(taker.key, token_mint_a.key)?
+            .amount;
+        let maker_b_amount_before_transfer = maker_token_account_b
+            .as_associated_token_account(maker.key, token_mint_b.key)?
+            .amount;
+        let taker_b_amount_before_transfer = taker_token_account_b
+            .as_associated_token_account(taker.key, token_mint_b.key)?
+            .amount;
+
+        solana_program::msg!("Vault A Balance Before Transfer: {}", vault_amount);
+        solana_program::msg!(
+            "Taker A Balance Before Transfer: {}",
+            taker_a_amount_before_transfer
+        );
+        solana_program::msg!(
+            "Maker B Balance Before Transfer: {}",
+            maker_b_amount_before_transfer
+        );
+        solana_program::msg!(
+            "Taker B Balance Before Transfer: {}",
+            taker_b_amount_before_transfer
+        );
+
+        // taker makes a transfer of the wanted amount to maker
+        //
         transfer(
             taker,
             taker_token_account_b,
             maker_token_account_b,
             token_program,
-            offer.token_b_wanted_amount,
+            offer.token_b_wanted_amount, // offer amount
         )?;
 
-        
+        // tokens in the vault is transfered to the taker
+        //
         transfer_signed(
             offer_info,
             vault,
             taker_token_account_a,
             token_program,
-            vault.as_token_account()?.amount,
-            &[
-                b"offer",
-                maker.key.as_ref(),
-                offer.id.to_be_bytes().as_ref(),
-            ],
+            vault_amount, // all tokens in the vault
+            offer_seeds,
         )?;
 
-        solana_program::msg!("Vault A Balance After Transfer: {}", vault.as_token_account()?.amount);
-        solana_program::msg!("Taker A Balance After Transfer: {}", taker_token_account_a.as_token_account()?.amount);
-        solana_program::msg!("Maker B Balance After Transfer: {}", maker_token_account_b.as_token_account()?.amount);
-        solana_program::msg!("Taker B Balance After Transfer: {}", taker_token_account_b.as_token_account()?.amount);
+        solana_program::msg!(
+            "Vault A Balance After Transfer: {}",
+            vault.as_token_account()?.amount
+        );
+        solana_program::msg!(
+            "Taker A Balance After Transfer: {}",
+            taker_token_account_a.as_token_account()?.amount
+        );
+        solana_program::msg!(
+            "Maker B Balance After Transfer: {}",
+            maker_token_account_b.as_token_account()?.amount
+        );
+        solana_program::msg!(
+            "Taker B Balance After Transfer: {}",
+            taker_token_account_b.as_token_account()?.amount
+        );
 
+        // assert the token balances after transfers
+        //
+        assert_eq!(
+            taker_token_account_a.as_token_account()?.amount,
+            vault_amount + taker_a_amount_before_transfer
+        );
+        assert_eq!(
+            maker_token_account_b.as_token_account()?.amount,
+            maker_b_amount_before_transfer + offer.token_b_wanted_amount
+        );
+
+        // close the vault because it is no longer needed
+        //
         invoke_signed_with_bump(
             &spl_token::instruction::close_account(
                 token_program.key,
@@ -86,11 +151,7 @@ impl TakeOffer {
                 offer_info.key,
                 &[],
             )?,
-            &[
-                vault.clone(),
-                taker.clone(),
-                offer_info.clone(),
-            ],
+            &[vault.clone(), taker.clone(), offer_info.clone()],
             &[
                 b"offer",
                 maker.key.as_ref(),
@@ -99,6 +160,8 @@ impl TakeOffer {
             offer.bump,
         )?;
 
+        // close the offer account
+        //
         offer_info.close(taker)?;
 
         Ok(())

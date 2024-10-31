@@ -1,10 +1,10 @@
 use {
-    crate::{state::*, SteelInstruction},
+    crate::{state::*, EscrowInstruction},
     steel::*,
 };
 
-instruction!(SteelInstruction, MakeOffer);
-
+instruction!(EscrowInstruction, MakeOffer);
+//  MakeOffer Instruction
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct MakeOffer {
@@ -14,7 +14,11 @@ pub struct MakeOffer {
 }
 
 impl MakeOffer {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
+    pub fn process(
+        program_id: &Pubkey,
+        accounts: &[AccountInfo<'_>],
+        data: &[u8],
+    ) -> ProgramResult {
         let args = MakeOffer::try_from_bytes(data)?;
         let [offer_info, token_mint_a, token_mint_b, maker_token_account_a, vault, maker, payer, token_program, associated_token_program, system_program] =
             accounts
@@ -22,21 +26,28 @@ impl MakeOffer {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        maker.is_writable()?;
-        system_program.is_program(&system_program::ID)?;
+        // make sure the maker is a signer
+        //
+        maker.is_signer()?;
 
-        create_account::<Offer>(
-            offer_info,
-            system_program,
-            payer,
-            program_id,
-            &[
-                b"offer",
-                maker.key.as_ref(),
-                args.id.to_le_bytes().as_ref(),
-            ],
-        )?;
+        // make sure the maker is a writable signer
+        //
+        maker_token_account_a.as_associated_token_account(maker.key, token_mint_a.key)?;
 
+        let offer_id = args.id.to_le_bytes();
+        let offer_seeds = &[Offer::SEEDS, maker.key.as_ref(), &offer_id];
+        let (offer_address, offer_bump) = Pubkey::find_program_address(offer_seeds, program_id);
+
+        // check we have the right address, derived from the provided seeds
+        //
+        offer_info.has_address(&offer_address)?;
+
+        // create the offer account
+        //
+        create_account::<Offer>(offer_info, system_program, payer, program_id, offer_seeds)?;
+
+        // create the vault token account, where the maker will send funds to
+        //
         create_associated_token_account(
             payer,
             offer_info,
@@ -47,6 +58,12 @@ impl MakeOffer {
             associated_token_program,
         )?;
 
+        // validate the vault the maker token a will be sent to
+        //
+        vault.as_associated_token_account(offer_info.key, token_mint_a.key)?;
+
+        // maker transfer token a to the vault
+        //
         transfer(
             maker,
             maker_token_account_a,
@@ -56,24 +73,22 @@ impl MakeOffer {
         )?;
 
         let offer = offer_info.as_account_mut::<Offer>(program_id)?;
+        
+        // we record our offer data
+        //
+        *offer = Offer {
+            id: args.id,
+            bump: offer_bump,
+            maker: *maker.key,
+            token_b_wanted_amount: args.token_b_wanted_amount,
+            token_mint_a: *token_mint_a.key,
+            token_mint_b: *token_mint_b.key,
+        };
 
-        let (_, bump) = Pubkey::find_program_address(
-            &[
-                b"offer",
-                maker.key.as_ref(),
-                offer.id.to_be_bytes().as_ref(),
-            ],
-            program_id,
+        solana_program::msg!(
+            "Token A balance in vault: {}",
+            vault.as_token_account()?.amount
         );
-
-        offer.id = args.id;
-        offer.maker = *maker.key;
-        offer.token_mint_a = *token_mint_a.key;
-        offer.token_mint_b = *token_mint_b.key;
-        offer.token_b_wanted_amount = args.token_b_wanted_amount;
-        offer.bump = bump;
-
-        solana_program::msg!("Token A balance in vault: {}", vault.as_token_account()?.amount);
 
         Ok(())
     }

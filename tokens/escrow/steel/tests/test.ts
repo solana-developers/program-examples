@@ -1,12 +1,14 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { Transaction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
 import { buildMakeOffer, buildTakeOffer } from './instruction';
 import { createValues, mintingTokens } from './utils';
 
 describe('Escrow!', async () => {
-  const values = createValues();
+  const values = createValues({
+    programId: new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35'),
+  });
 
   const context = await start([{ name: 'escrow_steel_program', programId: values.programId }], []);
 
