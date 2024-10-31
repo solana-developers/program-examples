@@ -20,6 +20,7 @@ pub fn process_instruction(
     };
 
     favorites_info.is_writable()?;
+    favorites_info.has_seeds(&[b"favorites", user.key.as_ref()], program_id)?;
 
     // if we have not created our favourites account, let us create it
     if favorites_info.lamports() == 0 {

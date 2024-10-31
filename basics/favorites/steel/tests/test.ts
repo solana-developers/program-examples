@@ -4,6 +4,12 @@ import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction 
 import * as borsh from 'borsh';
 import { start } from 'solana-bankrun';
 
+type FavoritesData = {
+  number: bigint;
+  color: string;
+  hobbies: string[];
+};
+
 class Favorites {
   number: bigint;
   color: Uint8Array;
@@ -30,9 +36,9 @@ class Favorites {
   }
 
   static fromBuffer(buffer: Buffer) {
-    const some = Uint8Array.from(buffer).slice(8);
+    const _buffer = Uint8Array.from(buffer).slice(8);
 
-    return borsh.deserialize(FavoritesSchema, Favorites, Buffer.from(some));
+    return borsh.deserialize(FavoritesSchema, Favorites, Buffer.from(_buffer));
   }
 
   static fromInfo(info: { number: number; color: string; hobbies: string[] }) {
@@ -43,9 +49,9 @@ class Favorites {
     });
   }
 
-  serialise() {
+  toData(): FavoritesData {
     return {
-      number: this.number.toString(),
+      number: BigInt(this.number),
       color: Buffer.from(this.color).toString(),
       hobbies: this.hobbies.map((hobby) => Buffer.from(hobby).toString()),
     };
@@ -67,7 +73,7 @@ const FavoritesSchema = new Map([
 ]);
 
 describe('Favorites!', async () => {
-  const addressInfoAccount = Keypair.generate();
+  const favoritesAccount = Keypair.generate();
   const PROGRAM_ID = PublicKey.unique();
   const context = await start([{ name: 'favorites_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
@@ -79,9 +85,9 @@ describe('Favorites!', async () => {
   test('Set the favorites data', async () => {
     const payer = context.payer;
 
-    console.log(`Program Address    : ${PROGRAM_ID}`);
-    console.log(`Payer Address      : ${payer.publicKey}`);
-    console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
+    console.log(`Program Address : ${PROGRAM_ID}`);
+    console.log(`Payer Address   : ${payer.publicKey}`);
+    console.log(`Favorites Acct  : ${favoritesAccount.publicKey}`);
 
     const ix = new TransactionInstruction({
       keys: [
@@ -116,7 +122,7 @@ describe('Favorites!', async () => {
   test("Read favorites's data", async () => {
     const accountInfo = await client.getAccount(favoritesPda(context.payer.publicKey)[0]);
 
-    const readFavorites = Favorites.fromAccountData(Buffer.from(accountInfo.data)).serialise();
+    const readFavorites = Favorites.fromAccountData(Buffer.from(accountInfo.data)).toData();
 
     console.log(`number : ${readFavorites.number}`);
     console.log(`color  : ${readFavorites.color}`);
