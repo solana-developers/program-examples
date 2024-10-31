@@ -1,5 +1,6 @@
+import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import BN from 'bn.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
@@ -32,16 +33,18 @@ describe('Counter Solana Steel!', async () => {
   const client = context.banksClient;
   // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
   const payer = context.payer;
-  // Get the rent object to calculate rent for the accounts
-  const rent = await client.getRent();
 
-  function createInitializeInstruction(counter: PublicKey): TransactionInstruction {
-    return new TransactionInstruction({
+  // our counter address derived from the seeds
+  const counter = PublicKey.findProgramAddressSync([Buffer.from('counter')], PROGRAM_ID)[0];
+
+  test('Initialize counter', async () => {
+    // Let's create the initialize counter instruction
+    const incrementIx = new TransactionInstruction({
       programId: PROGRAM_ID,
       keys: [
         {
           pubkey: counter,
-          isSigner: true, // will need to sign create an account
+          isSigner: false,
           isWritable: true, // set to true so we can modify its data
         },
         {
@@ -57,30 +60,6 @@ describe('Counter Solana Steel!', async () => {
       ],
       data: Buffer.from([CounterInstruction.Initialize]),
     });
-  }
-
-  function createIncrementInstruction(counter: PublicKey): TransactionInstruction {
-    return new TransactionInstruction({
-      programId: PROGRAM_ID,
-      keys: [
-        {
-          pubkey: counter,
-          isSigner: false,
-          isWritable: true,
-        },
-      ],
-      data: Buffer.from([CounterInstruction.Increment]),
-    });
-  }
-
-  // Randomly generate the account key
-  // to sign for setting up the Counter state
-  const counterKeypair = Keypair.generate();
-  const counter = counterKeypair.publicKey;
-
-  test('Initialize counter', async () => {
-    // Let's create the initialize counter instruction
-    const incrementIx = createInitializeInstruction(counter);
 
     const tx = new Transaction().add(incrementIx);
 
@@ -92,7 +71,7 @@ describe('Counter Solana Steel!', async () => {
     tx.recentBlockhash = blockhash;
 
     // Sign the transaction with the payer's keypair
-    tx.sign(payer, counterKeypair);
+    tx.sign(payer);
 
     // Send transaction to bankrun
     await client.processTransaction(tx);
@@ -110,7 +89,17 @@ describe('Counter Solana Steel!', async () => {
 
   test('Increment counter!', async () => {
     // let's create the increment counter instruction
-    const incrementIx: TransactionInstruction = createIncrementInstruction(counter);
+    const incrementIx: TransactionInstruction = new TransactionInstruction({
+      programId: PROGRAM_ID,
+      keys: [
+        {
+          pubkey: counter,
+          isSigner: false,
+          isWritable: true,
+        },
+      ],
+      data: Buffer.from([CounterInstruction.Increment]),
+    });
 
     const tx = new Transaction().add(incrementIx);
     tx.feePayer = payer.publicKey;

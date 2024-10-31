@@ -43,10 +43,18 @@ impl Initialize {
 
         payer.is_writable()?.is_signer()?; // make use payer is writable and signer
         system_program.is_program(&system_program::ID)?; // system program check
-        counter_account.is_writable()?; // check the account is writable
+        counter_account
+            .is_writable()? // check the account is writable
+            .has_seeds(&[b"counter"], program_id)?; // check the address is derived from the right seeds
 
         // create the counter account
-        create_account::<Counter>(counter_account, system_program, payer, program_id, &[])?;
+        create_account::<Counter>(
+            counter_account, // account to be created
+            system_program, // system program
+            payer, // payer
+            program_id, // program id
+            &[COUNTER_SEEDS], // seeds
+        )?;
 
         let counter = counter_account.as_account::<Counter>(program_id)?;
         let count = counter.count;
@@ -69,7 +77,9 @@ impl Increment {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        counter_account.is_writable()?; // check the account is writable
+        counter_account
+            .is_writable()? // check the account is writable
+            .has_seeds(&[COUNTER_SEEDS], program_id)?; // check the address is derived from the right seeds
 
         let counter = counter_account.as_account_mut::<Counter>(program_id)?;
         counter.count += 1;
@@ -95,3 +105,5 @@ account!(CounterAccount, Counter);
 pub struct Counter {
     pub count: u64,
 }
+
+pub const COUNTER_SEEDS: &[u8] = b"counter"; // counter seeds
