@@ -5,7 +5,7 @@ import { start } from 'solana-bankrun';
 import { buildMakeOffer, buildTakeOffer } from './instruction';
 import { createValues, mintingTokens } from './utils';
 
-describe('Account Data!', async () => {
+describe('Escrow!', async () => {
   const values = createValues();
 
   const context = await start([{ name: 'escrow_native_program', programId: values.programId }], []);

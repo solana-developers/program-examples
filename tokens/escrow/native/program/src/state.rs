@@ -1,7 +1,6 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::pubkey::Pubkey;
 
-
 #[derive(BorshDeserialize, BorshSerialize, Debug)]
 pub struct Offer {
     pub id: u64,
@@ -13,5 +12,5 @@ pub struct Offer {
 }
 
 impl Offer {
-    pub const SEED_PREFIX: &'static str = "offer";
+    pub const SEED_PREFIX: &'static [u8] = b"offer";
 }

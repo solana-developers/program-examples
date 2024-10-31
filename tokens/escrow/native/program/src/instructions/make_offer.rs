@@ -1,5 +1,5 @@
 use {
-    crate::state::*,
+    crate::{error::*, state::*, utils::assert_is_associated_token_account},
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
         account_info::AccountInfo,
@@ -29,20 +29,48 @@ impl MakeOffer {
         accounts: &[AccountInfo<'_>],
         args: MakeOffer,
     ) -> ProgramResult {
-        let [offer, token_mint_a, token_mint_b, maker_token_account_a, vault, maker, payer, token_program, associated_token_program, system_program] =
-            accounts
-        else {
+        // accounts in order.
+        //
+        let [
+            offer_info, // offer account info
+            token_mint_a, // token_mint a
+            token_mint_b, // token mint b
+            maker_token_account_a, // maker token account a
+            vault, // vault
+            maker, // maker
+            payer, // payer
+            token_program, // token program
+            associated_token_program, // associated token program
+            system_program// system program
+        ] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        solana_program::msg!("here right now!");
+        // ensure the maker signs the instruction
+        // 
+        if !maker.is_signer {
+            return Err(ProgramError::MissingRequiredSignature);
+        }
 
-        let (_, bump) = Pubkey::find_program_address(
-            &[b"offer", maker.key.as_ref(), args.id.to_be_bytes().as_ref()],
-            program_id,
-        );
+        let offer_seeds = &[
+            Offer::SEED_PREFIX,
+            maker.key.as_ref(),
+            &args.id.to_le_bytes(),
+        ];
 
-        let offer_info = Offer {
+        let (offer_key, bump) = Pubkey::find_program_address(offer_seeds, program_id);
+
+        // make sure the offer key is the same
+        //
+        if *offer_info.key != offer_key {
+            return Err(EscrowError::OfferKeyMismatch.into());
+        };
+
+        // check vault is owned by the offer account
+        //
+        assert_is_associated_token_account(vault.key, offer_info.key, token_mint_a.key)?;
+
+        let offer = Offer {
             bump,
             maker: *maker.key,
             id: args.id,
@@ -51,48 +79,41 @@ impl MakeOffer {
             token_mint_b: *token_mint_b.key,
         };
 
-        let size = offer_info.try_to_vec()?.len();
-
-        // create the Offer Account
+        let size = borsh::to_vec::<Offer>(&offer)?.len();
         let lamports_required = (Rent::get()?).minimum_balance(size);
 
-        solana_program::msg!("lamports required: {}", lamports_required);
-        solana_program::msg!("bump: {}", bump);
-
-        solana_program::msg!("create offer acccount");
-
         // create account
+        //
         invoke_signed(
             &system_instruction::create_account(
                 payer.key,
-                offer.key,
+                offer_info.key,
                 lamports_required,
                 size as u64,
                 program_id,
             ),
-            &[payer.clone(), offer.clone(), system_program.clone()],
+            &[payer.clone(), offer_info.clone(), system_program.clone()],
             &[&[
-                Offer::SEED_PREFIX.as_bytes(),
+                Offer::SEED_PREFIX,
                 maker.key.as_ref(),
                 args.id.to_le_bytes().as_ref(),
                 &[bump],
             ]],
         )?;
 
-        solana_program::msg!("create vault token acccount");
-
         // create the vault token account
+        //
         invoke(
             &associated_token_account_instruction::create_associated_token_account(
                 payer.key,
-                offer.key,
+                offer_info.key,
                 token_mint_a.key,
                 token_program.key,
             ),
             &[
                 token_mint_a.clone(),
                 vault.clone(),
-                offer.clone(),
+                offer_info.clone(),
                 payer.clone(),
                 system_program.clone(),
                 token_program.clone(),
@@ -100,9 +121,8 @@ impl MakeOffer {
             ],
         )?;
 
-        solana_program::msg!("Tranfer to vault");
-
-        // transfer mint a tokens to vault
+        // transfer Mint A tokens to vault
+        //
         invoke(
             &token_instruction::transfer(
                 token_program.key,
@@ -120,24 +140,17 @@ impl MakeOffer {
             ],
         )?;
 
-        solana_program::msg!("CPI done. Writign to account");
-
-        let token_amount_a = TokenAccount::unpack(&vault.data.borrow())?.amount;
-        solana_program::msg!("Aount in vault: {}", token_amount_a);
-
-        let offer_info = Offer {
-            bump,
-            maker: *maker.key,
-            id: args.id,
-            token_b_wanted_amount: args.token_b_wanted_amount,
-            token_mint_a: *token_mint_a.key,
-            token_mint_b: *token_mint_b.key,
-        };
-
-        offer_info.serialize(&mut *offer.data.borrow_mut())?;
-
-        solana_program::msg!("Aount in vault: {:?}", offer.lamports());
-
+        let vault_token_amount = TokenAccount::unpack(&vault.data.borrow())?.amount;
+        
+        solana_program::msg!("Amount in vault: {}", vault_token_amount);
+        
+        assert_eq!(vault_token_amount, args.token_a_offered_amount);
+        
+        // write data into offer account
+        //
+        offer.serialize(&mut *offer_info.data.borrow_mut())?;
+        
+        
         Ok(())
     }
 }

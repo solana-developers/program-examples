@@ -1,14 +1,14 @@
-mod make_offer;
+mod error;
+mod instructions;
 mod state;
-mod take_offer;
+mod utils;
 
 use {
     borsh::{BorshDeserialize, BorshSerialize},
-    make_offer::MakeOffer,
+    instructions::*,
     solana_program::{
         account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, pubkey::Pubkey,
     },
-    take_offer::TakeOffer,
 };
 
 entrypoint!(process_instruction);
