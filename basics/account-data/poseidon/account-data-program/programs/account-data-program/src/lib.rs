@@ -1,19 +1,19 @@
 use anchor_lang::prelude::*;
-declare_id!("CWy5sbubCYKdQ2ANmFmeZVRqxPJjE5NJ7S4SQBWHnPyF");
+declare_id!("JvF1QDhgab1ARhACPWTAZnUymthGGmn3NXCj8i6mjSQ");
 #[program]
 pub mod account_data_program {
     use super::*;
     pub fn create_address_info(
         ctx: Context<CreateAddressInfoContext>,
-        house_number: u8,
-        street: u8,
-        city_code: u32,
         name: String,
+        house_number: u8,
+        street: String,
+        city: String,
     ) -> Result<()> {
         ctx.accounts.state.name = name;
         ctx.accounts.state.house_number = house_number;
         ctx.accounts.state.street = street;
-        ctx.accounts.state.city_code = city_code;
+        ctx.accounts.state.city = city;
         Ok(())
     }
 }
@@ -24,7 +24,7 @@ pub struct CreateAddressInfoContext<'info> {
     #[account(
         init,
         payer = payer,
-        space = 36,
+        space = 171,
         seeds = [b"address_info",
         payer.key().as_ref()],
         bump,
@@ -36,6 +36,6 @@ pub struct CreateAddressInfoContext<'info> {
 pub struct AddressInfo {
     pub name: String,
     pub house_number: u8,
-    pub street: u8,
-    pub city_code: u32,
+    pub street: String,
+    pub city: String,
 }

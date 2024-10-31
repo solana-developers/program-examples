@@ -24,13 +24,13 @@ describe('account data program', () => {
     const addressInfo = {
       name: 'John Doe',
       houseNumber: 100,
-      street: 62,
-      cityCode: 47100,
+      street: 'random colony',
+      city: 'random city',
     };
 
     // Call the create_address_info function on the program.
     await program.methods
-      .createAddressInfo(addressInfo.houseNumber, addressInfo.street, addressInfo.cityCode, addressInfo.name)
+      .createAddressInfo(addressInfo.name, addressInfo.houseNumber, addressInfo.street, addressInfo.city)
       .accounts({
         payer: payer.publicKey,
       })
@@ -43,12 +43,12 @@ describe('account data program', () => {
     console.log(`Name: ${account.name}`);
     console.log(`House Number: ${account.houseNumber}`);
     console.log(`Street: ${account.street}`);
-    console.log(`City Code: ${account.cityCode}`);
+    console.log(`City: ${account.city}`);
 
     // Assertions to verify account data.
     assert.strictEqual(account.name, addressInfo.name, 'Name does not match');
     assert.strictEqual(account.houseNumber, addressInfo.houseNumber, 'House Number does not match');
     assert.strictEqual(account.street, addressInfo.street, 'Street does not match');
-    assert.strictEqual(account.cityCode, addressInfo.cityCode, 'City Code does not match');
+    assert.strictEqual(account.city, addressInfo.city, 'City does not match');
   });
 });
