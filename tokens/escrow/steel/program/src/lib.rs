@@ -14,9 +14,9 @@ pub fn process_instruction(
     data: &[u8],
 ) -> ProgramResult {
     // use `crate::ID` as program_id in your program
-    // 
+    //
     // e.g parse_instruction(&crate::ID, program_id, data)
-    // 
+    //
     let (ix, data) = parse_instruction(program_id, program_id, data)?;
 
     match ix {
