@@ -1,112 +1,91 @@
 import { before, describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
+import { Program } from '@coral-xyz/anchor';
+import { getAssociatedTokenAddressSync, getMint } from '@solana/spl-token';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
-import { TransferTokensProgram } from '../target/types/transfer_tokens_program';
+import type { TransferTokensProgram } from '../target/types/transfer_tokens_program';
 
-// Load the program ID and IDL from the target folder
 const IDL = require('../target/idl/transfer_tokens_program.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('token_transfer_program', async () => {
-  // Initialize Bankrun context
+describe('Bankrun - Transfer Tokens Program', async () => {
+  // Start the Bankrun context
   const context = await startAnchor('', [{ name: 'transfer_tokens_program', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
-  const program = new anchor.Program<TransferTokensProgram>(IDL, provider);
-  const connection = provider.connection;
-  const payer = provider.wallet as anchor.Wallet;
+  anchor.setProvider(provider);
 
-  // Keypair for mint and recipient
+  const program = new anchor.Program<TransferTokensProgram>(IDL, provider);
+
+  const payer = provider.wallet as anchor.Wallet;
   const mintKeypair = Keypair.generate();
   const recipientKeypair = Keypair.generate();
 
-  let mintAccount: PublicKey;
+  const DECIMALS = 9;
   let senderTokenAccount: PublicKey;
   let recipientTokenAccount: PublicKey;
 
-  const confirm = async (signature: string): Promise<string> => {
-    const block = await provider.connection.getLatestBlockhash();
-    await provider.connection.confirmTransaction({
-      signature,
-      ...block,
-    });
-    return signature;
-  };
-
-  it('Test Preparation', async () => {
-    console.log('Starting test preparation...');
-
-    // Create an SPL token mint
-    console.log('Creating mint account...');
-    mintAccount = await createMint(
-      connection,
-      payer.payer,
-      provider.publicKey,
-      null,
-      9, // Decimals
-    );
-    console.log('Mint account created:', mintAccount.toBase58());
-
-    // Get or create associated token accounts for sender and recipient
-    senderTokenAccount = getAssociatedTokenAddressSync(mintAccount, payer.publicKey);
-    recipientTokenAccount = getAssociatedTokenAddressSync(mintAccount, recipientKeypair.publicKey);
-
-    console.log('Sender Token Account PublicKey:', senderTokenAccount.toBase58());
-    console.log('Recipient Token Account PublicKey:', recipientTokenAccount.toBase58());
-
-    // Create associated token accounts for the sender and recipient
-    console.log('Creating associated token accounts...');
-    await getOrCreateAssociatedTokenAccount(connection, payer.payer, mintAccount, payer.publicKey);
-    console.log('Sender associated token account created.');
-
-    await getOrCreateAssociatedTokenAccount(connection, payer.payer, mintAccount, recipientKeypair.publicKey);
-    console.log('Recipient associated token account created.');
-
-    // Mint some tokens to the sender's associated token account
-    console.log("Minting tokens to sender's associated token account...");
-    await mintTo(
-      connection,
-      payer.payer,
-      mintAccount,
-      senderTokenAccount,
-      payer.payer,
-      100 * 10 ** 9, // 100 tokens
-    );
-    console.log('Minting complete. 100 tokens minted to:', senderTokenAccount.toBase58());
+  before(async () => {
+    // Derive associated token account addresses
+    senderTokenAccount = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
+    recipientTokenAccount = getAssociatedTokenAddressSync(mintKeypair.publicKey, recipientKeypair.publicKey);
   });
 
-  it('Transfers tokens between accounts using Bankrun', async () => {
-    console.log('Starting token transfer test...');
-
-    const transferAmount = new anchor.BN(50 * 10 ** 9);
-    console.log('Initiating token transfer of:', transferAmount.toString());
-
-    // Call the transfer_tokens function of the program
-    const txSignature = await program.methods
-      .transferTokens(transferAmount)
+  it('Creates a new SPL Token', async () => {
+    const txSig = await program.methods
+      .createToken(DECIMALS, payer.publicKey)
       .accounts({
-        owner: payer.publicKey,
-        mint: mintAccount,
-        destination: recipientTokenAccount,
+        payer: payer.publicKey,
+        mintAccount: mintKeypair.publicKey,
       })
+      .signers([payer.payer, mintKeypair])
       .rpc();
 
-    console.log('Transfer transaction signature:', txSignature);
+    console.log(`Transaction Signature: ${txSig}`);
+    const mintInfo = await getMint(provider.connection, mintKeypair.publicKey);
 
-    // Fetch the balances of the associated token accounts
-    const senderAccountInfo = await connection.getTokenAccountBalance(senderTokenAccount);
-    const recipientAccountInfo = await connection.getTokenAccountBalance(recipientTokenAccount);
+    assert.equal(mintInfo.decimals, DECIMALS, 'Mint decimals should match the specified value');
+    assert.equal(mintInfo.mintAuthority?.toBase58(), payer.publicKey.toBase58(), 'Mint authority should be the payer');
 
-    console.log('Sender account balance after transfer:', senderAccountInfo.value.uiAmount);
-    console.log('Recipient account balance after transfer:', recipientAccountInfo.value.uiAmount);
+    console.log('Mint created successfully:', mintKeypair.publicKey.toBase58());
+  });
 
-    // Verify that the transfer occurred correctly
-    assert.equal(senderAccountInfo.value.uiAmount, 50, 'Sender should have 50 tokens left');
-    assert.equal(recipientAccountInfo.value.uiAmount, 50, 'Recipient should have received 50 tokens');
+  it("Mints tokens to sender's account", async () => {
+    const mintAmount = new anchor.BN(1_000_000_000); // Mint 1 token with 9 decimals
 
-    console.log('Token transfer test completed successfully.');
+    const txSig = await program.methods
+      .mint(mintAmount)
+      .accounts({
+        mintAccount: mintKeypair.publicKey,
+        mintAuthority: payer.publicKey,
+        recipient: payer.publicKey,
+      })
+      .signers([payer.payer])
+      .rpc();
+
+    const mintInfo = await getMint(provider.connection, mintKeypair.publicKey);
+
+    assert.equal(mintInfo.supply.toString(), mintAmount.toString(), 'Minted amount should match the specified value');
+    console.log(`Minted ${mintAmount.toString()} tokens to ${senderTokenAccount}`);
+    console.log(`Transaction Signature: ${txSig}`);
+  });
+
+  it('Transfers tokens from sender to recipient', async () => {
+    const transferAmount = new anchor.BN(500_000_000); // Transfer 0.5 tokens
+
+    const txSig = await program.methods
+      .transferTokens(transferAmount)
+      .accounts({
+        sender: payer.publicKey,
+        mintAccount: mintKeypair.publicKey,
+        recipient: recipientKeypair.publicKey,
+      })
+      .signers([payer.payer])
+      .rpc();
+
+    console.log(`Transferred ${transferAmount.toString()} tokens to ${recipientTokenAccount}`);
+    console.log(`Transaction Signature: ${txSig}`);
   });
 });

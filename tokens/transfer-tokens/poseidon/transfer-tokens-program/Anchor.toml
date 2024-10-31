@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_tokens_program = "BSHN8q3tEDsSiHBEHKKgxevQoSvXpKciZ7W3kcWSuEfC"
+transfer_tokens_program = "CSqtsYXnt2UfXttszwG6rGFFY7EedJ5kmn4xEyas4LeE"
 
 [registry]
 url = "https://api.apr.dev"
