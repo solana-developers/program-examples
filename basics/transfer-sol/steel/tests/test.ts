@@ -1,5 +1,6 @@
 import { describe, test } from 'node:test';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 import { InstructionType, createTransferInstruction, createTransferWithProgramInstruction } from './instruction';
 
@@ -15,7 +16,7 @@ describe('transfer-sol', async () => {
   const test2Recipient2 = Keypair.generate();
 
   test('Transfer between accounts using the system program', async () => {
-    await getBalances(payer.publicKey, test1Recipient.publicKey, 'Beginning');
+    const [, recipientBalanceBefore] = await getBalances(payer.publicKey, test1Recipient.publicKey, 'Beginning');
 
     const ix = createTransferInstruction(payer.publicKey, test1Recipient.publicKey, PROGRAM_ID, InstructionType.CpiTransfer, transferAmount);
 
@@ -26,7 +27,9 @@ describe('transfer-sol', async () => {
 
     await client.processTransaction(tx);
 
-    await getBalances(payer.publicKey, test1Recipient.publicKey, 'Resulting');
+    const [, recipientBalanceAfter] = await getBalances(payer.publicKey, test1Recipient.publicKey, 'Resulting');
+
+    assert(recipientBalanceAfter === recipientBalanceBefore + BigInt(transferAmount));
   });
 
   test('Create two accounts for the following test', async () => {
@@ -49,7 +52,7 @@ describe('transfer-sol', async () => {
   });
 
   test('Transfer between accounts using our program', async () => {
-    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Beginning');
+    const [, recipientBalanceBefore] = await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Beginning');
 
     const ix = createTransferWithProgramInstruction(
       test2Recipient1.publicKey,
@@ -66,7 +69,9 @@ describe('transfer-sol', async () => {
 
     await client.processTransaction(tx);
 
-    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Resulting');
+    const [, recipientBalanceAfter] = await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Resulting');
+
+    assert(recipientBalanceAfter === recipientBalanceBefore + BigInt(transferAmount));
   });
 
   async function getBalances(payerPubkey: PublicKey, recipientPubkey: PublicKey, timeframe: string) {
@@ -76,5 +81,7 @@ describe('transfer-sol', async () => {
     console.log(`${timeframe} balances:`);
     console.log(`   Payer: ${payerBalance}`);
     console.log(`   Recipient: ${recipientBalance}`);
+
+    return [payerBalance, recipientBalance];
   }
 });
