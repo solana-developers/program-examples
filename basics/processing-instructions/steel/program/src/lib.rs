@@ -13,9 +13,9 @@ fn process_instruction(
     instruction_data: &[u8],
 ) -> ProgramResult {
     // Steel uses bytemuck under the hood to process instruction data
+    //  bytemuck::try_from_bytes::<Park>(instruction_data)
     //
-    let instruction_data_object = bytemuck::try_from_bytes::<Park>(instruction_data)
-        .or(Err(ProgramError::InvalidInstructionData))?;
+    let instruction_data_object = Park::try_from_bytes(instruction_data)?;
 
     msg!(
         "Welcome to the park, {:?}!",
@@ -31,9 +31,16 @@ fn process_instruction(
     Ok(())
 }
 
+instruction!(ParkInstruction, Park);
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct Park {
     pub name: [u8; 32],
     pub height: u32,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, Zeroable)]
+pub enum ParkInstruction {
+    Park = 0
 }
