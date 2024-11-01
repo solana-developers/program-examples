@@ -2,6 +2,7 @@ import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 describe('PDA Rent-Payer', async () => {
@@ -83,6 +84,10 @@ describe('PDA Rent-Payer', async () => {
     tx.add(ix).sign(payer);
 
     await client.processTransaction(tx);
+
+    // get lamport of the account
+    const rentAccount = await client.getAccount(rentVaultPda);
+    assert.isNotNull(rentAccount);
   });
 
   test('Create a new account using the Rent Vault', async () => {
@@ -107,5 +112,10 @@ describe('PDA Rent-Payer', async () => {
 
     // Now we process the transaction
     await client.processTransaction(tx);
+    // get mininum balance of rent exempt
+    const expectedLamport = (await client.getRent()).minimumBalance(BigInt(0));
+    // get lamport of the account
+    const actualLamport = await client.getBalance(newAccount.publicKey);
+    assert.equal(actualLamport, expectedLamport);
   });
 });
