@@ -863,7 +863,6 @@ dependencies = [
  "mpl-token-metadata",
  "num_enum 0.7.3",
  "solana-program 1.18.17",
- "spl-associated-token-account",
  "spl-token",
  "steel 2.1.1",
 ]
