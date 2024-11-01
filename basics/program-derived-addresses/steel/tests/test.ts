@@ -2,6 +2,7 @@ import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 describe('PDAs', async () => {
@@ -81,7 +82,7 @@ describe('PDAs', async () => {
   }
 
   test('Create the page visits tracking PDA', async () => {
-    const [pageVisitsPda, pageVisitsBump] = derivePageVisitsPda(testUser.publicKey);
+    const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
     const ix = new TransactionInstruction({
       keys: [
         { pubkey: pageVisitsPda, isSigner: false, isWritable: true },
@@ -120,6 +121,10 @@ describe('PDAs', async () => {
     tx.add(ix).sign(payer, testUser);
 
     await client.processTransaction(tx);
+
+    const accountInfo = await client.getAccount(pageVisitsPda);
+    const readPageVisits = PageVisits.fromBuffer(Buffer.from(accountInfo.data));
+    assert(readPageVisits.page_visits === 1);
   });
 
   test('Visit the page!', async () => {
@@ -138,6 +143,10 @@ describe('PDAs', async () => {
     tx.add(ix).sign(payer, testUser);
 
     await client.processTransaction(tx);
+
+    const accountInfo = await client.getAccount(pageVisitsPda);
+    const readPageVisits = PageVisits.fromBuffer(Buffer.from(accountInfo.data));
+    assert(readPageVisits.page_visits === 2);
   });
 
   test('Read page visits', async () => {

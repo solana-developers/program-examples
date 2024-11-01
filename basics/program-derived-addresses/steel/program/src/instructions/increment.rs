@@ -16,7 +16,6 @@ impl IncrementPageVisits {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        // user.is_signer()?;
         page_visits_account
             .is_writable()?
             .has_owner(program_id)? 
