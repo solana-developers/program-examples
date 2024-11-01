@@ -2,9 +2,10 @@ import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
-describe('Create a system account', async () => {
+describe('Pay Rent!', async () => {
   const PROGRAM_ID = PublicKey.unique();
   const context = await start([{ name: 'rent_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
@@ -37,7 +38,7 @@ describe('Create a system account', async () => {
     ],
   ]);
 
-  test('Create the account', async () => {
+  test('Create the account, pay rent', async () => {
     const newKeypair = Keypair.generate();
 
     const addressData = new AddressData({
@@ -66,5 +67,13 @@ describe('Create a system account', async () => {
     tx.add(ix).sign(payer, newKeypair);
 
     await client.processTransaction(tx);
+
+    // get mininum balance of rent exempt
+    const expectedLamport = (await client.getRent()).minimumBalance(BigInt(addressDataBuffer.length));
+
+    // get lamport of the account
+    const actualLamport = await client.getBalance(newKeypair.publicKey);
+
+    assert.equal(actualLamport, expectedLamport);
   });
 });
