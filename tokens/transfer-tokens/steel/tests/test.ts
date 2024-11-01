@@ -4,39 +4,10 @@ import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mp
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { BN } from 'bn.js';
-import * as borsh from 'borsh';
 import { start } from 'solana-bankrun';
 import { CreateTokenArgs, MintNftArgs, MintSplArgs, MyInstruction, TransferTokensArgs } from './instructions';
 
-// class Assignable {
-// 	constructor(properties) {
-// 		for (const [key, value] of Object.entries(properties)) {
-// 			this[key] = value;
-// 		}
-// 	}
-// }
-
-// class CreateTokenArgs extends Assignable {
-// 	toBuffer() {
-// 		return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
-// 	}
-// }
-// const CreateTokenArgsSchema = new Map([
-// 	[
-// 		CreateTokenArgs,
-// 		{
-// 			kind: "struct",
-// 			fields: [
-// 				["token_title", "string"],
-// 				["token_symbol", "string"],
-// 				["token_uri", "string"],
-// 				["token_decimals", "u8"],
-// 			],
-// 		},
-// 	],
-// ]);
-
-describe('Create Tokens!', async () => {
+describe('Transfer Tokens!', async () => {
   const PROGRAM_ID = PublicKey.unique();
   const context = await start(
     [
@@ -100,7 +71,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${tokenMintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Create an NFT!', async () => {
@@ -146,7 +116,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${nftMintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Mint some tokens to your wallet!', async () => {
@@ -192,7 +161,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Mint the NFT to your wallet!', async () => {
@@ -251,7 +219,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
-    console.log(`   Tx Signature: ${tx}`);
   });
 
   test('Prep a new test wallet for transfers', async () => {
