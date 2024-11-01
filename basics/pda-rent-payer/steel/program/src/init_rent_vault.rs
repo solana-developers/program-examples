@@ -1,11 +1,11 @@
+use borsh::BorshDeserialize;
 use pda_rent_payer_api::prelude::*;
 use solana_program::msg;
 use steel::*;
 
 pub fn process_initialize_vault(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     // Parse args
-    let args = data[..8].try_into().expect("Error parsing args");
-    let amount = u64::from_le_bytes(args);
+    let args = InitializeRentVault::try_from_slice(data)?;
 
     // Load and validate accounts.
     let [payer_info, rent_vault_info, system_program] = accounts else {
@@ -27,11 +27,32 @@ pub fn process_initialize_vault(accounts: &[AccountInfo<'_>], data: &[u8]) -> Pr
         &[RENT_VAULT],
     )?;
 
-    payer_info.send(amount, rent_vault_info);
+    let (_, bump) = rent_vault_pda();
 
-    rent_vault_info.collect(amount, payer_info)?;
+    // Get account to see if it's created
+    let _vault = rent_vault_info.as_account_mut::<RentVault>(&pda_rent_payer_api::ID)?;
 
-    let _ = rent_vault_info.as_account_mut::<RentVault>(&pda_rent_payer_api::ID)?;
+    let transfer = solana_program::program::invoke_signed(
+        &solana_program::system_instruction::transfer(
+            payer_info.key,
+            rent_vault_info.key,
+            args.amount,
+        ),
+        &[
+            payer_info.clone(),
+            rent_vault_info.clone(),
+            system_program.clone(),
+        ],
+        &[&[RENT_VAULT, &[bump]]],
+    );
+
+    let vault_balance = rent_vault_info.lamports();
+    msg!("Updated vault balance: {}", vault_balance);
+
+    match transfer {
+        Ok(_) => (),
+        Err(e) => return Err(e.into()),
+    }
 
     msg!("Initialized rent vault.");
     msg!("PDA: {:?}", rent_vault_info.key);

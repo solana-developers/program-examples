@@ -14,6 +14,7 @@ keywords.workspace = true
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
+borsh.workspace = true
 pda-rent-payer-api.workspace = true
 solana-program.workspace = true
 steel.workspace = true

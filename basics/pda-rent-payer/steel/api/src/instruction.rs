@@ -1,3 +1,4 @@
+use borsh::{ BorshDeserialize, BorshSerialize };
 use steel::*;
 
 #[repr(u8)]
@@ -8,7 +9,7 @@ pub enum PdaRentPayerInstruction {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, Debug, Pod, Zeroable)]
+#[derive(BorshSerialize, BorshDeserialize, Clone, Copy, Debug, Pod, Zeroable)]
 pub struct InitializeRentVault {
     pub amount: u64,
 }

@@ -1,11 +1,11 @@
-# Steel
+# PDA Rent Payer
 
-**Steel** is a ...
+**PDA Rent Payer** is a program that uses a PDA to pay the rent
+for the creation of a system program by simply transferring lamports to it
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
 - [`Error`](api/src/error.rs) – Custom program errors.
-- [`Event`](api/src/event.rs) – Custom program events.
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions

@@ -1,4 +1,4 @@
-use super::PdaRentPayerAccount;
+use super::PdaRentPayerAccountDiscriminator;
 use steel::*;
 
 /// This empty struct represents the payer vault account
@@ -12,5 +12,5 @@ pub struct RentVault {}
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
 pub struct NewAccount {}
 
-account!(PdaRentPayerAccount, RentVault);
-account!(PdaRentPayerAccount, NewAccount);
+account!(PdaRentPayerAccountDiscriminator, RentVault);
+account!(PdaRentPayerAccountDiscriminator, NewAccount);
