@@ -11,12 +11,14 @@ declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
 pub mod transfer_switch {
     use super::*;
 
+    pub fn configure_admin(ctx: Context<ConfigureAdmin>) -> Result<()> {
+        ctx.accounts.is_admin()?;
+        ctx.accounts.configure_admin()
+    }
+
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
-    pub fn create(ctx: Context<InitializeExtraAccountMetas>) -> Result<()> {
-        ctx.accounts
-            .initialize_extra_account_metas_list(ctx.bumps)?;
-        ctx.accounts.init_admin_config()?;
-        Ok(())
+    pub fn initialize_extra_account_metas_list(ctx: Context<InitializeExtraAccountMetas>) -> Result<()> {
+        ctx.accounts.initialize_extra_account_metas_list(ctx.bumps)
     }
 
     pub fn switch(ctx: Context<Switch>, on: bool) -> Result<()> {

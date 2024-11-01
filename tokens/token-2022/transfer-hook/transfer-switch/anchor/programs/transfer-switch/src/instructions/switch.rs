@@ -6,14 +6,15 @@ use {
 #[derive(Accounts)]
 #[instruction(decimals: u8)]
 pub struct Switch<'info> {
+    /// admin that controls the switch
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    /// CHECK: sender
+    /// CHECK: wallet - transfer sender
     #[account(mut)]
-    pub user: UncheckedAccount<'info>,
+    pub wallet: UncheckedAccount<'info>,
 
-    /// CHECK: this account we use to take note of listings
+    /// admin config
     #[account(
         has_one=admin,
         seeds=[b"admin-config"],
@@ -21,22 +22,27 @@ pub struct Switch<'info> {
     )]
     pub admin_config: Account<'info, AdminConfig>,
 
-    /// CHECK: this account we use to take note of listings
+    /// the wallet (sender) transfer switch
     #[account(
         init_if_needed,
         payer=admin,
         space=8+TransferSwitch::INIT_SPACE,
-        seeds=[user.key().as_ref()],
+        seeds=[wallet.key().as_ref()],
         bump,
     )]
-    pub user_switch: Account<'info, TransferSwitch>,
+    pub wallet_switch: Account<'info, TransferSwitch>,
 
     pub system_program: Program<'info, System>,
 }
 
 impl<'info> Switch<'info> {
     pub fn switch(&mut self, on: bool) -> Result<()> {
-        self.user_switch.set_inner(TransferSwitch { on });
+        // toggle switch on/off for the given wallet
+        // 
+        self.wallet_switch.set_inner(TransferSwitch {
+            wallet: self.wallet.key(),
+            on,
+        });
         Ok(())
     }
 }

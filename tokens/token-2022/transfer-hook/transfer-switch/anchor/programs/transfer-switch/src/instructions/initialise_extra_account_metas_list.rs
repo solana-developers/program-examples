@@ -1,5 +1,4 @@
 use {
-    crate::state::AdminConfig,
     anchor_lang::{
         prelude::*,
         system_program::{create_account, CreateAccount},
@@ -12,23 +11,12 @@ use {
 };
 
 #[derive(Accounts)]
-// #[instruction(decimals: u8)]
 pub struct InitializeExtraAccountMetas<'info> {
     #[account(mut)]
-    pub admin: Signer<'info>,
+    pub payer: Signer<'info>,
 
     #[account()]
     pub token_mint: InterfaceAccount<'info, Mint>,
-
-    /// CHECK: this account we use to take note of listings
-    #[account(
-        init,
-        payer=admin,
-        space=8+AdminConfig::INIT_SPACE,
-        seeds=[b"admin-config"],
-        bump
-    )]
-    pub admin_config: Account<'info, AdminConfig>,
 
     /// CHECK: extra accoumt metas list
     #[account(
@@ -42,19 +30,12 @@ pub struct InitializeExtraAccountMetas<'info> {
 }
 
 impl<'info> InitializeExtraAccountMetas<'info> {
-    pub fn init_admin_config(&mut self) -> Result<()> {
-        self.admin_config.set_inner(AdminConfig {
-            admin: self.admin.key(), // set the admin pubkey that can switch transfers on/off
-        });
-        Ok(())
-    }
-
     pub fn initialize_extra_account_metas_list(
         &self,
         bumps: InitializeExtraAccountMetasBumps,
     ) -> Result<()> {
         let account_metas = vec![
-            // 5 - user (sender) config account
+            // 5 - wallet (sender) config account
             ExtraAccountMeta::new_with_seeds(
                 &[
                     Seed::AccountKey { index: 3 }, // sender index
@@ -81,7 +62,7 @@ impl<'info> InitializeExtraAccountMetas<'info> {
             CpiContext::new(
                 self.system_program.to_account_info(),
                 CreateAccount {
-                    from: self.admin.to_account_info(),
+                    from: self.payer.to_account_info(),
                     to: self.extra_account_metas_list.to_account_info(),
                 },
             )

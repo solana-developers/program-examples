@@ -30,7 +30,7 @@ pub struct TransferHook<'info> {
 
     /// CHECK: the transfer sender
     #[account()]
-    pub sender: UncheckedAccount<'info>,
+    pub wallet: UncheckedAccount<'info>,
 
     /// CHECK: extra account metas
     #[account(
@@ -39,17 +39,17 @@ pub struct TransferHook<'info> {
     )]
     pub extra_account_metas_list: UncheckedAccount<'info>,
 
-    /// sender transfer switch account
+    /// sender transfer switch
     #[account(
-        seeds=[sender.key().as_ref()],
+        seeds=[wallet.key().as_ref()],
         bump,
     )]
-    pub sender_switch: Account<'info, TransferSwitch>,
+    pub wallet_switch: Account<'info, TransferSwitch>,
 }
 
 impl<'info> TransferHook<'info> {
     pub fn assert_switch_is_on(&mut self) -> Result<()> {
-        if !self.sender_switch.on {
+        if !self.wallet_switch.on {
             return err!(TransferError::SwitchNotOn);
         }
         Ok(())

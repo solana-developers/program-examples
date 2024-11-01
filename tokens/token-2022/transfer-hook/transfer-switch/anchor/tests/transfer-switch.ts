@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
+  AccountLayout,
   ExtensionType,
   TOKEN_2022_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
@@ -12,7 +13,7 @@ import {
   getAssociatedTokenAddressSync,
   getMintLen,
 } from '@solana/spl-token';
-import { PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { Keypair, SystemProgram } from '@solana/web3.js';
 import { Transaction } from '@solana/web3.js';
 import { TransactionInstruction } from '@solana/web3.js';
@@ -63,6 +64,12 @@ describe('Transfer switch', async () => {
     return [user, userTokenAccount, createUserTokenAccountIx];
   }
 
+  // admin config address
+  const adminConfigAddress = PublicKey.findProgramAddressSync([Buffer.from('admin-config')], PROGRAM_ID)[0];
+
+  // helper for getting wallet switch
+  const walletTransferSwitchAddress = (wallet: PublicKey) => PublicKey.findProgramAddressSync([wallet.toBuffer()], PROGRAM_ID)[0];
+
   // sender
   const [sender, senderTokenAccount, senderTokenAccountCreateIx] = newUser();
 
@@ -112,15 +119,33 @@ describe('Transfer switch', async () => {
   });
 
   // Account to store extra accounts required by the transfer hook instruction
+  // This will be called for every mint
+  //
   it('Create ExtraAccountMetaList Account', async () => {
     await program.methods
-      .create()
+      .initializeExtraAccountMetasList()
       .accounts({
-        admin: payer.publicKey,
+        payer: payer.publicKey,
         tokenMint: mint.publicKey,
       })
       .signers([payer])
       .rpc();
+  });
+
+  // Set the account that controls the switches for the wallet
+  it('Configure an admin', async () => {
+    await program.methods
+      .configureAdmin()
+      .accounts({
+        admin: payer.publicKey,
+        newAdmin: payer.publicKey,
+      })
+      .signers([payer])
+      .rpc();
+
+    const adminConfig = await program.account.adminConfig.fetch(adminConfigAddress);
+    assert(adminConfig.isInitialised === true, 'admin config not initialised');
+    assert(adminConfig.admin.toBase58() === payer.publicKey.toBase58(), 'admin does not match');
   });
 
   // Account to store extra accounts required by the transfer hook instruction
@@ -128,11 +153,16 @@ describe('Transfer switch', async () => {
     await program.methods
       .switch(false)
       .accountsPartial({
-        user: sender.publicKey,
+        wallet: sender.publicKey,
         admin: payer.publicKey,
       })
       .signers([payer])
       .rpc();
+
+    const walletSwitch = await program.account.transferSwitch.fetch(walletTransferSwitchAddress(sender.publicKey));
+
+    assert(walletSwitch.wallet.toBase58() === sender.publicKey.toBase58(), 'wallet key does not match');
+    assert(!walletSwitch.on, 'wallet switch not set to false');
   });
 
   it('Try transfer, should fail!', async () => {
@@ -141,6 +171,17 @@ describe('Transfer switch', async () => {
     const bigIntAmount = BigInt(amount);
 
     const [recipient, recipientTokenAccount, recipientTokenAccountCreateIx] = newUser();
+
+    // create the recipient token account ahead of the transfer,
+    //
+    let transaction = new Transaction().add(
+      recipientTokenAccountCreateIx, // create recipient token account
+    );
+
+    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.sign(payer, recipient);
+
+    client.processTransaction(transaction);
 
     // Standard token transfer instruction
     const transferInstruction = await createTransferCheckedWithTransferHookInstruction(
@@ -156,15 +197,21 @@ describe('Transfer switch', async () => {
       TOKEN_2022_PROGRAM_ID,
     );
 
-    const transaction = new Transaction().add(
-      recipientTokenAccountCreateIx, // create recipient token account
+    transaction = new Transaction().add(
       transferInstruction, // transfer instruction
     );
 
     transaction.recentBlockhash = context.lastBlockhash;
     transaction.sign(payer, sender);
 
+    // expect the transaction to fail
+    //
     expectRevert(client.processTransaction(transaction));
+
+    const recipientTokenAccountData = (await client.getAccount(recipientTokenAccount)).data;
+    const recipientBalance = AccountLayout.decode(recipientTokenAccountData).amount;
+
+    assert(recipientBalance === BigInt(0), 'transfer was successful');
   });
 
   // Account to store extra accounts required by the transfer hook instruction
@@ -172,11 +219,16 @@ describe('Transfer switch', async () => {
     await program.methods
       .switch(true)
       .accountsPartial({
-        user: sender.publicKey,
+        wallet: sender.publicKey,
         admin: payer.publicKey,
       })
       .signers([payer])
       .rpc();
+
+    const walletSwitch = await program.account.transferSwitch.fetch(walletTransferSwitchAddress(sender.publicKey));
+
+    assert(walletSwitch.wallet.toBase58() === sender.publicKey.toBase58(), 'wallet key does not match');
+    assert(walletSwitch.on, 'wallet switch not set to true');
   });
 
   it('Send successfully', async () => {
@@ -206,5 +258,11 @@ describe('Transfer switch', async () => {
     transaction.sign(payer, sender);
 
     await client.processTransaction(transaction);
+
+    const recipientTokenAccountData = (await client.getAccount(recipientTokenAccount)).data;
+
+    const recipientBalance = AccountLayout.decode(recipientTokenAccountData).amount;
+
+    assert(recipientBalance === bigIntAmount, 'transfer was not successful');
   });
 });
