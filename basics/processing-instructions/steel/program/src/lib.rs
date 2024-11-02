@@ -42,5 +42,5 @@ pub struct Park {
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Zeroable)]
 pub enum ParkInstruction {
-    Park = 0
+    Park = 0,
 }
