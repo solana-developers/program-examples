@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{Transfer, transfer};
-declare_id!("8R1pBZKFyvBdR7LDa4R45JWSdUFnJdRSo9P1MPr571LC");
+declare_id!("Db6bufzTcWMDhiCUAuCv3AqCyeZKV4BSGG9ooCibQjrJ");
 #[program]
 pub mod pda_rent_payer {
     use super::*;
@@ -10,7 +10,7 @@ pub mod pda_rent_payer {
     ) -> Result<()> {
         let transfer_accounts = Transfer {
             from: ctx.accounts.payer.to_account_info(),
-            to: ctx.accounts.rentVault.to_account_info(),
+            to: ctx.accounts.rent_vault.to_account_info(),
         };
         let cpi_ctx = CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
@@ -24,8 +24,8 @@ pub mod pda_rent_payer {
         amount: u64,
     ) -> Result<()> {
         let transfer_accounts = Transfer {
-            from: ctx.accounts.rentVault.to_account_info(),
-            to: ctx.accounts.newAccount.to_account_info(),
+            from: ctx.accounts.rent_vault.to_account_info(),
+            to: ctx.accounts.new_account.to_account_info(),
         };
         let signer_seeds: &[&[&[u8]]; 1] = &[&[b"rent_vault", &[ctx.bumps.rent_vault]]];
         let cpi_ctx = CpiContext::new_with_signer(

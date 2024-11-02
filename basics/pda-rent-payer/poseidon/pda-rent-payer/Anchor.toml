@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pda_rent_payer = "8R1pBZKFyvBdR7LDa4R45JWSdUFnJdRSo9P1MPr571LC"
+pda_rent_payer = "Db6bufzTcWMDhiCUAuCv3AqCyeZKV4BSGG9ooCibQjrJ"
 
 [registry]
 url = "https://api.apr.dev"
