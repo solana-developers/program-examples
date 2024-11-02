@@ -21,8 +21,7 @@ fn process_instruction(
 
     msg!("Account span: {}", &account_span);
     msg!("Lamports required: {}", &lamports_required);
-    
-    
+
     // use `allocate_account`` steel helper for PDAs
     // allocate_account(target_account, system_program, payer, space, owner, seeds)
     //
@@ -40,4 +39,3 @@ fn process_instruction(
     msg!("Account created succesfully.");
     Ok(())
 }
-
