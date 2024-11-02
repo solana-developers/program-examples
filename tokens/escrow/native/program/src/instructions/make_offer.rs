@@ -47,7 +47,7 @@ impl MakeOffer {
         };
 
         // ensure the maker signs the instruction
-        // 
+        //
         if !maker.is_signer {
             return Err(ProgramError::MissingRequiredSignature);
         }
@@ -141,16 +141,15 @@ impl MakeOffer {
         )?;
 
         let vault_token_amount = TokenAccount::unpack(&vault.data.borrow())?.amount;
-        
+
         solana_program::msg!("Amount in vault: {}", vault_token_amount);
-        
+
         assert_eq!(vault_token_amount, args.token_a_offered_amount);
-        
+
         // write data into offer account
         //
         offer.serialize(&mut *offer_info.data.borrow_mut())?;
-        
-        
+
         Ok(())
     }
 }

@@ -5,7 +5,7 @@ use thiserror::Error;
 pub enum EscrowError {
     #[error("Offer key provided does not match expected")]
     OfferKeyMismatch,
-   
+
     #[error("Token account provided does not match expected")]
     TokenAccountMismatch,
 }

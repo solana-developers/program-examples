@@ -39,7 +39,7 @@ impl TakeOffer {
         };
 
         // ensure the taker signs the instruction
-        // 
+        //
         if !taker.is_signer {
             return Err(ProgramError::MissingRequiredSignature);
         }

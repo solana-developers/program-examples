@@ -1,7 +1,9 @@
-import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
+import { AccountLayout } from '@solana/spl-token';
 import { Transaction } from '@solana/web3.js';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
+import { OfferAccount } from './account';
 import { buildMakeOffer, buildTakeOffer } from './instruction';
 import { createValues, mintingTokens } from './utils';
 
@@ -53,6 +55,19 @@ describe('Escrow!', async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, values.maker);
     await client.processTransaction(tx);
+
+    const offerInfo = await client.getAccount(values.offer);
+    const offer = OfferAccount.fromBuffer(offerInfo.data).toData();
+
+    const vaultInfo = await client.getAccount(values.vault);
+    const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
+
+    assert(offer.id.toString() === values.id.toString(), 'wrong id');
+    assert(offer.maker.toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
+    assert(offer.token_mint_a.toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
+    assert(offer.token_mint_b.toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
+    assert(offer.token_b_wanted_amount.toString() === values.amountB.toString(), 'unexpected amount B');
+    assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), 'unexpected amount A');
   });
 
   test('Take Offer', async () => {
@@ -76,5 +91,20 @@ describe('Escrow!', async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, values.taker);
     await client.processTransaction(tx);
+
+    const offerInfo = await client.getAccount(values.offer);
+    assert(offerInfo === null, 'offer account not closed');
+
+    const vaultInfo = await client.getAccount(values.vault);
+    assert(vaultInfo === null, 'vault account not closed');
+
+    const makerTokenBInfo = await client.getAccount(values.makerAccountB);
+    const makerTokenAccountB = AccountLayout.decode(makerTokenBInfo.data);
+
+    const takerTokenAInfo = await client.getAccount(values.takerAccountA);
+    const takerTokenAccountA = AccountLayout.decode(takerTokenAInfo.data);
+
+    assert(takerTokenAccountA.amount.toString() === values.amountA.toString(), 'unexpected amount a');
+    assert(makerTokenAccountB.amount.toString() === values.amountB.toString(), 'unexpected amount b');
   });
 });
