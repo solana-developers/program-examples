@@ -33,7 +33,6 @@ fn process_instruction(
 
     // First create the account for the Mint
     //
-
     msg!("Creating mint account...");
     msg!("Mint: {}", mint_account.key);
     invoke(
