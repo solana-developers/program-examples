@@ -1,9 +1,16 @@
-import { Pubkey, type Result } from '@solanaturbine/poseidon';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Pubkey, type Result, Signer, SystemAccount, SystemProgram, u64 } from '@solanaturbine/poseidon';
 
 export default class PdaRentPayer {
-  static PROGRAM_ID = new Pubkey('11111111111111111111111111111111');
+  static PROGRAM_ID = new Pubkey('8R1pBZKFyvBdR7LDa4R45JWSdUFnJdRSo9P1MPr571LC');
 
-  initialize(): Result {
-    // Write your program here
+  initRentVault(payer: Signer, rentVault: SystemAccount, fundLamports: u64): Result {
+    rentVault.derive(['rent_vault']);
+    SystemProgram.transfer(payer, rentVault, fundLamports);
+  }
+
+  createNewAccount(newAccount: Signer, rentVault: SystemAccount, amount: u64): Result {
+    rentVault.derive(['rent_vault']);
+    SystemProgram.transfer(rentVault, newAccount, amount, ['rent_vault', rentVault.getBump()]);
   }
 }
