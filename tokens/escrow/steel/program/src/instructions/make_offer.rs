@@ -14,11 +14,7 @@ pub struct MakeOffer {
 }
 
 impl MakeOffer {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-        data: &[u8],
-    ) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
         let args = MakeOffer::try_from_bytes(data)?;
         let [
             // accounts order
@@ -45,7 +41,7 @@ impl MakeOffer {
         maker_token_account_a.as_associated_token_account(maker.key, token_mint_a.key)?;
 
         let offer_seeds = &[Offer::SEEDS, maker.key.as_ref(), &args.id.to_le_bytes()];
-        let (offer_address, offer_bump) = Pubkey::find_program_address(offer_seeds, program_id);
+        let (offer_address, offer_bump) = Pubkey::find_program_address(offer_seeds, &crate::ID);
 
         // check we have the right address, derived from the provided seeds
         //
@@ -53,7 +49,7 @@ impl MakeOffer {
 
         // create the offer account
         //
-        create_account::<Offer>(offer_info, system_program, payer, program_id, offer_seeds)?;
+        create_account::<Offer>(offer_info, system_program, payer, &crate::ID, offer_seeds)?;
 
         // create the vault token account, where the maker will send funds to
         //
@@ -81,7 +77,7 @@ impl MakeOffer {
             args.token_a_offered_amount,
         )?;
 
-        let offer = offer_info.as_account_mut::<Offer>(program_id)?;
+        let offer = offer_info.as_account_mut::<Offer>(&crate::ID)?;
 
         // we record our offer data
         //

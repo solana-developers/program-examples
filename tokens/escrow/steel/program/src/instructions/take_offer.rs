@@ -10,7 +10,7 @@ instruction!(EscrowInstruction, TakeOffer);
 pub struct TakeOffer {}
 
 impl TakeOffer {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [
             // accounts order
             offer_info,
@@ -37,7 +37,7 @@ impl TakeOffer {
         // Validate the offer
         //
         let offer = offer_info
-            .as_account::<Offer>(program_id)?
+            .as_account::<Offer>(&crate::ID)?
             .assert(|offer| {
                 offer.maker == *maker.key
                     && offer.token_mint_a == *token_mint_a.key
@@ -48,7 +48,7 @@ impl TakeOffer {
 
         // validate offer account
         //
-        offer_info.has_seeds(offer_seeds, program_id)?;
+        offer_info.has_seeds(offer_seeds, &crate::ID)?;
 
         // Create taker token a account, if needed
         //
@@ -155,9 +155,9 @@ impl TakeOffer {
         invoke_signed_with_bump(
             &spl_token::instruction::close_account(
                 token_program.key, // token program
-                vault.key, // token account to close
-                taker.key, // account to transfer lamports
-                offer_info.key, // token account ownder
+                vault.key,         // token account to close
+                taker.key,         // account to transfer lamports
+                offer_info.key,    // token account ownder
                 &[offer_info.key], // signer pubkeys
             )?,
             &[vault.clone(), taker.clone(), offer_info.clone()],
