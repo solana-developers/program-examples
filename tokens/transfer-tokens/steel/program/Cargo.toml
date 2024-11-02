@@ -7,8 +7,8 @@ edition = "2021"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-solana-program = "=1.18.17"
-steel = {version = "2.0", features = ["spl"]}
+solana-program = "1.18.17"
+steel = {version = "2.1", features = ["spl"]}
 bytemuck = "1.4"
 num_enum = "0.7"
 borsh = "1.5.1"

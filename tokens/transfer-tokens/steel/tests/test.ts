@@ -8,7 +8,7 @@ import { start } from 'solana-bankrun';
 import { CreateTokenArgs, MintNftArgs, MintSplArgs, MyInstruction, TransferTokensArgs } from './instructions';
 
 describe('Transfer Tokens!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start(
     [
       { name: 'transfer_tokens_steel_program', programId: PROGRAM_ID },
