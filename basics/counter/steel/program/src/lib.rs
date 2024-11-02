@@ -9,16 +9,11 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    // Use `crate::ID` for program_id in your program instead:
-    //
-    // e.g parse_instruction(&crate::ID, program_id, data)
-    //  or  counter_account.as_account_mut::<Counter>(&crate::ID)?
-    //
-    let (ix, _data) = parse_instruction(program_id, program_id, data)?;
+    let (ix, _data) = parse_instruction(&crate::ID, program_id, data)?;
 
     match ix {
-        CounterInstruction::Initialize => Initialize::process(program_id, accounts),
-        CounterInstruction::Increment => Increment::process(program_id, accounts),
+        CounterInstruction::Initialize => Initialize::process(accounts),
+        CounterInstruction::Increment => Increment::process(accounts),
     }
 }
 
@@ -36,7 +31,7 @@ instruction!(CounterInstruction, Initialize);
 pub struct Initialize {}
 
 impl Initialize {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [counter_account, payer, system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -45,18 +40,18 @@ impl Initialize {
         system_program.is_program(&system_program::ID)?; // system program check
         counter_account
             .is_writable()? // check the account is writable
-            .has_seeds(&[b"counter"], program_id)?; // check the address is derived from the right seeds
+            .has_seeds(&[b"counter"], &crate::ID)?; // check the address is derived from the right seeds
 
         // create the counter account
         create_account::<Counter>(
-            counter_account, // account to be created
-            system_program, // system program
-            payer, // payer
-            program_id, // program id
+            counter_account,  // account to be created
+            system_program,   // system program
+            payer,            // payer
+            &crate::ID,       // program id
             &[COUNTER_SEEDS], // seeds
         )?;
 
-        let counter = counter_account.as_account::<Counter>(program_id)?;
+        let counter = counter_account.as_account::<Counter>(&crate::ID)?;
         let count = counter.count;
 
         solana_program::msg!("Counter initialized! Count is {}", count);
@@ -72,16 +67,16 @@ instruction!(CounterInstruction, Increment);
 pub struct Increment {}
 
 impl Increment {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [counter_account] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
         counter_account
             .is_writable()? // check the account is writable
-            .has_seeds(&[COUNTER_SEEDS], program_id)?; // check the address is derived from the right seeds
+            .has_seeds(&[COUNTER_SEEDS], &crate::ID)?; // check the address is derived from the right seeds
 
-        let counter = counter_account.as_account_mut::<Counter>(program_id)?;
+        let counter = counter_account.as_account_mut::<Counter>(&crate::ID)?;
         counter.count += 1;
 
         let count = counter.count;
