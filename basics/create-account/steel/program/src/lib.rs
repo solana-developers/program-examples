@@ -29,8 +29,8 @@ pub fn process_instruction(
         &system_instruction::create_account(
             payer.key,
             new_account.key,
-            lamports, // send lmaports
-            0, // space
+            lamports,            // send lmaports
+            0,                   // space
             &system_program::ID, // owner program
         ),
         &[payer.clone(), new_account.clone(), system_program.clone()],
