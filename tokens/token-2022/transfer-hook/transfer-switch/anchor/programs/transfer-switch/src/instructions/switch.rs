@@ -38,7 +38,7 @@ pub struct Switch<'info> {
 impl<'info> Switch<'info> {
     pub fn switch(&mut self, on: bool) -> Result<()> {
         // toggle switch on/off for the given wallet
-        // 
+        //
         self.wallet_switch.set_inner(TransferSwitch {
             wallet: self.wallet.key(),
             on,

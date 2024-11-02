@@ -17,7 +17,9 @@ pub mod transfer_switch {
     }
 
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
-    pub fn initialize_extra_account_metas_list(ctx: Context<InitializeExtraAccountMetas>) -> Result<()> {
+    pub fn initialize_extra_account_metas_list(
+        ctx: Context<InitializeExtraAccountMetas>,
+    ) -> Result<()> {
         ctx.accounts.initialize_extra_account_metas_list(ctx.bumps)
     }
 
