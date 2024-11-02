@@ -74,7 +74,7 @@ const FavoritesSchema = new Map([
 
 describe('Favorites!', async () => {
   const favoritesAccount = Keypair.generate();
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'favorites_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
 

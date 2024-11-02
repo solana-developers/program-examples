@@ -12,6 +12,10 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
+    if program_id.ne(&crate::ID) {
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
     let favorites_data = bytemuck::try_from_bytes::<Favorites>(data)
         .or(Err(ProgramError::InvalidInstructionData))?;
 
@@ -20,7 +24,7 @@ pub fn process_instruction(
     };
 
     favorites_info.is_writable()?;
-    favorites_info.has_seeds(&[b"favorites", user.key.as_ref()], program_id)?;
+    favorites_info.has_seeds(&[FAVORITES_SEED, user.key.as_ref()], &crate::ID)?;
 
     // if we have not created our favourites account, let us create it
     if favorites_info.lamports() == 0 {
@@ -28,12 +32,12 @@ pub fn process_instruction(
             favorites_info,
             system_program,
             user,
-            program_id,
-            &[b"favorites", user.key.as_ref()],
+            &crate::ID,
+            &[FAVORITES_SEED, user.key.as_ref()],
         )?;
     }
 
-    let favorites = favorites_info.as_account_mut::<Favorites>(program_id)?;
+    let favorites = favorites_info.as_account_mut::<Favorites>(&crate::ID)?;
 
     *favorites = *favorites_data;
 
@@ -68,3 +72,5 @@ pub struct Favorites {
     pub color: [u8; 48],
     pub hobbies: [[u8; 48]; 5],
 }
+
+pub const FAVORITES_SEED: &[u8] = b"favorites";

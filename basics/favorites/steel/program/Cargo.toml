@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-solana-program = "=1.18.17"
+solana-program = "1.18.17"
 steel = "2.0"
 bytemuck = "1.14"
 num_enum = "0.7"

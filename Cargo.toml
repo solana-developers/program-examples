@@ -13,7 +13,6 @@ members = [
     "basics/create-account/native/program",
     "basics/create-account/anchor/programs/create-system-account",
     "basics/cross-program-invocation/anchor/programs/*",
-    "basics/favorites/steel/program",
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
     "basics/hello-solana/steel/program",
