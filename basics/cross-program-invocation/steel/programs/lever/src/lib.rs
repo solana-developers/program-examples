@@ -3,7 +3,7 @@ pub use instructions::*;
 
 use steel::*;
 
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
+declare_id!("E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN");
 
 #[cfg(not(feature = "no-entrypoint"))]
 entrypoint!(process_instruction);
@@ -13,11 +13,11 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(program_id, program_id, data)?;
+    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
 
     match ix {
-        SteelInstruction::InitializeLever => InitializeLever::process(program_id, accounts, data),
-        SteelInstruction::SetPowerStatus => SetPowerStatus::process(program_id, accounts, data),
+        SteelInstruction::InitializeLever => InitializeLever::process(accounts, data),
+        SteelInstruction::SetPowerStatus => SetPowerStatus::process(accounts, data),
     }
 }
 

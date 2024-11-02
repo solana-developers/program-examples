@@ -5,8 +5,8 @@ import * as borsh from 'borsh';
 import { start } from 'solana-bankrun';
 
 describe('CPI Example', async () => {
-  const LEVER_PROGRAM_ID = PublicKey.unique();
-  const HAND_PROGRAM_ID = PublicKey.unique();
+  const LEVER_PROGRAM_ID = new PublicKey('E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN');
+  const HAND_PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const powerAccount = Keypair.generate();
 
   const context = await start(

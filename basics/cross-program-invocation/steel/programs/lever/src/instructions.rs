@@ -20,7 +20,7 @@ pub struct InitializeLever {
 }
 
 impl InitializeLever {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
         let on = Self::try_from_bytes(data)?.on;
 
         let [power_info, user, system_program] = accounts else {
@@ -37,12 +37,12 @@ impl InitializeLever {
                 power_info.key,
                 lamports_required,
                 account_span as u64,
-                program_id,
+                &crate::ID,
             ),
             &[user.clone(), power_info.clone(), system_program.clone()],
         )?;
 
-        let power = power_info.as_account_mut::<PowerStatus>(program_id)?;
+        let power = power_info.as_account_mut::<PowerStatus>(&crate::ID)?;
 
         power.on = on;
 
@@ -63,14 +63,14 @@ pub struct SetPowerStatus {
 }
 
 impl SetPowerStatus {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
         let name = SetPowerStatus::try_from_bytes(data)?.name;
 
         let [power_info] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        let power = power_info.as_account_mut::<PowerStatus>(program_id)?;
+        let power = power_info.as_account_mut::<PowerStatus>(&crate::ID)?;
 
         // switch power status
         power.switch()?;

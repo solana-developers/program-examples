@@ -11,8 +11,8 @@ no-entrypoint = []
 cpi = ["no-entrypoint"]
 
 [dependencies]
-solana-program = "=1.18.17"
-steel = "2.0"
+solana-program = "1.18.17"
+steel = "2.1"
 bytemuck = "1.14"
 num_enum = "0.7"
 cross-program-invocation-steel-lever = { path = "../lever", features = ["cpi"] }
