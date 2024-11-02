@@ -1,4 +1,4 @@
-/// Helper for creating steel instruction with borsh. 
+/// Helper for creating steel instruction with borsh.
 /// Not required, but helpful with typing and CPI
 ///
 #[macro_export]
@@ -9,7 +9,7 @@ macro_rules! borsh_instruction {
                 $discriminator_name::$struct_name as u8
             }
         }
-        
+
         #[allow(dead_code)]
         // adds discriminator to the instruction data, helpful with cpis etc.
         impl $struct_name {

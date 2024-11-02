@@ -13,7 +13,7 @@ pub struct MintTo {
 
 impl MintTo {
     pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
-       let args = MintTo::try_from_bytes(data)?;
+        let args = MintTo::try_from_bytes(data)?;
 
         let [mint_account, mint_authority, associated_token_account, payer, system_program, token_program, associated_token_program] =
             accounts
