@@ -37,7 +37,6 @@ impl MintTo {
         }
         msg!("Associated Token Address: {}", associated_token_account.key);
 
-
         msg!("Minting NFT to associated token account...");
         mint_to_signed(
             mint_account,
