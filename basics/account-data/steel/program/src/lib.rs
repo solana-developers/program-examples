@@ -10,7 +10,8 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    // Parse data into address info.
+    // Parse data into AddressInfo.
+    //
     let address_info_data = bytemuck::try_from_bytes::<AddressInfo>(data)
         .or(Err(ProgramError::InvalidInstructionData))?;
 
@@ -26,13 +27,15 @@ pub fn process_instruction(
     let rent = Rent::get()?;
     let space = 8 + std::mem::size_of::<AddressInfo>();
 
+    // create the account
+    //
     solana_program::program::invoke(
         &solana_program::system_instruction::create_account(
             payer.key,
             address_info_account.key,
-            rent.minimum_balance(space),
-            space as u64,
-            program_id,
+            rent.minimum_balance(space), // lamports
+            space as u64,                // space
+            program_id,                  // program id
         ),
         &[
             payer.clone(),
@@ -41,9 +44,16 @@ pub fn process_instruction(
         ],
     )?;
 
+    // parse the account to AddressInfo
+    //
     let address_info = address_info_account.as_account_mut::<AddressInfo>(program_id)?;
 
-    *address_info = *address_info_data;
+    // set the account data
+    //
+    address_info.name = address_info_data.name;
+    address_info.house_number = address_info_data.house_number;
+    address_info.street = address_info_data.street;
+    address_info.city = address_info_data.city;
 
     Ok(())
 }
