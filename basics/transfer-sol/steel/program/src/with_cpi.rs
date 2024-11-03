@@ -1,7 +1,7 @@
-use crate::SteelInstruction;
+use crate::TransferInstruction;
 use steel::*;
 
-instruction!(SteelInstruction, TransferSolWithCpi);
+instruction!(TransferInstruction, TransferSolWithCpi);
 
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
