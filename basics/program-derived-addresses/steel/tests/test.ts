@@ -6,7 +6,7 @@ import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 describe('PDAs', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start(
     [
       {

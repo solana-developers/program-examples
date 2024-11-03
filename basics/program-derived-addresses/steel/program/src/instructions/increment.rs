@@ -8,23 +8,20 @@ instruction!(SteelInstruction, IncrementPageVisits);
 pub struct IncrementPageVisits {}
 
 impl IncrementPageVisits {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-    ) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [page_visits_account, user] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
         page_visits_account
             .is_writable()?
-            .has_owner(program_id)? 
+            .has_owner(&crate::ID)?
             .has_seeds(
                 &[PageVisits::SEED_PREFIX.as_bytes(), user.key.as_ref()],
-                program_id,
+                &crate::ID,
             )?;
 
-        let page_visits = page_visits_account.as_account_mut::<PageVisits>(program_id)?;
+        let page_visits = page_visits_account.as_account_mut::<PageVisits>(&crate::ID)?;
 
         page_visits.increment();
 

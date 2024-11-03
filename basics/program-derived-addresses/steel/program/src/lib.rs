@@ -16,14 +16,10 @@ pub fn process_instruction(
     data: &[u8],
 ) -> ProgramResult {
     // Parse data for instruction discriminator.
-    let (tag, _) = data
-        .split_first()
-        .ok_or(ProgramError::InvalidInstructionData)?;
-
-    let ix = SteelInstruction::try_from(*tag).or(Err(ProgramError::InvalidInstructionData))?;
+    let (ix, _data) = parse_instruction(&crate::ID, program_id, data)?;
 
     match ix {
-        SteelInstruction::CreatePageVisits => CreatePageVisits::process(program_id, accounts),
-        SteelInstruction::IncrementPageVisits => IncrementPageVisits::process(program_id, accounts),
+        SteelInstruction::CreatePageVisits => CreatePageVisits::process(accounts),
+        SteelInstruction::IncrementPageVisits => IncrementPageVisits::process(accounts),
     }
 }
