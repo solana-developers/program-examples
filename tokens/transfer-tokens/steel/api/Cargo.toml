@@ -1,5 +1,5 @@
 [package]
-name = "steel-api"
+name = "transfer-tokens-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,3 +11,4 @@ steel.workspace = true
 thiserror.workspace = true
 spl-token.workspace = true
 mpl-token-metadata.workspace = true
+spl-associated-token-account.workspace = true

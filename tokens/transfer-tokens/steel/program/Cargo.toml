@@ -1,5 +1,5 @@
 [package]
-name = "steel-program"
+name = "transfer-tokens-program"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,15 +7,16 @@ edition = "2021"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-steel-api.workspace = true
+transfer-tokens-api.workspace = true
 solana-program.workspace = true
 steel.workspace = true
 spl-token.workspace = true
 mpl-token-metadata.workspace = true
+spl-associated-token-account.workspace = true
 
 
 [dev-dependencies]
-bs64 = "0.1.2"
+base64 = "0.21"
 rand = "0.8.5"
 solana-program-test = "1.18"
 solana-sdk = "1.18"

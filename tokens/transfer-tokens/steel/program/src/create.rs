@@ -2,7 +2,7 @@ use solana_program::msg;
 use solana_program::program_pack::Pack;
 use spl_token::state::Mint;
 use steel::*;
-use steel_api::prelude::*;
+use transfer_tokens_api::prelude::*;
 
 pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     // parse args.
@@ -10,9 +10,10 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     let token_name = String::from_utf8(args.token_name.to_vec()).expect("Invalid UTF-8");
     let token_symbol = String::from_utf8(args.token_symbol.to_vec()).expect("Invalid UTF-8");
     let token_uri = String::from_utf8(args.token_uri.to_vec()).expect("Invalid UTF-8");
+    let token_decimals = args.token_decimals;
 
     // Load accounts.
-    let [payer_info, mint_info, mint_authority_info, metadata_info, token_program, system_program, rent_sysvar, token_metadata_program] =
+    let [payer_info, mint_info, metadata_info, system_program, token_program, metadata_program, rent_sysvar] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -20,25 +21,29 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
 
     // validation
     payer_info.is_signer()?;
-    mint_info.to_mint()?;
-    token_program.is_program(&spl_token::ID)?;
-    rent_sysvar.is_sysvar(&sysvar::rent::ID)?;
+    mint_info.is_empty()?.is_writable()?;
     system_program.is_program(&system_program::ID)?;
     token_program.is_program(&spl_token::ID)?;
-    token_metadata_program.is_program(&mpl_token_metadata::ID)?;
     rent_sysvar.is_sysvar(&sysvar::rent::ID)?;
 
     // First create the account for the Mint
     //
     msg!("Creating mint account...");
     msg!("Mint: {}", mint_info.key);
-    allocate_account(
-        mint_info,
-        &spl_token::ID,
-        Mint::LEN,
-        &[MINT, MINT_NOISE.as_slice()],
-        system_program,
-        payer_info,
+    solana_program::program::invoke(
+        &solana_program::system_instruction::create_account(
+            payer_info.key,
+            mint_info.key,
+            (solana_program::rent::Rent::get()?).minimum_balance(Mint::LEN),
+            Mint::LEN as u64,
+            token_program.key,
+        ),
+        &[
+            mint_info.clone(),
+            payer_info.clone(),
+            system_program.clone(),
+            token_program.clone(),
+        ],
     )?;
 
     // Now initialize that account as a Mint (standard Mint)
@@ -47,16 +52,16 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     msg!("Mint: {}", mint_info.key);
     solana_program::program::invoke(
         &spl_token::instruction::initialize_mint(
-            &spl_token::ID,
+            token_program.key,
             mint_info.key,
-            mint_authority_info.key,
-            Some(mint_authority_info.key),
-            9, // 9 Decimals for the default SPL Token standard,
+            payer_info.key,
+            Some(payer_info.key),
+            token_decimals, // 9 Decimals for the default SPL Token standard
         )?,
         &[
-            token_program.clone(),
             mint_info.clone(),
-            mint_authority_info.clone(),
+            payer_info.clone(),
+            token_program.clone(),
             rent_sysvar.clone(),
         ],
     )?;
@@ -66,10 +71,10 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     msg!("Creating metadata account...");
     msg!("Metadata account address: {}", metadata_info.key);
     mpl_token_metadata::instructions::CreateMetadataAccountV3Cpi {
-        __program: token_metadata_program,
+        __program: metadata_program,
         metadata: metadata_info,
         mint: mint_info,
-        mint_authority: mint_authority_info,
+        mint_authority: payer_info,
         payer: payer_info,
         update_authority: (payer_info, true),
         system_program,

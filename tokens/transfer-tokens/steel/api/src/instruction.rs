@@ -15,18 +15,19 @@ pub struct Create {
     pub token_name: [u8; 32],
     pub token_symbol: [u8; 8],
     pub token_uri: [u8; 64],
+    pub token_decimals: u8,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct Mint {
-    pub amount: [u8; 8],
+    pub quantity: [u8; 8],
 }
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct Transfer {
-    pub amount: [u8; 8],
+    pub quantity: [u8; 8],
 }
 
 instruction!(SteelInstruction, Create);

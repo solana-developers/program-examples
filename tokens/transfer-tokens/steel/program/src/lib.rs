@@ -1,20 +1,20 @@
 mod create;
 mod mint;
-mod tranfer;
+mod transfer;
 
 use create::*;
 use mint::*;
-use tranfer::*;
+use transfer::*;
 
 use steel::*;
-use steel_api::prelude::*;
+use transfer_tokens_api::prelude::*;
 
 pub fn process_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&steel_api::ID, program_id, data)?;
+    let (ix, data) = parse_instruction(&transfer_tokens_api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::Mint => process_mint(accounts, data)?,
