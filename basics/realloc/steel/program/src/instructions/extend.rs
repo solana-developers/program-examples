@@ -13,12 +13,8 @@ pub struct ExtendAddressInfo {
 }
 
 impl ExtendAddressInfo {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-        data: &[u8],
-    ) -> ProgramResult {
-        // Steel uses zero_copy types, so the sizes are fixed, however we can move from one account 
+    pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
+        // Steel uses zero_copy types, so the sizes are fixed, however we can move from one account
         // type to another, e.g AddressInfo -> ExtendedAddressInfo
 
         let [payer, address_info_account, _system_program] = accounts else {
@@ -29,11 +25,11 @@ impl ExtendAddressInfo {
         //
         let address_info_extended_data = Self::try_from_bytes(data)?.address_info;
 
-        let address_info = address_info_account.as_account::<AddressInfo>(program_id)?;
+        let address_info = address_info_account.as_account::<AddressInfo>(&crate::ID)?;
 
         // We collect our current address data and combime with the
         //  data extension
-        // 
+        //
         let extended_address_info_data = ExtendedAddressInfo {
             name: address_info.name,
             house_number: address_info.house_number,
@@ -44,16 +40,16 @@ impl ExtendAddressInfo {
         };
 
         // We get pay for the extra space we need before allocating the space
-        // 
+        //
         let account_span = 8 + (extended_address_info_data.to_bytes()).len();
         let lamports_required = (Rent::get()?).minimum_balance(account_span);
         let diff = lamports_required - address_info_account.lamports();
-        
+
         // transfer the difference
         address_info_account.collect(diff, payer)?;
-        
+
         // we reallocate new space to accomodate the new data
-        // 
+        //
         address_info_account.realloc(account_span, false)?;
 
         // we set the discriminator to the `ExtendedAccountInfo`, so Steel can deserialize.
@@ -66,11 +62,12 @@ impl ExtendAddressInfo {
         }
 
         // now we reset the account discriminator, we can deserialise as `ExtendedAddressInfo
-        // 
-        let extended_address_info = address_info_account.as_account_mut::<ExtendedAddressInfo>(program_id)?;
+        //
+        let extended_address_info =
+            address_info_account.as_account_mut::<ExtendedAddressInfo>(&crate::ID)?;
 
         // set the extended address info
-        // 
+        //
         *extended_address_info = extended_address_info_data;
 
         Ok(())

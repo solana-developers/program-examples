@@ -13,11 +13,10 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-   
-    let (ix, data) = parse_instruction(program_id, program_id, data)?;
+    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
 
     match ix {
-        SteelInstruction::CreateAddressInfo => CreateAddressInfo::process(program_id, accounts, data),
-        SteelInstruction::ExtendAddressInfo => ExtendAddressInfo::process(program_id, accounts, data)
+        SteelInstruction::CreateAddressInfo => CreateAddressInfo::process(accounts, data),
+        SteelInstruction::ExtendAddressInfo => ExtendAddressInfo::process(accounts, data),
     }
-    }
+}

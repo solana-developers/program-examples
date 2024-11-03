@@ -23,7 +23,6 @@ members = [
     "basics/program-derived-addresses/native/program",
     "basics/program-derived-addresses/anchor/programs/*",
     "basics/realloc/native/program",
-    "basics/realloc/steel/program",
     "basics/realloc/anchor/programs/*",
     "basics/rent/native/program",
     "basics/rent/anchor/programs/*",

@@ -12,11 +12,7 @@ pub struct CreateAddressInfo {
 }
 
 impl CreateAddressInfo {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-        data: &[u8],
-    ) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
         let address_info_data = Self::try_from_bytes(data)?.address_info;
 
         let [payer, address_info_account, system_program] = accounts else {
@@ -32,11 +28,11 @@ impl CreateAddressInfo {
             address_info_account,
             system_program,
             payer,
-            program_id,
+            &crate::ID,
             &[],
         )?;
 
-        let address_info = address_info_account.as_account_mut::<AddressInfo>(program_id)?;
+        let address_info = address_info_account.as_account_mut::<AddressInfo>(&crate::ID)?;
 
         *address_info = address_info_data;
 

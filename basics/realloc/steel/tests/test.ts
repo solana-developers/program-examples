@@ -4,8 +4,8 @@ import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction 
 import { start } from 'solana-bankrun';
 import { AddressInfo, AddressInfoExtender, ExtendedAddressInfo, ReallocInstruction } from './schema';
 
-describe('Account Data!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+describe('Realloc!', async () => {
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'realloc_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
 
