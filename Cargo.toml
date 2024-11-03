@@ -2,7 +2,6 @@
 members = [
     #basics
     "basics/account-data/native/program",
-    "basics/account-data/steel/program",
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",

@@ -10,8 +10,8 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    // Parse args.
-    let args = bytemuck::try_from_bytes::<AddressInfo>(data)
+    // Parse data into address info.
+    let address_info_data = bytemuck::try_from_bytes::<AddressInfo>(data)
         .or(Err(ProgramError::InvalidInstructionData))?;
 
     let [payer, address_info_account, system_program] = accounts else {
@@ -43,7 +43,7 @@ pub fn process_instruction(
 
     let address_info = address_info_account.as_account_mut::<AddressInfo>(program_id)?;
 
-    *address_info = *args;
+    *address_info = *address_info_data;
 
     Ok(())
 }
