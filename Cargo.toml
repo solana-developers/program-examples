@@ -17,7 +17,6 @@ members = [
     "basics/hello-solana/anchor/programs/*",
     "basics/hello-solana/steel/program",
     "basics/pda-rent-payer/native/program",
-    "basics/pda-rent-payer/steel/program",
     "basics/pda-rent-payer/anchor/programs/*",
     "basics/processing-instructions/native/program",
     "basics/processing-instructions/anchor/programs/*",

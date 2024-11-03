@@ -10,11 +10,7 @@ pub struct InitRentVault {
 }
 
 impl InitRentVault {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-        data: &[u8],
-    ) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
         // Parse args.
         let args = InitRentVault::try_from_bytes(data)?;
 
@@ -27,7 +23,7 @@ impl InitRentVault {
         rent_vault
             .is_writable()?
             .has_owner(&system_program::ID)? // we check that the account is owned by the system program.
-            .has_seeds(&[RentVault::SEED_PREFIX.as_bytes()], program_id)?;
+            .has_seeds(&[RentVault::SEED_PREFIX], &crate::ID)?;
 
         system_program.is_program(&system_program::ID)?;
 
@@ -36,8 +32,8 @@ impl InitRentVault {
             rent_vault,
             system_program,
             payer,
-            program_id,
-            &[RentVault::SEED_PREFIX.as_bytes()],
+            &crate::ID,
+            &[RentVault::SEED_PREFIX],
         )?;
 
         // send funds to vault

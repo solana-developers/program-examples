@@ -6,7 +6,7 @@ import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 describe('PDA Rent-Payer', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'pda_rent_payer_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;

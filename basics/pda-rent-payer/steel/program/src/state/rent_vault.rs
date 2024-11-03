@@ -8,5 +8,5 @@ account!(SteelAccount, RentVault);
 pub struct RentVault {}
 
 impl RentVault {
-    pub const SEED_PREFIX: &'static str = "rent_vault";
+    pub const SEED_PREFIX: &'static [u8] = b"rent_vault";
 }

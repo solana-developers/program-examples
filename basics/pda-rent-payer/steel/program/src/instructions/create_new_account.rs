@@ -9,7 +9,7 @@ instruction!(SteelInstruction, CreateNewAccount);
 pub struct CreateNewAccount {}
 
 impl CreateNewAccount {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [new_account, rent_vault, system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -17,7 +17,7 @@ impl CreateNewAccount {
         new_account.is_signer()?;
         rent_vault
             .is_writable()?
-            .has_seeds(&[RentVault::SEED_PREFIX.as_bytes()], program_id)?;
+            .has_seeds(&[RentVault::SEED_PREFIX], &crate::ID)?;
         system_program.is_program(&system_program::ID)?;
 
         let lamports_required_for_rent = (Rent::get()?).minimum_balance(0);
