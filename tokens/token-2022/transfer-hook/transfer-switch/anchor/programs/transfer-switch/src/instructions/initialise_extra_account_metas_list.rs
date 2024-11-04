@@ -41,7 +41,7 @@ impl<'info> InitializeExtraAccountMetas<'info> {
                     Seed::AccountKey { index: 3 }, // sender index
                 ],
                 false, // is_signer
-                true,  // is_writable
+                false, // is_writable
             )?,
         ];
 
