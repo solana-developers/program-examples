@@ -1,5 +1,5 @@
 [package]
-name = "steel-api"
+name = "pda-mint-authority-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,3 +12,4 @@ thiserror.workspace = true
 spl-token.workspace = true
 mpl-token-metadata.workspace = true
 const-crypto.workspace = true
+spl-associated-token-account.workspace = true

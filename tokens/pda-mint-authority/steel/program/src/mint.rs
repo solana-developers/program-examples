@@ -1,6 +1,6 @@
+use pda_mint_authority_api::prelude::*;
 use solana_program::msg;
 use steel::*;
-use steel_api::prelude::*;
 
 pub fn process_mint(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     // parse args.
@@ -8,43 +8,64 @@ pub fn process_mint(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult 
     let amount = u64::from_le_bytes(args.amount);
 
     // Load accounts.
-    let [signer_info, mint_info, to_info, authority_info, token_program] = accounts else {
+    let [payer_info, mint_info, ata_info, mint_authority_info, token_program, associated_token_program, system_program] =
+        accounts
+    else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
     msg!("Minting tokens to associated token account...");
     msg!("Mint: {:?}", mint_info);
-    msg!("Token Address: {:?}", &to_info);
+    msg!("Token Address: {:?}", &ata_info);
 
     // validation
-    signer_info.is_signer()?;
-    mint_info.to_mint()?;
+    payer_info.is_signer()?;
+    mint_info.as_mint()?;
     token_program.is_program(&spl_token::ID)?;
 
-    to_info
+    if ata_info.lamports() == 0 {
+        msg!("Creating associated token account...");
+        create_associated_token_account(
+            payer_info,
+            payer_info,
+            ata_info,
+            mint_info,
+            system_program,
+            token_program,
+            associated_token_program,
+        )?;
+        msg!("Associated Token Address: {}", ata_info.key);
+    } else {
+        msg!("Associated token account exists.");
+    }
+
+    mint_authority_info
         .is_writable()?
-        .to_associated_token_account(signer_info.key, mint_info.key)?
-        .check(|t| t.owner == *signer_info.key)?
-        .check(|t| t.mint == *mint_info.key)?;
+        .has_seeds(&[MINT_AUTHORITY], &pda_mint_authority_api::ID)?;
+    ata_info
+        .is_writable()?
+        .as_associated_token_account(payer_info.key, mint_info.key)?;
 
-    token_program.is_program(&spl_token::ID)?;
+    msg!("Minting token to associated token account...");
+    msg!("Mint: {}", mint_info.key);
+    msg!("Token Address: {}", ata_info.key);
 
     solana_program::program::invoke_signed(
         &spl_token::instruction::mint_to(
             &spl_token::id(),
             mint_info.key,
-            to_info.key,
-            authority_info.key,
-            &[authority_info.key],
+            ata_info.key,
+            mint_authority_info.key,
+            &[mint_authority_info.key],
             amount,
         )?,
         &[
             token_program.clone(),
             mint_info.clone(),
-            to_info.clone(),
-            authority_info.clone(),
+            ata_info.clone(),
+            mint_authority_info.clone(),
         ],
-        &[&[MINT_AUTHORITY, &[MINT_AUTHORITY_BUMP]]],
+        &[&[MINT_AUTHORITY, &[mint_authority_pda().1]]],
     )?;
 
     msg!("Token minted successfully.");

@@ -2,32 +2,29 @@ use steel::*;
 
 use crate::prelude::*;
 
+pub fn init(payer: Pubkey) -> Instruction {
+    let mint_authority_pda = mint_authority_pda();
+
+    Instruction {
+        program_id: crate::ID,
+        accounts: vec![
+            AccountMeta::new(mint_authority_pda.0, false),
+            AccountMeta::new(payer, false),
+            AccountMeta::new_readonly(system_program::ID, false),
+        ],
+        data: Init {}.to_bytes(),
+    }
+}
+
 pub fn create(
     payer: Pubkey,
-    token_name: String,
-    token_symbol: String,
-    token_uri: String,
+    mint: Pubkey,
+    token_name: [u8; 32],
+    token_symbol: [u8; 8],
+    token_uri: [u8; 64],
 ) -> Instruction {
-    let token_name_bytes: [u8; 32] = token_name
-        .as_bytes()
-        .try_into()
-        .expect("String wrong length, expected 32 bytes");
-    let token_symbol_bytes: [u8; 8] = token_symbol
-        .as_bytes()
-        .try_into()
-        .expect("String wrong length, expected 32 bytes");
-    let token_uri_bytes: [u8; 64] = token_uri
-        .as_bytes()
-        .try_into()
-        .expect("String wrong length, expected 32 bytes");
-
-    let mint_pda = Pubkey::find_program_address(&[MINT, MINT_NOISE.as_slice()], &crate::ID);
     let metadata_pda = Pubkey::find_program_address(
-        &[
-            METADATA,
-            mpl_token_metadata::ID.as_ref(),
-            mint_pda.0.as_ref(),
-        ],
+        &[METADATA, mpl_token_metadata::ID.as_ref(), mint.as_ref()],
         &mpl_token_metadata::ID,
     );
     let mint_authority_pda = mint_authority_pda();
@@ -35,40 +32,41 @@ pub fn create(
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(payer, true),
-            AccountMeta::new(mint_pda.0, false),
+            AccountMeta::new(mint, true),
             AccountMeta::new(mint_authority_pda.0, false),
             AccountMeta::new(metadata_pda.0, false),
+            AccountMeta::new(payer, true),
             AccountMeta::new_readonly(system_program::ID, false),
             AccountMeta::new_readonly(spl_token::ID, false),
             AccountMeta::new_readonly(mpl_token_metadata::ID, false),
             AccountMeta::new_readonly(sysvar::rent::ID, false),
         ],
         data: Create {
-            token_name: token_name_bytes,
-            token_symbol: token_symbol_bytes,
-            token_uri: token_uri_bytes,
-            mint_authority_bump: mint_authority_pda.1,
-            mint_bump: mint_pda.1,
+            token_name,
+            token_symbol,
+            token_uri,
         }
         .to_bytes(),
     }
 }
 pub fn mint(
-    signer: Pubkey,
+    payer: Pubkey,
     mint: Pubkey,
-    to: Pubkey,
-    authority: Pubkey,
+    associated_token_account: Pubkey,
     amount: u64,
 ) -> Instruction {
+    let mint_authority_pda = mint_authority_pda();
+
     Instruction {
         program_id: crate::ID,
         accounts: vec![
-            AccountMeta::new(signer, true),
+            AccountMeta::new(payer, true),
             AccountMeta::new(mint, false),
-            AccountMeta::new(to, false),
-            AccountMeta::new(authority, false),
+            AccountMeta::new(associated_token_account, false),
+            AccountMeta::new(mint_authority_pda.0, false),
             AccountMeta::new_readonly(spl_token::ID, false),
+            AccountMeta::new_readonly(spl_associated_token_account::ID, false),
+            AccountMeta::new_readonly(system_program::ID, false),
         ],
         data: Mint {
             amount: amount.to_le_bytes(),

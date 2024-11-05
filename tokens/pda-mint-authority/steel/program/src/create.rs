@@ -1,8 +1,8 @@
+use pda_mint_authority_api::prelude::*;
 use solana_program::msg;
 use solana_program::program_pack::Pack;
 use spl_token::state::Mint;
 use steel::*;
-use steel_api::prelude::*;
 
 pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     // parse args.
@@ -12,48 +12,44 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     let token_uri = String::from_utf8(args.token_uri.to_vec()).expect("Invalid UTF-8");
 
     // Load accounts.
-    let [payer_info, mint_info, mint_authority_info, metadata_info, token_program, system_program, rent_sysvar, token_metadata_program] =
+    let [mint_info, mint_authority_info, metadata_info, payer_info, system_program, token_program, token_metadata_program, rent_sysvar] =
         accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
-
     // validation
     payer_info.is_signer()?;
-    mint_info.to_mint()?;
-    token_program.is_program(&spl_token::ID)?;
+    mint_info.is_empty()?.is_writable()?;
     rent_sysvar.is_sysvar(&sysvar::rent::ID)?;
     system_program.is_program(&system_program::ID)?;
     token_program.is_program(&spl_token::ID)?;
-    token_metadata_program.is_program(&mpl_token_metadata::ID)?;
-    rent_sysvar.is_sysvar(&sysvar::rent::ID)?;
+    msg!("{:?}", token_metadata_program.is_executable());
 
-    mint_authority_info.is_empty()?.is_writable()?.has_seeds(
-        &[MINT_AUTHORITY],
-        args.mint_authority_bump,
-        &steel_api::ID,
-    )?;
+    let (mint_authority_pda, bump) = mint_authority_pda();
+    assert!(&mint_authority_pda.eq(mint_authority_info.key));
 
-    // Initialize mint authority.
-    create_account::<MintAuthorityPda>(
-        mint_authority_info,
-        &steel_api::ID,
-        &[MINT_AUTHORITY, &[args.mint_authority_bump]],
-        system_program,
-        payer_info,
-    )?;
+    mint_authority_info
+        .is_writable()?
+        .has_seeds(&[MINT_AUTHORITY], &pda_mint_authority_api::ID)?;
 
     // First create the account for the Mint
     //
     msg!("Creating mint account...");
     msg!("Mint: {}", mint_info.key);
-    allocate_account(
-        mint_info,
-        &spl_token::ID,
-        Mint::LEN,
-        &[MINT, MINT_NOISE.as_slice(), &[args.mint_bump]],
-        system_program,
-        payer_info,
+    solana_program::program::invoke(
+        &solana_program::system_instruction::create_account(
+            payer_info.key,
+            mint_info.key,
+            (solana_program::rent::Rent::get()?).minimum_balance(Mint::LEN),
+            Mint::LEN as u64,
+            token_program.key,
+        ),
+        &[
+            mint_info.clone(),
+            payer_info.clone(),
+            system_program.clone(),
+            token_program.clone(),
+        ],
     )?;
 
     // Now initialize that account as a Mint (standard Mint)
@@ -62,7 +58,7 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     msg!("Mint: {}", mint_info.key);
     solana_program::program::invoke(
         &spl_token::instruction::initialize_mint(
-            &spl_token::ID,
+            token_program.key,
             mint_info.key,
             mint_authority_info.key,
             Some(mint_authority_info.key),
@@ -103,7 +99,7 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
             collection_details: None,
         },
     }
-    .invoke_signed(&[&[MINT_AUTHORITY, &[args.mint_authority_bump]]])?;
+    .invoke_signed(&[&[MINT_AUTHORITY, &[bump]]])?;
 
     msg!("Token mint created successfully.");
 
