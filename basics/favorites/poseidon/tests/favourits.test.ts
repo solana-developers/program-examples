@@ -27,10 +27,11 @@ describe("account favorites program", () => {
 
     const favorites = {
       number: 2,
-      // color: "blue",
+      color: "blue",
+      hobbies: ["coding", "chess"],
     };
     await program.methods
-      .initialize(favorites.number)
+      .initialize(favorites.number, favorites.color, favorites.hobbies)
       .accounts({
         user: favoritesAccount.publicKey,
       })
@@ -41,12 +42,14 @@ describe("account favorites program", () => {
     console.log(`Owner: ${account.owner}`);
     console.log(`Number: ${account.number}`);
     console.log(`Bump: ${account.bump}`);
-    // console.log(`Color: ${account.color}`);
-
+    console.log(`Color: ${account.color}`);
+    console.log(`Hobbies: ${account.hobbies}`);
     expect(account.bump).to.be.a("number");
     expect(account.owner.toBase58()).to.equal(
       favoritesAccount.publicKey.toBase58()
     );
     expect(account.number).to.equal(favorites.number);
+    expect(account.color).to.equal(favorites.color);
+    expect(account.hobbies).to.deep.equal(favorites.hobbies);
   });
 });
