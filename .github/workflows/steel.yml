@@ -97,103 +97,110 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.x]
-        solana-version: [1.18.17, stable]
         index: ${{ fromJson(needs.changes.outputs.matrix) }}
     name: build-and-test-group-${{ matrix.index }}
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           check-latest: true
-      - uses: heyAyushh/setup-solana@v5.4
-        with:
-          solana-cli-version: ${{ matrix.solana-version }}
-      - run: solana block
-        shell: bash
-      - name: Install pnpm
-        run: npm install --global pnpm
-      - name: Build and Test
-        env:
-          TOTAL_PROJECTS: ${{ needs.changes.outputs.total_projects }}
-          PROJECTS_PER_JOB: ${{ env.MIN_PROJECTS_PER_JOB }}
+      - name: Setup build environment
+        id: setup
         run: |
+          # Create the build and test function
+          cat << 'EOF' > build_and_test.sh
           function build_and_test() {
             local project=$1
-            echo "Building and Testing $project"
+            local solana_version=$2
+            echo "Building and Testing $project with Solana $solana_version"
             cd "$project" || return 1
 
-            # Install dependencies and build
+            # Install dependencies
             if ! pnpm install --frozen-lockfile; then
               echo "::error::pnpm install failed for $project"
-              echo "$project: pnpm install failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
             fi
 
+            # Build
             if ! pnpm build; then
               echo "::error::build failed for $project"
-              echo "$project: build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
             fi
 
-            # Run tests
+            # Test
             if ! pnpm build-and-test; then
               echo "::error::tests failed for $project"
-              echo "$project: tests failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
             fi
 
-            echo "Build and tests succeeded for $project."
+            echo "Build and tests succeeded for $project with $solana_version version."
             cd - > /dev/null
             return 0
           }
 
-          # Determine which projects to build in this job
-          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
-          start_index=$(( ${{ matrix.index }} * PROJECTS_PER_JOB ))
-          end_index=$(( start_index + PROJECTS_PER_JOB ))
-          end_index=$(( end_index > TOTAL_PROJECTS ? TOTAL_PROJECTS : end_index ))
+          function process_projects() {
+            local solana_version=$1
 
-          echo "Projects to build and test in this job"
-          for i in $(seq $start_index $(( end_index - 1 ))); do
-            echo "${all_projects[$i]}"
-          done
+            readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+            start_index=$(( ${{ matrix.index }} * ${{ env.MIN_PROJECTS_PER_JOB }} ))
+            end_index=$(( start_index + ${{ env.MIN_PROJECTS_PER_JOB }} ))
+            end_index=$(( end_index > ${{ needs.changes.outputs.total_projects }} ? ${{ needs.changes.outputs.total_projects }} : end_index ))
 
-          # Build and test projects
-          failed=false
-          failed_projects=()
-          for i in $(seq $start_index $(( end_index - 1 ))); do
-            echo "::group::Building and testing ${all_projects[$i]}"
-            if ! build_and_test "${all_projects[$i]}"; then
-              failed=true
-              failed_projects+=("${all_projects[$i]}")
-            fi
-            echo "::endgroup::"
-          done
+            echo "Projects to build and test in this job"
+            for i in $(seq $start_index $(( end_index - 1 ))); do
+              echo "${all_projects[$i]}"
+            done
 
-          if [[ "$failed" == "true" ]]; then
-            echo "::group::Failed projects"
-            cat $GITHUB_WORKSPACE/failed_projects.txt
-            echo "::endgroup::"
-            echo "failed_projects=${failed_projects[@]}" >> $GITHUB_OUTPUT
-            exit 1
-          else
-            echo "failed_projects=" >> $GITHUB_OUTPUT
-          fi
+            failed=false
+            for i in $(seq $start_index $(( end_index - 1 ))); do
+              echo "::group::Building and testing ${all_projects[$i]}"
+              if ! build_and_test "${all_projects[$i]}" "$solana_version"; then
+                failed=true
+              fi
+              echo "::endgroup::"
+            done
+
+            return $([ "$failed" = true ] && echo 1 || echo 0)
+          }
+          EOF
+
+          # Make the script executable
+          chmod +x build_and_test.sh
+
+          # Install pnpm
+          npm install --global pnpm
+      - name: Test with Solana stable
+        uses: heyAyushh/setup-solana@v5.4
+        with:
+          solana-cli-version: stable
+      - name: Build and Test with Stable
+        run: |
+          source build_and_test.sh
+          solana block
+          solana -V
+          rustc -V
+          process_projects "stable"
 
       - name: Set failed projects output
         id: set-failed
         if: failure()
         run: |
-          failed_projects=$(cat $GITHUB_WORKSPACE/failed_projects.txt | jq -R -s -c 'split("\n")[:-1]')
-          echo "failed_projects=$failed_projects" >> $GITHUB_OUTPUT
+          if [ -f "$GITHUB_WORKSPACE/failed_projects.txt" ]; then
+            failed_projects=$(cat $GITHUB_WORKSPACE/failed_projects.txt | jq -R -s -c 'split("\n")[:-1]')
+            echo "failed_projects=$failed_projects" >> $GITHUB_OUTPUT
+          else
+            echo "failed_projects=[]" >> $GITHUB_OUTPUT
+          fi
 
   summary:
     needs: [changes, build-and-test]
