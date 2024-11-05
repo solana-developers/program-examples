@@ -179,7 +179,7 @@ jobs:
 
           # Install pnpm
           npm install --global pnpm
-      - name: Test with Solana stable
+      - name: Setup Solana stable
         uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: stable
@@ -189,7 +189,7 @@ jobs:
           solana -V
           rustc -V
           process_projects "stable"
-      - name: Test with Solana 1.18.17
+      - name: Setup Solana 1.18.17
         uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: 1.18.17
