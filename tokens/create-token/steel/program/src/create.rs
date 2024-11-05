@@ -24,6 +24,7 @@ pub fn process_create(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResul
     mint_info.is_empty()?.is_writable()?;
     system_program.is_program(&system_program::ID)?;
     token_program.is_program(&spl_token::ID)?;
+    metadata_program.is_program(&mpl_token_metadata::ID)?;
     rent_sysvar.is_sysvar(&sysvar::rent::ID)?;
 
     // First create the account for the Mint

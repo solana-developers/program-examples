@@ -14,9 +14,8 @@ import {
   Transaction,
   TransactionInstruction,
 } from "@solana/web3.js";
-import { BN } from "bn.js";
 import { start } from "solana-bankrun";
-import { CreateTokenArgs, SplMinterInstruction } from "./instructions";
+import { CreateTokenArgs } from "./instructions";
 
 describe("Create Tokens!", async () => {
   const PROGRAM_ID = new PublicKey(
@@ -51,7 +50,7 @@ describe("Create Tokens!", async () => {
       "Solana Gold",
       "GOLDSOL",
       "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
-      "9",
+      9,
     );
 
     const createTokenIx = new TransactionInstruction({
@@ -107,7 +106,7 @@ describe("Create Tokens!", async () => {
       "Homer NFT",
       "HOMR",
       "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
-      "0",
+      0,
     );
 
     const createTokenIx = new TransactionInstruction({
