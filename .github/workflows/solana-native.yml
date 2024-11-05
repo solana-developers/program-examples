@@ -36,7 +36,7 @@ jobs:
             native:
               - added|modified: '**/native/**'
             workflow:
-              - added|modified: '.github/workflows/native.yml'
+              - added|modified: '.github/workflows/solana-native.yml'
       - name: Analyze Changes
         id: analyze
         run: |

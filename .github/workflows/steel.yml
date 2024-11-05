@@ -186,10 +186,19 @@ jobs:
       - name: Build and Test with Stable
         run: |
           source build_and_test.sh
-          solana block
           solana -V
           rustc -V
           process_projects "stable"
+      - name: Test with Solana 1.18.17
+        uses: heyAyushh/setup-solana@v5.4
+        with:
+          solana-cli-version: 1.18.17
+      - name: Build and Test with 1.18.17
+        run: |
+          source build_and_test.sh
+          solana -V
+          rustc -V
+          process_projects "1.18.17"
 
       - name: Set failed projects output
         id: set-failed
