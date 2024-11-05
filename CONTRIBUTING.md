@@ -16,7 +16,7 @@ We welcome contributions in the form of code, documentation, bug reports, featur
 
 ## General coding and writing guidelines
 
-Please follow the [Contributing and Style Guide from the Developer Content Repo](https://github.com/solana-foundation/developer-content/blob/main/CONTRIBUTING.md). 
+Please follow the [Contributing and Style Guide from the Developer Content Repo](https://github.com/solana-foundation/developer-content/blob/main/CONTRIBUTING.md).
 
 Specifically for code in this repo:
 
@@ -43,7 +43,7 @@ Specifically for code in this repo:
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
 ```bash
-pnpm check:fix
+pnpm fix
 ```
 
 7. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
