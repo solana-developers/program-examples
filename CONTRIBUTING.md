@@ -16,19 +16,17 @@ We welcome contributions in the form of code, documentation, bug reports, featur
 
 ## General coding and writing guidelines
 
-Please follow the [Contributing and Style Guide from the Developer Content Repo](https://github.com/solana-foundation/developer-content/blob/main/CONTRIBUTING.md). 
+Please follow the [Contributing and Style Guide from the Developer Content Repo](https://github.com/solana-foundation/developer-content/blob/main/CONTRIBUTING.md).
 
 Specifically for code in this repo:
 
 1. Use pnpm as the default package manager for the project. You can [install pnpm by following the instructions](https://pnpm.io/installation). Commit `pnpm-lock.yaml` to the repository.
 
-2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `posidon` and Python in `seahorse.
+2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `poseidon` and Python in `seahorse`.
 
-3. Tests for Solana native, Steel and Anchor programs should be written with [ts-mocha](https://github.com/piotrwitek/ts-mocha).
+3. Tests for Solana native programs, steel framework programs, and Anchor should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
 
-4. Tests for solana native programs and steel framework programs should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
-
-5. For Solana native programs and Steel framework programs ensure adding these mandatory pnpm run scripts to your `package.json`. file for successful ci/cd builds:
+4. For Solana native programs and Steel framework programs ensure adding these mandatory pnpm run scripts to your `package.json` file for successful CI/CD builds:
 
 ```json
 "scripts": {
@@ -39,18 +37,19 @@ Specifically for code in this repo:
 },
 ```
 
-6. Test command for anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
+5. Test command for Anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
 
-7. TypeScript, JavaScript and JSON files are formatted and linted using
+6. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
-8. Some projects can be ignored from the building and testing process by adding the project name to the `.ghaignore` file.
-When removing or updating an example, please ensure that the example is removed from the `.ghaignore` file
+```bash
+pnpm fix
+```
+
+7. Some projects can be ignored from the building and testing process by adding the project name to the `.gitignore` file.
+When removing or updating an example, please ensure that the example is removed from the `.gitignore` file
 and there's a change in that example's directory.
 
-```bash
-pnpm check:fix
-```
 
 ## Code of Conduct
 
