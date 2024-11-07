@@ -1,8 +1,9 @@
+pub mod api;
 mod hello;
 
+use api::prelude::*;
 use hello::*;
 
-use hello_solana_api::prelude::*;
 use steel::*;
 
 pub fn process_instruction(
@@ -10,7 +11,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&hello_solana_api::ID, program_id, data)?;
+    let (ix, data) = parse_instruction(&api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::HelloSolana => process_hello(accounts, data)?,
