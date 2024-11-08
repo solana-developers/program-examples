@@ -1,4 +1,5 @@
-use crate::{state::MintAuthorityPda, SteelInstruction};
+use super::SteelInstruction;
+use crate::state::MintAuthorityPda;
 use solana_program::msg;
 use steel::*;
 
@@ -14,7 +15,7 @@ impl Init {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX.as_bytes()], program_id)?;
+        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
 
         msg!("Creating mint authority PDA...");
         msg!("Mint Authority: {}", &mint_authority.key);
@@ -23,7 +24,7 @@ impl Init {
             system_program,
             payer,
             program_id,
-            &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
+            &[MintAuthorityPda::SEED_PREFIX],
         )?;
 
         msg!("Token mint created successfully.");

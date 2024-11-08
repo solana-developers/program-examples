@@ -1,11 +1,5 @@
-mod borsh_instruction;
-mod instructions;
-mod state;
-
-use instructions::*;
+use pda_mint_authority_steel_api::prelude::*;
 use steel::*;
-
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
 
 entrypoint!(process_instruction);
 
@@ -14,7 +8,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
+    let (ix, data) = parse_instruction(&pda_mint_authority_steel_api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::Init => Init::process(program_id, accounts)?,

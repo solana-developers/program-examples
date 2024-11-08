@@ -1,4 +1,5 @@
-use crate::{borsh_instruction, state::MintAuthorityPda, SteelInstruction};
+use super::SteelInstruction;
+use crate::{borsh_instruction, state::MintAuthorityPda};
 use borsh::{BorshDeserialize, BorshSerialize};
 use mpl_token_metadata::{instructions as mpl_instruction, types::DataV2};
 use solana_program::{msg, program::invoke, program_pack::Pack, rent::Rent, system_instruction};
@@ -28,7 +29,7 @@ impl CreateToken {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX.as_bytes()], program_id)?;
+        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
 
         // First create the account for the Mint
         //
@@ -104,7 +105,7 @@ impl CreateToken {
                 rent.clone(),
             ],
             program_id,
-            &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
+            &[MintAuthorityPda::SEED_PREFIX],
         )?;
 
         msg!("Token mint created successfully.");
