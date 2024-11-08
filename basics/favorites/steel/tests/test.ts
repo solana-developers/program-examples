@@ -89,6 +89,12 @@ describe('Favorites!', async () => {
     console.log(`Payer Address   : ${payer.publicKey}`);
     console.log(`Favorites Acct  : ${favoritesAccount.publicKey}`);
 
+    const favorites = Favorites.fromInfo({
+      number: 2,
+      color: 'green',
+      hobbies: ['singing', 'reading', 'jogging', 'dancing', 'traveling'],
+    });
+
     const ix = new TransactionInstruction({
       keys: [
         {
@@ -104,11 +110,10 @@ describe('Favorites!', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: Favorites.fromInfo({
-        number: 2,
-        color: 'green',
-        hobbies: ['singing', 'reading', 'jogging', 'dancing', 'traveling'],
-      }).toBuffer(),
+      data: Buffer.concat([
+        Buffer.from([0]), // SetFavorites Discriminator
+        favorites.toBuffer(),
+      ]),
     });
 
     const blockhash = context.lastBlockhash;
