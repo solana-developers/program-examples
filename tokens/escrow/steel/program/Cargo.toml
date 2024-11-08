@@ -7,9 +7,5 @@ edition = "2021"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-solana-program = "1.18.17"
-steel = {version ="2.1", features=["spl"]}
-bytemuck = "1.14"
-num_enum = "0.7"
-fixed = "=1.27.0"
-spl-token = { version = "4.0.0", features = [ "no-entrypoint" ] }
+steel.workspace = true
+escrow-steel-api = {path = "../api"}
