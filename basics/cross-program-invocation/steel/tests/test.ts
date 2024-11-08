@@ -68,7 +68,7 @@ describe('CPI Example', async () => {
       ],
       programId: LEVER_PROGRAM_ID,
       data: Buffer.concat([
-        Buffer.from([0]), // the instruction discriminator
+        Buffer.from([0]), // Initilaize Lever instruction discriminator
         new PowerStatus({ on: true }).toBuffer(),
       ]),
     });
@@ -89,7 +89,10 @@ describe('CPI Example', async () => {
         { pubkey: LEVER_PROGRAM_ID, isSigner: false, isWritable: false },
       ],
       programId: HAND_PROGRAM_ID,
-      data: SetPowerStatus.from({ name: 'Chris' }).toBuffer(),
+      data: Buffer.concat([
+        Buffer.from([0]), // Pull Lever Instruction discriminator
+        SetPowerStatus.from({ name: 'Chris' }).toBuffer(),
+      ]),
     });
 
     const blockhash = context.lastBlockhash;
@@ -108,7 +111,10 @@ describe('CPI Example', async () => {
         { pubkey: LEVER_PROGRAM_ID, isSigner: false, isWritable: false },
       ],
       programId: HAND_PROGRAM_ID,
-      data: SetPowerStatus.from({ name: 'Ashley' }).toBuffer(),
+      data: Buffer.concat([
+        Buffer.from([0]), // Pull Lever Instrution discriminator
+        SetPowerStatus.from({ name: 'Ashley' }).toBuffer(),
+      ]),
     });
 
     const blockhash = context.lastBlockhash;

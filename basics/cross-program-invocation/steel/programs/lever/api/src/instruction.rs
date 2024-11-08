@@ -1,18 +1,16 @@
-use std::ffi::CStr;
-
+use crate::state::*;
 use solana_program::{msg, program::invoke, rent::Rent, system_instruction};
+use std::ffi::CStr;
 use steel::*;
-
-use crate::PowerStatus;
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
-pub enum SteelInstruction {
+pub enum LeverInstruction {
     InitializeLever = 0,
     SetPowerStatus = 1,
 }
 
-instruction!(SteelInstruction, InitializeLever);
+instruction!(LeverInstruction, InitializeLever);
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct InitializeLever {
@@ -55,7 +53,7 @@ impl InitializeLever {
     }
 }
 
-instruction!(SteelInstruction, SetPowerStatus);
+instruction!(LeverInstruction, SetPowerStatus);
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct SetPowerStatus {
