@@ -1,10 +1,5 @@
-mod instructions;
-mod state;
-
-use instructions::{CloseUser, CreateUser, SteelInstruction};
+use close_account_steel_api::prelude::*;
 use steel::*;
-
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
 
 entrypoint!(process_instruction);
 
@@ -13,7 +8,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
+    let (ix, data) = parse_instruction(&close_account_steel_api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::CreateUser => CreateUser::process(program_id, accounts, data),
