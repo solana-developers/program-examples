@@ -14,17 +14,18 @@ class Assignable {
   }
 }
 
-class CreateTokenArgs extends Assignable {
+class CreateTokenInstructionData extends Assignable {
   toBuffer() {
-    return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
+    return Buffer.from(borsh.serialize(CreateTokenInstructionDataSchema, this));
   }
 }
-const CreateTokenArgsSchema = new Map([
+const CreateTokenInstructionDataSchema = new Map([
   [
-    CreateTokenArgs,
+    CreateTokenInstructionData,
     {
       kind: 'struct',
       fields: [
+        ['discriminator', 'u8'], // add the instructiion discriminator
         ['token_title', 'string'],
         ['token_symbol', 'string'],
         ['token_uri', 'string'],
@@ -35,7 +36,7 @@ const CreateTokenArgsSchema = new Map([
 ]);
 
 describe('Create Tokens!', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start(
     [
       { name: 'create_token_steel_program', programId: PROGRAM_ID },
@@ -56,7 +57,8 @@ describe('Create Tokens!', async () => {
 
     // SPL Token default = 9 decimals
     //
-    const instructionData = new CreateTokenArgs({
+    const instructionData = new CreateTokenInstructionData({
+      discriminator: 0,
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
@@ -79,7 +81,7 @@ describe('Create Tokens!', async () => {
         }, // Token metadata program
       ],
       programId: PROGRAM_ID,
-      data: instructionData.toBuffer(),
+      data: Buffer.concat([instructionData.toBuffer()]),
     });
 
     const tx = new Transaction();
@@ -91,7 +93,6 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 
   test('Create an NFT!', async () => {
@@ -104,7 +105,8 @@ describe('Create Tokens!', async () => {
 
     // NFT default = 0 decimals
     //
-    const instructionData = new CreateTokenArgs({
+    const instructionData = new CreateTokenInstructionData({
+      discriminator: 0,
       token_title: 'Homer NFT',
       token_symbol: 'HOMR',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
@@ -139,6 +141,5 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-    // console.log(`   Tx Signature: ${sx}`);
   });
 });
