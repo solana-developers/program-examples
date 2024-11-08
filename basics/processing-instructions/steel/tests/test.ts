@@ -5,7 +5,7 @@ import * as borsh from 'borsh';
 import { start } from 'solana-bankrun';
 
 describe('custom-instruction-data', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'processing_instructions_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
@@ -50,6 +50,14 @@ describe('custom-instruction-data', async () => {
     ],
   ]);
 
+  enum ParkInstruction {
+    Park = 0,
+  }
+
+  const addInstructionDiscriminator = (discriminator: ParkInstruction, instructionData: InstructionData) => {
+    return Buffer.concat([Buffer.from([discriminator]), instructionData.toBuffer()]);
+  };
+
   test('Go to the park!', async () => {
     const blockhash = context.lastBlockhash;
 
@@ -66,12 +74,12 @@ describe('custom-instruction-data', async () => {
     const ix1 = new TransactionInstruction({
       keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
       programId: PROGRAM_ID,
-      data: jimmy.toBuffer(),
+      data: addInstructionDiscriminator(ParkInstruction.Park, jimmy),
     });
 
     const ix2 = new TransactionInstruction({
       ...ix1,
-      data: mary.toBuffer(),
+      data: addInstructionDiscriminator(ParkInstruction.Park, mary),
     });
 
     const tx = new Transaction();

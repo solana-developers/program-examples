@@ -1,3 +1,9 @@
 [workspace]
-members = ["program"]
+members = ["api", "program"]
 resolver = "2"
+
+[workspace.dependencies]
+solana-program = "1.18.17"
+steel = "2.1"
+bytemuck = "1.4"
+num_enum = "0.7"
