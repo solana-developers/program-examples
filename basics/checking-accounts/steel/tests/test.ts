@@ -4,7 +4,7 @@ import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction 
 import { start } from 'solana-bankrun';
 
 describe('Checking accounts', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'checking_accounts_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
@@ -43,7 +43,7 @@ describe('Checking accounts', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: Buffer.alloc(0),
+      data: Buffer.from([0]), // instruction discriminator
     });
 
     const tx = new Transaction();

@@ -1,11 +1,13 @@
 [package]
-name = "checking-accounts-steel-program"
+name = "checking-accounts-steel-api"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+solana-program.workspace = true
 steel.workspace = true
-checking-accounts-steel-api = {path = "../api"}
+bytemuck.workspace = true
+num_enum.workspace = true
 
 [lib]
 crate-type = ["cdylib", "lib"]
