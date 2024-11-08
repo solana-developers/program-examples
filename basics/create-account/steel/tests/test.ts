@@ -5,7 +5,7 @@ import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 describe('Create a system account', async () => {
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'create_account_steel_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
@@ -21,7 +21,7 @@ describe('Create a system account', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: Buffer.alloc(0),
+      data: Buffer.from([0]), // instruction discriminator
     });
 
     const tx = new Transaction();
