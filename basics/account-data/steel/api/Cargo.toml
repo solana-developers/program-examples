@@ -1,5 +1,5 @@
 [package]
-name = "account-data-steel-program"
+name = "account-data-steel-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,4 +11,3 @@ solana-program.workspace = true
 steel.workspace = true
 bytemuck.workspace = true
 num_enum.workspace = true
-account-data-steel-api = {path = "../api"}

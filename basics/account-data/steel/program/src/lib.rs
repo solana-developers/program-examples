@@ -1,7 +1,6 @@
+use account_data_steel_api::prelude::*;
 use solana_program::rent::Rent;
 use steel::*;
-
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
 
 entrypoint!(process_instruction);
 
@@ -56,20 +55,4 @@ pub fn process_instruction(
     address_info.city = address_info_data.city;
 
     Ok(())
-}
-
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
-pub enum SteelAccount {
-    AddressInfo = 0,
-}
-
-account!(SteelAccount, AddressInfo);
-#[repr(C, packed)]
-#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
-pub struct AddressInfo {
-    pub name: [u8; 48],
-    pub house_number: u8,
-    pub street: [u8; 48],
-    pub city: [u8; 48],
 }
