@@ -1,10 +1,5 @@
-mod borsh_instruction;
-mod instructions;
-
-use instructions::*;
 use steel::*;
-
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
+use transfer_tokens_steel_api::prelude::*;
 
 entrypoint!(process_instruction);
 
@@ -13,7 +8,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&crate::ID, program_id, data)?;
+    let (ix, data) = parse_instruction(&transfer_tokens_steel_api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::Create => Create::process(accounts, data)?,

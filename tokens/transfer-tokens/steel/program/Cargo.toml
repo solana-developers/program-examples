@@ -7,11 +7,5 @@ edition = "2021"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-solana-program = "1.18.17"
 steel = {version = "2.1", features = ["spl"]}
-bytemuck = "1.4"
-num_enum = "0.7"
-borsh = "1.5.1"
-spl-token = { version = "4.0.0", features = [ "no-entrypoint" ] }
-spl-associated-token-account = { version = "3.0.4", features = [ "no-entrypoint" ] }
-mpl-token-metadata = { version = "4.1.2" }
+transfer-tokens-steel-api = {path = "../api"}

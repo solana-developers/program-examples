@@ -10,7 +10,6 @@ macro_rules! borsh_instruction {
             }
         }
 
-        #[allow(dead_code)]
         // adds discriminator to the instruction data, helpful with cpis etc.
         impl $struct_name {
             pub fn to_bytes(&self) -> Result<Vec<u8>, solana_program::program_error::ProgramError> {
