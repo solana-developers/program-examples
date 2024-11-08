@@ -1,10 +1,12 @@
-use crate::{state::MintAuthorityPda, SteelInstruction};
+use crate::state::MintAuthorityPda;
 use mpl_token_metadata::instructions as mpl_instruction;
 use solana_program::msg;
 use steel::*;
 
-instruction!(SteelInstruction, MintTo);
+use super::SteelInstruction;
 
+instruction!(SteelInstruction, MintTo);
+// MintTo instruction
 #[repr(C, packed)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct MintTo {}
@@ -17,7 +19,7 @@ impl MintTo {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX.as_bytes()], program_id)?;
+        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
 
         // First create the token account for the user
         //
@@ -44,7 +46,7 @@ impl MintTo {
             mint_authority,
             token_program,
             1,
-            &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
+            &[MintAuthorityPda::SEED_PREFIX],
         )?;
 
         // We can make this a Limited Edition NFT through Metaplex,
@@ -78,7 +80,7 @@ impl MintTo {
                 rent.clone(),
             ],
             program_id,
-            &[MintAuthorityPda::SEED_PREFIX.as_bytes()],
+            &[MintAuthorityPda::SEED_PREFIX],
         )?;
 
         msg!("NFT minted successfully.");

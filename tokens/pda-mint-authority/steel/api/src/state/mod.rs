@@ -15,5 +15,5 @@ pub struct MintAuthorityPda {
 }
 
 impl MintAuthorityPda {
-    pub const SEED_PREFIX: &'static str = "mint_authority";
+    pub const SEED_PREFIX: &'static [u8] = b"mint_authority";
 }
