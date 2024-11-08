@@ -1,15 +1,17 @@
 use solana_program::{msg, program::invoke, rent::Rent, system_instruction};
 use steel::*;
 
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
-
 entrypoint!(process_instruction);
 
 fn process_instruction(
-    _program_id: &Pubkey,
+    program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
+    if program_id.ne(&rent_steel_api::ID) {
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
     let [payer, new_account, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
