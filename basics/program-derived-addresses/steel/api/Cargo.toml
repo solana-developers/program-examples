@@ -1,5 +1,5 @@
 [package]
-name = "program-derived-addresses-steel-program"
+name = "program-derived-addresses-steel-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,7 +8,6 @@ solana-program.workspace = true
 steel.workspace = true
 bytemuck.workspace = true
 num_enum.workspace = true
-program-derived-addresses-steel-api = {path = "../api"}
 
 [lib]
 crate-type = ["cdylib", "lib"]

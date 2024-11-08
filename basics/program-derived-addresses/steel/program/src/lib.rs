@@ -1,9 +1,4 @@
-mod instructions;
-mod state;
-
-use instructions::*;
-use state::*;
-
+use program_derived_addresses_steel_api::prelude::*;
 use steel::*;
 
 declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
