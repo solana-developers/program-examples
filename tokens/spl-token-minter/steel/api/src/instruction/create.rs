@@ -1,4 +1,5 @@
-use crate::{borsh_instruction, SteelInstruction};
+use super::SteelInstruction;
+use crate::borsh_instruction;
 use borsh::{BorshDeserialize, BorshSerialize};
 use mpl_token_metadata::{instructions as mpl_instruction, types::DataV2};
 use solana_program::{msg, program::invoke, program_pack::Pack, rent::Rent, system_instruction};

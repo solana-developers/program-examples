@@ -1,4 +1,4 @@
-use crate::SteelInstruction;
+use super::SteelInstruction;
 use solana_program::{msg, program::invoke};
 use spl_token::instruction::{self as token_instruction};
 use steel::*;
