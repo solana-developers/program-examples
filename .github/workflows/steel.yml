@@ -90,61 +90,35 @@ jobs:
             echo "matrix=[$(echo $indices | tr ' ' ',')]" >> $GITHUB_OUTPUT
           fi
 
-  fmt:
+  rust-checks:
     needs: changes
     if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.total_projects != '0' }}
-    name: Rustfmt
+    name: Rust Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt
-      - uses: mozilla-actions/sccache-action@v0.0.4
-      - name: Run fmt
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
+          components: rustfmt, clippy
+      - name: Run sccache-cache
+        if: github.event_name != 'release'
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: Set Rust cache env vars
+        if: github.event_name != 'release'
         run: |
-          echo "Checking projects: ${{ needs.changes.outputs.changed_projects }}"
-          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]' | sed 's/^\.//')
-          echo "Projects to check:"
-          printf '%s\n' "${projects[@]}"
-          for project in "${projects[@]}"; do
-            if [ -f "${project}/Cargo.toml" ]; then
-              echo "Running fmt check in ${project}"
-              cd "${project}"
-              cargo fmt --check || exit 1
-              cd - > /dev/null
-            fi
-          done
-
-  clippy:
-    needs: changes
-    if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.total_projects != '0' }}
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
-      - uses: mozilla-actions/sccache-action@v0.0.4
-      - name: Run clippy
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
+          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+      - name: Run fmt and clippy
         run: |
-          echo "Checking projects: ${{ needs.changes.outputs.changed_projects }}"
-          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]' | sed 's/^\.//')
-          echo "Projects to check:"
-          printf '%s\n' "${projects[@]}"
-          for project in "${projects[@]}"; do
+          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+          for project in "${all_projects[@]}"; do
             if [ -f "${project}/Cargo.toml" ]; then
-              echo "Running clippy in ${project}"
+              echo "::group::Checking ${project}"
               cd "${project}"
-              cargo clippy --all-features -- -D warnings || exit 1
+              cargo fmt --check
+              cargo clippy --all-features -- -D warnings
               cd - > /dev/null
+              echo "::endgroup::"
             fi
           done
 
@@ -160,10 +134,29 @@ jobs:
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
-
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run sccache-cache
+        if: github.event_name != 'release'
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: Set Rust cache env vars
+        if: github.event_name != 'release'
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/steel
+          key: ${{ runner.os }}-steel-cli
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          check-latest: true
       - name: Setup build environment
         id: setup
         run: |
+          npm install --global pnpm
           # Create the build and test function
           cat << 'EOF' > build_and_test.sh
           function build_and_test() {
@@ -198,13 +191,13 @@ jobs:
               fi
             else
               # Use Steel CLI
-              if ! cargo install steel-cli; then
+              if ! cargo install --quiet steel-cli; then
                 echo "::error::steel-cli installation failed for $project"
                 echo "$project: steel-cli installation failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
                 cd - > /dev/null
                 return 1
               fi
-
+              
               # Build
               if ! steel build; then
                 echo "::error::steel build failed for $project"
@@ -221,7 +214,7 @@ jobs:
                 return 1
               fi
             fi
-
+            
             echo "Build and tests succeeded for $project with $solana_version version."
             cd - > /dev/null
             return 0
@@ -256,8 +249,6 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-          # Install pnpm
-          npm install --global pnpm
       - name: Setup Solana stable
         uses: heyAyushh/setup-solana@v5.4
         with:
@@ -341,4 +332,3 @@ jobs:
           else
             echo "## :warning: Build and test job was skipped or canceled" >> $GITHUB_STEP_SUMMARY
           fi
-          
