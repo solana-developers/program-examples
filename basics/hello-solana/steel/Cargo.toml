@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["program"]
+members = ["api", "program"]
 
 [workspace.package]
 version = "0.1.0"
@@ -13,6 +13,7 @@ readme = "./README.md"
 keywords = ["solana"]
 
 [workspace.dependencies]
+hello-solana-api = { path = "./api", version = "0.1.0" }
 bytemuck = "1.14"
 num_enum = "0.7"
 solana-program = "1.18"

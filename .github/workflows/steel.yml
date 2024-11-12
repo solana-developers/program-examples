@@ -112,14 +112,16 @@ jobs:
         run: |
           readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
           for project in "${all_projects[@]}"; do
-            if [ -f "${project}/Cargo.toml" ]; then
-              echo "::group::Checking ${project}"
-              cd "${project}"
-              cargo fmt --check
-              cargo clippy --all-features -- -D warnings
-              cd - > /dev/null
-              echo "::endgroup::"
+            echo "::group::Checking ${project}"
+            if [ ! -f "${project}/Cargo.toml" ]; then
+              echo "::error::No Cargo.toml found in ${project}"
+              exit 1
             fi
+            cd "${project}"
+            cargo fmt --check
+            cargo clippy --all-features -- -D warnings
+            cd - > /dev/null
+            echo "::endgroup::"
           done
 
   build-and-test:
@@ -157,6 +159,7 @@ jobs:
         id: setup
         run: |
           npm install --global pnpm
+
           # Create the build and test function
           cat << 'EOF' > build_and_test.sh
           function build_and_test() {
@@ -197,7 +200,7 @@ jobs:
                 cd - > /dev/null
                 return 1
               fi
-              
+
               # Build
               if ! steel build; then
                 echo "::error::steel build failed for $project"
@@ -214,7 +217,7 @@ jobs:
                 return 1
               fi
             fi
-            
+
             echo "Build and tests succeeded for $project with $solana_version version."
             cd - > /dev/null
             return 0
