@@ -102,12 +102,19 @@ jobs:
           components: rustfmt
       - uses: mozilla-actions/sccache-action@v0.0.4
       - name: Run fmt
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
-          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]')
+          echo "Checking projects: ${{ needs.changes.outputs.changed_projects }}"
+          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]' | sed 's/^\.//')
+          echo "Projects to check:"
+          printf '%s\n' "${projects[@]}"
           for project in "${projects[@]}"; do
-            if [ -f "$project/Cargo.toml" ]; then
-              cd "$project"
-              cargo fmt --check
+            if [ -f "${project}/Cargo.toml" ]; then
+              echo "Running fmt check in ${project}"
+              cd "${project}"
+              cargo fmt --check || exit 1
               cd - > /dev/null
             fi
           done
@@ -124,12 +131,19 @@ jobs:
           components: clippy
       - uses: mozilla-actions/sccache-action@v0.0.4
       - name: Run clippy
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
-          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]')
+          echo "Checking projects: ${{ needs.changes.outputs.changed_projects }}"
+          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]' | sed 's/^\.//')
+          echo "Projects to check:"
+          printf '%s\n' "${projects[@]}"
           for project in "${projects[@]}"; do
-            if [ -f "$project/Cargo.toml" ]; then
-              cd "$project"
-              cargo clippy -- -D warnings
+            if [ -f "${project}/Cargo.toml" ]; then
+              echo "Running clippy in ${project}"
+              cd "${project}"
+              cargo clippy --all-features -- -D warnings || exit 1
               cd - > /dev/null
             fi
           done
@@ -146,12 +160,7 @@ jobs:
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          check-latest: true
+
       - name: Setup build environment
         id: setup
         run: |
@@ -332,3 +341,4 @@ jobs:
           else
             echo "## :warning: Build and test job was skipped or canceled" >> $GITHUB_STEP_SUMMARY
           fi
+          
