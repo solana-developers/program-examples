@@ -90,6 +90,50 @@ jobs:
             echo "matrix=[$(echo $indices | tr ' ' ',')]" >> $GITHUB_OUTPUT
           fi
 
+  fmt:
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.total_projects != '0' }}
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Run fmt
+        run: |
+          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]')
+          for project in "${projects[@]}"; do
+            if [ -f "$project/Cargo.toml" ]; then
+              cd "$project"
+              cargo fmt --check
+              cd - > /dev/null
+            fi
+          done
+
+  clippy:
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.total_projects != '0' }}
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: mozilla-actions/sccache-action@v0.0.4
+      - name: Run clippy
+        run: |
+          readarray -t projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]')
+          for project in "${projects[@]}"; do
+            if [ -f "$project/Cargo.toml" ]; then
+              cd "$project"
+              cargo clippy -- -D warnings
+              cd - > /dev/null
+            fi
+          done
+
   build-and-test:
     needs: changes
     if: needs.changes.outputs.total_projects != '0'
@@ -120,27 +164,53 @@ jobs:
             cd "$project" || return 1
 
             # Install dependencies
-            if ! pnpm install --frozen-lockfile; then
-              echo "::error::pnpm install failed for $project"
-              echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
-            fi
+            if [ -f "package.json" ]; then
+              if ! pnpm install --frozen-lockfile; then
+                echo "::error::pnpm install failed for $project"
+                echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
 
-            # Build
-            if ! pnpm build; then
-              echo "::error::build failed for $project"
-              echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
-            fi
+              # Build
+              if ! pnpm build; then
+                echo "::error::build failed for $project"
+                echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
 
-            # Test
-            if ! pnpm build-and-test; then
-              echo "::error::tests failed for $project"
-              echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
+              # Test
+              if ! pnpm build-and-test; then
+                echo "::error::tests failed for $project"
+                echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+            else
+              # Use Steel CLI
+              if ! cargo install steel-cli; then
+                echo "::error::steel-cli installation failed for $project"
+                echo "$project: steel-cli installation failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+
+              # Build
+              if ! steel build; then
+                echo "::error::steel build failed for $project"
+                echo "$project: steel build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+
+              # Test
+              if ! steel test; then
+                echo "::error::steel test failed for $project"
+                echo "$project: steel test failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
             fi
 
             echo "Build and tests succeeded for $project with $solana_version version."
@@ -184,21 +254,29 @@ jobs:
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           process_projects "stable"
+          sccache --show-stats
       - name: Setup Solana 1.18.17
         uses: heyAyushh/setup-solana@v5.4
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           process_projects "1.18.17"
+          sccache --show-stats
 
       - name: Set failed projects output
         id: set-failed
