@@ -90,6 +90,40 @@ jobs:
             echo "matrix=[$(echo $indices | tr ' ' ',')]" >> $GITHUB_OUTPUT
           fi
 
+  rust-checks:
+    needs: changes
+    if: ${{ github.event_name == 'pull_request' && needs.changes.outputs.total_projects != '0' }}
+    name: Rust Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Run sccache-cache
+        if: github.event_name != 'release'
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: Set Rust cache env vars
+        if: github.event_name != 'release'
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+      - name: Run fmt and clippy
+        run: |
+          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+          for project in "${all_projects[@]}"; do
+            echo "::group::Checking ${project}"
+            if [ ! -f "${project}/Cargo.toml" ]; then
+              echo "::error::No Cargo.toml found in ${project}"
+              exit 1
+            fi
+            cd "${project}"
+            cargo fmt --check
+            cargo clippy --all-features -- -D warnings
+            cd - > /dev/null
+            echo "::endgroup::"
+          done
+
   build-and-test:
     needs: changes
     if: needs.changes.outputs.total_projects != '0'
@@ -103,6 +137,19 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run sccache-cache
+        if: github.event_name != 'release'
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: Set Rust cache env vars
+        if: github.event_name != 'release'
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/steel
+          key: ${{ runner.os }}-steel-cli
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -111,6 +158,8 @@ jobs:
       - name: Setup build environment
         id: setup
         run: |
+          npm install --global pnpm
+
           # Create the build and test function
           cat << 'EOF' > build_and_test.sh
           function build_and_test() {
@@ -120,27 +169,53 @@ jobs:
             cd "$project" || return 1
 
             # Install dependencies
-            if ! pnpm install --frozen-lockfile; then
-              echo "::error::pnpm install failed for $project"
-              echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
-            fi
+            if [ -f "package.json" ]; then
+              if ! pnpm install --frozen-lockfile; then
+                echo "::error::pnpm install failed for $project"
+                echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
 
-            # Build
-            if ! pnpm build; then
-              echo "::error::build failed for $project"
-              echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
-            fi
+              # Build
+              if ! pnpm build; then
+                echo "::error::build failed for $project"
+                echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
 
-            # Test
-            if ! pnpm build-and-test; then
-              echo "::error::tests failed for $project"
-              echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
+              # Test
+              if ! pnpm build-and-test; then
+                echo "::error::tests failed for $project"
+                echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+            else
+              # Use Steel CLI
+              if ! cargo install --quiet steel-cli; then
+                echo "::error::steel-cli installation failed for $project"
+                echo "$project: steel-cli installation failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+
+              # Build
+              if ! steel build; then
+                echo "::error::steel build failed for $project"
+                echo "$project: steel build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+
+              # Test
+              if ! steel test; then
+                echo "::error::steel test failed for $project"
+                echo "$project: steel test failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
             fi
 
             echo "Build and tests succeeded for $project with $solana_version version."
@@ -177,28 +252,34 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-          # Install pnpm
-          npm install --global pnpm
       - name: Setup Solana stable
         uses: heyAyushh/setup-solana@v5.4
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           process_projects "stable"
+          sccache --show-stats
       - name: Setup Solana 1.18.17
         uses: heyAyushh/setup-solana@v5.4
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           process_projects "1.18.17"
+          sccache --show-stats
 
       - name: Set failed projects output
         id: set-failed
