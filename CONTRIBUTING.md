@@ -77,6 +77,11 @@ Alternatively, You can add `steel test` and `steel build` as commands according 
 
 7. Test command for Anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
 
+```
+[scripts]
+test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+```
+
 8. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
