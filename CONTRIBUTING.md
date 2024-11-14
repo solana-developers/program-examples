@@ -22,8 +22,9 @@ Specifically for code in this repo:
 
 1. Use pnpm as the default package manager for the project. You can [install pnpm by following the instructions](https://pnpm.io/installation). Commit `pnpm-lock.yaml` to the repository.
 
-2. Anchor programs should be in directory `anchor`, programs written for Solana Native should be in directory `native`, TypeScript in `poseidon` and Python in `seahorse`.
-  - Project path structure: `/program-examples/category/example-name/steel`
+2. Solana Programs written for Anchor framework  should be in directory (`anchor`)[https://www.anchor-lang.com], Solana Native in (`native`)[https://solana.com/developers/guides/getstarted/intro-to-native-rust], Steel Framework in (`steel`)[https://github.com/regolith-labs/steel], TypeScript in (`poseidon`)[https://github.com/Turbin3/poseidon], respectively.
+  - Project path structure: `/program-examples/category/example-name/<framework_name>`
+    - Project path structure example for anchor: `/program-examples/category/example-name/anchor`
 
 3. Tests for Solana native programs, steel framework programs, and Anchor should be written with [solana-bankrun](https://kevinheavey.github.io/solana-bankrun)
 
@@ -66,6 +67,13 @@ Specifically for code in this repo:
 ```
 
 Alternatively, You can add `steel test` and `steel build` as commands according to your project.
+
+"scripts": {
+  "test": "steel test",
+  "build-and-test": "steel build && steel test",
+  "build": "steel build",
+  "deploy": "solana program deploy ./program/target/so/program.so"
+},
 
 7. Test command for Anchor should execute `pnpm test` instead of `yarn run test` for anchor programs. Replace `yarn` with `pnpm` in `[script]` table inside [Anchor.toml file.](https://www.anchor-lang.com/docs/manifest#scripts-required-for-testing)
 
