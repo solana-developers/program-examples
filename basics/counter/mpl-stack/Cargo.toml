@@ -13,5 +13,5 @@ default = []
 
 [dependencies]
 borsh = "0.9"
-shank = "0.0.8"
+shank = "0.4.2"
 solana-program = "=1.18.17"
