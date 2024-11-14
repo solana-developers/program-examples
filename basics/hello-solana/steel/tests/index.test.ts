@@ -5,7 +5,7 @@ import { start } from 'solana-bankrun';
 
 describe('hello-solana', async () => {
   // load program in solana-bankrun
-  const PROGRAM_ID = PublicKey.unique();
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start([{ name: 'steel_hello_solana', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;

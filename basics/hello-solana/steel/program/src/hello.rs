@@ -1,4 +1,3 @@
-use crate::api::prelude::*;
 use solana_program::msg;
 use steel::*;
 
@@ -11,7 +10,7 @@ pub fn process_hello(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResul
 
     msg!("Hello, Solana!");
 
-    msg!("Our program's Program ID: {}", ID);
+    msg!("Our program's Program ID: {}", &hello_solana_api::ID);
 
     Ok(())
 }
