@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install Solana
+        run: sh -c "$(curl -sSfL https://release.solana.com/v1.17.0/install)"
+
+      - name: Install Dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+
+      - name: Build Program
+        run: anchor build
+
+      - name: Run Tests
+        run: |
+          solana-test-validator &
+          sleep 5
+          anchor test
+
+      - name: Run Rust Tests
+        run: |
+          cd programs/poseidon
+          cargo test
+
+      - name: Run Bankrun Tests
+        run: |
+          cd programs/poseidon
+          cargo test --features "test-bpf"
