@@ -11,9 +11,9 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&pda_mint_authority_steel_api::ID, program_id, data)?;
 
     match ix {
-        SteelInstruction::Init => Init::process(program_id, accounts)?,
-        SteelInstruction::CreateToken => CreateToken::process(program_id, accounts, data)?,
-        SteelInstruction::MintTo => MintTo::process(program_id, accounts)?,
+        SteelInstruction::Init => Init::process(accounts)?,
+        SteelInstruction::CreateToken => CreateToken::process(accounts, data)?,
+        SteelInstruction::MintTo => MintTo::process(accounts)?,
     }
 
     Ok(())

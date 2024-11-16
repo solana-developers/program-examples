@@ -10,24 +10,31 @@ instruction!(SteelInstruction, Init);
 pub struct Init {}
 
 impl Init {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [mint_authority, payer, system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
+        let (mint_authority_key, bump) =
+            Pubkey::find_program_address(&[MintAuthorityPda::SEED_PREFIX], &crate::ID);
+
+        mint_authority.has_address(&mint_authority_key)?;
 
         msg!("Creating mint authority PDA...");
         msg!("Mint Authority: {}", &mint_authority.key);
-        create_account::<MintAuthorityPda>(
+        create_account_with_bump::<MintAuthorityPda>(
             mint_authority,
             system_program,
             payer,
-            program_id,
+            &crate::ID,
             &[MintAuthorityPda::SEED_PREFIX],
+            bump,
         )?;
 
-        msg!("Token mint created successfully.");
+        let mint_authority_account =
+            mint_authority.as_account_mut::<MintAuthorityPda>(&crate::ID)?;
+
+        mint_authority_account.bump = bump;
 
         Ok(())
     }

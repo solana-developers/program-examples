@@ -16,11 +16,7 @@ pub struct CreateToken {
 }
 
 impl CreateToken {
-    pub fn process(
-        program_id: &Pubkey,
-        accounts: &[AccountInfo<'_>],
-        data: &[u8],
-    ) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
         let args = Self::try_from_slice(data)?;
 
         let [mint_account, mint_authority, metadata_account, payer, rent, system_program, token_program, _token_metadata_program] =
@@ -29,7 +25,7 @@ impl CreateToken {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
+        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], &crate::ID)?;
 
         // First create the account for the Mint
         //
@@ -104,7 +100,7 @@ impl CreateToken {
                 system_program.clone(),
                 rent.clone(),
             ],
-            program_id,
+            &crate::ID,
             &[MintAuthorityPda::SEED_PREFIX],
         )?;
 

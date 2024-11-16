@@ -12,14 +12,14 @@ instruction!(SteelInstruction, MintTo);
 pub struct MintTo {}
 
 impl MintTo {
-    pub fn process(program_id: &Pubkey, accounts: &[AccountInfo<'_>]) -> ProgramResult {
+    pub fn process(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         let [mint_account, metadata_account, edition_account, mint_authority, associated_token_account, payer, rent, system_program, token_program, associated_token_program, _token_metadata_program] =
             accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], program_id)?;
+        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], &crate::ID)?;
 
         // First create the token account for the user
         //
@@ -79,7 +79,7 @@ impl MintTo {
                 system_program.clone(),
                 rent.clone(),
             ],
-            program_id,
+            &crate::ID,
             &[MintAuthorityPda::SEED_PREFIX],
         )?;
 
