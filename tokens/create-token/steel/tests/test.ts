@@ -1,9 +1,10 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Metadata, PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
+import { MintLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
 class Assignable {
@@ -57,12 +58,16 @@ describe('Create Tokens!', async () => {
 
     // SPL Token default = 9 decimals
     //
-    const instructionData = new CreateTokenInstructionData({
-      discriminator: 0,
+    const tokenDetails = {
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
       token_decimals: 9,
+    };
+
+    const instructionData = new CreateTokenInstructionData({
+      ...tokenDetails,
+      discriminator: 0,
     });
 
     const ix = new TransactionInstruction({
@@ -93,6 +98,24 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+
+    const metadataInfo = await client.getAccount(metadataAddress);
+    assert(metadataInfo !== null, 'metadata account not created');
+
+    const [metadata] = Metadata.fromAccountInfo({
+      ...metadataInfo,
+      data: Buffer.from(metadataInfo.data),
+    });
+
+    assert(metadata.data.name.slice(0, tokenDetails.token_title.length) === tokenDetails.token_title, 'name does not match');
+    assert(metadata.data.symbol.slice(0, tokenDetails.token_symbol.length) === tokenDetails.token_symbol, 'symbol does not match');
+    assert(metadata.data.uri.slice(0, tokenDetails.token_uri.length) === tokenDetails.token_uri, 'uri does not match');
+    assert(metadata.mint.toBase58() === mintKeypair.publicKey.toBase58(), 'mint does not match');
+
+    const mintInfo = await client.getAccount(mintKeypair.publicKey);
+    const mint = MintLayout.decode(mintInfo.data);
+    assert(mint.mintAuthority.toBase58() === payer.publicKey.toBase58(), 'mint authority does not match');
+    assert(mint.decimals === 9, 'mint decimals does not match');
   });
 
   test('Create an NFT!', async () => {
@@ -105,12 +128,16 @@ describe('Create Tokens!', async () => {
 
     // NFT default = 0 decimals
     //
-    const instructionData = new CreateTokenInstructionData({
-      discriminator: 0,
+    const nftDetails = {
       token_title: 'Homer NFT',
       token_symbol: 'HOMR',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
       token_decimals: 0,
+    };
+
+    const instructionData = new CreateTokenInstructionData({
+      ...nftDetails,
+      discriminator: 0,
     });
 
     const ix = new TransactionInstruction({
@@ -141,5 +168,23 @@ describe('Create Tokens!', async () => {
 
     console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
+
+    const metadataInfo = await client.getAccount(metadataAddress);
+    assert(metadataInfo !== null, 'metadata account not created');
+
+    const [metadata] = Metadata.fromAccountInfo({
+      ...metadataInfo,
+      data: Buffer.from(metadataInfo.data),
+    });
+
+    assert(metadata.data.name.slice(0, nftDetails.token_title.length) === nftDetails.token_title, 'name does not match');
+    assert(metadata.data.symbol.slice(0, nftDetails.token_symbol.length) === nftDetails.token_symbol, 'symbol does not match');
+    assert(metadata.data.uri.slice(0, nftDetails.token_uri.length) === nftDetails.token_uri, 'uri does not match');
+    assert(metadata.mint.toBase58() === mintKeypair.publicKey.toBase58(), 'mint does not match');
+
+    const mintInfo = await client.getAccount(mintKeypair.publicKey);
+    const mint = MintLayout.decode(mintInfo.data);
+    assert(mint.mintAuthority.toBase58() === payer.publicKey.toBase58(), 'mint authority does not match');
+    assert(mint.decimals === 0, 'mint decimals does not match');
   });
 });
