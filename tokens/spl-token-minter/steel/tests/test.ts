@@ -34,7 +34,7 @@ describe('SPL Token Minter!', async () => {
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
-      token_decimals: 9,
+      decimals: 9,
     };
 
     const instructionData = new CreateTokenArgs(tokenDetails);
@@ -87,7 +87,8 @@ describe('SPL Token Minter!', async () => {
 
     const mintInfo = await client.getAccount(tokenMintKeypair.publicKey);
     const mint = MintLayout.decode(mintInfo.data);
-    assert(payer.publicKey.toBase58() === mint.mintAuthority.toBase58(), 'mint authority does not match');
+    assert(mint.mintAuthority.toBase58() === payer.publicKey.toBase58(), 'mint authority does not match');
+    assert(mint.decimals === tokenDetails.decimals, 'mint decimals does not match');
   });
 
   test('Mint some tokens to your wallet!', async () => {
@@ -137,14 +138,11 @@ describe('SPL Token Minter!', async () => {
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
 
-    const mintInfo = await client.getAccount(tokenMintKeypair.publicKey);
-    const mint = MintLayout.decode(mintInfo.data);
-
     const tokenAccountInfo = await client.getAccount(associatedTokenAccountAddress);
     assert(tokenAccountInfo !== null, 'token account not created');
 
     const tokenAccount = AccountLayout.decode(tokenAccountInfo.data);
-    assert(tokenAccount.amount === BigInt(150 * 10 ** mint.decimals), 'amount is not equal to 150');
+    assert(tokenAccount.amount === BigInt(150), 'amount is not equal to 150');
     assert(tokenAccount.mint.toBase58() === tokenMintKeypair.publicKey.toBase58(), 'mint key does not match');
   });
 });
