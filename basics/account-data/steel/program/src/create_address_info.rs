@@ -2,10 +2,7 @@ use account_data_api::prelude::*;
 use solana_program::msg;
 use steel::*;
 
-pub fn process_create_address_info(
-    accounts: &[AccountInfo<'_>], 
-    data: &[u8]
-) -> ProgramResult {
+pub fn process_create_address_info(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
     msg!("Processing CreateAddressInfo instruction");
 
     let [signer_account, create_address_account, system_program_account] = accounts else {
@@ -78,7 +75,13 @@ pub fn process_create_address_info(
             city: '{}' 
         }}",
         bytes_to_string(&address_info.data.name),
-        u64::from_le_bytes(address_info.data.house_number.try_into().unwrap_or_default()),
+        u64::from_le_bytes(
+            address_info
+                .data
+                .house_number
+                .try_into()
+                .unwrap_or_default()
+        ),
         bytes_to_string(&address_info.data.street),
         bytes_to_string(&address_info.data.city),
     );
@@ -103,6 +106,7 @@ fn bytes_to_string(bytes: &[u8]) -> String {
             .iter()
             .take_while(|&&b| b != 0)
             .copied()
-            .collect::<Vec<u8>>()
-    ).unwrap_or_default()
+            .collect::<Vec<u8>>(),
+    )
+    .unwrap_or_default()
 }

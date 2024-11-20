@@ -1,5 +1,5 @@
-use steel::*;
 use crate::consts::ADDRESS_INFO_SEED;
+use steel::*;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable, PartialEq)]

@@ -16,11 +16,8 @@ pub fn process_instruction(
     }
 
     // Parse and validate instruction data
-    let (instruction, instruction_data) = parse_instruction::<AddressInfoInstruction>(
-        &account_data_api::ID,
-        program_id,
-        data,
-    )?;
+    let (instruction, instruction_data) =
+        parse_instruction::<AddressInfoInstruction>(&account_data_api::ID, program_id, data)?;
 
     // Route instruction to appropriate processor
     match instruction {

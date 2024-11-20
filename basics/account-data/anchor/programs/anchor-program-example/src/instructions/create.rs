@@ -1,4 +1,4 @@
-use crate::{constants::constants::ANCHOR_DESCRIMINATOR_SIZE, state::AddressInfo};
+use crate::{constants::ANCHOR_DESCRIMINATOR_SIZE, state::AddressInfo};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]

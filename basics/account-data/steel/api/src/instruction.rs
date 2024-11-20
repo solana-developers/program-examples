@@ -1,5 +1,5 @@
-use steel::*;
 use crate::state::AddressInfoData;
+use steel::*;
 
 /// Instruction types for the address info program
 #[repr(u8)]
