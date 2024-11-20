@@ -37,7 +37,12 @@ describe('SPL Token Minter!', async () => {
       decimals: 9,
     };
 
-    const instructionData = new CreateTokenArgs(tokenDetails);
+    const instructionData = new CreateTokenArgs({
+      token_title: Buffer.from(tokenDetails.token_title.padEnd(32, '\0')),
+      token_symbol: Buffer.from(tokenDetails.token_symbol.padEnd(10, '\0')),
+      token_uri: Buffer.from(tokenDetails.token_uri.padEnd(256, '\0')),
+      decimals: 9,
+    });
 
     const ix = new TransactionInstruction({
       keys: [
@@ -131,9 +136,6 @@ describe('SPL Token Minter!', async () => {
     tx.add(ix).sign(payer);
 
     await client.processTransaction(tx);
-
-    console.log('Success!');
-    console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
 
     console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
