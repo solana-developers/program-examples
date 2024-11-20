@@ -104,7 +104,9 @@ describe('PDA Mint Authority!', async () => {
     //
     const instructionData = new CreateTokenArgs({
       instruction: NftMinterInstruction.CreateToken,
-      ...nftData,
+      nft_title: Buffer.from(nftData.nft_title.padEnd(32, '\0')),
+      nft_symbol: Buffer.from(nftData.nft_symbol.padEnd(10, '\0')),
+      nft_uri: Buffer.from(nftData.nft_uri.padEnd(256, '\0')),
     });
 
     const ix = new TransactionInstruction({

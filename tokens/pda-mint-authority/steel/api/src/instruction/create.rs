@@ -1,31 +1,36 @@
+use std::ffi::CStr;
+
 use super::SteelInstruction;
-use crate::{borsh_instruction, state::MintAuthorityPda};
-use borsh::{BorshDeserialize, BorshSerialize};
-use mpl_token_metadata::{instructions as mpl_instruction, types::DataV2};
+use crate::state::MintAuthorityPda;
+use mpl_token_metadata::instructions as mpl_instruction;
 use solana_program::{msg, program::invoke, program_pack::Pack, rent::Rent, system_instruction};
 use spl_token::state::Mint;
 use steel::*;
 
-borsh_instruction!(SteelInstruction, CreateToken);
-/// Create Instruction
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
+instruction!(SteelInstruction, CreateToken);
+// MintTo instruction
+#[repr(C, packed)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct CreateToken {
-    nft_title: String,
-    nft_symbol: String,
-    nft_uri: String,
+    pub token_name: [u8; 32],
+    pub token_symbol: [u8; 10],
+    pub token_uri: [u8; 256],
 }
 
 impl CreateToken {
     pub fn process(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
-        let args = Self::try_from_slice(data)?;
+        let args = Self::try_from_bytes(data)?;
 
-        let [mint_account, mint_authority, metadata_account, payer, rent, system_program, token_program, _token_metadata_program] =
+        let [mint_account, mint_authority, metadata_account, payer, rent, system_program, token_program, token_metadata_program] =
             accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
 
-        mint_authority.has_seeds(&[MintAuthorityPda::SEED_PREFIX], &crate::ID)?;
+        let (mint_authority_key, bump) =
+            Pubkey::find_program_address(&[MintAuthorityPda::SEED_PREFIX], &crate::ID);
+
+        mint_authority.has_address(&mint_authority_key)?;
 
         // First create the account for the Mint
         //
@@ -66,43 +71,46 @@ impl CreateToken {
         msg!("Creating metadata account...");
         msg!("Metadata account address: {}", metadata_account.key);
 
-        let ix = &mpl_instruction::CreateMetadataAccountV3 {
-            metadata: *metadata_account.key,
-            mint: *mint_account.key,
-            mint_authority: *mint_authority.key,
-            payer: *payer.key,
-            rent: None,
-            system_program: *system_program.key,
-            update_authority: (*mint_authority.key, true),
-        }
-        .instruction(mpl_instruction::CreateMetadataAccountV3InstructionArgs {
-            data: DataV2 {
-                name: args.nft_title,
-                symbol: args.nft_symbol,
-                uri: args.nft_uri,
-                creators: None,
-                seller_fee_basis_points: 0,
-                collection: None,
-                uses: None,
-            },
-            collection_details: None,
-            is_mutable: false,
-        });
+        let name = CStr::from_bytes_until_nul(&args.token_name)
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
+        let symbol = CStr::from_bytes_until_nul(&args.token_symbol)
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
+        let uri = CStr::from_bytes_until_nul(&args.token_uri)
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
 
-        invoke_signed(
-            ix,
-            &[
-                metadata_account.clone(),
-                mint_account.clone(),
-                mint_authority.clone(),
-                payer.clone(),
-                payer.clone(),
-                system_program.clone(),
-                rent.clone(),
-            ],
-            &crate::ID,
-            &[MintAuthorityPda::SEED_PREFIX],
-        )?;
+        mpl_instruction::CreateMetadataAccountV3Cpi {
+            __program: token_metadata_program,
+            metadata: metadata_account,
+            mint: mint_account,
+            mint_authority,
+            payer,
+            update_authority: (mint_authority, true),
+            system_program,
+            rent: Some(rent),
+            __args: mpl_token_metadata::instructions::CreateMetadataAccountV3InstructionArgs {
+                data: mpl_token_metadata::types::DataV2 {
+                    name,
+                    symbol,
+                    uri,
+                    seller_fee_basis_points: 0,
+                    creators: None,
+                    collection: None,
+                    uses: None,
+                },
+                is_mutable: true,
+                collection_details: None,
+            },
+        }
+        .invoke_signed(&[&[MintAuthorityPda::SEED_PREFIX, &[bump]]])?;
 
         msg!("Token mint created successfully.");
 

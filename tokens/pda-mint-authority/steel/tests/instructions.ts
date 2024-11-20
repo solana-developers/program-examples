@@ -41,9 +41,9 @@ const CreateTokenArgsSchema = new Map([
       kind: 'struct',
       fields: [
         ['instruction', 'u8'],
-        ['nft_title', 'string'],
-        ['nft_symbol', 'string'],
-        ['nft_uri', 'string'],
+        ['nft_title', [32]],
+        ['nft_symbol', [10]],
+        ['nft_uri', [256]],
       ],
     },
   ],

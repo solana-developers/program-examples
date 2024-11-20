@@ -1,5 +1,4 @@
 pub mod instruction;
-pub mod macros;
 pub mod state;
 
 pub mod prelude {
