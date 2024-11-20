@@ -27,9 +27,9 @@ const CreateTokenInstructionDataSchema = new Map([
       kind: 'struct',
       fields: [
         ['discriminator', 'u8'], // add the instructiion discriminator
-        ['token_title', 'string'],
-        ['token_symbol', 'string'],
-        ['token_uri', 'string'],
+        ['token_title', [32]],
+        ['token_symbol', [10]],
+        ['token_uri', [256]],
         ['token_decimals', 'u8'],
       ],
     },
@@ -68,6 +68,9 @@ describe('Create Tokens!', async () => {
     const instructionData = new CreateTokenInstructionData({
       ...tokenDetails,
       discriminator: 0,
+      token_title: Buffer.from(tokenDetails.token_title.padEnd(32, '\0')),
+      token_symbol: Buffer.from(tokenDetails.token_symbol.padEnd(10, '\0')),
+      token_uri: Buffer.from(tokenDetails.token_uri.padEnd(256, '\0')),
     });
 
     const ix = new TransactionInstruction({
@@ -138,6 +141,9 @@ describe('Create Tokens!', async () => {
     const instructionData = new CreateTokenInstructionData({
       ...nftDetails,
       discriminator: 0,
+      token_title: Buffer.from(nftDetails.token_title.padEnd(32, '\0')),
+      token_symbol: Buffer.from(nftDetails.token_symbol.padEnd(10, '\0')),
+      token_uri: Buffer.from(nftDetails.token_uri.padEnd(256, '\0')),
     });
 
     const ix = new TransactionInstruction({

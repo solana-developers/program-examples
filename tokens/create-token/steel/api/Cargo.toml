@@ -11,6 +11,5 @@ solana-program.workspace = true
 steel.workspace = true
 bytemuck.workspace = true
 num_enum.workspace = true
-borsh.workspace = true
 spl-token.workspace = true
 mpl-token-metadata.workspace = true
