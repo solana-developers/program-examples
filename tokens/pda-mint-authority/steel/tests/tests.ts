@@ -1,30 +1,17 @@
-import { Buffer } from "node:buffer";
-import { describe, test } from "node:test";
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  getAssociatedTokenAddressSync,
-} from "@solana/spl-token";
-import {
-  Keypair,
-  PublicKey,
-  SYSVAR_RENT_PUBKEY,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
-import { start } from "solana-bankrun";
-import { InitArgs, CreateTokenArgs, MintToArgs } from "./instructions";
+import { Buffer } from 'node:buffer';
+import { describe, test } from 'node:test';
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { start } from 'solana-bankrun';
+import { CreateTokenArgs, InitArgs, MintToArgs } from './instructions';
 
-describe("PDA MINT AUTHORITY", async () => {
-  const PROGRAM_ID = new PublicKey(
-    "z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35",
-  );
+describe('PDA MINT AUTHORITY', async () => {
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
   const context = await start(
     [
-      { name: "pda_mint_authority_program", programId: PROGRAM_ID },
-      { name: "token_metadata", programId: TOKEN_METADATA_PROGRAM_ID },
+      { name: 'pda_mint_authority_program', programId: PROGRAM_ID },
+      { name: 'token_metadata', programId: TOKEN_METADATA_PROGRAM_ID },
     ],
     [],
   );
@@ -32,18 +19,11 @@ describe("PDA MINT AUTHORITY", async () => {
   const payer = context.payer;
 
   const mintKeypair: Keypair = Keypair.generate();
-  const mintAuthorityPublicKey = PublicKey.findProgramAddressSync(
-    [Buffer.from("mint_authority")],
-    PROGRAM_ID,
-  )[0];
+  const mintAuthorityPublicKey = PublicKey.findProgramAddressSync([Buffer.from('mint_authority')], PROGRAM_ID)[0];
 
-  test("Init mind authority PDA!", async () => {
+  test('Init mint authority PDA!', async () => {
     const metadataPDA = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintKeypair.publicKey.toBuffer(),
-      ],
+      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
@@ -66,26 +46,22 @@ describe("PDA MINT AUTHORITY", async () => {
 
     await client.processTransaction(tx);
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
   });
 
-  test("Create a SPL Token with PDA!", async () => {
+  test('Create a SPL Token with PDA!', async () => {
     const metadataPDA = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("metadata"),
-        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
-        mintKeypair.publicKey.toBuffer(),
-      ],
+      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
     // SPL Token default = 9 decimals
     //
     const createArgs = new CreateTokenArgs(
-      "Solana Gold",
-      "GOLDSOL",
-      "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
+      'Solana Gold',
+      'GOLDSOL',
+      'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
     );
 
     const createTokenIx = new TransactionInstruction({
@@ -118,15 +94,12 @@ describe("PDA MINT AUTHORITY", async () => {
 
     await client.processTransaction(tx);
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
   });
 
-  test("Mint some tokens to your wallet with PDA!", async () => {
-    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
-      mintKeypair.publicKey,
-      payer.publicKey,
-    );
+  test('Mint some tokens to your wallet with PDA!', async () => {
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
     const mintArgs = new MintToArgs(100);
 
@@ -163,7 +136,7 @@ describe("PDA MINT AUTHORITY", async () => {
 
     await client.processTransaction(tx);
 
-    console.log("Success!");
+    console.log('Success!');
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
   });
 });

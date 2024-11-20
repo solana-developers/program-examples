@@ -1,4 +1,4 @@
-import { BN } from "bn.js";
+import { BN } from 'bn.js';
 
 class Assignable {
   constructor(properties) {
@@ -84,7 +84,7 @@ export class MintToArgs {
     offset += 1;
 
     // Write quantity as u64 LE (8 bytes)
-    this.quantity.toBuffer("le", 8).copy(buffer, offset);
+    this.quantity.toBuffer('le', 8).copy(buffer, offset);
 
     return buffer;
   }
