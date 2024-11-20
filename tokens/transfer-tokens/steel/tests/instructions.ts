@@ -27,9 +27,9 @@ const CreateTokenArgsSchema = new Map([
       kind: 'struct',
       fields: [
         ['instruction', 'u8'],
-        ['token_title', 'string'],
-        ['token_symbol', 'string'],
-        ['token_uri', 'string'],
+        ['token_title', [32]],
+        ['token_symbol', [10]],
+        ['token_uri', [256]],
         ['decimals', 'u8'],
       ],
     },

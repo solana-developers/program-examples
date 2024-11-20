@@ -40,7 +40,13 @@ describe('Transfer Tokens!', async () => {
       decimals: 9,
     };
 
-    const instructionData = new CreateTokenArgs(tokenDetails);
+    const instructionData = new CreateTokenArgs({
+      ...tokenDetails,
+      discriminator: 0,
+      token_title: Buffer.from(tokenDetails.token_title.padEnd(32, '\0')),
+      token_symbol: Buffer.from(tokenDetails.token_symbol.padEnd(10, '\0')),
+      token_uri: Buffer.from(tokenDetails.token_uri.padEnd(256, '\0')),
+    });
 
     const ix = new TransactionInstruction({
       keys: [
@@ -109,7 +115,13 @@ describe('Transfer Tokens!', async () => {
       decimals: 0,
     };
 
-    const instructionData = new CreateTokenArgs(nftDetails);
+    const instructionData = new CreateTokenArgs({
+      ...nftDetails,
+      discriminator: 0,
+      token_title: Buffer.from(nftDetails.token_title.padEnd(32, '\0')),
+      token_symbol: Buffer.from(nftDetails.token_symbol.padEnd(10, '\0')),
+      token_uri: Buffer.from(nftDetails.token_uri.padEnd(256, '\0')),
+    });
 
     const ix = new TransactionInstruction({
       keys: [
