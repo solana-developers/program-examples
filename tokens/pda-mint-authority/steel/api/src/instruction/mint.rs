@@ -72,23 +72,6 @@ impl MintTo {
         }
         .invoke_signed(&[&[MintAuthorityPda::SEED_PREFIX, &[bump]]])?;
 
-        // invoke_signed(
-        //     ix,
-        //     &[
-        //         edition_account.clone(),
-        //         mint_account.clone(),
-        //         payer.clone(),
-        //         mint_authority.clone(),
-        //         mint_authority.clone(),
-        //         metadata_account.clone(),
-        //         token_program.clone(),
-        //         system_program.clone(),
-        //         rent.clone(),
-        //     ],
-        //     &crate::ID,
-        //     &[MintAuthorityPda::SEED_PREFIX],
-        // )?;
-
         msg!("NFT minted successfully.");
 
         Ok(())
