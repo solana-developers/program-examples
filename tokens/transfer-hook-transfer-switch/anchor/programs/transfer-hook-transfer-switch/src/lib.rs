@@ -3,8 +3,8 @@ use anchor_lang::prelude::*;
 pub mod constants;
 pub mod error;
 pub mod events;
-pub mod state;
 pub mod instructions;
+pub mod state;
 
 use instructions::*;
 
@@ -24,18 +24,12 @@ pub mod transfer_hook {
         instructions::create_mint::create_mint(ctx)
     }
 
-    pub fn set_wallet_state(
-        ctx: Context<SetWalletState>,
-        is_frozen: bool,
-    ) -> Result<()> {
+    pub fn set_wallet_state(ctx: Context<SetWalletState>, is_frozen: bool) -> Result<()> {
         msg!("Setting wallet state: frozen = {}", is_frozen);
         instructions::set_wallet_state::set_wallet_state(ctx, is_frozen)
     }
 
-    pub fn transfer(
-        ctx: Context<TransferTokens>,
-        amount: u64,
-    ) -> Result<()> {
+    pub fn transfer(ctx: Context<TransferTokens>, amount: u64) -> Result<()> {
         msg!("Processing transfer of {} tokens", amount);
         instructions::transfer::transfer_tokens(ctx, amount)
     }

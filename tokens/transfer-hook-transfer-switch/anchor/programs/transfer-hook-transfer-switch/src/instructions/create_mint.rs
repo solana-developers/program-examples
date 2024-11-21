@@ -1,3 +1,4 @@
+use crate::{constants::*, error::*, state::*};
 use {
     anchor_lang::prelude::*,
     anchor_spl::{
@@ -5,7 +6,6 @@ use {
         token::{mint_to, Mint, MintTo, Token, TokenAccount},
     },
 };
-use crate::{state::*, constants::*, error::*};
 
 #[derive(Accounts)]
 pub struct CreateMint<'info> {
@@ -46,7 +46,10 @@ pub fn create_mint(ctx: Context<CreateMint>) -> Result<()> {
     msg!("Creating new mint...");
     msg!("Mint address: {}", ctx.accounts.mint.key());
     msg!("Authority: {}", ctx.accounts.authority.key());
-    msg!("Authority token account: {}", ctx.accounts.authority_token.key());
+    msg!(
+        "Authority token account: {}",
+        ctx.accounts.authority_token.key()
+    );
 
     // Mint initial supply to authority
     mint_to(

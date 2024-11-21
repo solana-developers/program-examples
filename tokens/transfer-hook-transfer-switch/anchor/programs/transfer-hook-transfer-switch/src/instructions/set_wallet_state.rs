@@ -1,6 +1,6 @@
+use crate::{constants::*, error::*, events::*, state::*};
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Token, Mint};
-use crate::{state::*, constants::*, error::*, events::*};
+use anchor_spl::token::{Mint, Token};
 
 #[derive(Accounts)]
 pub struct SetWalletState<'info> {
@@ -46,8 +46,8 @@ pub fn set_wallet_state(ctx: Context<SetWalletState>, is_frozen: bool) -> Result
     });
 
     msg!(
-        "Wallet state updated for {}: frozen = {}", 
-        ctx.accounts.wallet.key(), 
+        "Wallet state updated for {}: frozen = {}",
+        ctx.accounts.wallet.key(),
         is_frozen
     );
     Ok(())

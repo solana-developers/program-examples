@@ -1,5 +1,5 @@
+use crate::{constants::*, state::*};
 use anchor_lang::prelude::*;
-use crate::{state::*, constants::*};
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
@@ -22,7 +22,10 @@ pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
     let state = &mut ctx.accounts.state;
     state.authority = ctx.accounts.authority.key();
     state.bump = ctx.bumps.state;
-    
-    msg!("Transfer hook state initialized with authority: {}", state.authority);
+
+    msg!(
+        "Transfer hook state initialized with authority: {}",
+        state.authority
+    );
     Ok(())
 }
