@@ -75,11 +75,7 @@ pub fn process_create_address_info(accounts: &[AccountInfo<'_>], data: &[u8]) ->
             city: '{}' 
         }}",
         bytes_to_string(&address_info.data.name),
-        u64::from_le_bytes(
-            address_info
-                .data
-                .house_number
-        ),
+        u64::from_le_bytes(address_info.data.house_number),
         bytes_to_string(&address_info.data.street),
         bytes_to_string(&address_info.data.city),
     );
