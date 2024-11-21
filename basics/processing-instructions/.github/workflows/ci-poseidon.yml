@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**' # Adjust according to your branch naming convention
+  pull_request:
+    branches:
+      - main
+      - 'feature/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: rust-lang/rustup-init@v1
+        with:
+          default-toolchain: stable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # Specify the Node.js version you need
+
+      - name: Install dependencies
+        run: |
+          cd programs/basics/processing-instructions/poseidon
+          pnpm install
+
+      - name: Build and Test
+        run: |
+          cd programs/basics/processing-instructions/poseidon
+          cargo build-bpf
+          pnpm test
