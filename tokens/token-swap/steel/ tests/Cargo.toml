@@ -6,5 +6,5 @@ edition = "2018"
 [dependencies]
 solana-program = "1.8.0"
 borsh = "0.9.1"  # Serialization for instructions
-steel = "version"  # for Steel framework if using Steel
+# steel = "version"  # Removed Steel framework as per requirements
 poseidon = "version"  # for Poseidon framework if using Poseidon
