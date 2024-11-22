@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-poseidon = "8krac1be77qraaZQGzHypmngXH6MbftjBmcucLtQLahG"
+hello_solana = "84mLf5VZKf58tQ1VkUtsthxuR8fSeDLv8ZKemANC53oF"
 
 [registry]
 url = "https://api.apr.dev"
@@ -15,4 +15,4 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "pnpm run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
