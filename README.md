@@ -87,7 +87,7 @@ Store and retrieve state in Solana.
 
 [anchor](./basics/program-derived-addresses/anchor) [native](./basics/program-derived-addresses/native)
 
-### Handling accounts that expland in size
+### Handling accounts that expand in size
 
 How to store state that changes size in Solana.
 
