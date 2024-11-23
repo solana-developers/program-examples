@@ -10,3 +10,4 @@ num_enum = "0.7"
 spl-token = { version = "4.0.0", features = [ "no-entrypoint" ] }
 spl-associated-token-account = { version = "3.0.4", features = [ "no-entrypoint" ] }
 mpl-token-metadata = { version = "4.1.2" }
+thiserror = "2.0.3"
