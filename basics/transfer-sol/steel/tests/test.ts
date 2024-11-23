@@ -23,7 +23,7 @@ describe('transfer-sol', async () => {
     const res = await client.getLatestBlockhash();
 
     if (res) {
-      let [blockhash, _] = res;
+      const [blockhash, _] = res;
 
       tx.recentBlockhash = blockhash;
       tx.add(ix).sign(payer);
@@ -50,7 +50,7 @@ describe('transfer-sol', async () => {
     const res = await client.getLatestBlockhash();
 
     if (res) {
-      let [blockhash, _] = res;
+      const [blockhash, _] = res;
 
       tx.recentBlockhash = blockhash;
       tx.add(ix(test2Recipient1.publicKey)).add(ix(test2Recipient2.publicKey)).sign(payer, test2Recipient1, test2Recipient2);
@@ -74,7 +74,7 @@ describe('transfer-sol', async () => {
     const res = await client.getLatestBlockhash();
 
     if (res) {
-      let [blockhash, _] = res;
+      const [blockhash, _] = res;
 
       tx.recentBlockhash = blockhash;
       tx.add(ix).sign(payer, test2Recipient1);
