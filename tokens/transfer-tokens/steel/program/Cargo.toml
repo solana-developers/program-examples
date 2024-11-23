@@ -1,0 +1,11 @@
+[package]
+name = "transfer-tokens-steel-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+steel = {version = "2.1", features = ["spl"]}
+transfer-tokens-steel-api = {path = "../api"}
