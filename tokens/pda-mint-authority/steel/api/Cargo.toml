@@ -12,3 +12,4 @@ borsh.workspace = true
 spl-token.workspace = true
 spl-associated-token-account.workspace = true
 mpl-token-metadata.workspace = true
+thiserror.workspace = true

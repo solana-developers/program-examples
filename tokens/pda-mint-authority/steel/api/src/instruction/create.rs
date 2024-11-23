@@ -1,20 +1,19 @@
-use std::ffi::CStr;
-
 use super::SteelInstruction;
-use crate::state::MintAuthorityPda;
-use mpl_token_metadata::instructions as mpl_instruction;
+use crate::{error::*, state::*};
+use mpl_token_metadata::{instructions as mpl_instruction, types::DataV2};
 use solana_program::{msg, program::invoke, program_pack::Pack, rent::Rent, system_instruction};
 use spl_token::state::Mint;
+use std::ffi::CStr;
 use steel::*;
 
 instruction!(SteelInstruction, CreateToken);
-// MintTo instruction
-#[repr(C, packed)]
+// CreateToken instruction
+#[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct CreateToken {
-    pub token_name: [u8; 32],
-    pub token_symbol: [u8; 10],
-    pub token_uri: [u8; 256],
+    pub token_name: [u8; 32],   // Metaplex metadata name: 32 bytes max
+    pub token_symbol: [u8; 10], // Metaplex metadata symbol: 10 bytes max
+    pub token_uri: [u8; 256],   // Metaplex metadata uri: 200 bytes max
 }
 
 impl CreateToken {
@@ -71,21 +70,9 @@ impl CreateToken {
         msg!("Creating metadata account...");
         msg!("Metadata account address: {}", metadata_account.key);
 
-        let name = CStr::from_bytes_until_nul(&args.token_name)
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string();
-        let symbol = CStr::from_bytes_until_nul(&args.token_symbol)
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string();
-        let uri = CStr::from_bytes_until_nul(&args.token_uri)
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string();
+        let name = Self::str_from_bytes(&mut args.token_name.to_vec())?.to_string();
+        let symbol = Self::str_from_bytes(&mut args.token_symbol.to_vec())?.to_string();
+        let uri = Self::str_from_bytes(&mut args.token_uri.to_vec())?.to_string();
 
         mpl_instruction::CreateMetadataAccountV3Cpi {
             __program: token_metadata_program,
@@ -96,8 +83,8 @@ impl CreateToken {
             update_authority: (mint_authority, true),
             system_program,
             rent: Some(rent),
-            __args: mpl_token_metadata::instructions::CreateMetadataAccountV3InstructionArgs {
-                data: mpl_token_metadata::types::DataV2 {
+            __args: mpl_instruction::CreateMetadataAccountV3InstructionArgs {
+                data: DataV2 {
                     name,
                     symbol,
                     uri,
@@ -115,5 +102,18 @@ impl CreateToken {
         msg!("Token mint created successfully.");
 
         Ok(())
+    }
+
+    fn str_from_bytes(bytes: &mut Vec<u8>) -> Result<&str, ProgramError> {
+        // add an extra null byte, in the case every position is occupied with a non-null byte
+        bytes.push(0);
+
+        // remove excess null bytes
+        if let Ok(cstr) = CStr::from_bytes_until_nul(bytes) {
+            if let Ok(str) = cstr.to_str() {
+                return Ok(str);
+            }
+        }
+        Err(SteelError::ParseError.into())
     }
 }
