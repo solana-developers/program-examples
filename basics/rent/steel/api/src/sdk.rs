@@ -1,5 +1,5 @@
-use steel::*;
 use crate::prelude::*;
+use steel::*;
 
 pub fn create_system_account(
     payer: Pubkey,
@@ -9,7 +9,7 @@ pub fn create_system_account(
 ) -> Instruction {
     let mut name_bytes = [0u8; 32];
     let mut address_bytes = [0u8; 64];
-    
+
     name_bytes[..name.len()].copy_from_slice(name.as_bytes());
     address_bytes[..address.len()].copy_from_slice(address.as_bytes());
 
@@ -23,6 +23,7 @@ pub fn create_system_account(
         data: CreateSystemAccount {
             name: name_bytes,
             address: address_bytes,
-        }.to_bytes(),
+        }
+        .to_bytes(),
     }
 }

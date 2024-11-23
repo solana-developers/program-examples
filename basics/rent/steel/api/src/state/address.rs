@@ -1,5 +1,5 @@
-use steel::*;
 use super::RentAccount;
+use steel::*;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
