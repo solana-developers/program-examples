@@ -1,5 +1,5 @@
 [package]
-name = "steel-hello-solana"
+name = "steel-hello-solana-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,4 +9,3 @@ crate-type = ["cdylib", "lib"]
 [dependencies]
 solana-program.workspace = true
 steel.workspace = true
-steel-hello-solana-api = {path = "../api"}
