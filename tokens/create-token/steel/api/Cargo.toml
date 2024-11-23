@@ -13,3 +13,4 @@ bytemuck.workspace = true
 num_enum.workspace = true
 spl-token.workspace = true
 mpl-token-metadata.workspace = true
+thiserror.workspace = true

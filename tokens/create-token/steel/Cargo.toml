@@ -9,3 +9,4 @@ bytemuck = "1.4"
 num_enum = "0.7"
 spl-token = { version = "4.0.0", features = [ "no-entrypoint" ] }
 mpl-token-metadata = { version = "4.1.2" }
+thiserror = "2.0.3"
