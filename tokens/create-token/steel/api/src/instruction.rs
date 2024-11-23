@@ -3,7 +3,7 @@ use steel::*;
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, TryFromPrimitive)]
 pub enum SteelInstruction {
-    Create_Token = 0
+    Create_Token = 0,
 }
 
 #[repr(C)]

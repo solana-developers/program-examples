@@ -3,7 +3,11 @@ use spl_token::state::Mint;
 use steel::*;
 use steel_api::prelude::*;
 
-pub fn process_create_token(accounts: &[AccountInfo], name: String, symbol: String) -> ProgramResult {
+pub fn process_create_token(
+    accounts: &[AccountInfo],
+    name: String,
+    symbol: String,
+) -> ProgramResult {
     let mint = Mint {
         mint_authority: COption::Some(accounts[0].key.to_owned()),
         supply: 0,

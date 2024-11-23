@@ -1,8 +1,8 @@
-use steel_api::prelude::*;
 use solana_program::hash::Hash;
 use solana_program_test::{processor, BanksClient, ProgramTest};
 use solana_sdk::{signature::Keypair, signer::Signer, transaction::Transaction};
 use steel::*;
+use steel_api::prelude::*;
 
 async fn setup() -> (BanksClient, Keypair, Hash) {
     let mut program_test = ProgramTest::new(
@@ -43,4 +43,3 @@ async fn run_test() {
     let counter = Counter::try_from_bytes(&counter_account.data).unwrap();
     assert_eq!(counter.value, 42);
 }
-

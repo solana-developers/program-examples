@@ -1,11 +1,8 @@
-mod add;
-mod initialize;
+mod token;
 
-use add::*;
-use initialize::*;
-        
-use steel_api::prelude::*;
 use steel::*;
+use steel_api::prelude::*;
+use token::*;
 
 pub fn process_instruction(
     program_id: &Pubkey,
@@ -15,8 +12,7 @@ pub fn process_instruction(
     let (ix, data) = parse_instruction(&steel_api::ID, program_id, data)?;
 
     match ix {
-        SteelInstruction::Initialize => process_initialize(accounts, data)?,
-        SteelInstruction::Add => process_add(accounts, data)?,
+        SteelInstruction::Create_Token => process_create_token(accounts, name, symbol)?,
     }
 
     Ok(())

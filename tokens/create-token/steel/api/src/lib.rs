@@ -2,7 +2,6 @@ pub mod consts;
 pub mod error;
 pub mod instruction;
 pub mod sdk;
-pub mod state;
 
 pub mod prelude {
     pub use crate::consts::*;
@@ -14,4 +13,4 @@ pub mod prelude {
 use steel::*;
 
 // TODO Set program id
-declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35"); 
+declare_id!("z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35");
