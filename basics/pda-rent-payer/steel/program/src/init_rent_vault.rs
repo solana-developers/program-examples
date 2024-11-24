@@ -51,7 +51,7 @@ pub fn process_initialize_vault(accounts: &[AccountInfo<'_>], data: &[u8]) -> Pr
 
     match transfer {
         Ok(_) => (),
-        Err(e) => return Err(e.into()),
+        Err(e) => return Err(e),
     }
 
     msg!("Initialized rent vault.");

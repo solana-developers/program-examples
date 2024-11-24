@@ -22,7 +22,7 @@ pub fn process_create_account(accounts: &[AccountInfo<'_>]) -> ProgramResult {
     // First we get the lamports required for rent
     // assuming this account has no inner data
     let lamports_required_for_rent = (Rent::get()?).minimum_balance(0);
-    
+
     if vault_balance < lamports_required_for_rent {
         return Err(ProgramError::InsufficientFunds);
     }
