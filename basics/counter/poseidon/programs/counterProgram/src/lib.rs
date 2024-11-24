@@ -1,11 +1,10 @@
 use anchor_lang::prelude::*;
-declare_id!("3DRpGvotDMHtXzHahF1jdzYEiYa52cwpQcqGiNPw9vRd");
+declare_id!("EgcUM7mn2dsedh9vjY8ihfzuU9Vhhady8bSPcRssUriR");
 #[program]
 pub mod counter_program {
     use super::*;
     pub fn initialize_counter(ctx: Context<InitializeCounterContext>) -> Result<()> {
         ctx.accounts.counter.count = 0;
-        ctx.accounts.counter.payer = ctx.accounts.payer.key();
         Ok(())
     }
     pub fn increment(ctx: Context<IncrementContext>) -> Result<()> {

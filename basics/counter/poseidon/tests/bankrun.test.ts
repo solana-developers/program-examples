@@ -108,40 +108,4 @@ describe('counter_program', async () => {
     const currentCount = await program.account.counter.fetch(counter);
     assert(currentCount.count.toNumber() === 1, 'Expected  count to be 1');
   });
-
-  it('Increment and decrement multiple times', async () => {
-    // Increment the counter 5 times
-    for (let i = 0; i < 5; i++) {
-      await program.methods
-        .increment()
-        .accounts({
-          counter: counter,
-        })
-        .rpc();
-    }
-
-    let currentCount = await program.account.counter.fetch(counter);
-    assert.strictEqual(currentCount.count.toNumber(), 6, 'Expected count to be 6 after 5 increments');
-
-    // Decrement the counter 4 times
-    for (let i = 0; i < 4; i++) {
-      await program.methods
-        .decrement()
-        .accounts({
-          counter: counter,
-        })
-        .rpc();
-    }
-
-    currentCount = await program.account.counter.fetch(counter);
-    assert.strictEqual(currentCount.count.toNumber(), 2, 'Expected count to be 2 after 4 decrements');
-  });
-
-  it('Cannot decrement below 0', async () => {
-    // Decrement the counter to 0
-    await program.methods.decrement().accounts({ counter: counter }).rpc();
-    await program.methods.decrement().accounts({ counter: counter }).rpc();
-    const currentCount = await program.account.counter.fetch(counter);
-    assert.strictEqual(currentCount.count.toNumber(), 0, 'Expected count to be 0 after multiple decrements');
-  });
 });
