@@ -13,5 +13,6 @@ pub fn process_instruction(
     match ix {
         SteelInstruction::CreateAddressInfo => CreateAddressInfo::process(accounts, data),
         SteelInstruction::ExtendAddressInfo => ExtendAddressInfo::process(accounts, data),
+        SteelInstruction::ZeroInit => ZeroInit::process(accounts, data),
     }
 }

@@ -5,10 +5,11 @@ use steel::*;
 pub enum SteelAccount {
     AddressInfo,
     ExtendedAddressInfo,
+    WorkInfo,
 }
 
 account!(SteelAccount, AddressInfo);
-#[repr(C, packed)]
+#[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
 pub struct AddressInfo {
     pub name: [u8; 48],
@@ -29,7 +30,17 @@ pub struct ExtendedAddressInfo {
     pub zip: u32,
 }
 
-#[repr(C, packed)]
+account!(SteelAccount, WorkInfo);
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
+pub struct WorkInfo {
+    pub name: [u8; 48],
+    pub position: [u8; 48],
+    pub company: [u8; 48],
+    pub years_employed: u8,
+}
+
+#[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
 pub struct EnhancedAddressInfoExtender {
     pub state: [u8; 48],
