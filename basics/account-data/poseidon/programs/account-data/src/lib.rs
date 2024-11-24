@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-declare_id!("3cvZMR8oDVXVcxcfuPmBpsEWnGMYh2uomwYohNSJSWwk");
+declare_id!("CFiSZ4w8WcG7U8Axq3Lx5zpbyLiMMBde6HGKtZvRCn6U");
 #[program]
 pub mod account_data {
     use super::*;

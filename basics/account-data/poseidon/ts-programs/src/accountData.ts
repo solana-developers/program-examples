@@ -1,17 +1,9 @@
-import { Account, Pubkey, Result, u8 } from "@solanaturbine/poseidon";
+import { Account, Pubkey, Result, u8 } from '@solanaturbine/poseidon';
 
 export default class AccountData {
-  static PROGRAM_ID = new Pubkey(
-    "3cvZMR8oDVXVcxcfuPmBpsEWnGMYh2uomwYohNSJSWwk",
-  );
+  static PROGRAM_ID = new Pubkey('3cvZMR8oDVXVcxcfuPmBpsEWnGMYh2uomwYohNSJSWwk');
 
-  createAddressInfo(
-    addressInfo: AddressInfo,
-    name: String,
-    houseNumber: u8,
-    street: String,
-    city: String,
-  ): Result {
+  createAddressInfo(addressInfo: AddressInfo, name: string, houseNumber: u8, street: string, city: string): Result {
     addressInfo.name = name;
     addressInfo.houseNumber = houseNumber;
     addressInfo.street = street;
@@ -20,8 +12,8 @@ export default class AccountData {
 }
 
 export interface AddressInfo extends Account {
-  name: String;
+  name: string;
   houseNumber: u8;
-  street: String;
-  city: String;
+  street: string;
+  city: string;
 }
