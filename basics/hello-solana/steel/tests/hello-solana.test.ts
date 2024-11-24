@@ -5,8 +5,8 @@ import { start } from 'solana-bankrun';
 
 describe('hello-solana', async () => {
   // load program in solana-bankrun
-  const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'steel_hello_solana', programId: PROGRAM_ID }], []);
+  const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
+  const context = await start([{ name: 'hello_solana_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -16,7 +16,7 @@ describe('hello-solana', async () => {
     const ix = new TransactionInstruction({
       keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
       programId: PROGRAM_ID,
-      data: Buffer.alloc(0), // No data
+      data: Buffer.from([0]), // No data
     });
 
     const tx = new Transaction();
