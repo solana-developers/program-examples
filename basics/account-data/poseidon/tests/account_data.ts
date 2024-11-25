@@ -6,9 +6,8 @@ import { startAnchor } from 'solana-bankrun';
 import { AddressInfoProgram } from '../target/types/address_info_program';
 
 describe('Address Info Program', () => {
-
   const IDL = require('../target/idl/address_info_program.json');
-      
+
   const PROGRAM_ID = new PublicKey(IDL.address);
 
   // Test setup
@@ -23,15 +22,15 @@ describe('Address Info Program', () => {
       // Initialize program test environment
       const context = await startAnchor(
         '.', // Path to Anchor.toml
-        [], // No extra programs needed
-        [], // No
+        [],
+        [],
       );
 
       // Set up provider and program
       provider = new BankrunProvider(context);
 
       // Get program from workspace
-      program = new Program(IDL, provider);
+      program = new Program<AddressInfoProgram>(IDL, provider);
 
       owner = provider.wallet as Wallet;
 
