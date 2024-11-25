@@ -4,7 +4,7 @@ export default class AccountDataProgram {
   // Following Poseidon example pattern of static PROGRAM_ID
   static PROGRAM_ID = new Pubkey('JvF1QDhgab1ARhACPWTAZnUymthGGmn3NXCj8i6mjSQ');
 
-  create_address_info(payer: Signer, state: AddressInfo, name: string, houseNumber: u8, street: string, city: string): Result {
+  create_address_info(payer: Signer, state: AddressInfo, name: String, houseNumber: u8, street: String, city: String): Result {
     // Use nit() for initialization
     state.derive(['address_info', payer.key]).init(payer);
     // Store the account data
@@ -16,8 +16,8 @@ export default class AccountDataProgram {
 }
 
 export interface AddressInfo extends Account {
-  name: string;
+  name: String;
   houseNumber: u8;
-  street: string;
-  city: string;
+  street: String;
+  city: String;
 }
