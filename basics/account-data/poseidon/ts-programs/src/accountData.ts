@@ -1,17 +1,7 @@
-import {
-  Account,
-  Pubkey,
-  Signer,
-  String,
-  u8,
-  type Result,
-  u32,
-} from "@solanaturbine/poseidon";
+import { Account, String as PString, Pubkey, type Result, Signer, u8 } from '@solanaturbine/poseidon';
 
 export default class AccountData {
-  static PROGRAM_ID = new Pubkey(
-    "3PUaDfRezKNY9u2ffsAwgApxM3QYjztfYYcyNcuRKWmk"
-  );
+  static PROGRAM_ID = new Pubkey('3PUaDfRezKNY9u2ffsAwgApxM3QYjztfYYcyNcuRKWmk');
 
   // Create Address Info instruction
   createAddressInfo(
@@ -19,10 +9,10 @@ export default class AccountData {
 
     payer: Signer,
     address_info: AddressInfoState,
-    name: String<25>,
+    name: PString<25>,
     house_number: u8,
-    street: String<25>,
-    city: String<25>
+    street: PString<25>,
+    city: PString<25>,
   ): Result {
     // CONTEXT
 
@@ -40,8 +30,8 @@ export default class AccountData {
 
 export interface AddressInfoState extends Account {
   // String<MAX_LENGTH>; therefore, name, house_number, street and city are maximum 25 bytes each
-  name: String<25>;
+  name: PString<25>;
   house_number: u8;
-  street: String<25>;
-  city: String<25>;
+  street: PString<25>;
+  city: PString<25>;
 }
