@@ -19,8 +19,16 @@ pub mod account_data {
 }
 #[derive(Accounts)]
 pub struct CreateAddressInfoContext<'info> {
-    #[account(mut)]
+    #[account(
+        init,
+        payer = owner,
+        space = 171,
+        seeds = [b"address_info", owner.key().as_ref()],
+        bump,
+    )]
     pub address_info: Account<'info, AddressInfo>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[account]
