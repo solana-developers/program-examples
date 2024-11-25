@@ -1,7 +1,7 @@
 import { Account, Pubkey, Result, Signer, u8 } from '@solanaturbine/poseidon';
 
 export default class CloseAccount {
-  static PROGRAM_ID = new Pubkey('11111111111111111111111111111111');
+  static PROGRAM_ID = new Pubkey('4So9Jbx672BRL9RvfB8Sux2NMVX5QJRnhmdWyij3kkFg');
 
   initalize(state: AccountState, user: Signer, data: u8): Result {
     state.derive(['account']).init();
