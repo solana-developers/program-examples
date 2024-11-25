@@ -18,8 +18,6 @@ pub mod favorites_program {
 }
 #[derive(Accounts)]
 pub struct SetFavoritesContext<'info> {
-    #[account(mut)]
-    pub payer: Signer<'info>,
     #[account(
         init,
         payer = payer,
@@ -29,6 +27,8 @@ pub struct SetFavoritesContext<'info> {
         bump,
     )]
     pub favorites: Account<'info, Favorites>,
+    #[account(mut)]
+    pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[account]

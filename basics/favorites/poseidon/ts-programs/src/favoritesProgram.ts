@@ -4,8 +4,8 @@ import { Account, Pubkey, Result, Signer, String, Vec, u8, u64 } from '@solanatu
 export default class FavoritesProgram {
   static PROGRAM_ID = new Pubkey('HMYL9ABJz8fpw6XUnkRAYVsXor4JxosiZqHBd38ZgCqS');
 
-  setFavorites(favorites: Favorites, payer: Signer, number: u64, color: String<8>, hobbies: Vec<String<8>, 5>): Result {
-    favorites.derive(['favorites', payer.key]).init();
+  setFavorites(favorites: Favorites, payer: Signer, number: u64, color: String<7>, hobbies: Vec<String<7>, 5>): Result {
+    favorites.derive(['favorites', payer.key]).init(payer);
     favorites.number = number;
     favorites.color = color;
     favorites.hobbies = hobbies;
