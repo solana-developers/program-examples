@@ -8,7 +8,7 @@ pub mod close_account {
         ctx.accounts.user_account.bump = ctx.bumps.user_account;
         Ok(())
     }
-    pub fn close_user(ctx: Context<CloseUserContext>) -> Result<()> {
+    pub fn close_user(_ctx: Context<CloseUserContext>) -> Result<()> {
         Ok(())
     }
 }
