@@ -8,7 +8,7 @@ declare_id!("FUfFBrs2nHAud8gVESDMtYa7oa5aGa3DEngKKLGyV2hv");
 #[program]
 pub mod processing_instructions_program {
     use super::*;
-    pub fn go_to_park(ctx: Context<GoToParkContext>, height: u32, name: String) -> Result<()> {
+    pub fn go_to_park(_ctx: Context<GoToParkContext>, height: u32, name: String) -> Result<()> {
         // Note::
         // Currently Poseidon does not support transpiling console.log to msg! calls and transpiled version of the Anchor code omits the original msg! calls
         // Thus, you can add msg! statements similar to the original code to provide feedback during the program execution.
