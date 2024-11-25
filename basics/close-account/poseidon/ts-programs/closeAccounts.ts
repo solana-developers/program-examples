@@ -1,14 +1,14 @@
-import { Account, Pubkey, Result, u8, Signer } from "@solanaturbine/poseidon";
+import { Account, Pubkey, Result, Signer, u8 } from '@solanaturbine/poseidon';
 
 export default class CloseAccount {
-  static PROGRAM_ID = new Pubkey("11111111111111111111111111111111");
+  static PROGRAM_ID = new Pubkey('11111111111111111111111111111111');
 
   initalize(state: AccountState, user: Signer, data: u8): Result {
-    state.derive(["account"]).init();
+    state.derive(['account']).init();
     state.someData = data;
   }
   close(state: AccountState, user: Signer): Result {
-    state.derive(["account"]).close(user);
+    state.derive(['account']).close(user);
   }
 }
 

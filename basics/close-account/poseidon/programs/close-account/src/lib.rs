@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-declare_id!("11111111111111111111111111111111");
+declare_id!("4So9Jbx672BRL9RvfB8Sux2NMVX5QJRnhmdWyij3kkFg");
 #[program]
 pub mod close_account {
     use super::*;
