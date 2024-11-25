@@ -150,13 +150,6 @@ jobs:
         with:
           path: ~/.cargo/bin/steel
           key: ${{ runner.os }}-steel-cli
-      - name: Display Versions and Install pnpm
-        run: |
-          solana -V
-          solana-keygen new --no-bip39-passphrase
-          rustc -V
-          anchor -V
-          npm i -g pnpm
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -271,6 +264,7 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
+          solana-keygen new --no-bip39-passphrase
           process_projects "stable"
           sccache --show-stats
       - name: Setup Solana 1.18.17
@@ -285,6 +279,7 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
+          solana-keygen new --no-bip39-passphrase
           process_projects "1.18.17"
           sccache --show-stats
 
