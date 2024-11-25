@@ -6,8 +6,10 @@ import { startAnchor } from 'solana-bankrun';
 import { AddressInfoProgram } from '../target/types/address_info_program';
 
 describe('Address Info Program', () => {
-  // Constants
-  const PROGRAM_ID = new PublicKey('ChA1o71vBEwkYNs6FnkmG4cxyZWtWkbXSEJ6xP2zaJAq');
+
+  const IDL = require('../target/idl/address_info_program.json');
+      
+  const PROGRAM_ID = new PublicKey(IDL.address);
 
   // Test setup
   let program: Program<AddressInfoProgram>;
@@ -29,8 +31,7 @@ describe('Address Info Program', () => {
       provider = new BankrunProvider(context);
 
       // Get program from workspace
-      const idl = require('../target/idl/address_info_program.json');
-      program = new Program(idl, provider);
+      program = new Program(IDL, provider);
 
       owner = provider.wallet as Wallet;
 
