@@ -11,9 +11,9 @@ declare_id!("CSqtsYXnt2UfXttszwG6rGFFY7EedJ5kmn4xEyas4LeE");
 pub mod transfer_tokens_program {
     use super::*;
     pub fn create_token(
-        ctx: Context<CreateTokenContext>,
-        decimals: u8,
-        freeze_authority: Pubkey,
+        _ctx: Context<CreateTokenContext>,
+        _decimals: u8,
+        _freeze_authority: Pubkey,
     ) -> Result<()> {
         // Note: Initialization for mint handled manually
         // As Poseidon's transpiler does not support initializeMint yet.
