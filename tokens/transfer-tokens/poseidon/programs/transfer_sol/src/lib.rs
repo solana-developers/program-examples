@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{Transfer, transfer};
+use anchor_lang::system_program::{transfer, Transfer};
 declare_id!("HU7QEokj5qUUV5ryZYL7EhsqiAkxJyMVXc3DesKyCqtF");
 #[program]
 pub mod transfer_sol {
@@ -23,8 +23,8 @@ pub mod transfer_sol {
 #[derive(Accounts)]
 pub struct TransferWithProgramContext<'info> {
     #[account(mut)]
-    pub from: Signer<'info>,
-    #[account(mut)]
     pub to: SystemAccount<'info>,
+    #[account(mut)]
+    pub from: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
