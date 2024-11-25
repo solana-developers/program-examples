@@ -15,9 +15,9 @@ export interface AddressInfoState extends Account {
 /**
  * Program class for managing address information
  */
-export default class AddressInfoProgram {
+export default class AccountData {
   // Following Poseidon example pattern of static PROGRAM_ID
-  static PROGRAM_ID = new Pubkey('ChA1o71vBEwkYNs6FnkmG4cxyZWtWkbXSEJ6xP2zaJAq');
+  static PROGRAM_ID = new Pubkey('3edvbB5tuRDQHX2xUdR22m3ih6u7Zf4xi3abmHfSyZsn');
 
   initialize(owner: Signer, state: AddressInfoState, houseNumber: u8, streetNumber: u16, zipCode: u32, countryCode: u16): Result {
     // Use derive() for PDA creation and init() for initialization

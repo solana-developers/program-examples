@@ -3,15 +3,15 @@ import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { expect } from 'chai';
 import { startAnchor } from 'solana-bankrun';
-import { AddressInfoProgram } from '../target/types/address_info_program';
+import { AccountData } from '../target/types/account_data';
 
-describe('Address Info Program', () => {
-  const IDL = require('../target/idl/address_info_program.json');
+describe('Account Data', () => {
+  const IDL = require('../target/idl/account_data.json');
 
   const PROGRAM_ID = new PublicKey(IDL.address);
 
   // Test setup
-  let program: Program<AddressInfoProgram>;
+  let program: Program<AccountData>;
   let provider: BankrunProvider;
   let addressInfoPda: PublicKey;
   let addressInfoBump: number;
@@ -30,7 +30,7 @@ describe('Address Info Program', () => {
       provider = new BankrunProvider(context);
 
       // Get program from workspace
-      program = new Program<AddressInfoProgram>(IDL, provider);
+      program = new Program<AccountData>(IDL, provider);
 
       owner = provider.wallet as Wallet;
 

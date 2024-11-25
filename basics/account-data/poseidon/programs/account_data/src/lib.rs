@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
-declare_id!("ChA1o71vBEwkYNs6FnkmG4cxyZWtWkbXSEJ6xP2zaJAq");
+declare_id!("3edvbB5tuRDQHX2xUdR22m3ih6u7Zf4xi3abmHfSyZsn");
 #[program]
-pub mod address_info_program {
+pub mod account_data {
     use super::*;
     pub fn initialize(
         ctx: Context<InitializeContext>,
