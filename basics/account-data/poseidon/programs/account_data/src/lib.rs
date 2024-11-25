@@ -34,6 +34,8 @@ pub mod address_info_program {
 }
 #[derive(Accounts)]
 pub struct InitializeContext<'info> {
+    #[account(mut)]
+    pub owner: Signer<'info>,
     #[account(
         init,
         payer = owner,
@@ -43,8 +45,6 @@ pub struct InitializeContext<'info> {
         bump,
     )]
     pub state: Account<'info, AddressInfoState>,
-    #[account(mut)]
-    pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]

@@ -1,4 +1,4 @@
-import { Account, Pubkey, Result, Signer, u8, u16, u32 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, type Result, Signer, u8, u16, u32 } from '@solanaturbine/poseidon';
 
 /**
  * State account interface for storing address information
@@ -17,11 +17,11 @@ export interface AddressInfoState extends Account {
  */
 export default class AddressInfoProgram {
   // Following Poseidon example pattern of static PROGRAM_ID
-  static PROGRAM_ID = new Pubkey('5wF2itZNsDcf5s1SdcdJPdgBSTFAKjj6YbdicLFYi8vN');
+  static PROGRAM_ID = new Pubkey("ChA1o71vBEwkYNs6FnkmG4cxyZWtWkbXSEJ6xP2zaJAq");
 
   initialize(owner: Signer, state: AddressInfoState, houseNumber: u8, streetNumber: u16, zipCode: u32, countryCode: u16): Result {
     // Use derive() for PDA creation and init() for initialization
-    state.derive(['address_info', owner.key]).init();
+    state.derive(['address_info', owner.key]).init(owner);
 
     // Store the account data
     state.owner = owner.key;
