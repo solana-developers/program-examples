@@ -12,7 +12,6 @@ pub mod create_token {
     use super::*;
 
     pub fn create_token_mint(_ctx: Context<CreateTokenMintContext>, _decimals: u8) -> Result<()> {
-        
         Ok(())
     }
 }
