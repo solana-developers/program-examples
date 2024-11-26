@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-close_account = "3bo4FzxB1xAiPqZjq8nmLvHGMEsqm96VZeJFXFei7DJD"
+close_account = "2euVXLTWxETeBCDDEWCUT5SUPdbpKJKpEzRHVcmWHF5z"
 
 [registry]
 url = "https://api.apr.dev"
