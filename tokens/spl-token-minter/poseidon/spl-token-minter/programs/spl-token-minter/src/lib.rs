@@ -1,18 +1,18 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token::{Token, mint_to, TokenAccount, Mint, MintTo},
+    token::{mint_to, Mint, MintTo, Token, TokenAccount},
 };
 declare_id!("CSi4VcU9g99HKSodPV3MJvweoEAuaqWqgEC3jvdHieDG");
 #[program]
 pub mod spl_token_minter {
     use super::*;
     pub fn create_token_mint(
-        ctx: Context<CreateTokenMintContext>,
-        decimals: u8,
-        freeze_authority: Pubkey,
+        _ctx: Context<CreateTokenMintContext>,
+        _decimals: u8,
+        _freeze_authority: Pubkey,
     ) -> Result<()> {
-        // Note: Initialization for mint handled manually 
+        // Note: Initialization for mint handled manually
         // As Poseidon's transpiler does not support initializeMint yet.
 
         Ok(())
