@@ -13,7 +13,7 @@ import { AssociatedTokenAccount, Mint, Pubkey, type Result, Signer, TokenProgram
 // under "to_account" & "mint_account" under "MintContext"
 
 export default class SplTokenMinter {
-  static PROGRAM_ID = new Pubkey('HFKNWrbYAfKsrWJu88RtUVHgVBNz1uJ6u2tNx1YCmAMZ');
+  static PROGRAM_ID = new Pubkey("HFKNWrbYAfKsrWJu88RtUVHgVBNz1uJ6u2tNx1YCmAMZ");
 
   createToken(mint: Mint, decimals: u8, payer: Signer, freezeAuthority: Pubkey): Result {
     mint.initIfNeeded();

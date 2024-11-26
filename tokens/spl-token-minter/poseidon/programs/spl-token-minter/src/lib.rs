@@ -1,7 +1,10 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{
-    token::{transfer as transfer_spl, Transfer as TransferSPL, mint_to, Mint, MintTo, Token, TokenAccount},
     associated_token::AssociatedToken,
+    token::{
+        mint_to, transfer as transfer_spl, Mint, MintTo, Token, TokenAccount,
+        Transfer as TransferSPL,
+    },
 };
 declare_id!("HFKNWrbYAfKsrWJu88RtUVHgVBNz1uJ6u2tNx1YCmAMZ");
 #[program]
@@ -21,7 +24,7 @@ pub mod spl_token_minter {
                 mint: ctx.accounts.mint_account.to_account_info(),
                 to: ctx.accounts.to_account.to_account_info(),
                 authority: ctx.accounts.signer.to_account_info(),
-            }
+            },
         );
         mint_to(cpi_ctx, amount)?;
         Ok(())
