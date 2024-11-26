@@ -7,10 +7,10 @@ declare_id!("2Ry3iUWABuQv8PTjgPwaM1CFHB8D8CtuX6EVzYXQ3PvE");
 #[program]
 pub mod token_minter {
     use super::*;
-    pub fn create_token(ctx: Context<CreateTokenContext>, decimals: u8) -> Result<()> {
-        // Note: Initialization for mint handled manually 
+    pub fn create_token(_ctx: Context<CreateTokenContext>, _decimals: u8) -> Result<()> {
+        // Note: Initialization for mint handled manually
         // As Poseidon's transpiler does not support initializeMint yet.
-        
+
         Ok(())
     }
     pub fn mint_token(ctx: Context<MintTokenContext>, amount: u64) -> Result<()> {
