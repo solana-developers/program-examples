@@ -9,7 +9,7 @@ pub mod program_derived_addresses {
         Ok(())
     }
     pub fn increment(ctx: Context<IncrementContext>) -> Result<()> {
-        ctx.accounts.page_visits.page_visits = ctx.accounts.page_visits.page_visits + 1;
+        ctx.accounts.page_visits.page_visits += 1;
         Ok(())
     }
 }
