@@ -1,13 +1,10 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{Transfer, transfer};
+use anchor_lang::system_program::{transfer, Transfer};
 declare_id!("Db6bufzTcWMDhiCUAuCv3AqCyeZKV4BSGG9ooCibQjrJ");
 #[program]
 pub mod pda_rent_payer {
     use super::*;
-    pub fn init_rent_vault(
-        ctx: Context<InitRentVaultContext>,
-        fund_lamports: u64,
-    ) -> Result<()> {
+    pub fn init_rent_vault(ctx: Context<InitRentVaultContext>, fund_lamports: u64) -> Result<()> {
         let transfer_accounts = Transfer {
             from: ctx.accounts.payer.to_account_info(),
             to: ctx.accounts.rent_vault.to_account_info(),
@@ -19,10 +16,7 @@ pub mod pda_rent_payer {
         transfer(cpi_ctx, fund_lamports)?;
         Ok(())
     }
-    pub fn create_new_account(
-        ctx: Context<CreateNewAccountContext>,
-        amount: u64,
-    ) -> Result<()> {
+    pub fn create_new_account(ctx: Context<CreateNewAccountContext>, amount: u64) -> Result<()> {
         let transfer_accounts = Transfer {
             from: ctx.accounts.rent_vault.to_account_info(),
             to: ctx.accounts.new_account.to_account_info(),
