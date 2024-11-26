@@ -1,7 +1,7 @@
 import { Account, Pubkey, type Result, Signer, u64 } from '@solanaturbine/poseidon';
 
 export default class Counter {
-  static PROGRAM_ID = new Pubkey("GkV2QQhYjUdtodnREvNATozYWoEsTQX8ezUZs8Ncy3gm");
+  static PROGRAM_ID = new Pubkey('GkV2QQhYjUdtodnREvNATozYWoEsTQX8ezUZs8Ncy3gm');
 
   initializeCounter(payer: Signer, counter: CounterState): Result {
     counter.derive(['']).init();
