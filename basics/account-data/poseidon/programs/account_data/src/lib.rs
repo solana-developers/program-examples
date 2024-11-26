@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-declare_id!("5wF2itZNsDcf5s1SdcdJPdgBSTFAKjj6YbdicLFYi8vN");
+declare_id!("5p8KvdgFw7VygwT3J19dqDRDHDFUt6wKdDiA4s1kctdf");
 #[program]
 pub mod address_info {
     use super::*;

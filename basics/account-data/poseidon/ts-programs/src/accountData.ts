@@ -1,7 +1,7 @@
 import { Account, Pubkey, Result, Signer, u8, u16, u32 } from '@solanaturbine/poseidon';
 
 export default class AddressInfo {
-  static PROGRAM_ID = new Pubkey('5wF2itZNsDcf5s1SdcdJPdgBSTFAKjj6YbdicLFYi8vN');
+  static PROGRAM_ID = new Pubkey("5p8KvdgFw7VygwT3J19dqDRDHDFUt6wKdDiA4s1kctdf");
 
   initialize(owner: Signer, state: AddressInfoState, houseNumber: u8, streetNumber: u16, zipCode: u32, countryCode: u16): Result {
     state.derive(['account_data', owner.key]).init();

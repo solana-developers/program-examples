@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-account_data = "5wF2itZNsDcf5s1SdcdJPdgBSTFAKjj6YbdicLFYi8vN"
+account_data = "5p8KvdgFw7VygwT3J19dqDRDHDFUt6wKdDiA4s1kctdf"
 
 [registry]
 url = "https://api.apr.dev"
