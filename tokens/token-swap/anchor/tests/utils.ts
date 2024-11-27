@@ -20,14 +20,16 @@ export const expectRevert = async (promise: Promise<any>) => {
   }
 };
 
+const defaultMintedAmount = 100;
+const defaultDecimals = 6;
 export const mintingTokens = async ({
   connection,
   creator,
   holder = creator,
   mintAKeypair,
   mintBKeypair,
-  mintedAmount = 100,
-  decimals = 6,
+  mintedAmount = defaultMintedAmount,
+  decimals = defaultDecimals,
 }: {
   connection: Connection;
   creator: Signer;
@@ -67,7 +69,7 @@ export interface TestValues {
   admin: Keypair;
   mintAKeypair: Keypair;
   mintBKeypair: Keypair;
-  defaultSupply: anchor.BN;
+  defaultHolderAccountSupply: anchor.BN;
   ammKey: PublicKey;
   minimumLiquidity: anchor.BN;
   poolKey: PublicKey;
@@ -127,6 +129,6 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
     depositAmountA: new BN(4 * 10 ** 6),
     depositAmountB: new BN(1 * 10 ** 6),
     minimumLiquidity: new BN(100),
-    defaultSupply: new BN(100 * 10 ** 6),
+    defaultHolderAccountSupply: new BN(defaultMintedAmount * 10 ** defaultDecimals),
   };
 }

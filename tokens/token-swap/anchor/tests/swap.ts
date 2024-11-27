@@ -39,7 +39,9 @@ describe('Swap', () => {
         poolAccountB: values.poolAccountB,
       })
       .rpc();
+  });
 
+  it('Swap from a to b, initial deposit a > b', async () => {
     await program.methods
       .depositLiquidity(values.depositAmountA, values.depositAmountB)
       .accounts({
@@ -57,9 +59,6 @@ describe('Swap', () => {
       })
       .signers([values.admin])
       .rpc({ skipPreflight: true });
-  });
-
-  it('Swap from A to B', async () => {
     const input = new BN(10 ** 6);
     await program.methods
       .swapExactTokensForTokens(true, input, new BN(100))
@@ -80,8 +79,54 @@ describe('Swap', () => {
 
     const traderTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
     const traderTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
-    expect(traderTokenAccountA.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountA).sub(input).toString());
-    expect(Number(traderTokenAccountB.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountB).toNumber());
-    expect(Number(traderTokenAccountB.value.amount)).to.be.lessThan(values.defaultSupply.sub(values.depositAmountB).add(input).toNumber());
+    expect(traderTokenAccountA.value.amount).to.equal(values.defaultHolderAccountSupply.sub(values.depositAmountA).sub(input).toString());
+    expect(Number(traderTokenAccountB.value.amount)).to.be.greaterThan(values.defaultHolderAccountSupply.sub(values.depositAmountB).toNumber());
+    expect(Number(traderTokenAccountB.value.amount)).to.be.lessThan(
+      values.defaultHolderAccountSupply.sub(values.depositAmountB).add(input).toNumber(),
+    );
+  });
+
+  it('Swap from a to b, initial deposit a < b', async () => {
+    const depositAmountA = new BN(10 * 10 ** 6);
+    const depositAmountB = new BN(30 * 10 ** 6);
+    await program.methods
+      .depositLiquidity(depositAmountA, depositAmountB)
+      .accounts({
+        pool: values.poolKey,
+        poolAuthority: values.poolAuthority,
+        depositor: values.admin.publicKey,
+        mintLiquidity: values.mintLiquidity,
+        mintA: values.mintAKeypair.publicKey,
+        mintB: values.mintBKeypair.publicKey,
+        poolAccountA: values.poolAccountA,
+        poolAccountB: values.poolAccountB,
+        depositorAccountLiquidity: values.liquidityAccount,
+        depositorAccountA: values.holderAccountA,
+        depositorAccountB: values.holderAccountB,
+      })
+      .signers([values.admin])
+      .rpc({ skipPreflight: true });
+    const input = new BN(10 ** 6);
+    await program.methods
+      .swapExactTokensForTokens(true, input, new BN(100))
+      .accounts({
+        amm: values.ammKey,
+        pool: values.poolKey,
+        poolAuthority: values.poolAuthority,
+        trader: values.admin.publicKey,
+        mintA: values.mintAKeypair.publicKey,
+        mintB: values.mintBKeypair.publicKey,
+        poolAccountA: values.poolAccountA,
+        poolAccountB: values.poolAccountB,
+        traderAccountA: values.holderAccountA,
+        traderAccountB: values.holderAccountB,
+      })
+      .signers([values.admin])
+      .rpc({ skipPreflight: true });
+
+    const traderTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
+    const traderTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
+    expect(traderTokenAccountA.value.amount).to.equal(values.defaultHolderAccountSupply.sub(depositAmountA).sub(input).toString());
+    expect(Number(traderTokenAccountB.value.amount)).to.be.greaterThan(values.defaultHolderAccountSupply.sub(depositAmountB).add(input).toNumber());
   });
 });

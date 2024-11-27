@@ -82,9 +82,9 @@ describe('Withdraw liquidity', () => {
     const depositTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
     const depositTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
     expect(liquidityTokenAccount.value.amount).to.equal('0');
-    expect(Number(depositTokenAccountA.value.amount)).to.be.lessThan(values.defaultSupply.toNumber());
-    expect(Number(depositTokenAccountA.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountA).toNumber());
-    expect(Number(depositTokenAccountB.value.amount)).to.be.lessThan(values.defaultSupply.toNumber());
-    expect(Number(depositTokenAccountB.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountA).toNumber());
+    expect(Number(depositTokenAccountA.value.amount)).to.be.lessThan(values.defaultHolderAccountSupply.toNumber());
+    expect(Number(depositTokenAccountA.value.amount)).to.be.greaterThan(values.defaultHolderAccountSupply.sub(values.depositAmountA).toNumber());
+    expect(Number(depositTokenAccountB.value.amount)).to.be.lessThan(values.defaultHolderAccountSupply.toNumber());
+    expect(Number(depositTokenAccountB.value.amount)).to.be.greaterThan(values.defaultHolderAccountSupply.sub(values.depositAmountA).toNumber());
   });
 });
