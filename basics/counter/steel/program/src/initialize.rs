@@ -1,6 +1,6 @@
-use steel_api::prelude::*;
-use steel::*;
 use solana_program::msg;
+use steel::*;
+use steel_api::prelude::*;
 
 pub fn process_initialize(accounts: &[AccountInfo<'_>]) -> ProgramResult {
     // Get expected pda bump.
@@ -8,14 +8,13 @@ pub fn process_initialize(accounts: &[AccountInfo<'_>]) -> ProgramResult {
 
     // Load accounts.
     let [signer_info, counter_info, system_program] = accounts else {
-        return Err(ProgramError::NotEnoughAccountKeys);        
+        return Err(ProgramError::NotEnoughAccountKeys);
     };
     signer_info.is_signer()?;
-    counter_info.is_empty()?.is_writable()?.has_seeds(
-        &[COUNTER],
-        counter_bump,
-        &steel_api::ID
-    )?;
+    counter_info
+        .is_empty()?
+        .is_writable()?
+        .has_seeds(&[COUNTER], counter_bump, &steel_api::ID)?;
     system_program.is_program(&system_program::ID)?;
 
     // Initialize counter.

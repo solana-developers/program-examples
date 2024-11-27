@@ -3,9 +3,9 @@ mod initialize;
 
 use increment::*;
 use initialize::*;
-        
-use steel_api::prelude::*;
+
 use steel::*;
+use steel_api::prelude::*;
 
 use solana_program::msg;
 
@@ -14,7 +14,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     data: &[u8],
 ) -> ProgramResult {
-    let (ix, data) = parse_instruction(&steel_api::ID, program_id , data)?;
+    let (ix, data) = parse_instruction(&steel_api::ID, program_id, data)?;
 
     match ix {
         SteelInstruction::Initialize => process_initialize(accounts)?,

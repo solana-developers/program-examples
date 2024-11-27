@@ -21,6 +21,6 @@ pub fn increment(signer: Pubkey) -> Instruction {
             AccountMeta::new(signer, true),
             AccountMeta::new(counter_pda().0, false),
         ],
-        data : Increment {}.to_bytes(),
+        data: Increment {}.to_bytes(),
     }
 }
