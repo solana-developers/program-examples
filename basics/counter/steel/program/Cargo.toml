@@ -1,0 +1,11 @@
+[package]
+name = "counter-solana-steel"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+steel.workspace = true
+counter-solana-steel-api = {path = "../api"}
+
+[lib]
+crate-type = ["cdylib", "lib"]

@@ -1,0 +1,29 @@
+{
+  "name": "counter-solana-steel",
+  "version": "0.1.0",
+  "description": "Counter program written using Steel framework",
+  "main": "index.js",
+  "author": "The Wuh",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "test": "pnpm ts-mocha -p ./tests/tsconfig.test.json -t 1000000 ./tests/counter.test.ts",
+    "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
+    "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+    "deploy": "solana program deploy ./program/target/so/program.so"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.8.5",
+    "chai": "^4.3.4",
+    "mocha": "^10.8.2",
+    "solana-bankrun": "^0.4.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.4"
+  }
+}
