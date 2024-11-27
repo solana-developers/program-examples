@@ -253,7 +253,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.4
+        uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -264,10 +264,11 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
+          solana-keygen new --no-bip39-passphrase
           process_projects "stable"
           sccache --show-stats
       - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.4
+        uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17
@@ -278,6 +279,7 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
+          solana-keygen new --no-bip39-passphrase --force
           process_projects "1.18.17"
           sccache --show-stats
 
