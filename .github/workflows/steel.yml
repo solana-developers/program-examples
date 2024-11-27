@@ -279,7 +279,7 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
-          solana-keygen new --no-bip39-passphrase
+          solana-keygen new --no-bip39-passphrase --force
           process_projects "1.18.17"
           sccache --show-stats
 
