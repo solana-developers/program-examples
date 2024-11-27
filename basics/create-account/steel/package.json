@@ -1,0 +1,29 @@
+{
+  "name": "create-account-program",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Create an account using the steel framework for Solana",
+  "main": "index.js",
+  "scripts": {
+    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.test.ts",
+    "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
+    "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+    "deploy": "solana program deploy ./program/target/so/create_account_program.so"
+  },
+  "keywords": ["solana"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@solana/web3.js": "^1.95.4"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.8.1",
+    "chai": "^4.5.0",
+    "mocha": "^10.7.3",
+    "solana-bankrun": "^0.4.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.6.3"
+  }
+}

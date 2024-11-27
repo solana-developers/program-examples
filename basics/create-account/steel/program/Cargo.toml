@@ -1,0 +1,19 @@
+[package]
+name = "create-account-program"
+description = ""
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+create-account-api.workspace = true
+solana-program.workspace = true
+steel.workspace = true
