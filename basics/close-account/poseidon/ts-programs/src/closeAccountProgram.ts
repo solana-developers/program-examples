@@ -1,7 +1,7 @@
-import { Account, String, Pubkey, Result, Signer, u8 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, Result, Signer, String, u8 } from '@solanaturbine/poseidon';
 
-export default class CloseAccount {
-  static PROGRAM_ID = new Pubkey('AtUc6zMfozxrQoK4PbDUnd5daS86XCPuT2og1293P5XXo');
+export default class CloseAccountProgram {
+  static PROGRAM_ID = new Pubkey('Cp1rfMVrJoD9aNT8dGVoPAf2BrY6HBMXbsTPfd2heV6C');
 
   createUser(user: Signer, userState: UserState, name: String<50>): Result {
     userState.derive(['USER', user.key]).init(user);

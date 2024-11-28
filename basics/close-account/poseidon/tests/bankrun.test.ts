@@ -14,9 +14,9 @@ import {
 } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { BanksClient, BanksTransactionResultWithMeta, startAnchor } from 'solana-bankrun';
-import type { CloseAccount } from '../target/types/close_account';
+import type { CloseAccountProgram } from '../target/types/close_account_program';
 
-const IDL = require('../target/idl/close_account.json');
+const IDL = require('../target/idl/close_account_program.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 async function createAndProcessTransaction(
@@ -45,7 +45,7 @@ describe('Close an account', async () => {
   const provider = new BankrunProvider(context);
 
   const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<CloseAccount>(IDL, provider);
+  const program = new anchor.Program<CloseAccountProgram>(IDL, provider);
 
   const user = Keypair.generate(); // Generate a new user keypair
 
