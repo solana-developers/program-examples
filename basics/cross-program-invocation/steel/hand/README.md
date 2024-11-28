@@ -1,6 +1,6 @@
-# TokenSwap
+# Hand
 
-**TokenSwap** is a ...
+**Hand** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

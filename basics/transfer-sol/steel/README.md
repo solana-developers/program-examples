@@ -1,6 +1,6 @@
-# TokenSwap
+# TransferSol
 
-**TokenSwap** is a ...
+**TransferSol** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.

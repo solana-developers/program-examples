@@ -1,6 +1,6 @@
-# TokenSwap
+# PdaMintAuthority
 
-**TokenSwap** is a ...
+**PdaMintAuthority** is a ...
         
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
