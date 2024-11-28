@@ -1,0 +1,13 @@
+[package]
+name = "steel-api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bytemuck.workspace = true
+num_enum.workspace = true
+solana-program.workspace = true
+spl-token = "6.0.0"
+steel.workspace = true
+steel-program = { version = "0.1.0", path = "../program" }
+thiserror.workspace = true
