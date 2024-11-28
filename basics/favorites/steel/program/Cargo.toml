@@ -1,0 +1,11 @@
+[package]
+name = "favorites-steel-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+steel.workspace = true
+favorites-steel-api = {path = "../api"}
