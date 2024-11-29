@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
-    "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
-    "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+    "test": "steel test",
+    "build-and-test": "steel build && steel test",
+    "build": "steel build",
     "deploy": "solana program deploy ./program/target/so/program.so",
     "check:fix": "pnpm biome format --write ./tests",
     "rust:test": "cargo test-sbf"
