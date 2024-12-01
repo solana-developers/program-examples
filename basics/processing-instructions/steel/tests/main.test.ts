@@ -13,6 +13,10 @@ type GoToTheParkDataRaw = {
   height: bigint;
 };
 
+const instructionDiscriminators = {
+  goToThePark: Buffer.from([0]),
+};
+
 const encodeString = (str: string, length: number): Uint8Array => {
   const buffer = Buffer.alloc(length, 0);
   buffer.write(str, 'utf-8');
@@ -32,7 +36,7 @@ const encodeBigInt = (value: bigint): Uint8Array => {
 const createGoToTheParkBuffer = (data: GoToTheParkData): Buffer => {
   const name = encodeString(data.name, 64);
   const height = encodeBigInt(data.height); // 8 bytes
-  return Buffer.concat([name, height]);
+  return Buffer.concat([instructionDiscriminators.goToThePark, name, height]);
 };
 
 const toGoToTheParkData = (data: GoToTheParkDataRaw): GoToTheParkData => {
