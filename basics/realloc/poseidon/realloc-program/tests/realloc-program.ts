@@ -47,6 +47,7 @@ describe('realloc_program', () => {
       .update(updatedMessage)
       .accounts({
         payer: provider.wallet.publicKey,
+        account: messagePDA,
       })
       .signers([])
       .rpc();

@@ -28,7 +28,13 @@ pub struct UpdateContext<'info> {
     // Due to current limitations in Poseidon, dynamic allocation (reallocation) is not supported on Poseidon right now.
     // As a result, this example uses fixed-sized fields to work around the limitation.
     // In typical Solana programs using Anchor, dynamic reallocation allows accounts to resize based on the input data.
-    #[account(mut, seeds = [b"message"], bump)]
+    // so I am adding it manually right now
+    #[account(
+        mut,
+        realloc = 48,
+        realloc::payer = payer,
+        realloc::zero = true,
+    )]
     pub account: Account<'info, MessageAccountState>,
     pub system_program: Program<'info, System>,
 }

@@ -56,6 +56,7 @@ describe('realloc_program', async () => {
       .update(updatedMessage)
       .accounts({
         payer: payer.publicKey,
+        account: messagePDA,
       })
       .rpc();
 

@@ -1,4 +1,4 @@
-import { Account, String as PoseidonString, Pubkey, Result, Signer, SystemAccount, u8 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, Result, Signer, Str, SystemAccount, u8 } from '@solanaturbine/poseidon';
 
 // Note:
 // Realloc Program:
@@ -10,15 +10,15 @@ import { Account, String as PoseidonString, Pubkey, Result, Signer, SystemAccoun
 export default class ReallocProgram {
   static PROGRAM_ID = new Pubkey('7T1DgawXjJD6kGaC43ujSw2xXLhn7w28MGzyD7oV8Q1B');
 
-  initialize(payer: Signer, account: MessageAccountState, input: PoseidonString): Result {
-    account.derive(['message']).init();
+  initialize(payer: Signer, account: MessageAccountState, input: Str<25>): Result {
+    account.derive(['message']).init(payer);
 
     account.message = input;
 
     account.bump = account.getBump();
   }
 
-  update(payer: Signer, account: MessageAccountState, input: PoseidonString): Result {
+  update(payer: Signer, account: MessageAccountState, input: Str<25>): Result {
     account.derive(['message']);
 
     account.message = input;
@@ -26,7 +26,7 @@ export default class ReallocProgram {
 }
 
 export interface MessageAccountState extends Account {
-  message: PoseidonString;
+  message: Str<25>;
 
   bump: u8;
 }
