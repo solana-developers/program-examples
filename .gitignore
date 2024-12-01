@@ -8,6 +8,7 @@ node_modules/
 **/*/node_modules
 **/*/package-lock.json
 **/*/Cargo.lock
+!**/*/steel/Cargo.lock
 
 **/*/.anchor
 **/*/.DS_Store
