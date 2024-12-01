@@ -1,6 +1,15 @@
 # Solana Counter Program
 
-A simple Solana program demonstrating the basics of on-chain state management using Anchor. The program allows users to create and increment counters, with each user maintaining their own counter state.
+A simple Solana program demonstrating the basics of on-chain state management, originally written in TypeScript and transpiled to Anchor using Poseidon. This program allows users to create and increment counters, with each user maintaining their own counter state.
+
+## Development Approach
+
+This program was initially developed in TypeScript for a more familiar development experience, then transpiled to Anchor using Poseidon. This approach makes it easier for TypeScript developers to get started with Solana development by:
+
+- Writing programs in familiar TypeScript syntax
+- Leveraging TypeScript's type safety and IDE support
+- Automatically converting to Anchor's Rust-based framework
+- Reducing the initial learning curve for Solana development
 
 ## Features
 
@@ -27,7 +36,6 @@ The program uses a `CounterAccount` to store the state with the following fields
 ### Instructions
 
 1. `initialize`
-
    - Creates a new counter account for the caller
    - Initializes count to 0
    - Stores the PDA bump
@@ -40,18 +48,19 @@ The program uses a `CounterAccount` to store the state with the following fields
 
 ### Prerequisites
 
-- Rust and Cargo
+- Node.js and npm/yarn/pnpm
+- Poseidon CLI (for TypeScript to Anchor transpilation)
+- Rust and Cargo (for the transpiled Anchor program)
 - Solana CLI tools
 - Anchor CLI
-- Node.js and npm/yarn/pnpm
 
 ### Building
 
 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/solana-developers/program-examples.git
+cd program-examples
 ```
 
 2. Install dependencies
@@ -60,15 +69,19 @@ cd <repository-name>
 pnpm install
 ```
 
-3. Build the program
+3. Transpile TypeScript to Anchor
+```bash
+poseidon compile --input "/ts-programs/src/counter.ts'" --output "/programs/counter/src/lib.rs"
+```
 
+4. Build the transpiled Anchor program
 ```bash
 anchor build
 ```
 
 ### Testing
 
-The program uses `anchor-bankrun` for testing, which provides a lightweight environment for running Solana program tests.
+The program uses `anchor-bankrun` for testing, which provides a lightweight environment for running Solana program tests. Tests can be written in TypeScript and will work with both the original TypeScript program and the transpiled Anchor version.
 
 Run the tests with:
 
@@ -125,7 +138,7 @@ await program.methods
 
 # Counter Program Tests Documentation
 
-This document describes the test suite for a Solana program that implements a basic counter functionality using the Anchor framework and bankrun for testing.
+This document describes the test suite for the Solana counter program. The tests are written in TypeScript and work with both the original TypeScript program and the transpiled Anchor version using bankrun for testing.
 
 ## Test Setup
 
@@ -201,12 +214,6 @@ it("maintains separate counts for different authorities");
   - First counter shows count of 1
   - Second counter remains at 0
 
-## Program Account Structure
-
-The tests interact with `counterAccount` which appears to have the following structure:
-
-- `count`: BN (Big Number) representing the current count value
-
 ## Testing Considerations
 
 1. Each test starts with a fresh state due to the `beforeEach` setup
@@ -216,9 +223,9 @@ The tests interact with `counterAccount` which appears to have the following str
 
 ## Usage
 
-To run these tests, ensure you have:
+To run these tests:
 
-1. Built the Anchor program
-2. Generated the IDL file
-3. Installed all dependencies
-4. Run the test command (typically `anchor test`)
+1. Ensure you have all dependencies installed
+2. Build the TypeScript program
+3. Transpile to Anchor using Poseidon
+4. Run the test command: `anchor test`
