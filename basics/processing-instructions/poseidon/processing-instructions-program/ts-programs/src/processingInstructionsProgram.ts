@@ -1,9 +1,9 @@
-import { Account, Pubkey, type Result, u32 } from '@solanaturbine/poseidon';
+import { Account, Pubkey, type Result, Str, u32 } from '@solanaturbine/poseidon';
 
 export default class ProcessingInstructionsProgram {
   static PROGRAM_ID = new Pubkey('FUfFBrs2nHAud8gVESDMtYa7oa5aGa3DEngKKLGyV2hv');
 
-  go_to_park(height: u32, name: String): Result {
+  go_to_park(height: u32, name: Str<25>): Result {
     // Display a welcome message
     console.log('Welcome to the park,', name);
     // Check if the height is above the threshold
