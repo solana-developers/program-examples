@@ -13,6 +13,15 @@ async fn setup() -> (BanksClient, Keypair, Hash) {
     program_test.start().await
 }
 
+// Helper function to assert the presence of log messages
+fn assert_log_contains(logs: &[String], expected: &str) {
+    assert!(
+        logs.iter().any(|msg| msg.contains(expected)),
+        "Missing log: {}",
+        expected
+    );
+}
+
 #[tokio::test]
 async fn run_test() {
     // Setup test
@@ -28,8 +37,23 @@ async fn run_test() {
         blockhash,
     );
 
-    let res = banks.process_transaction(tx).await;
-    assert!(res.is_ok());
+    let res = banks.process_transaction_with_metadata(tx).await;
+    assert!(res.is_ok(), "Process Transaction failed: {:?}", res.err());
+    let tx_result = res.unwrap();
+    assert!(
+        tx_result.result.is_ok(),
+        "Transaction failed: {:?}",
+        tx_result.result.err()
+    );
 
-    // check the logs to see if the program executed correctly
+    let metadata = tx_result.metadata.unwrap();
+
+    // check the logs
+    // we got 2 instructions, we must see 2 consecutive logs
+    // - Welcome to the park, {name}!
+    // - You are NOT tall enough... and You are tall enough...
+    assert_log_contains(&metadata.log_messages, "Welcome to the park, Jimmy!");
+    assert_log_contains(&metadata.log_messages, "You are NOT tall enough");
+    assert_log_contains(&metadata.log_messages, "Welcome to the park, Mary!");
+    assert_log_contains(&metadata.log_messages, "You are tall enough");
 }
