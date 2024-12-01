@@ -10,12 +10,12 @@ import { Account, Pubkey, Result, Signer, u8, u64 } from '@solanaturbine/poseido
  * @notice Main program class implementing counter functionality
  * @dev Uses Turbine framework for Solana program development
  */
-export default class CounterProgram {
+export default class Counter {
   /**
    * @notice Program ID for the Counter Program
    * @dev Deployed program address on Solana
    */
-  static PROGRAM_ID = new Pubkey('FceHwEvpsYuAawfi4Lcp5LRtb6Hze97YrgGpQHUXwNwo');
+  static PROGRAM_ID = new Pubkey('3dhKkikKk112wEVdNr69Q2eEXSwU3MivfTNxauQsTjJP');
 
   /**
    * @notice Initializes a new counter account
@@ -25,9 +25,9 @@ export default class CounterProgram {
    * @param counter The counter account to be initialized
    * @return Result Success/failure of the initialization
    */
-  initialize(authority: Signer, counter: Counter): Result {
+  initialize(authority: Signer, counter: CounterAccount): Result {
     // Derive PDA for counter account using seeds
-    counter.derive(['counter', authority.key]).init();
+    counter.derive(['counter', authority.key]).init(authority);
 
     // Initialize counter state
     counter.count = new u64(0);
@@ -42,7 +42,7 @@ export default class CounterProgram {
    * @param counter The counter account to be incremented
    * @return Result Success/failure of the increment operation
    */
-  increment(authority: Signer, counter: Counter): Result {
+  increment(authority: Signer, counter: CounterAccount): Result {
     // Verify counter PDA using stored bump seed
     counter.deriveWithBump(['counter', authority.key], counter.bump);
     // Increment counter value
@@ -54,7 +54,7 @@ export default class CounterProgram {
  * @notice Interface defining the structure of a Counter account
  * @dev Extends the base Account type from Turbine framework
  */
-export interface Counter extends Account {
+export interface CounterAccount extends Account {
   /** Current value of the counter */
   count: u64;
   /** Bump seed used in PDA derivation */

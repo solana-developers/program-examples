@@ -1,88 +1,169 @@
 import * as anchor from '@coral-xyz/anchor';
 import { Program } from '@coral-xyz/anchor';
-import { SystemProgram } from '@solana/web3.js';
-import { expect } from 'chai';
-import { CounterProgram } from '../target/types/counter_program';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BankrunProvider, startAnchor } from 'anchor-bankrun';
+import { assert } from 'chai';
+import { Counter } from '../target/types/counter';
 
-describe('counter program', () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+// Import the IDL (Interface Description Language) file for the Counter program
+const IDL = require('../target/idl/counter.json');
 
-  const program = anchor.workspace.Counter as Program<CounterProgram>;
+/**
+ * Test suite for the Counter program
+ * Tests basic functionality including initialization and increment operations
+ */
+describe('counter', () => {
+  // Test environment variables
+  let provider: BankrunProvider;
+  let program: Program<Counter>;
+  let authority: Keypair;
 
-  // Generate a unique counter account for each test run
-  const counterKeypair = anchor.web3.Keypair.generate();
+  /**
+   * Set up a fresh test environment before each test
+   * Creates a new authority keypair and initializes the bankrun context
+   */
+  beforeEach(async () => {
+    // Create fresh authority for each test
+    authority = Keypair.generate();
 
-  it('Initialize counter', async () => {
-    try {
-      // Initialize the counter account
-      await program.methods
+    // Initialize bankrun context with funded authority account
+    const context = await startAnchor(
+      '.', // Current directory
+      [], // No additional programs needed
+      [
+        {
+          address: authority.publicKey,
+          info: {
+            lamports: 10 * LAMPORTS_PER_SOL, // Fund with 10 SOL
+            data: Buffer.alloc(0),
+            owner: anchor.web3.SystemProgram.programId,
+            executable: false,
+          },
+        },
+      ],
+    );
+
+    // Initialize provider and program with the new context
+    provider = new BankrunProvider(context);
+    program = new anchor.Program<Counter>(IDL, provider);
+  });
+
+  /**
+   * Helper function to create a new counter account
+   * @param authority - Keypair of the authority who will own the counter
+   * @returns Object containing counter public key and initialization transaction signature
+   */
+  async function createCounter(authority: Keypair) {
+    // Derive the counter PDA using authority's public key
+    const [counter] = PublicKey.findProgramAddressSync([Buffer.from('counter'), authority.publicKey.toBuffer()], program.programId);
+
+    // Initialize the counter account
+    return {
+      counter,
+      tx: await program.methods
         .initialize()
         .accounts({
-          counter: counterKeypair.publicKey,
-          user: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
+          authority: authority.publicKey,
+          counter,
+          systemProgram: anchor.web3.SystemProgram.programId,
         })
-        .signers([counterKeypair])
-        .rpc();
+        .signers([authority])
+        .rpc(),
+    };
+  }
 
-      // Fetch the created account
-      const counterAccount = await program.account.counter.fetch(counterKeypair.publicKey);
-
-      // Verify the counter is initialized to 0
-      expect(counterAccount.count.toNumber()).to.equal(0);
-    } catch (error) {
-      console.error('Initialization error:', error);
-      throw error;
-    }
+  /**
+   * Test case: Verify counter initialization
+   * Ensures a new counter starts with a count of zero
+   */
+  it('can initialize counter', async () => {
+    const { counter } = await createCounter(authority);
+    const counterAccount = await program.account.counterAccount.fetch(counter);
+    assert.ok(counterAccount.count.eq(new anchor.BN(0)));
   });
 
-  it('Increment counter', async () => {
-    try {
-      // Increment the counter
-      await program.methods
-        .increment()
-        .accounts({
-          counter: counterKeypair.publicKey,
-          user: provider.wallet.publicKey,
-        })
-        .rpc();
+  /**
+   * Test case: Verify counter increment
+   * Ensures the counter can be incremented by one
+   */
+  it('can increment counter', async () => {
+    const { counter } = await createCounter(authority);
 
-      // Fetch the updated counter account
-      const counterAccount = await program.account.counter.fetch(counterKeypair.publicKey);
+    // Perform increment operation
+    await program.methods
+      .increment()
+      .accounts({
+        authority: authority.publicKey,
+        counter,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([authority])
+      .rpc();
 
-      // Verify the counter was incremented
-      expect(counterAccount.count.toNumber()).to.equal(1);
-
-      // Optional: Print the current count for debugging
-      console.log('Current count:', counterAccount.count.toNumber());
-    } catch (error) {
-      console.error('Increment error:', error);
-      throw error;
-    }
+    // Verify counter was incremented
+    const counterAccount = await program.account.counterAccount.fetch(counter);
+    assert.ok(counterAccount.count.eq(new anchor.BN(1)));
   });
 
-  // Optional: Add a test to verify multiple increments
-  it('Multiple increments', async () => {
-    try {
-      // Increment twice more
-      for (let i = 0; i < 2; i++) {
-        await program.methods
-          .increment()
-          .accounts({
-            counter: counterKeypair.publicKey,
-            user: provider.wallet.publicKey,
-          })
-          .rpc();
-      }
+  /**
+   * Test case: Verify counter separation
+   * Ensures different authorities maintain separate counter states
+   */
+  it('maintains separate counts for different authorities', async () => {
+    // Create and fund second authority
+    const authority2 = Keypair.generate();
+    const context = await startAnchor(
+      '.',
+      [],
+      [
+        // Fund first authority
+        {
+          address: authority.publicKey,
+          info: {
+            lamports: 10 * LAMPORTS_PER_SOL,
+            data: Buffer.alloc(0),
+            owner: anchor.web3.SystemProgram.programId,
+            executable: false,
+          },
+        },
+        // Fund second authority
+        {
+          address: authority2.publicKey,
+          info: {
+            lamports: 10 * LAMPORTS_PER_SOL,
+            data: Buffer.alloc(0),
+            owner: anchor.web3.SystemProgram.programId,
+            executable: false,
+          },
+        },
+      ],
+    );
 
-      const counterAccount = await program.account.counter.fetch(counterKeypair.publicKey);
+    // Reinitialize provider and program with new context
+    provider = new BankrunProvider(context);
+    program = new anchor.Program<Counter>(IDL, provider);
 
-      // Counter should now be 3 (1 from previous test + 2 new increments)
-      expect(counterAccount.count.toNumber()).to.equal(3);
-    } catch (error) {
-      console.error('Multiple increment error:', error);
-      throw error;
-    }
+    // Create counters for both authorities
+    const { counter: counter1 } = await createCounter(authority);
+    const { counter: counter2 } = await createCounter(authority2);
+
+    // Increment only the first counter
+    await program.methods
+      .increment()
+      .accounts({
+        authority: authority.publicKey,
+        counter: counter1,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([authority])
+      .rpc();
+
+    // Fetch and verify both counter states
+    const account1 = await program.account.counterAccount.fetch(counter1);
+    const account2 = await program.account.counterAccount.fetch(counter2);
+
+    // Verify first counter was incremented and second remains at zero
+    assert.ok(account1.count.eq(new anchor.BN(1)));
+    assert.ok(account2.count.eq(new anchor.BN(0)));
   });
 });
