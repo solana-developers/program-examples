@@ -1,0 +1,12 @@
+[package]
+name = "token-swap-native"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+borsh = "1.5.3"
+borsh-derive = "1.5.3"
+solana-program = "=1.18.17"
+
+[lib]
+crate-type = ["cdylib", "lib"]
