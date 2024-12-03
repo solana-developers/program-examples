@@ -20,8 +20,7 @@ pub fn process_withdraw_liquidity(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-
-        //extracting account datas
+    //extracting account datas
     let amm_data: &mut Amm = amm_info.as_account_mut::<Amm>(&token_swap_api::ID)?;
     let pool_data: &mut Pool = pool_info.as_account_mut::<Pool>(&token_swap_api::ID)?;
     assert(
@@ -40,7 +39,7 @@ pub fn process_withdraw_liquidity(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
         "Mint account is invalid",
     )?;
 
-        // helper closure to get seeds for different accounts
+    // helper closure to get seeds for different accounts
 
     let get_seeds =
         |include_liquidity: bool, include_authority: bool, amm_seed: bool| -> Vec<&[u8]> {
@@ -68,14 +67,18 @@ pub fn process_withdraw_liquidity(accounts: &[AccountInfo<'_>], data: &[u8]) -> 
     signer_info.is_signer()?;
     depositor_info.is_signer()?;
     amm_info.has_seeds(&get_seeds(false, false, true), &token_swap_api::ID)?;
-    pool_info.has_seeds(&get_seeds(false, false, false), &token_swap_api::ID)?.as_account::<Pool>(&token_swap_api::ID)?;
+    pool_info
+        .has_seeds(&get_seeds(false, false, false), &token_swap_api::ID)?
+        .as_account::<Pool>(&token_swap_api::ID)?;
     pool_authority_info.has_seeds(&get_seeds(false, true, false), &token_swap_api::ID)?;
-     assert(
+    assert(
         !pool_authority_info.is_writable,
         TutorialError::ValidationBreached,
         "Pool authority account should be read-only",
     )?;
-    let mint_liquidity_data = mint_liquidity_info.has_seeds(&get_seeds(true,false,false),&token_swap_api::ID)?.as_mint()?;
+    let mint_liquidity_data = mint_liquidity_info
+        .has_seeds(&get_seeds(true, false, false), &token_swap_api::ID)?
+        .as_mint()?;
     mint_a_info.as_mint()?;
     mint_b_info.as_mint()?;
     let pool_account_a_amount = pool_account_a

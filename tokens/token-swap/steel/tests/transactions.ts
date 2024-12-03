@@ -1,39 +1,24 @@
-import { BN } from "@coral-xyz/anchor";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-  SYSVAR_RENT_PUBKEY as SYS_VAR_RENT_ID,
-} from "@solana/web3.js";
-import { serialize } from "borsh";
-import { ProgramTestContext } from "solana-bankrun";
-import { PROGRAM_ID, TestValues } from "./utils";
+import { BN } from '@coral-xyz/anchor';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY as SYS_VAR_RENT_ID, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { serialize } from 'borsh';
+import { ProgramTestContext } from 'solana-bankrun';
+import { PROGRAM_ID, TestValues } from './utils';
 
-export const createAmmTransactionInstruction = (
-  values: TestValues,
-  payer: Keypair,
-  context: ProgramTestContext,
-  shouldFail = false
-): Transaction => {
+export const createAmmTransactionInstruction = (values: TestValues, payer: Keypair, context: ProgramTestContext, shouldFail = false): Transaction => {
   const data = serialize(
     {
       struct: {
-        discriminator: "u8",
-        id: { array: { type: "u8", len: 32 } },
-        fee: "u16",
+        discriminator: 'u8',
+        id: { array: { type: 'u8', len: 32 } },
+        fee: 'u16',
       },
     },
     {
       discriminator: 0,
       id: values.id.toBytes(),
       fee: shouldFail ? 2000 : values.fee,
-    }
+    },
   );
 
   const ix = new TransactionInstruction({
@@ -67,21 +52,16 @@ export const createAmmTransactionInstruction = (
   return tx;
 };
 
-export const createPoolInstruction = (
-  values: TestValues,
-  payer: Keypair,
-  context: ProgramTestContext,
-  shouldFail = false
-): Transaction => {
+export const createPoolInstruction = (values: TestValues, payer: Keypair, context: ProgramTestContext, shouldFail = false): Transaction => {
   const data = serialize(
     {
       struct: {
-        discriminator: "u8",
+        discriminator: 'u8',
       },
     },
     {
       discriminator: 1,
-    }
+    },
   );
 
   const ix = new TransactionInstruction({
@@ -114,9 +94,7 @@ export const createPoolInstruction = (
         isWritable: true,
       },
       {
-        pubkey: shouldFail
-          ? values.mintAKeypair.publicKey
-          : values.mintBKeypair.publicKey,
+        pubkey: shouldFail ? values.mintAKeypair.publicKey : values.mintBKeypair.publicKey,
         isSigner: false,
         isWritable: true,
       },
@@ -167,21 +145,21 @@ export const createDepositInstruction = (
   payer: Keypair,
   context: ProgramTestContext,
   sameAmount = false,
-  shouldFail = false
+  shouldFail = false,
 ): Transaction => {
   const data = serialize(
     {
       struct: {
-        discriminator: "u8",
-        amount_a: "u64",
-        amount_b: "u64",
+        discriminator: 'u8',
+        amount_a: 'u64',
+        amount_b: 'u64',
       },
     },
     {
       discriminator: 2,
       amount_a: values.depositAmountA,
       amount_b: sameAmount ? values.depositAmountA : values.depositAmountB,
-    }
+    },
   );
 
   const ix = new TransactionInstruction({
@@ -281,15 +259,15 @@ export const createSwapInstruction = (
   context: ProgramTestContext,
   input: BN = new BN(10 ** 6),
   output: BN = new BN(100),
-  shouldFail = false
+  shouldFail = false,
 ): Transaction => {
   const data = serialize(
     {
       struct: {
-        discriminator: "u8",
-        swap_a: "u8",
-        input: "u64",
-        min_output_amount: "u64",
+        discriminator: 'u8',
+        swap_a: 'u8',
+        input: 'u64',
+        min_output_amount: 'u64',
       },
     },
     {
@@ -297,7 +275,7 @@ export const createSwapInstruction = (
       swap_a: 1,
       input: input,
       min_output_amount: output,
-    }
+    },
   );
 
   const ix = new TransactionInstruction({
@@ -387,19 +365,19 @@ export const createWithdrawInstruction = (
   payer: Keypair,
   context: ProgramTestContext,
   amount: BN = values.depositAmountA.sub(values.minimumLiquidity),
-  shouldFail = false
+  shouldFail = false,
 ): Transaction => {
   const data = serialize(
     {
       struct: {
-        discriminator: "u8",
-        amount: "u64",
+        discriminator: 'u8',
+        amount: 'u64',
       },
     },
     {
       discriminator: 4,
       amount,
-    }
+    },
   );
 
   const ix = new TransactionInstruction({

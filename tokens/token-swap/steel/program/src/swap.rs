@@ -17,7 +17,6 @@ pub fn process_swap(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult 
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    
     //extracting account datas
     let amm_data: &mut Amm = amm_info.as_account_mut::<Amm>(&token_swap_api::ID)?;
     let pool_data: &mut Pool = pool_info.as_account_mut::<Pool>(&token_swap_api::ID)?;
