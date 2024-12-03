@@ -1,0 +1,276 @@
+name: Poseidon
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+env:
+  MAX_JOBS: 64
+  MIN_PROJECTS_PER_JOB: 4
+  MIN_PROJECTS_FOR_MATRIX: 4
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      changed_projects: ${{ steps.analyze.outputs.changed_projects }}
+      total_projects: ${{ steps.analyze.outputs.total_projects }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        if: github.event_name == 'pull_request'
+        with:
+          list-files: shell
+          filters: |
+            poseidon:
+              - added|modified: '**/poseidon/**'
+            workflow:
+              - added|modified: '.github/workflows/poseidon.yml'
+      - name: Analyze Changes
+        id: analyze
+        run: |
+          # Generate ignore pattern, excluding comments
+          ignore_pattern=$(grep -v '^#' .github/.ghaignore | grep -v '^$' | tr '\n' '|' | sed 's/|$//')
+          echo "Ignore pattern: $ignore_pattern"
+
+          function get_projects() {
+            find . -type d -name "poseidon" | grep -vE "$ignore_pattern" | sort
+          }
+
+          # Determine which projects to build and test
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" || "${{ steps.changes.outputs.workflow }}" == "true" ]]; then
+            projects=$(get_projects)
+          elif [[ "${{ steps.changes.outputs.poseidon }}" == "true" ]]; then
+            changed_files=(${{ steps.changes.outputs.poseidon_files }})
+            projects=$(for file in "${changed_files[@]}"; do dirname "${file}" | grep poseidon | sed 's#/poseidon/.*#/poseidon#g'; done | grep -vE "$ignore_pattern" | sort -u)
+          else
+            projects=""
+          fi
+
+          # Output project information
+          if [[ -n "$projects" ]]; then
+            echo "Projects to build and test"
+            echo "$projects"
+            total_projects=$(echo "$projects" | wc -l)
+            echo "Total projects: $total_projects"
+            echo "total_projects=$total_projects" >> $GITHUB_OUTPUT
+            echo "changed_projects=$(echo "$projects" | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          else
+            echo "No projects to build and test."
+            echo "total_projects=0" >> $GITHUB_OUTPUT
+            echo "changed_projects=[]" >> $GITHUB_OUTPUT
+          fi
+      - name: Generate matrix
+        id: matrix
+        run: |
+          total_projects=${{ steps.analyze.outputs.total_projects }}
+          max_jobs=${{ env.MAX_JOBS }}
+          min_projects_per_job=${{ env.MIN_PROJECTS_PER_JOB }}
+          min_projects_for_matrix=${{ env.MIN_PROJECTS_FOR_MATRIX }}
+
+          # Generate matrix based on number of projects
+          if [ "$total_projects" -lt "$min_projects_for_matrix" ]; then
+            echo "matrix=[0]" >> $GITHUB_OUTPUT
+          else
+            projects_per_job=$(( (total_projects + max_jobs - 1) / max_jobs ))
+            projects_per_job=$(( projects_per_job > min_projects_per_job ? projects_per_job : min_projects_per_job ))
+            num_jobs=$(( (total_projects + projects_per_job - 1) / projects_per_job ))
+
+            indices=$(seq 0 $(( num_jobs - 1 )))
+            echo "matrix=[$(echo $indices | tr ' ' ',')]" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-test:
+    needs: changes
+    if: needs.changes.outputs.total_projects != '0'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        index: ${{ fromJson(needs.changes.outputs.matrix) }}
+    name: build-and-test-group-${{ matrix.index }}
+    outputs:
+      failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: heyAyushh/setup-anchor@v4.4
+        with:
+          anchor-version: 0.30.1
+          solana-cli-version: stable
+          node-version: 20.x
+          use-avm: false
+
+      # Get Poseidon repo commit SHA for cache key
+      - name: Get Poseidon commit SHA
+        id: poseidon-sha
+        run: |
+          POSEIDON_SHA=$(git ls-remote https://github.com/Turbin3/poseidon HEAD | cut -f1)
+          echo "sha=$POSEIDON_SHA" >> $GITHUB_OUTPUT
+
+      # Setup Rust cache
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "poseidon-cli"
+          cache-on-failure: true
+          workspaces: |
+            ~/.cargo/bin/poseidon -> Cargo.lock
+
+      # Cache Poseidon binary
+      - name: Cache Poseidon binary
+        id: cache-poseidon
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/poseidon
+          key: poseidon-${{ runner.os }}-${{ steps.poseidon-sha.outputs.sha }}
+
+      # Install Poseidon CLI only if not cached
+      - name: Install Poseidon CLI
+        if: steps.cache-poseidon.outputs.cache-hit != 'true'
+        run: |
+          cargo install --git https://github.com/Turbin3/poseidon
+      - name: Display Versions and Install pnpm
+        run: |
+          solana -V
+          solana-keygen new --no-bip39-passphrase
+          rustc -V
+          poseidon --version
+          npm i -g pnpm
+      - name: Build and Test
+        env:
+          TOTAL_PROJECTS: ${{ needs.changes.outputs.total_projects }}
+          PROJECTS_PER_JOB: ${{ env.MIN_PROJECTS_PER_JOB }}
+        run: |
+          function build_and_test() {
+            local project=$1
+            echo "Building and Testing $project"
+            cd "$project" || return 1
+
+            # Install dependencies
+            if ! pnpm install --frozen-lockfile; then
+              echo "::error::pnpm install failed for $project"
+              echo "$project: pnpm install failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              cd - > /dev/null
+              return 1
+            fi
+
+            # Run poseidon build
+            if ! poseidon build; then
+              echo "::error::poseidon build failed for $project"
+              echo "$project: poseidon build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              rm -rf target
+              cd - > /dev/null
+              return 1
+            fi
+
+
+            # Run poseidon test
+            if ! poseidon test; then
+              echo "::error::poseidon test failed for $project"
+              echo "$project: poseidon test failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              rm -rf target node_modules
+              cd - > /dev/null
+              return 1
+            fi
+
+            echo "Build and tests succeeded for $project."
+            rm -rf target node_modules
+            cd - > /dev/null
+            return 0
+          }
+
+          # Determine which projects to build in this job
+          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+          start_index=$(( ${{ matrix.index }} * PROJECTS_PER_JOB ))
+          end_index=$(( start_index + PROJECTS_PER_JOB ))
+          end_index=$(( end_index > TOTAL_PROJECTS ? TOTAL_PROJECTS : end_index ))
+
+          echo "Projects to build and test in this job"
+          for i in $(seq $start_index $(( end_index - 1 ))); do
+            echo "${all_projects[$i]}"
+          done
+
+          # Build and test projects
+          failed=false
+          failed_projects=()
+          for i in $(seq $start_index $(( end_index - 1 ))); do
+            echo "::group::Building and testing ${all_projects[$i]}"
+            if ! build_and_test "${all_projects[$i]}"; then
+              failed=true
+              failed_projects+=("${all_projects[$i]}")
+            fi
+            echo "::endgroup::"
+          done
+
+          if [[ "$failed" == "true" ]]; then
+            echo "::group::Failed projects"
+            cat $GITHUB_WORKSPACE/failed_projects.txt
+            echo "::endgroup::"
+            echo "failed_projects=${failed_projects[@]}" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "failed_projects=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set failed projects output
+        id: set-failed
+        if: failure()
+        run: |
+          # Prepare failed projects list for output
+          failed_projects=$(cat $GITHUB_WORKSPACE/failed_projects.txt | jq -R -s -c 'split("\n")[:-1]')
+          echo "failed_projects=$failed_projects" >> $GITHUB_OUTPUT
+
+  summary:
+    needs: [changes, build-and-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create job summary
+        run: |
+          echo "## Poseidon Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Total projects: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
+
+          # List all processed projects
+          echo "<details>" >> $GITHUB_STEP_SUMMARY
+          echo "<summary>Projects processed (click to expand)</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]' | while read project; do
+            echo "- $project" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
+
+          # Report build and test results
+          if [[ "${{ needs.build-and-test.result }}" == "failure" ]]; then
+            echo "## :x: Build or tests failed" >> $GITHUB_STEP_SUMMARY
+            echo "<details>" >> $GITHUB_STEP_SUMMARY
+            echo "<summary>Failed projects (click to expand)</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            failed_projects='${{ needs.build-and-test.outputs.failed_projects }}'
+            if [[ -n "$failed_projects" ]]; then
+              echo "$failed_projects" | jq -r '.[]' | while IFS=: read -r project failure_reason; do
+                echo "- **$project**" >> $GITHUB_STEP_SUMMARY
+                echo "  - Failure reason: $failure_reason" >> $GITHUB_STEP_SUMMARY
+              done
+            else
+              echo "No failed projects reported. This might indicate an unexpected error in the workflow." >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.build-and-test.result }}" == "success" ]]; then
+            echo "## :white_check_mark: All builds and tests passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## :warning: Build and test job was skipped or canceled" >> $GITHUB_STEP_SUMMARY
+          fi
