@@ -1,6 +1,6 @@
 use escrow_api::prelude::*;
-use steel::*;
 use solana_program::msg;
+use steel::*;
 
 pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramResult {
     // Load accounts.
@@ -34,18 +34,16 @@ pub fn process_take_offer(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
     };
     match taker_token_account_a.as_associated_token_account(taker_signer.key, token_mint_a.key) {
         Ok(_) => msg!("maker token account already exists"),
-        Err(_) =>   create_associated_token_account(
-        taker_signer,
-        taker_signer,
-        taker_token_account_a,
-        token_mint_a,
-        system_program,
-        token_program,
-        associated_token_program,
-    )?
+        Err(_) => create_associated_token_account(
+            taker_signer,
+            taker_signer,
+            taker_token_account_a,
+            token_mint_a,
+            system_program,
+            token_program,
+            associated_token_program,
+        )?,
     };
-
-  
 
     let offer_data: &Offer = offer.as_account::<Offer>(&escrow_api::ID)?;
 

@@ -56,6 +56,6 @@ pub fn process_refund(accounts: &[AccountInfo<'_>]) -> ProgramResult {
         signer_seeds,
         offer_data.bump as u8,
     )?;
-offer.close(signer_maker_info)?;
+    offer.close(signer_maker_info)?;
     Ok(())
 }
