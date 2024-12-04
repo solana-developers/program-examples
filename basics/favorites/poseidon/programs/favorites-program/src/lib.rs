@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-declare_id!("HMYL9ABJz8fpw6XUnkRAYVsXor4JxosiZqHBd38ZgCqS");
+declare_id!("BreVFi2U3pUegY96xP5JMviUuxL5x6bRnnbsztb262vQ");
 #[program]
 pub mod favorites_program {
     use super::*;
@@ -18,6 +18,8 @@ pub mod favorites_program {
 }
 #[derive(Accounts)]
 pub struct SetFavoritesContext<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
     #[account(
         init,
         payer = payer,
@@ -27,8 +29,6 @@ pub struct SetFavoritesContext<'info> {
         bump,
     )]
     pub favorites: Account<'info, Favorites>,
-    #[account(mut)]
-    pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[account]

@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-favorites_program = "HMYL9ABJz8fpw6XUnkRAYVsXor4JxosiZqHBd38ZgCqS"
+favorites_program = "BreVFi2U3pUegY96xP5JMviUuxL5x6bRnnbsztb262vQ"
 
 [registry]
 url = "https://api.apr.dev"
