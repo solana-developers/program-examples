@@ -1,0 +1,14 @@
+[package]
+name = "transfer-tokens-api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bytemuck.workspace = true
+num_enum.workspace = true
+solana-program.workspace = true
+steel.workspace = true
+thiserror.workspace = true
+spl-token.workspace = true
+mpl-token-metadata.workspace = true
+spl-associated-token-account.workspace = true
