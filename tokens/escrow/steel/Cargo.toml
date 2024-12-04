@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = ["api", "program"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = ""
+documentation = ""
+repository = ""
+readme = "./README.md"
+keywords = ["solana"]
+
+[workspace.dependencies]
+escrow-api = { path = "./api", version = "0.1.0" }
+bytemuck = "1.14"
+num_enum = "0.7"
+solana-program = "1.18"
+steel = { features = ["spl"], version = "2.0" }
+thiserror = "1.0"
+spl-token = { version = "^4", features = ["no-entrypoint"] }
+spl-associated-token-account = { version = "^2.3", features = [
+    "no-entrypoint",
+] }
