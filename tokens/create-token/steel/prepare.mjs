@@ -1,17 +1,17 @@
 #!/usr/bin/env zx
 
-import { mkdir, rm } from "node:fs/promises";
-import { join } from "node:path";
-import { $ } from "zx";
+import { mkdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { $ } from 'zx';
 
 const programs = [
   {
-    id: "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-    name: "token_metadata.so",
+    id: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+    name: 'token_metadata.so',
   },
 ];
 
-const outputDir = "tests/fixtures";
+const outputDir = 'tests/fixtures';
 const overwrite = true;
 
 try {
