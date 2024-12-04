@@ -10,7 +10,8 @@
       "suspicious": {
         "noExplicitAny": "off",
         "noAssignInExpressions": "warn",
-        "noExportsInTest": "warn"
+        "noExportsInTest": "warn",
+        "noShadowRestrictedNames": "off"
       },
       "style": {
         "noParameterAssign": "warn",
