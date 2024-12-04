@@ -1,7 +1,7 @@
 # Lever
 
 **Lever** is a ...
-        
+
 ## API
 - [`Consts`](api/src/consts.rs) – Program constants.
 - [`Error`](api/src/error.rs) – Custom program errors.
@@ -9,11 +9,11 @@
 - [`Instruction`](api/src/instruction.rs) – Declared instructions.
 
 ## Instructions
-- [`Add`](program/src/add.rs) – Add ...
+- [`SwitchPower`](program/src/switch_power.rs) – Switch Power ...
 - [`Initialize`](program/src/initialize.rs) – Initialize ...
 
 ## State
-- [`Counter`](api/src/state/counter.rs) – Counter ...
+- [`PowerStatus`](api/src/state/power_status.rs) – Power status ...
 
 ## Get started
 
