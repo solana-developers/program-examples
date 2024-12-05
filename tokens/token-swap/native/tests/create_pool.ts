@@ -10,7 +10,7 @@ import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { expectRevert } from "./utils";
 
 describe('Create Pool', async () => {
-    let programId, context, client, payer, connection, ammPda, admin;
+    let programId, context, client, payer, ammPda, admin;
     let mintA, mintB, poolAccountA, poolAccountB;
     let poolPda, poolAuthorityPda, mintLiquidityPda;
     beforeEach(async () => {
@@ -30,7 +30,7 @@ describe('Create Pool', async () => {
 
         await client.processTransaction(tx);
 
-        // Mint the tokens to be used for the pool
+        // Initialize tokens to be used for the pool
         mintA = await createMint(client, payer, admin.publicKey, null, 6,)
         mintB = await createMint(client, payer, admin.publicKey, null, 6,)
         if (mintA.toBuffer().compare(mintB.toBuffer()) >= 0) {
@@ -39,8 +39,8 @@ describe('Create Pool', async () => {
         poolPda = PublicKey.findProgramAddressSync([Buffer.from('pool'), ammPda.toBuffer(), mintA.toBuffer(), mintB.toBuffer()], programId)[0];
         mintLiquidityPda = PublicKey.findProgramAddressSync([Buffer.from('liquidity'), ammPda.toBuffer(), mintA.toBuffer(), mintB.toBuffer()], programId)[0];
         poolAuthorityPda = PublicKey.findProgramAddressSync([Buffer.from('authority'), ammPda.toBuffer(), mintA.toBuffer(), mintB.toBuffer()], programId)[0];
-        poolAccountA = await getAssociatedTokenAddressSync(mintA, poolAuthorityPda, poolAuthorityPda);
-        poolAccountB = await getAssociatedTokenAddressSync(mintB, poolAuthorityPda, poolAuthorityPda);
+        poolAccountA = await getAssociatedTokenAddressSync(mintA, poolAuthorityPda, true);
+        poolAccountB = await getAssociatedTokenAddressSync(mintB, poolAuthorityPda, true);
     })
 
     it('Creation', async () => {

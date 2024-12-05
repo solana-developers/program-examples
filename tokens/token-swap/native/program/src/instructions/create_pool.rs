@@ -36,6 +36,20 @@ pub fn process_create_pool(
     let token_program = next_account_info(accounts_iter)?;
     let associated_token_program = next_account_info(accounts_iter)?;
 
+    // Verify pool_authority PDA
+    let (pool_authority_pda, _) = Pubkey::find_program_address(
+        &[
+            Pool::AUTHORITY_PREFIX.as_ref(),
+            amm.key.as_ref(),
+            mint_a.key.as_ref(),
+            mint_b.key.as_ref(),
+        ],
+        program_id,
+    );
+    if pool_authority.key != &pool_authority_pda {
+        return Err(AmmError::InvalidAuthority.into());
+    }
+
     // Enforce mint key ordering to prevent duplicate pools
     if mint_a.key >= mint_b.key {
         return Err(AmmError::InvalidMint.into());

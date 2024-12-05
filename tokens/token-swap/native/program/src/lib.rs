@@ -8,7 +8,9 @@ use solana_program::{
     account_info::AccountInfo, declare_id, entrypoint, entrypoint::ProgramResult, pubkey::Pubkey,
 };
 
-use crate::instructions::{process_create_amm, process_create_pool, AmmInstruction};
+use crate::instructions::{
+    process_create_amm, process_create_pool, process_deposit_liquidity, AmmInstruction,
+};
 
 declare_id!("5tS77fBNSDtMSuyBfizp3bdBCcgmVPuLTKzYpZjgoMjq");
 entrypoint!(process_instruction);
@@ -22,5 +24,8 @@ pub fn process_instruction(
     match instruction {
         AmmInstruction::CreateAmm(args) => process_create_amm(program_id, accounts, args),
         AmmInstruction::CreatePool(args) => process_create_pool(program_id, accounts, args),
+        AmmInstruction::DepositLiquidity(args) => {
+            process_deposit_liquidity(program_id, accounts, args)
+        }
     }
 }
