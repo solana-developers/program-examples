@@ -30,9 +30,9 @@ pub struct InitializeContext<'info> {
 #[derive(Accounts)]
 pub struct IncrementContext<'info> {
     #[account(mut)]
-    pub counter: Account<'info, Counter>,
-    #[account(mut)]
     pub authority: Signer<'info>,
+    #[account(mut)]
+    pub counter: Account<'info, Counter>,
     pub system_program: Program<'info, System>,
 }
 #[account]

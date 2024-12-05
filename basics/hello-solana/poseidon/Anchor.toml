@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-poseidon_hello_solana = "AAfRjjKbh77KLxouxEymo5uzJ4qbRaqorx5gHVuX59o8"
+hello_solana = "AAfRjjKbh77KLxouxEymo5uzJ4qbRaqorx5gHVuX59o8"
 
 [registry]
 url = "https://api.apr.dev"

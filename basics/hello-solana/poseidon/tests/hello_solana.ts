@@ -12,7 +12,7 @@ const PROGRAM_ID = new PublicKey(IDL.address);
 describe('hello-solana', async () => {
   // Configure the Anchor provider & load the program IDL for anchor-bankrun
   // The IDL gives you a typescript module
-  const context = await startAnchor('', [{ name: 'poseidon_hello_solana', programId: PROGRAM_ID }], []);
+  const context = await startAnchor('', [{ name: 'hello_solana', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
   const payer = provider.wallet as anchor.Wallet;
 
