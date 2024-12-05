@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-processing_instructions = "85pSnBtvLk9JEwKDuQUH3AWx7vdt6bndneWi9fyrBkhF"
+processing_instructions = "BWj4tkT21WrGfyi1hcYKjAKrB3UbXm144hZ84RaMLV7C"
 
 [registry]
 url = "https://api.apr.dev"

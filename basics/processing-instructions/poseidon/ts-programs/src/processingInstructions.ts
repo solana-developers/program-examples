@@ -6,7 +6,7 @@ import { Account, Pubkey, Signer, u64 } from '@solanaturbine/poseidon';
  */
 
 export default class ProcessingInstructions {
-  static PROGRAM_ID = new Pubkey('85pSnBtvLk9JEwKDuQUH3AWx7vdt6bndneWi9fyrBkhF');
+  static PROGRAM_ID = new Pubkey('BWj4tkT21WrGfyi1hcYKjAKrB3UbXm144hZ84RaMLV7C');
 
   // Instruction: Initializes a new GreetingAccount with a custom message.
   initialize(
