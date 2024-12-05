@@ -14,8 +14,6 @@ pub mod hello_solana {
 }
 #[derive(Accounts)]
 pub struct InitializeContext<'info> {
-    #[account(mut)]
-    pub authority: Signer<'info>,
     #[account(
         init,
         payer = authority,
@@ -25,6 +23,8 @@ pub struct InitializeContext<'info> {
         bump,
     )]
     pub counter: Account<'info, Counter>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 #[derive(Accounts)]
