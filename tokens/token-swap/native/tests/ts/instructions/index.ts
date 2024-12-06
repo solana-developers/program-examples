@@ -11,4 +11,3 @@ export enum AmmInstruction {
     SwapExactTokensForTokens = 3,
     WithdrawLiquidity = 4,
 }
-
