@@ -33,7 +33,7 @@ export const DepositLiquidityArgsSchema = new Map([
     ]
 ]);
 
-export function createDepositLiquidityInstruction(pool, poolAuthority, depositor, mintLiquidity, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccoutB, amountA, amountB, programId) {
+export function createDepositLiquidityInstruction(pool, poolAuthority, depositor, mintLiquidity, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amountA, amountB, programId) {
     const instructionObject = new DepositLiquidityArgs({
         instruction: AmmInstruction.DepositLiquidity,
         amount_a: amountA,
@@ -52,7 +52,7 @@ export function createDepositLiquidityInstruction(pool, poolAuthority, depositor
             { pubkey: poolAccountB, isSigner: false, isWritable: true },
             { pubkey: depositorAccountLiquidity, isSigner: false, isWritable: true },
             { pubkey: depositorAccountA, isSigner: false, isWritable: true },
-            { pubkey: depositorAccoutB, isSigner: false, isWritable: true },
+            { pubkey: depositorAccountB, isSigner: false, isWritable: true },
             { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
         ],
         programId: programId,

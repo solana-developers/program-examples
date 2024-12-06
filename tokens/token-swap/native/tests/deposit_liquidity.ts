@@ -7,6 +7,7 @@ import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { createCreatePoolInstruction } from "./ts/instructions/create_pool";
 import { createDepositLiquidityInstruction } from "./ts/instructions/deposit_liquidity";
 import { expect } from "chai";
+import { getTokenBalance } from "./utils";
 
 
 describe('Deposit liquidity', async () => {
@@ -17,16 +18,6 @@ describe('Deposit liquidity', async () => {
     let depositorAccountLiquidity, depositorAccountA, depositorAccountB;
     const default_mint_amount = 100 * 10 ** 6;
     const minimum_liquidity = 100; // Matches rust constant
-    const getTokenBalance = async (tokenAccount) => {
-        const account = await client.getAccount(tokenAccount);
-        if (!account) {
-            throw new Error(`Account ${tokenAccount.toString()} not found`);
-        }
-        // Token account data has an 8-byte discriminator followed by mint, owner, amount
-        // Amount is stored as a u64 at offset 64
-        const balance = Buffer.from(account.data).readBigUInt64LE(64);
-        return Number(balance);
-    };
     beforeEach(async () => {
         programId = PublicKey.unique();
         context = await start([{ name: "token_swap_native", programId }], []);
@@ -84,11 +75,11 @@ describe('Deposit liquidity', async () => {
         tx.add(ix).sign(payer, admin);
         await client.processTransaction(tx);
 
-        const depositorLiquidityBalance = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance = await getTokenBalance(depositorAccountA);
-        const depositorBBalance = await getTokenBalance(depositorAccountB);
-        const poolABalance = await getTokenBalance(poolAccountA);
-        const poolBBalance = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance = await getTokenBalance(client, depositorAccountB);
+        const poolABalance = await getTokenBalance(client, poolAccountA);
+        const poolBBalance = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance).to.equal(amount_a - minimum_liquidity);
         expect(depositorABalance).to.equal(default_mint_amount - amount_a);
@@ -105,11 +96,11 @@ describe('Deposit liquidity', async () => {
         tx2.add(ix2).sign(payer, admin);
         await client.processTransaction(tx2);
 
-        const depositorLiquidityBalance2 = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance2 = await getTokenBalance(depositorAccountA);
-        const depositorBBalance2 = await getTokenBalance(depositorAccountB);
-        const poolABalance2 = await getTokenBalance(poolAccountA);
-        const poolBBalance2 = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance2 = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance2 = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance2 = await getTokenBalance(client, depositorAccountB);
+        const poolABalance2 = await getTokenBalance(client, poolAccountA);
+        const poolBBalance2 = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance2).to.equal(depositorLiquidityBalance + amount_a);
         expect(depositorABalance2).to.equal(depositorABalance - amount_a);
@@ -128,11 +119,11 @@ describe('Deposit liquidity', async () => {
         tx.add(ix).sign(payer, admin);
         await client.processTransaction(tx);
 
-        const depositorLiquidityBalance = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance = await getTokenBalance(depositorAccountA);
-        const depositorBBalance = await getTokenBalance(depositorAccountB);
-        const poolABalance = await getTokenBalance(poolAccountA);
-        const poolBBalance = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance = await getTokenBalance(client, depositorAccountB);
+        const poolABalance = await getTokenBalance(client, poolAccountA);
+        const poolBBalance = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance).to.equal(6 * 10 ** 6 - minimum_liquidity);
         expect(depositorABalance).to.equal(default_mint_amount - amount_a);
@@ -155,11 +146,11 @@ describe('Deposit liquidity', async () => {
         tx2.add(ix2).sign(payer, admin);
         await client.processTransaction(tx2);
 
-        const depositorLiquidityBalance2 = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance2 = await getTokenBalance(depositorAccountA);
-        const depositorBBalance2 = await getTokenBalance(depositorAccountB);
-        const poolABalance2 = await getTokenBalance(poolAccountA);
-        const poolBBalance2 = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance2 = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance2 = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance2 = await getTokenBalance(client, depositorAccountB);
+        const poolABalance2 = await getTokenBalance(client, poolAccountA);
+        const poolBBalance2 = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance2).to.equal(depositorLiquidityBalance + 40.5 * 10 ** 6);
         expect(depositorABalance2).to.equal(depositorABalance - 60.75 * 10 ** 6);
@@ -178,11 +169,11 @@ describe('Deposit liquidity', async () => {
         tx.add(ix).sign(payer, admin);
         await client.processTransaction(tx);
 
-        const depositorLiquidityBalance = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance = await getTokenBalance(depositorAccountA);
-        const depositorBBalance = await getTokenBalance(depositorAccountB);
-        const poolABalance = await getTokenBalance(poolAccountA);
-        const poolBBalance = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance = await getTokenBalance(client, depositorAccountB);
+        const poolABalance = await getTokenBalance(client, poolAccountA);
+        const poolBBalance = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance).to.equal(6 * 10 ** 6 - minimum_liquidity);
         expect(depositorABalance).to.equal(default_mint_amount - amount_a);
@@ -205,11 +196,11 @@ describe('Deposit liquidity', async () => {
         tx2.add(ix2).sign(payer, admin);
         await client.processTransaction(tx2);
 
-        const depositorLiquidityBalance2 = await getTokenBalance(depositorAccountLiquidity);
-        const depositorABalance2 = await getTokenBalance(depositorAccountA);
-        const depositorBBalance2 = await getTokenBalance(depositorAccountB);
-        const poolABalance2 = await getTokenBalance(poolAccountA);
-        const poolBBalance2 = await getTokenBalance(poolAccountB);
+        const depositorLiquidityBalance2 = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance2 = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance2 = await getTokenBalance(client, depositorAccountB);
+        const poolABalance2 = await getTokenBalance(client, poolAccountA);
+        const poolBBalance2 = await getTokenBalance(client, poolAccountB);
 
         expect(depositorLiquidityBalance2).to.equal(depositorLiquidityBalance + 40.5 * 10 ** 6);
         expect(depositorABalance2).to.equal(depositorABalance - amount_a2);

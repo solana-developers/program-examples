@@ -5,6 +5,8 @@ pub enum AmmError {
     InvalidMint,
     InvalidAuthority,
     DepositTooSmall,
+    OutputTooSmall,
+    InvariantViolated,
 }
 
 impl From<AmmError> for ProgramError {
