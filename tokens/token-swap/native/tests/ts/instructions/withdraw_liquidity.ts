@@ -3,41 +3,37 @@ import { AmmInstruction } from ".";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import * as borsh from 'borsh';
 
-export class DepositLiquidityArgs {
+export class WithdrawLiquidityArgs {
     instruction: AmmInstruction;
-    amount_a: number; // u64
-    amount_b: number; // u64
+    amount: number; // u64
 
-    constructor(props: { instruction: AmmInstruction; amount_a: number; amount_b: number }) {
+    constructor(props: { instruction: AmmInstruction; amount: number }) {
         this.instruction = props.instruction;
-        this.amount_a = props.amount_a;
-        this.amount_b = props.amount_b;
+        this.amount = props.amount;
     }
 
     toBuffer() {
-        return Buffer.from(borsh.serialize(DepositLiquidityArgsSchema, this));
+        return Buffer.from(borsh.serialize(WithdrawLiquidityArgsSchema, this));
     }
 }
 
-export const DepositLiquidityArgsSchema = new Map([
+export const WithdrawLiquidityArgsSchema = new Map([
     [
-        DepositLiquidityArgs,
+        WithdrawLiquidityArgs,
         {
             kind: 'struct',
             fields: [
                 ['instruction', 'u8'],
-                ['amount_a', 'u64'],
-                ['amount_b', 'u64'],
+                ['amount', 'u64'],
             ]
         }
     ]
 ]);
 
-export function createDepositLiquidityInstruction(pool, poolAuthority, depositor, mintLiquidity, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amountA, amountB, programId) {
-    const instructionObject = new DepositLiquidityArgs({
-        instruction: AmmInstruction.DepositLiquidity,
-        amount_a: amountA,
-        amount_b: amountB,
+export function createWithdrawLiquidityInstruction(pool, poolAuthority, depositor, mintLiquidity, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amount, programId) {
+    const instructionObject = new WithdrawLiquidityArgs({
+        instruction: AmmInstruction.WithdrawLiquidity,
+        amount: amount,
     });
 
     const ix = new TransactionInstruction({

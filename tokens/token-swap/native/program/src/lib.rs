@@ -10,7 +10,7 @@ use solana_program::{
 
 use crate::instructions::{
     process_create_amm, process_create_pool, process_deposit_liquidity,
-    process_swap_exact_tokens_for_tokens, AmmInstruction,
+    process_swap_exact_tokens_for_tokens, process_withdraw_liquidity, AmmInstruction,
 };
 
 declare_id!("5tS77fBNSDtMSuyBfizp3bdBCcgmVPuLTKzYpZjgoMjq");
@@ -30,6 +30,9 @@ pub fn process_instruction(
         }
         AmmInstruction::SwapExactTokensForToken(args) => {
             process_swap_exact_tokens_for_tokens(program_id, accounts, args)
+        }
+        AmmInstruction::WithdrawLiquidity(args) => {
+            process_withdraw_liquidity(program_id, accounts, args)
         }
     }
 }

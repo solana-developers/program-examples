@@ -1,18 +1,22 @@
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { describe } from "mocha";
 import { start } from "solana-bankrun";
-import { createCreateAmmInstruction, createCreatePoolInstruction, createDepositLiquidityInstruction, createSwapExactTokensForTokensInstruction } from "./ts/instructions";
+import { createCreateAmmInstruction, createCreatePoolInstruction, createDepositLiquidityInstruction, createWithdrawLiquidityInstruction } from "./ts/instructions";
 import { createMint, createAssociatedTokenAccount, mintTo } from "spl-token-bankrun";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { getAssociatedTokenAddressSync, MintLayout } from "@solana/spl-token";
 import { getTokenBalance } from "./utils";
 import { expect } from "chai";
 
-describe('Swap', async () => {
+
+describe('Withdraw liquidity', async () => {
     let programId, context, client, payer, ammPda, admin;
     let mintA, mintB, poolAccountA, poolAccountB;
     let poolPda, poolAuthorityPda, mintLiquidityPda;
     let depositorAccountLiquidity, depositorAccountA, depositorAccountB;
     const default_mint_amount = 100 * 10 ** 6;
+    const minimum_liquidity = 100; // Matches rust constant
+    const amount_a = 9 * 10 ** 6;
+    const amount_b = 4 * 10 ** 6;
     beforeEach(async () => {
         programId = PublicKey.unique();
         context = await start([{ name: "token_swap_native", programId }], []);
@@ -22,7 +26,7 @@ describe('Swap', async () => {
         admin = Keypair.generate()
 
         // Create amm
-        const fee = 99;
+        const fee = 99
         const ix_amm = createCreateAmmInstruction(ammPda, admin.publicKey, payer.publicKey, programId, fee);
         const tx_amm = new Transaction();
         tx_amm.recentBlockhash = context.lastBlockhash;
@@ -59,70 +63,43 @@ describe('Swap', async () => {
         await createAssociatedTokenAccount(client, payer, mintB, admin.publicKey);
         await mintTo(client, payer, mintA, depositorAccountA, admin, default_mint_amount);
         await mintTo(client, payer, mintB, depositorAccountB, admin, default_mint_amount);
+
+        // Deposit
+        await context.warpToSlot(BigInt(100));
+        const ixD = createDepositLiquidityInstruction(poolPda, poolAuthorityPda, admin.publicKey, mintLiquidityPda, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amount_a, amount_b, programId);
+        const txD = new Transaction();
+        txD.recentBlockhash = context.lastBlockhash;
+        txD.add(ixD).sign(payer, admin);
+        await client.processTransaction(txD);
     });
 
-    it('Swap from a to b, initial deposit a > b', async () => {
-        const amount_a = 9 * 10 ** 6;
-        const amount_b = 4 * 10 ** 6;
-
-        const ix = createDepositLiquidityInstruction(poolPda, poolAuthorityPda, admin.publicKey, mintLiquidityPda, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amount_a, amount_b, programId);
+    it('Withdraw everything', async () => {
+        await context.warpToSlot(BigInt(101));
+        const amount = 6 * 10 ** 6 - minimum_liquidity;
+        const ix = createWithdrawLiquidityInstruction(poolPda, poolAuthorityPda, admin.publicKey, mintLiquidityPda, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amount, programId);
         const tx = new Transaction();
-        tx.recentBlockhash = context.lastBlockhash;
+        tx.recentBlockhash = context.lastBlockhash
         tx.add(ix).sign(payer, admin);
         await client.processTransaction(tx);
 
-        // Second transaction
-        await context.warpToSlot(BigInt(100));
-
-        const input = 10 ** 6
-        const minOutputAmount = 100
-        const ix2 = createSwapExactTokensForTokensInstruction(ammPda, poolPda, poolAuthorityPda, admin.publicKey, mintA, mintB, poolAccountA, poolAccountB, depositorAccountA, depositorAccountB, true, input, minOutputAmount, programId);
-        const tx2 = new Transaction();
-        tx2.recentBlockhash = context.lastBlockhash;
-        tx2.add(ix2).sign(payer, admin);
-        await client.processTransaction(tx2);
-
-        const traderABalance = await getTokenBalance(client, depositorAccountA);
-        const traderBBalance = await getTokenBalance(client, depositorAccountB);
+        const depositorLiquidityBalance = await getTokenBalance(client, depositorAccountLiquidity);
+        const depositorABalance = await getTokenBalance(client, depositorAccountA);
+        const depositorBBalance = await getTokenBalance(client, depositorAccountB);
         const poolABalance = await getTokenBalance(client, poolAccountA);
         const poolBBalance = await getTokenBalance(client, poolAccountB);
 
-        expect(traderABalance).to.equal(default_mint_amount - amount_a - input);
-        expect(traderBBalance).to.be.greaterThan(default_mint_amount - amount_b);
-        expect(traderBBalance).to.be.lessThan(default_mint_amount - amount_b + input);
-        expect(poolABalance).to.equal(amount_a + input);
+        const mintAccount = await client.getAccount(mintLiquidityPda);
+        const mintSupply = MintLayout.decode(mintAccount.data).supply;
+
+        expect(depositorLiquidityBalance).to.equal(0);
+        expect(depositorABalance).to.be.lessThan(default_mint_amount);
+        expect(depositorABalance).to.be.greaterThan(default_mint_amount - amount_a);
+        expect(depositorBBalance).to.lessThan(default_mint_amount);
+        expect(depositorBBalance).to.be.greaterThan(default_mint_amount - amount_b);
+        expect(poolABalance).to.be.lessThan(amount_a);
+        expect(poolABalance).to.be.greaterThan(0);
         expect(poolBBalance).to.be.lessThan(amount_b);
+        expect(poolBBalance).to.be.greaterThan(0);
+        expect(mintSupply).to.equal(BigInt(0));
     });
-
-    it('Swap from a to b, initial deposit a < b', async () => {
-        const amount_a = 10 * 10 ** 6;
-        const amount_b = 30 * 10 ** 6;
-
-        const ix = createDepositLiquidityInstruction(poolPda, poolAuthorityPda, admin.publicKey, mintLiquidityPda, mintA, mintB, poolAccountA, poolAccountB, depositorAccountLiquidity, depositorAccountA, depositorAccountB, amount_a, amount_b, programId);
-        const tx = new Transaction();
-        tx.recentBlockhash = context.lastBlockhash;
-        tx.add(ix).sign(payer, admin);
-        await client.processTransaction(tx);
-
-        // Second transaction
-        await context.warpToSlot(BigInt(100));
-
-        const input = 10 ** 6
-        const minOutputAmount = 100
-        const ix2 = createSwapExactTokensForTokensInstruction(ammPda, poolPda, poolAuthorityPda, admin.publicKey, mintA, mintB, poolAccountA, poolAccountB, depositorAccountA, depositorAccountB, true, input, minOutputAmount, programId);
-        const tx2 = new Transaction();
-        tx2.recentBlockhash = context.lastBlockhash;
-        tx2.add(ix2).sign(payer, admin);
-        await client.processTransaction(tx2);
-
-        const traderABalance = await getTokenBalance(client, depositorAccountA);
-        const traderBBalance = await getTokenBalance(client, depositorAccountB);
-        const poolABalance = await getTokenBalance(client, poolAccountA);
-        const poolBBalance = await getTokenBalance(client, poolAccountB);
-
-        expect(traderABalance).to.equal(default_mint_amount - amount_a - input);
-        expect(traderBBalance).to.be.greaterThan(default_mint_amount - amount_b + input);
-        expect(poolABalance).to.equal(amount_a + input);
-        expect(poolBBalance).to.be.lessThan(amount_b);
-    })
 });

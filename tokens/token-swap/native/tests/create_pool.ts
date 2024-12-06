@@ -1,9 +1,8 @@
 import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { it, beforeEach, describe } from "mocha";
 import { start } from "solana-bankrun";
-import { createCreateAmmInstruction } from "./ts/instructions";
+import { createCreateAmmInstruction, createCreatePoolInstruction } from "./ts/instructions";
 import { createMint } from "spl-token-bankrun";
-import { createCreatePoolInstruction } from "./ts/instructions/create_pool";
 import { Pool } from "./ts/state";
 import { expect } from "chai";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";

@@ -13,16 +13,16 @@ export class CreatePoolArgs {
     }
 
     toBuffer() {
-        return Buffer.from(borsh.serialize(CreateAmmArgsSchema, this));
+        return Buffer.from(borsh.serialize(CreatePoolArgsSchema, this));
     }
 
     static fromBuffer(buffer: Buffer) {
-        return borsh.deserialize(CreateAmmArgsSchema, CreatePoolArgs, buffer);
+        return borsh.deserialize(CreatePoolArgsSchema, CreatePoolArgs, buffer);
     }
 
 }
 
-export const CreateAmmArgsSchema = new Map([
+export const CreatePoolArgsSchema = new Map([
     [
         CreatePoolArgs,
         {
