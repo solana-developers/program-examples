@@ -1,6 +1,6 @@
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { describe } from "mocha";
-import { start } from "solana-bankrun";
+import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 import { createCreateAmmInstruction, createCreatePoolInstruction, createDepositLiquidityInstruction, createWithdrawLiquidityInstruction } from "./ts/instructions";
 import { createMint, createAssociatedTokenAccount, mintTo } from "spl-token-bankrun";
 import { getAssociatedTokenAddressSync, MintLayout } from "@solana/spl-token";
@@ -9,10 +9,22 @@ import { expect } from "chai";
 
 
 describe('Withdraw liquidity', async () => {
-    let programId, context, client, payer, ammPda, admin;
-    let mintA, mintB, poolAccountA, poolAccountB;
-    let poolPda, poolAuthorityPda, mintLiquidityPda;
-    let depositorAccountLiquidity, depositorAccountA, depositorAccountB;
+    let programId: PublicKey;
+    let context: ProgramTestContext;
+    let client: BanksClient;
+    let payer: Keypair;
+    let ammPda: PublicKey;
+    let admin: Keypair;
+    let mintA: PublicKey;
+    let mintB: PublicKey;
+    let poolAccountA: PublicKey;
+    let poolAccountB: PublicKey;
+    let poolPda: PublicKey;
+    let poolAuthorityPda: PublicKey;
+    let mintLiquidityPda: PublicKey;
+    let depositorAccountLiquidity: PublicKey;
+    let depositorAccountA: PublicKey;
+    let depositorAccountB: PublicKey;
     const default_mint_amount = 100 * 10 ** 6;
     const minimum_liquidity = 100; // Matches rust constant
     const amount_a = 9 * 10 ** 6;
@@ -89,6 +101,9 @@ describe('Withdraw liquidity', async () => {
         const poolBBalance = await getTokenBalance(client, poolAccountB);
 
         const mintAccount = await client.getAccount(mintLiquidityPda);
+        if (!mintAccount) {
+            throw new Error(`Mint account ${mintLiquidityPda.toString()} not found`);
+        }
         const mintSupply = MintLayout.decode(mintAccount.data).supply;
 
         expect(depositorLiquidityBalance).to.equal(0);

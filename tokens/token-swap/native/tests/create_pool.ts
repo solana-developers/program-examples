@@ -1,6 +1,6 @@
 import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { it, beforeEach, describe } from "mocha";
-import { start } from "solana-bankrun";
+import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 import { createCreateAmmInstruction, createCreatePoolInstruction } from "./ts/instructions";
 import { createMint } from "spl-token-bankrun";
 import { Pool } from "./ts/state";
@@ -9,9 +9,19 @@ import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { expectRevert } from "./utils";
 
 describe('Create Pool', async () => {
-    let programId, context, client, payer, ammPda, admin;
-    let mintA, mintB, poolAccountA, poolAccountB;
-    let poolPda, poolAuthorityPda, mintLiquidityPda;
+    let programId: PublicKey;
+    let context: ProgramTestContext;
+    let client: BanksClient;
+    let payer: Keypair;
+    let ammPda: PublicKey;
+    let admin: Keypair;
+    let mintA: PublicKey;
+    let mintB: PublicKey;
+    let poolAccountA: PublicKey;
+    let poolAccountB: PublicKey;
+    let poolPda: PublicKey;
+    let poolAuthorityPda: PublicKey;
+    let mintLiquidityPda: PublicKey;
     beforeEach(async () => {
         programId = PublicKey.unique();
         context = await start([{ name: "token_swap_native", programId }], []);
@@ -51,6 +61,9 @@ describe('Create Pool', async () => {
         await client.processTransaction(tx);
 
         const pool = await client.getAccount(poolPda);
+        if (!pool) {
+            throw new Error(`Pool account not found`);
+        }
         expect(pool.owner.toBase58()).to.equal(programId.toBase58())
         const poolData = Pool.fromBuffer(Buffer.from(pool.data));
         expect(poolData.amm.toBase58()).to.equal(ammPda.toBase58());

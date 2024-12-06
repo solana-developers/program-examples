@@ -1,7 +1,7 @@
 import { Keypair } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js"
 import { it, beforeEach, describe } from "mocha";
-import { start } from "solana-bankrun";
+import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 import { createCreateAmmInstruction } from "./ts/instructions";
 import { Transaction } from "@solana/web3.js";
 import { Amm } from "./ts/state";
@@ -10,7 +10,12 @@ import { expectRevert } from "./utils";
 
 
 describe('Create AMM', async () => {
-    let programId, context, client, payer, ammPda, admin;
+    let programId: PublicKey;
+    let context: ProgramTestContext;
+    let client: BanksClient;
+    let payer: Keypair;
+    let ammPda: PublicKey;
+    let admin: Keypair;
     beforeEach(async () => {
         programId = PublicKey.unique();
         context = await start([{ name: "token_swap_native", programId }], []);
@@ -30,6 +35,9 @@ describe('Create AMM', async () => {
         await client.processTransaction(tx);
 
         const amm = await client.getAccount(ammPda);
+        if (!amm) {
+            throw new Error(`AMM account not found`);
+        }
         expect(amm.owner.toBase58()).to.equal(programId.toBase58())
         const ammData = Amm.fromBuffer(Buffer.from(amm.data));
         expect(ammData.admin.toBase58()).to.equal(admin.publicKey.toBase58());

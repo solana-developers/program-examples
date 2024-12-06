@@ -1,19 +1,29 @@
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { describe } from "mocha";
-import { start } from "solana-bankrun";
+import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 import { createCreateAmmInstruction, createCreatePoolInstruction, createDepositLiquidityInstruction } from "./ts/instructions";
 import { createMint, createAssociatedTokenAccount, mintTo } from "spl-token-bankrun";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { expect } from "chai";
 import { getTokenBalance } from "./utils";
 
-
 describe('Deposit liquidity', async () => {
-
-    let programId, context, client, payer, ammPda, admin;
-    let mintA, mintB, poolAccountA, poolAccountB;
-    let poolPda, poolAuthorityPda, mintLiquidityPda;
-    let depositorAccountLiquidity, depositorAccountA, depositorAccountB;
+    let programId: PublicKey;
+    let context: ProgramTestContext;
+    let client: BanksClient;
+    let payer: Keypair;
+    let ammPda: PublicKey;
+    let admin: Keypair;
+    let mintA: PublicKey;
+    let mintB: PublicKey;
+    let poolAccountA: PublicKey;
+    let poolAccountB: PublicKey;
+    let poolPda: PublicKey;
+    let poolAuthorityPda: PublicKey;
+    let mintLiquidityPda: PublicKey;
+    let depositorAccountLiquidity: PublicKey;
+    let depositorAccountA: PublicKey;
+    let depositorAccountB: PublicKey;
     const default_mint_amount = 100 * 10 ** 6;
     const minimum_liquidity = 100; // Matches rust constant
     beforeEach(async () => {
