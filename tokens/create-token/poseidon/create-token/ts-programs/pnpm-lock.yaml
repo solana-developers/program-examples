@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@solanaturbine/poseidon':
+        specifier: ^0.0.13
+        version: 0.0.13
+
+packages:
+
+  '@solanaturbine/poseidon@0.0.13':
+    resolution: {integrity: sha512-NDvFdF+xyRHVFjT4+Ll5bNc32A4SEQUiDg5vFwmcQIfqxmQZhhzOC72+yfNXuP4oMYN4x82rtBCqabxRmostgg==}
+
+snapshots:
+
+  '@solanaturbine/poseidon@0.0.13': {}
