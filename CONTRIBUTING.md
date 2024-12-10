@@ -85,6 +85,10 @@ test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 8. TypeScript, JavaScript and JSON files are formatted and linted using
    [Biome](https://biomejs.dev/). Execute the following command to format and lint your code at the root of this project before submitting a pull request:
 
+8. Some projects can be ignored from the building and testing process by adding the project name to the `.ghaignore` file.
+When removing or updating an example, please ensure that the example is removed from the `.ghaignore` file
+and there's a change in that example's directory.
+
 ```bash
 pnpm fix
 ```
