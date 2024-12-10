@@ -1,16 +1,11 @@
 import { Mint, Pubkey, Result, Signer, TokenProgram, u8 } from '@solanaturbine/poseidon';
 
 export default class CreateToken {
-  static PROGRAM_ID = new Pubkey('7ZpQnmMWwNbuSRnBpq2E4RTKMgN5tDNopF7BHvSJZfwU');
+  static PROGRAM_ID = new Pubkey('2GEjNvm8P1npWqX2ctzYtEkPpuJ5VFaDGQAQjdi9WiWF');
 
-  createTokenMint(payer: Signer, mint: Mint, decimals: u8, freezeAuthority?: Pubkey): Result {
+  createTokenMint(payer: Signer, mint: Mint, decimals: u8): Result {
     // Initialize the mint account with specified decimals
 
-    TokenProgram.initializeMint(
-      mint,
-      payer, // authority
-      decimals,
-      freezeAuthority, // freeze authority
-    );
+    mint.derive(null, payer.key, decimals).init(payer);
   }
 }
