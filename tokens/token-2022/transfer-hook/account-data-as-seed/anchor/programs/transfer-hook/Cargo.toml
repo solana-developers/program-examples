@@ -3,7 +3,7 @@ anchor_version = "0.30.1"
 solana_version = "2.0.3"
 
 [package]
-name = "transfer-hook"
+name = "transfer-hook-account-as-seed"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"

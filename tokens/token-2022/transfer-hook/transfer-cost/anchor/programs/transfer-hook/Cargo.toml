@@ -1,5 +1,5 @@
 [package]
-name = "transfer-hook"
+name = "transfer-hook-transfer-cost"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"

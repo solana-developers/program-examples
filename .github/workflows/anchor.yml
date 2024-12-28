@@ -104,7 +104,7 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: heyAyushh/setup-anchor@v4.4
+      - uses: heyAyushh/setup-anchor@v4.9
         with:
           anchor-version: 0.30.1
           solana-cli-version: stable
@@ -112,6 +112,7 @@ jobs:
           use-avm: false
       - name: Display Versions and Install pnpm
         run: |
+          cargo-build-sbf --version
           solana -V
           solana-keygen new --no-bip39-passphrase
           rustc -V
@@ -127,9 +128,24 @@ jobs:
             echo "Building and Testing $project"
             cd "$project" || return 1
 
+            # Check Cargo.lock version before build
+            if [ -f "Cargo.lock" ]; then
+              echo "Checking Cargo.lock version for $project"
+              grep "^version = " Cargo.lock | head -n1
+            else
+              echo "No Cargo.lock found for $project"
+            fi
+
             # Run anchor build
             if ! anchor build; then
               echo "::error::anchor build failed for $project"
+
+              # Check Cargo.lock version after failed build
+              if [ -f "Cargo.lock" ]; then
+                echo "Cargo.lock version after failed build:"
+                grep "^version = " Cargo.lock | head -n1
+              fi
+
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target
               cd - > /dev/null

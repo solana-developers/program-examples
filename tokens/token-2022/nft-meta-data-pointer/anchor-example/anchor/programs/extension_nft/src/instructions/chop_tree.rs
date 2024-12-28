@@ -2,7 +2,7 @@ pub use crate::errors::GameErrorCode;
 pub use crate::state::game_data::GameData;
 use crate::{state::player_data::PlayerData, NftAuthority};
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::{Token2022};
+use anchor_spl::token_interface::Token2022;
 use session_keys::{Session, SessionToken};
 use solana_program::program::invoke_signed;
 
@@ -87,7 +87,7 @@ pub struct ChopTree<'info> {
     /// CHECK: Make sure the ata to the mint is actually owned by the signer
     #[account(mut)]
     pub mint: AccountInfo<'info>,
-    #[account(  
+    #[account(
         init_if_needed,
         seeds = [b"nft_authority".as_ref()],
         bump,
