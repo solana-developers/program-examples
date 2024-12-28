@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script is for quick building & deploying of the program.
+# This script is a reference for quick building & deploying of the program.
 # It also serves as a reference for the commands used for building & deploying Solana programs.
 # Run this bad boy with "bash cicd.sh" or "./cicd.sh"
 
