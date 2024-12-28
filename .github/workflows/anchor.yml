@@ -131,7 +131,7 @@ jobs:
             # Check Cargo.lock version before build
             if [ -f "Cargo.lock" ]; then
               echo "Checking Cargo.lock version for $project"
-              grep "^version = " Cargo.lock
+              grep "^version = " Cargo.lock | head -n1
             else
               echo "No Cargo.lock found for $project"
             fi
@@ -143,7 +143,7 @@ jobs:
               # Check Cargo.lock version after failed build
               if [ -f "Cargo.lock" ]; then
                 echo "Cargo.lock version after failed build:"
-                grep "^version = " Cargo.lock
+                grep "^version = " Cargo.lock | head -n1
               fi
 
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt

@@ -29,13 +29,33 @@ members = [
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/anchor/programs/*",
+    "tokens/transfer-tokens/anchor/programs/*",
+    "tokens/pda-mint-authority/anchor/programs/token-minter",
     "tokens/token-2022/mint-close-authority/native/program",
     "tokens/token-2022/non-transferable/native/program",
     "tokens/token-2022/default-account-state/native/program",
     "tokens/token-2022/transfer-fee/native/program",
     "tokens/token-2022/multiple-extensions/native/program",
+    "tokens/token-2022/basics/anchor/programs/*",
+    "tokens/token-2022/cpi-guard/anchor/programs/*",
+    "tokens/token-2022/default-account-state/anchor/programs/*",
+    "tokens/token-2022/interest-bearing/anchor/programs/*",
+    "tokens/token-2022/interest-bearing/anchor/programs/*",
+    "tokens/token-2022/memo-transfer/anchor/programs/*",
+    "tokens/token-2022/metadata/anchor/programs/*",
+    "tokens/token-2022/mint-close-authority/anchor/programs/*",
+    "tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor/programs/*",
+    "tokens/token-2022/non-transferable/anchor/programs/*",
+    "tokens/token-2022/permanent-delegate/anchor/programs/*",
+    "tokens/token-2022/transfer-fee/anchor/programs/*"
+    # "tokens/token-2022/transfer-hook/account-data-as-seed/anchor/programs/*",
+    # "tokens/token-2022/transfer-hook/counter/anchor/programs/*",
+    # "tokens/token-2022/transfer-hook/hello-world/anchor/programs/*",
+    # "tokens/token-2022/transfer-hook/transfer-cost/anchor/programs/*",
+    # "tokens/token-2022/transfer-hook/whitelist/anchor/programs/*"
 ]
 resolver = "2"
+edition = "2021"
 
 [profile.release]
 overflow-checks = true
