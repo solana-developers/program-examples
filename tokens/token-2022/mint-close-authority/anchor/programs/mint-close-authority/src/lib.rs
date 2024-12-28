@@ -57,7 +57,7 @@ pub struct Initialize<'info> {
 }
 
 // helper to check mint data, and demonstrate how to read mint extension data within a program
-impl<'info> Initialize<'info> {
+impl Initialize<'_> {
     pub fn check_mint_data(&self) -> Result<()> {
         let mint = &self.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
