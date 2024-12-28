@@ -112,6 +112,7 @@ jobs:
           use-avm: false
       - name: Display Versions and Install pnpm
         run: |
+          cargo-build-sbf --version
           solana -V
           solana-keygen new --no-bip39-passphrase
           rustc -V
@@ -127,9 +128,24 @@ jobs:
             echo "Building and Testing $project"
             cd "$project" || return 1
 
+            # Check Cargo.lock version before build
+            if [ -f "Cargo.lock" ]; then
+              echo "Checking Cargo.lock version for $project"
+              grep "^version = " Cargo.lock
+            else
+              echo "No Cargo.lock found for $project"
+            fi
+
             # Run anchor build
             if ! anchor build; then
               echo "::error::anchor build failed for $project"
+
+              # Check Cargo.lock version after failed build
+              if [ -f "Cargo.lock" ]; then
+                echo "Cargo.lock version after failed build:"
+                grep "^version = " Cargo.lock
+              fi
+
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target
               cd - > /dev/null
