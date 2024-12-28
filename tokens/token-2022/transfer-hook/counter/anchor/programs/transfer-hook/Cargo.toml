@@ -3,7 +3,7 @@ anchor_version = "0.30.0"
 solana_version = "1.18.15"
 
 [package]
-name = "transfer-hook"
+name = "transfer-hook-counter"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
@@ -23,6 +23,6 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 [dependencies]
 anchor-lang = { version = "0.30.0", features = ["interface-instructions"] }
 anchor-spl = "0.30.0"
-solana-program = "1.18.16"
+solana-program = "=1.18.17"
 spl-tlv-account-resolution = "0.6.3"
 spl-transfer-hook-interface = "0.6.3"
