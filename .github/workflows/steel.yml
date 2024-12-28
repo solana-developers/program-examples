@@ -268,7 +268,7 @@ jobs:
           process_projects "stable"
           sccache --show-stats
       - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17
