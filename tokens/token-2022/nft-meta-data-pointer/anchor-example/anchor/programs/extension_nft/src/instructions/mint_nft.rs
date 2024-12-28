@@ -1,26 +1,25 @@
 pub use crate::errors::GameErrorCode;
 pub use crate::errors::ProgramErrorCode;
 pub use crate::state::game_data::GameData;
-use anchor_lang::{ prelude::*, system_program };
+use anchor_lang::{prelude::*, system_program};
 use anchor_spl::{
-    associated_token::{ self, AssociatedToken },
+    associated_token::{self, AssociatedToken},
     token_2022,
-    token_interface::{ spl_token_2022::instruction::AuthorityType, Token2022 },
+    token_interface::{spl_token_2022::instruction::AuthorityType, Token2022},
 };
-use solana_program::program::{ invoke, invoke_signed };
-use spl_token_2022::{ extension::ExtensionType, state::Mint };
+use solana_program::program::{invoke, invoke_signed};
+use spl_token_2022::{extension::ExtensionType, state::Mint};
 
 pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     msg!("Mint nft with meta data extension and additional meta data");
 
-    let space = match
-        ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::MetadataPointer])
-    {
-        Ok(space) => space,
-        Err(_) => {
-            return err!(ProgramErrorCode::InvalidMintAccountSpace);
-        }
-    };
+    let space =
+        match ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::MetadataPointer]) {
+            Ok(space) => space,
+            Err(_) => {
+                return err!(ProgramErrorCode::InvalidMintAccountSpace);
+            }
+        };
 
     // This is the space required for the metadata account.
     // We put the meta data into the mint account at the end so we
@@ -41,39 +40,44 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
             system_program::CreateAccount {
                 from: ctx.accounts.signer.to_account_info(),
                 to: ctx.accounts.mint.to_account_info(),
-            }
+            },
         ),
         lamports_required,
         space as u64,
-        &ctx.accounts.token_program.key()
+        &ctx.accounts.token_program.key(),
     )?;
 
     // Assign the mint to the token program
     system_program::assign(
-        CpiContext::new(ctx.accounts.token_program.to_account_info(), system_program::Assign {
-            account_to_assign: ctx.accounts.mint.to_account_info(),
-        }),
-        &token_2022::ID
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            system_program::Assign {
+                account_to_assign: ctx.accounts.mint.to_account_info(),
+            },
+        ),
+        &token_2022::ID,
     )?;
 
     // Initialize the metadata pointer (Need to do this before initializing the mint)
-    let init_meta_data_pointer_ix = match
-        spl_token_2022::extension::metadata_pointer::instruction::initialize(
+    let init_meta_data_pointer_ix =
+        match spl_token_2022::extension::metadata_pointer::instruction::initialize(
             &Token2022::id(),
             &ctx.accounts.mint.key(),
             Some(ctx.accounts.nft_authority.key()),
-            Some(ctx.accounts.mint.key())
-        )
-    {
-        Ok(ix) => ix,
-        Err(_) => {
-            return err!(ProgramErrorCode::CantInitializeMetadataPointer);
-        }
-    };
+            Some(ctx.accounts.mint.key()),
+        ) {
+            Ok(ix) => ix,
+            Err(_) => {
+                return err!(ProgramErrorCode::CantInitializeMetadataPointer);
+            }
+        };
 
     invoke(
         &init_meta_data_pointer_ix,
-        &[ctx.accounts.mint.to_account_info(), ctx.accounts.nft_authority.to_account_info()]
+        &[
+            ctx.accounts.mint.to_account_info(),
+            ctx.accounts.nft_authority.to_account_info(),
+        ],
     )?;
 
     // Initialize the mint cpi
@@ -81,7 +85,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
         ctx.accounts.token_program.to_account_info(),
         token_2022::InitializeMint2 {
             mint: ctx.accounts.mint.to_account_info(),
-        }
+        },
     );
 
     token_2022::initialize_mint2(mint_cpi_ix, 0, &ctx.accounts.nft_authority.key(), None).unwrap();
@@ -92,7 +96,10 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     let bump = ctx.bumps.nft_authority;
     let signer: &[&[&[u8]]] = &[&[seeds, &[bump]]];
 
-    msg!("Init metadata {0}", ctx.accounts.nft_authority.to_account_info().key);
+    msg!(
+        "Init metadata {0}",
+        ctx.accounts.nft_authority.to_account_info().key
+    );
 
     // Init the metadata account
     let init_token_meta_data_ix = &spl_token_metadata_interface::instruction::initialize(
@@ -103,7 +110,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
         ctx.accounts.nft_authority.to_account_info().key,
         "Beaver".to_string(),
         "BVA".to_string(),
-        "https://arweave.net/MHK3Iopy0GgvDoM7LkkiAdg7pQqExuuWvedApCnzfj0".to_string()
+        "https://arweave.net/MHK3Iopy0GgvDoM7LkkiAdg7pQqExuuWvedApCnzfj0".to_string(),
     );
 
     invoke_signed(
@@ -112,7 +119,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
             ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.nft_authority.to_account_info().clone(),
         ],
-        signer
+        signer,
     )?;
 
     // Update the metadata account with an additional metadata field in this case the player level
@@ -122,29 +129,27 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
             ctx.accounts.mint.key,
             ctx.accounts.nft_authority.to_account_info().key,
             spl_token_metadata_interface::state::Field::Key("level".to_string()),
-            "1".to_string()
+            "1".to_string(),
         ),
         &[
             ctx.accounts.mint.to_account_info().clone(),
             ctx.accounts.nft_authority.to_account_info().clone(),
         ],
-        signer
+        signer,
     )?;
 
     // Create the associated token account
-    associated_token::create(
-        CpiContext::new(
-            ctx.accounts.associated_token_program.to_account_info(),
-            associated_token::Create {
-                payer: ctx.accounts.signer.to_account_info(),
-                associated_token: ctx.accounts.token_account.to_account_info(),
-                authority: ctx.accounts.signer.to_account_info(),
-                mint: ctx.accounts.mint.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                token_program: ctx.accounts.token_program.to_account_info(),
-            }
-        )
-    )?;
+    associated_token::create(CpiContext::new(
+        ctx.accounts.associated_token_program.to_account_info(),
+        associated_token::Create {
+            payer: ctx.accounts.signer.to_account_info(),
+            associated_token: ctx.accounts.token_account.to_account_info(),
+            authority: ctx.accounts.signer.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            token_program: ctx.accounts.token_program.to_account_info(),
+        },
+    ))?;
 
     // Mint one token to the associated token account of the player
     token_2022::mint_to(
@@ -155,9 +160,9 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
                 to: ctx.accounts.token_account.to_account_info(),
                 authority: ctx.accounts.nft_authority.to_account_info(),
             },
-            signer
+            signer,
         ),
-        1
+        1,
     )?;
 
     // Freeze the mint authority so no more tokens can be minted to make it an NFT
@@ -168,10 +173,10 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
                 current_authority: ctx.accounts.nft_authority.to_account_info(),
                 account_or_mint: ctx.accounts.mint.to_account_info(),
             },
-            signer
+            signer,
         ),
         AuthorityType::MintTokens,
-        None
+        None,
     )?;
 
     Ok(())
