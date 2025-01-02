@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = ["api", "program"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = ""
+documentation = ""
+respository = ""
+readme = "./README.md"
+keywords = ["solana"]
+
+[workspace.dependencies]
+create-account-api = { path = "./api", version = "0.1.0" }
+bytemuck = "1.14"
+num_enum = "0.7"
+solana-program = "1.18"
+steel = "1.3"
+thiserror = "1.0"
+
