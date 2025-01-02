@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-borsh = "0.9.3"
+borsh = "1.5.1"
 borsh-derive = "0.9.1"
 solana-program = "=1.18.17"
 spl-associated-token-account = { version="2.0.0", features = [ "no-entrypoint" ] }
