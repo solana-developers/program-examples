@@ -1,0 +1,11 @@
+[package]
+name = "close-account-steel-program"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+steel.workspace = true
+close-account-steel-api = {path = "../api"}
+
+[lib]
+crate-type = ["cdylib", "lib"]
