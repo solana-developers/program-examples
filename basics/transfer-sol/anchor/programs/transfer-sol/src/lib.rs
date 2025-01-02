@@ -9,7 +9,13 @@ declare_id!("4fQVnLWKKKYxtxgGn7Haw8v2g2Hzbu8K61JvWKvqAi7W");
 pub mod transfer_sol {
     use super::*;
 
+    /// Transfer SOL using Cross-Program Invocation (CPI)
     pub fn transfer_sol_with_cpi(ctx: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
+        // Check for sufficient balance before transferring
+        let payer_balance = **ctx.accounts.payer.try_borrow_lamports()?;
+        require!(payer_balance >= amount, CustomError::InsufficientFunds);
+
+        // CPI-based transfer using the system program's transfer function
         system_program::transfer(
             CpiContext::new(
                 ctx.accounts.system_program.to_account_info(),
@@ -29,6 +35,10 @@ pub mod transfer_sol {
         ctx: Context<TransferSolWithProgram>,
         amount: u64,
     ) -> Result<()> {
+        // Check if the payer has sufficient funds for the transfer
+        let payer_balance = **ctx.accounts.payer.try_borrow_lamports()?;
+        require!(payer_balance >= amount, CustomError::InsufficientFunds);
+
         **ctx.accounts.payer.try_borrow_mut_lamports()? -= amount;
         **ctx.accounts.recipient.try_borrow_mut_lamports()? += amount;
         Ok(())
@@ -54,4 +64,10 @@ pub struct TransferSolWithProgram<'info> {
     payer: UncheckedAccount<'info>,
     #[account(mut)]
     recipient: SystemAccount<'info>,
+}
+
+#[error_code]
+pub enum CustomError {
+    #[msg("Insufficient funds for the transfer.")]
+    InsufficientFunds,
 }
