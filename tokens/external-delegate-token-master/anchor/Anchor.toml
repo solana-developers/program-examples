@@ -1,0 +1,16 @@
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+external_delegate_token_master = "FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn test"
