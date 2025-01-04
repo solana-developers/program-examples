@@ -1,8 +1,4 @@
-use solana_program::{
-    account_info::AccountInfo, 
-    entrypoint::ProgramResult, 
-    pubkey::Pubkey,
-};
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey};
 
 use crate::instructions::{create_pda::*, get_pda::*};
 use crate::state::Favorites;
@@ -23,7 +19,7 @@ pub fn process_instruction(
 
     match instruction {
         FavoritesInstruction::CreatePda(data) => create_pda(program_id, accounts, data),
-        FavoritesInstruction::GetPda => get_pda(program_id,accounts),
+        FavoritesInstruction::GetPda => get_pda(program_id, accounts),
     }?;
 
     Ok(())

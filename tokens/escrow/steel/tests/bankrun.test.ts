@@ -1,8 +1,8 @@
-import { PublicKey, Keypair, SystemProgram, Transaction, TransactionInstruction, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ProgramTestContext, BanksClient, start } from 'solana-bankrun';
-import { createAMint, deserializeOfferAccount, encodeBigint, getMakeOfferInstructionData, getTakeOfferInstructionData, mintTo } from './utils';
-import { AccountLayout, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, AccountLayout, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { assert } from 'chai';
+import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
+import { createAMint, deserializeOfferAccount, encodeBigint, getMakeOfferInstructionData, getTakeOfferInstructionData, mintTo } from './utils';
 
 const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');
 
@@ -10,8 +10,8 @@ describe('Escrow Program', () => {
   let context: ProgramTestContext;
   let client: BanksClient;
   let payer: Keypair;
-  let maker = Keypair.generate();
-  let taker = Keypair.generate();
+  const maker = Keypair.generate();
+  const taker = Keypair.generate();
 
   const mint_a = Keypair.generate();
   const mint_b = Keypair.generate();

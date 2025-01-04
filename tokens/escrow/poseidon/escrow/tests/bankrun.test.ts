@@ -1,19 +1,16 @@
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey, Keypair, SystemProgram } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
-import { assert } from "chai";
-import { startAnchor } from "solana-bankrun";
-import { EscrowProgram } from "../target/types/escrow_program";
+import { describe, it } from 'node:test';
+import * as anchor from '@coral-xyz/anchor';
+import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
+import { BankrunProvider } from 'anchor-bankrun';
+import { assert } from 'chai';
+import { startAnchor } from 'solana-bankrun';
+import { EscrowProgram } from '../target/types/escrow_program';
 
-const IDL = require("../target/idl/escrow_program.json");
+const IDL = require('../target/idl/escrow_program.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe("escrow_program (Bankrun)", async () => {
-  const context = await startAnchor(
-    "",
-    [{ name: "escrow_program", programId: PROGRAM_ID }],
-    []
-  );
+describe('escrow_program (Bankrun)', async () => {
+  const context = await startAnchor('', [{ name: 'escrow_program', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
 
   const payer = provider.wallet as anchor.Wallet;
@@ -25,9 +22,12 @@ describe("escrow_program (Bankrun)", async () => {
   const escrowKeypair = new Keypair();
 
   const mint = new Keypair(); // Mint account for SPL tokens
-  let makerATA, takerATA, escrowVault, escrowState;
+  let makerATA: PublicKey;
+  let takerATA: PublicKey;
+  let escrowVault: PublicKey;
+  let escrowState: anchor.IdlAccounts<EscrowProgram>['escrowState'] | null;
 
-  it("Make Escrow", async () => {
+  it('Make Escrow', async () => {
     await program.methods
       .make(new anchor.BN(100), new anchor.BN(50), new anchor.BN(12345)) // deposit_amount, offer_amount, seed
       .accounts({
@@ -46,14 +46,12 @@ describe("escrow_program (Bankrun)", async () => {
       .rpc();
 
     // Fetch and verify the state of the escrow
-    escrowState = await program.account.escrowState.fetch(
-      escrowKeypair.publicKey
-    );
+    escrowState = await program.account.escrowState.fetch(escrowKeypair.publicKey);
     assert.equal(escrowState.maker.toString(), maker.publicKey.toString());
     assert.equal(escrowState.amount.toNumber(), 50);
   });
 
-  it("Refund Escrow", async () => {
+  it('Refund Escrow', async () => {
     await program.methods
       .refund()
       .accounts({
@@ -68,13 +66,11 @@ describe("escrow_program (Bankrun)", async () => {
       .rpc();
 
     // Assert that escrow is closed or funds refunded
-    escrowState = await program.account.escrowState
-      .fetch(escrowKeypair.publicKey)
-      .catch(() => null);
-    assert.isNull(escrowState, "Escrow state should be closed after refund");
+    escrowState = await program.account.escrowState.fetch(escrowKeypair.publicKey).catch(() => null);
+    assert.isNull(escrowState, 'Escrow state should be closed after refund');
   });
 
-  it("Take Escrow", async () => {
+  it('Take Escrow', async () => {
     await program.methods
       .take()
       .accounts({
