@@ -1,0 +1,9 @@
+{
+  "name": "ts-programs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@solanaturbine/poseidon": "^0.0.4"
+  }
+}
