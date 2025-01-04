@@ -16,7 +16,7 @@ pub fn deposit_liquidity(
     amount_a: u64,
     amount_b: u64,
 ) -> Result<()> {
-    // Prevent depositing assets the depositor does not own
+    // If the user specified amounts greater than held, use the total amounts they do have
     let mut amount_a = if amount_a > ctx.accounts.depositor_account_a.amount {
         ctx.accounts.depositor_account_a.amount
     } else {
@@ -38,7 +38,7 @@ pub fn deposit_liquidity(
         (amount_a, amount_b)
     } else {
         let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+            .checked_div(I64F64::from_num(pool_b.amount))
             .unwrap();
         if pool_a.amount > pool_b.amount {
             (

@@ -6,7 +6,6 @@ import { type TestValues, createValues, expectRevert } from './utils';
 
 describe('Create AMM', () => {
   const provider = anchor.AnchorProvider.env();
-  const connection = provider.connection;
   anchor.setProvider(provider);
 
   const program = anchor.workspace.SwapExample as Program<SwapExample>;
