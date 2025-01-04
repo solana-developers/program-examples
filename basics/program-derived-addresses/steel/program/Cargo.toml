@@ -1,0 +1,19 @@
+[package]
+name = "program-derived-addresses-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+program-derived-addresses-api.workspace = true
+solana-program.workspace = true
+steel.workspace = true
+
+[dev-dependencies]
+bs64 = "0.1.2"
+rand = "0.8.5"
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1.35", features = ["full"] }
