@@ -55,7 +55,7 @@ pub fn create_pda(program_id: &Pubkey, accounts: &[AccountInfo], data: Favorites
         data.serialize(&mut &mut favorite_account.data.borrow_mut()[..])?;
         msg!("{:#?}", data);
     } else {
-        return Err(ProgramError::AccountAlreadyInitialized.into());
+        return Err(ProgramError::AccountAlreadyInitialized);
     }
 
     Ok(())
