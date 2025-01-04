@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["api", "program"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = ""
+documentation = ""
+repository = ""
+readme = "./README.md"
+keywords = ["solana"]
+
+[workspace.dependencies]
+transfer-tokens-api = { path = "./api", version = "0.1.0" }
+bytemuck = "1.14"
+num_enum = "0.7"
+solana-program = "1.18"
+steel = { version = "2.0", features = ["spl"] }
+thiserror = "1.0"
+spl-token = "^4"
+mpl-token-metadata = { version = "4.1.2" }
+spl-associated-token-account = { version = "^2.3", features = [
+    "no-entrypoint",
+] }
