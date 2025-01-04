@@ -1,0 +1,29 @@
+{
+  "name": "pda-rent-payer-program",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Use a PDA to pay the rent for the creation of a new account.",
+  "scripts": {
+    "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/*.test.ts",
+    "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
+    "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+    "deploy": "solana program deploy ./program/target/so/pda_rent_payer_program.so"
+  },
+  "keywords": ["solana"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@solana/web3.js": "^1.95.4"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.8.5",
+    "borsh": "^2.0.0",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "solana-bankrun": "^0.4.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.6.3"
+  }
+}
