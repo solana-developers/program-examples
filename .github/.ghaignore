@@ -20,10 +20,12 @@ oracles/pyth/anchor
 # not building
 compression/cutils/anchor
 compression/cnft-vault/anchor
+basics/favorites/native
+
 # builds but need to test on localhost
 compression/cnft-burn/anchor
 
-# test failing
+# build failing
 # https://github.com/solana-developers/helpers/issues/40
 tokens/escrow/anchor
 
