@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
         with:
           components: rustfmt, clippy
       - name: Run sccache-cache
@@ -140,7 +140,7 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
       - name: Run sccache-cache
         if: github.event_name != 'release'
         uses: mozilla-actions/sccache-action@v0.0.6
