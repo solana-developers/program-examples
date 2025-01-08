@@ -1,10 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { assert } from "chai";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { EscrowProgram } from "../target/types/escrow_program";
+import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
+import { PublicKey, SystemProgram } from '@solana/web3.js';
+import { assert } from 'chai';
+import { EscrowProgram } from '../target/types/escrow_program';
 
-describe("escrow_program", () => {
+describe('escrow_program', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -15,7 +15,7 @@ describe("escrow_program", () => {
   let vaultAccount: PublicKey;
   let escrowAccount: PublicKey;
 
-  it("Creates a new escrow", async () => {
+  it('Creates a new escrow', async () => {
     // Generate a keypair for escrow
     escrowAccount = anchor.web3.Keypair.generate().publicKey;
 
@@ -43,19 +43,11 @@ describe("escrow_program", () => {
 
     // Assert escrow account was created
     const escrowState = await program.account.escrowState.fetch(escrowAccount);
-    assert.equal(
-      escrowState.amount.toString(),
-      offerAmount.toString(),
-      "Escrow amount is incorrect"
-    );
-    assert.equal(
-      escrowState.seed.toString(),
-      seed.toString(),
-      "Escrow seed is incorrect"
-    );
+    assert.equal(escrowState.amount.toString(), offerAmount.toString(), 'Escrow amount is incorrect');
+    assert.equal(escrowState.seed.toString(), seed.toString(), 'Escrow seed is incorrect');
   });
 
-  it("Refunds from the vault", async () => {
+  it('Refunds from the vault', async () => {
     await program.methods
       .refund()
       .accounts({
@@ -73,13 +65,13 @@ describe("escrow_program", () => {
     // Assert that the escrow account was closed
     try {
       await program.account.escrowState.fetch(escrowAccount);
-      assert.fail("Escrow account should be closed");
+      assert.fail('Escrow account should be closed');
     } catch (err) {
-      assert.ok("Escrow account was closed");
+      assert.ok('Escrow account was closed');
     }
   });
 
-  it("Transfers tokens to taker", async () => {
+  it('Transfers tokens to taker', async () => {
     const taker = anchor.web3.Keypair.generate();
     const takerAta = anchor.web3.Keypair.generate();
     const takerReceiveAta = anchor.web3.Keypair.generate();
@@ -102,6 +94,6 @@ describe("escrow_program", () => {
 
     // Assert the transfer occurred
     const escrowState = await program.account.escrowState.fetch(escrowAccount);
-    assert.isNotNull(escrowState, "Escrow state should be updated");
+    assert.isNotNull(escrowState, 'Escrow state should be updated');
   });
 });

@@ -12,15 +12,15 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*": [
-      "biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"
-    ]
+    "*": ["biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"]
   },
   "keywords": [],
   "author": "Solana Foundation",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.8.1",
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.9.0",
     "husky": "^9.0.11",
     "picocolors": "^1.0.0",

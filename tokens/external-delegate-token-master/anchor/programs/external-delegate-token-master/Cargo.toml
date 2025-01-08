@@ -1,12 +1,12 @@
 [package]
-name = "account-data-anchor-program-example"
+name = "external-delegate-token-master"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "anchor_program_example"
+name = "escrow"
 
 [features]
 default = []
@@ -14,7 +14,9 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build"]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
-anchor-lang = "=0.30.0"
+anchor-lang = { version = "0.30.1", features = ["init-if-needed"]}
+anchor-spl = "0.30.1"
+solana-program = "=1.18.17"

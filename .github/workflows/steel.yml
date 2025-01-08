@@ -27,6 +27,9 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
       - uses: dorny/paths-filter@v3
         id: changes
         if: github.event_name == 'pull_request'
@@ -97,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
         with:
           components: rustfmt, clippy
       - name: Run sccache-cache
@@ -137,7 +140,7 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
       - name: Run sccache-cache
         if: github.event_name != 'release'
         uses: mozilla-actions/sccache-action@v0.0.6
@@ -253,7 +256,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -268,7 +271,7 @@ jobs:
           process_projects "stable"
           sccache --show-stats
       - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17

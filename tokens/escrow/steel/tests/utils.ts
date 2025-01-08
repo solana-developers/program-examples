@@ -1,14 +1,14 @@
 import {
   MINT_SIZE,
   TOKEN_PROGRAM_ID,
-  createInitializeMint2Instruction,
-  getAssociatedTokenAddressSync,
   createAssociatedTokenAccountInstruction,
+  createInitializeMint2Instruction,
   createMintToInstruction,
+  getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
-import { Keypair, Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ProgramTestContext } from 'solana-bankrun';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { ProgramTestContext } from 'solana-bankrun';
 
 export const instructionDiscriminators = {
   MakeOffer: Buffer.from([0]),

@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import { PublicKey, Transaction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
-import { createCreateUserInstruction, createCloseUserInstruction } from '../ts';
+import { createCloseUserInstruction, createCreateUserInstruction } from '../ts';
 
 describe('Close Account!', async () => {
   const PROGRAM_ID = new PublicKey('z7msBPQHDJjTvdQRoEcKyENgXDhSRYeHieN1ZMTqo35');

@@ -1,7 +1,7 @@
-import { start } from 'solana-bankrun';
-import { expect } from 'chai';
-import { PublicKey, SystemProgram, Keypair, Connection } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
+import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
+import { expect } from 'chai';
+import { start } from 'solana-bankrun';
 
 jest.setTimeout(30000); // Set timeout to 30 seconds
 
@@ -12,7 +12,7 @@ async function retryWithBackoff(fn: () => Promise<any>, retries = 5, delay = 500
     return await fn();
   } catch (err) {
     if (retries === 0) throw err;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
     return retryWithBackoff(fn, retries - 1, delay * 2);
   }
 }
@@ -34,15 +34,15 @@ describe('External Delegate Token Master Tests', () => {
 
     const programs = [
       {
-        name: "external_delegate_token_master",
-        programId: new PublicKey("FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD"),
-        program: "target/deploy/external_delegate_token_master.so",
+        name: 'external_delegate_token_master',
+        programId: new PublicKey('FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD'),
+        program: 'target/deploy/external_delegate_token_master.so',
       },
     ];
 
     context = await retryWithBackoff(async () => await start(programs, []));
 
-    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
     context.connection = connection;
 
     // Airdrop SOL to authority with retry logic
@@ -51,28 +51,24 @@ describe('External Delegate Token Master Tests', () => {
     });
 
     // Create mint with retry logic
-    mint = await retryWithBackoff(async () =>
-      await createMint(connection, authority, authority.publicKey, null, 6)
-    );
+    mint = await retryWithBackoff(async () => await createMint(connection, authority, authority.publicKey, null, 6));
 
-    const userTokenAccountInfo = await retryWithBackoff(async () =>
-      await getOrCreateAssociatedTokenAccount(connection, authority, mint, authority.publicKey)
+    const userTokenAccountInfo = await retryWithBackoff(
+      async () => await getOrCreateAssociatedTokenAccount(connection, authority, mint, authority.publicKey),
     );
     userTokenAccount = userTokenAccountInfo.address;
 
-    const recipientTokenAccountInfo = await retryWithBackoff(async () =>
-      await getOrCreateAssociatedTokenAccount(connection, authority, mint, Keypair.generate().publicKey)
+    const recipientTokenAccountInfo = await retryWithBackoff(
+      async () => await getOrCreateAssociatedTokenAccount(connection, authority, mint, Keypair.generate().publicKey),
     );
     recipientTokenAccount = recipientTokenAccountInfo.address;
 
     // Mint tokens to the user's account
-    await retryWithBackoff(async () =>
-      await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000)
-    );
+    await retryWithBackoff(async () => await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000));
 
     // Find program-derived address (PDA)
-    [userPda, bumpSeed] = await retryWithBackoff(async () =>
-      await PublicKey.findProgramAddress([userAccount.publicKey.toBuffer()], context.program.programId)
+    [userPda, bumpSeed] = await retryWithBackoff(
+      async () => await PublicKey.findProgramAddress([userAccount.publicKey.toBuffer()], context.program.programId),
     );
   });
 

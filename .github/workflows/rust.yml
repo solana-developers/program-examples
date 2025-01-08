@@ -33,7 +33,9 @@ jobs:
 
        # This GitHub Action installs a Rust toolchain using rustup. It is designed for one-line concise usage and good defaults.
       - name: Install the Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
 
       - name: Run tests
         run: cargo test
@@ -43,8 +45,7 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
         with:
           # Specific to dtolnay/rust-toolchain: Comma-separated string of additional components to install
           components: rustfmt
@@ -57,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.79.0
         with:
           components: clippy
       - name: Linting

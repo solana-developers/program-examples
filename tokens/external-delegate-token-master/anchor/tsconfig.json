@@ -1,19 +1,8 @@
 {
   "compilerOptions": {
-    "types": [
-      "jest",
-      "node"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "lib": [
-      "es2015",
-      "dom",
-      "es6",
-      "es2017",
-      "esnext.asynciterable"
-    ],
+    "types": ["jest", "node"],
+    "typeRoots": ["./node_modules/@types"],
+    "lib": ["es2015", "dom", "es6", "es2017", "esnext.asynciterable"],
     "module": "commonjs",
     "target": "es6",
     "esModuleInterop": true,
@@ -30,19 +19,10 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "outDir": "dist"
   },
-  "include": [
-    "tests/**/*",
-    "programs/**/*",
-    "jest.setup.js",
-    "jest.config.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["tests/**/*", "programs/**/*", "jest.setup.js", "jest.config.js"],
+  "exclude": ["node_modules"]
 }

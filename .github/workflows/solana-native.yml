@@ -103,6 +103,9 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -180,7 +183,7 @@ jobs:
           # Install pnpm
           npm install --global pnpm
       - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -190,7 +193,7 @@ jobs:
           rustc -V
           process_projects "stable"
       - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: 1.18.17
       - name: Build and Test with 1.18.17
