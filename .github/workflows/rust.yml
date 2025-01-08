@@ -33,7 +33,9 @@ jobs:
 
        # This GitHub Action installs a Rust toolchain using rustup. It is designed for one-line concise usage and good defaults.
       - name: Install the Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
 
       - name: Run tests
         run: cargo test

@@ -103,6 +103,9 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:

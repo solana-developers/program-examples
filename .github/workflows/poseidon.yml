@@ -104,6 +104,9 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
       - uses: heyAyushh/setup-anchor@v4.9
         with:
           anchor-version: 0.30.1

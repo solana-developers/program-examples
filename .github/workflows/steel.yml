@@ -27,6 +27,9 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.79.0
+        with:
+          components: rustfmt, clippy
       - uses: dorny/paths-filter@v3
         id: changes
         if: github.event_name == 'pull_request'
