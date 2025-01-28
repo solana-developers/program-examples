@@ -8,7 +8,7 @@ pub mod errors;
 
 
 #[program]
-pub mod ed25519_example {
+pub mod ed_25519_example {
     use super::*;
 
     pub fn verify_message(
