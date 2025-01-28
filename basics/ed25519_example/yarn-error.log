@@ -1,0 +1,46 @@
+Arguments: 
+  /Users/dogukangundogan/.nvm/versions/node/v22.12.0/bin/node /usr/local/bin/yarn install
+
+PATH: 
+  /Users/dogukangundogan/.nvm/versions/node/v22.12.0/bin:/Users/dogukangundogan/.fuelup/bin:/Users/dogukangundogan/.detaspace/bin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/Users/dogukangundogan/Documents/flutter/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Users/dogukangundogan/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:~/.dotnet/tools:/usr/local/go/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/dogukangundogan/.nvm/versions/node/v22.12.0/bin:/Users/dogukangundogan/.fuelup/bin:/Users/dogukangundogan/.detaspace/bin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/Users/dogukangundogan/Documents/flutter/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Users/dogukangundogan/.local/share/solana/install/active_release/bin:/Users/dogukangundogan/.cargo/bin:/Users/dogukangundogan/.foundry/bin:/Users/dogukangundogan/.local/bin:/Users/dogukangundogan/.pub-cache/bin:/usr/local/bin:/Users/dogukangundogan/.local/bin:/Users/dogukangundogan/.pub-cache/bin:/Users/dogukangundogan/.local/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  22.12.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)
+
+npm manifest: 
+  {
+    "license": "ISC",  
+    "scripts": {
+      "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
+      "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+    },
+    "dependencies": {
+      "@coral-xyz/anchor": "^0.30.1"
+    },
+    "devDependencies": {
+      "chai": "^4.3.4",
+      "mocha": "^9.0.3",
+      "ts-mocha": "^10.0.0",
+      "@types/bn.js": "^5.1.0",
+      "@types/chai": "^4.3.0",
+      "@types/mocha": "^9.0.0",
+      "typescript": "^4.3.5",
+      "prettier": "^2.6.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
