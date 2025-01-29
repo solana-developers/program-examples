@@ -1,0 +1,25 @@
+{
+  "name": "ed25519-custodial-poseidon",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts tests/**/*.ts",
+    "format": "prettier --write src/ tests/"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.2",
+    "@noble/ed25519": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.7",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.3"
+  }
+}

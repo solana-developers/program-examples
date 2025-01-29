@@ -1,0 +1,11 @@
+[package]
+name = "ed25519-custodial-program"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+solana-program.workspace = true
+steel.workspace = true 

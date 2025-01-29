@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "test": "pnpm ts-mocha -p ./tests/tsconfig.test.json -t 1000000 ./tests/test.ts",
+    "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
+    "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
+    "deploy": "solana program deploy ./program/target/so/program.so"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.2",
+    "@noble/ed25519": "^1.7.1",
+    "buffer": "^6.0.3",
+    "solana-bankrun": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^4.7.4",
+    "ts-mocha": "^10.0.0",
+    "@types/mocha": "^9.0.0",
+    "mocha": "^9.0.3"
+  }
+}
