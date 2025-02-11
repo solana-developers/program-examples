@@ -4,7 +4,7 @@ Thank you for considering contributing to the Solana Program Examples repository
 
 We believe that a welcoming and inclusive environment fosters collaboration and encourages participation from developers of all backgrounds and skill levels.
 
-To ensure a smooth and effective contribution process, please take a moment to review and follow the guidelines outlined below.
+To ensure a smooth and effective contribution process, please take a moment to review and follow the guidelines outlined above
 
 ## How to Contribute
 
