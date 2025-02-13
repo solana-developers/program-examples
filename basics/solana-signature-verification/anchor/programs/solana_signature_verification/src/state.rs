@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-pub const ESCROW_SEED: &[u8] = b"get the best weed from us";
+pub const ESCROW_SEED: &[u8] = b"instruction-introspection-seed";
 //pub const SOL_USDC_FEED: &str = "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR";
 use bytemuck::{Pod, Zeroable};
 #[derive(Debug, Copy, Clone, Pod, Zeroable)]

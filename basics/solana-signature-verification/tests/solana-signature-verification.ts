@@ -14,7 +14,7 @@ import { assert, expect } from 'chai';
 
 const MSG = Buffer.from('const MSG = Buffer.from');
 // replace with your keypair path
-const keypairPath = "/home/mubariz/.config/solana/id.json";
+const keypairPath = "~/.config/solana/id.json";
 // the actual keypair
 const payer = anchor.web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(fs.readFileSync(path.resolve(keypairPath), 'utf-8'))));
 // according to contract there can be one escrow for one user so we will create a temporary one for testing
@@ -57,7 +57,7 @@ describe("solana-signature-verification", () => {
     await transferLamports(provider.connection, payer, temp_payer.publicKey, 0.2);
     try {
       const [escrowState] = await anchor.web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("get the best weed from us"), temp_payer.publicKey.toBuffer()],
+        [Buffer.from("instruction-introspection-seed"), temp_payer.publicKey.toBuffer()],
         program.programId,
       );
       const amountToLockUp = new anchor.BN(100);
@@ -115,7 +115,7 @@ describe("solana-signature-verification", () => {
   it("withdraws from escrow", async () => {
 
     const [escrowState] = await anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("get the best weed from us"), temp_payer.publicKey.toBuffer()],
+      [Buffer.from("instruction-introspection-seed"), temp_payer.publicKey.toBuffer()],
       program.programId,
     );
     const userBalanceBefore = await provider.connection.getBalance(
@@ -163,17 +163,6 @@ describe("solana-signature-verification", () => {
         }),
         { skipPreflight: true }
       );
-      // way-two 
-      /*
-      await sendTransactions(
-        await transactionBuilder.buildVersionedTransactions({
-          computeUnitPriceMicroLamports: 100000,
-          tightComputeBudget: true,
-        }),
-        pythSolanaReceiver.connection,
-        new anchor.Wallet(temp_payer)
-      );
-*/
       try {
         //  Verify escrow account is closed
         await program.account.escrowState.fetch(escrowState);
