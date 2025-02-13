@@ -1,9 +1,13 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import type { AnchorWallet } from "@solana/wallet-adapter-react";
+import {
+    LAMPORTS_PER_SOL,
+    SystemProgram,
+    Transaction,
+    Connection,
+    Keypair,
+    PublicKey,
+    sendAndConfirmTransaction
+} from "@solana/web3.js";
 import { HermesClient } from "@pythnetwork/hermes-client";
-import bs58 from "bs58";
-import { SignatureResult, LAMPORTS_PER_SOL, Signer, VersionedTransaction, SystemProgram, Transaction, Connection, Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js";
 
 export async function transferLamports(
     connection: Connection,
