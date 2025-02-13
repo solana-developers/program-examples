@@ -1,23 +1,19 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import type { AnchorWallet } from "@solana/wallet-adapter-react";
 import {
   PythSolanaReceiver,
   InstructionWithEphemeralSigners,
 } from "@pythnetwork/pyth-solana-receiver";
-import { HermesClient } from "@pythnetwork/hermes-client";
-import bs58 from "bs58";
-import { Ed25519Program, SignatureResult, LAMPORTS_PER_SOL, Signer, VersionedTransaction, SystemProgram, Transaction, Connection, Keypair, PublicKey, sendAndConfirmTransaction } from "@solana/web3.js";
+import { Ed25519Program, Connection } from "@solana/web3.js";
 import { SolanaSignatureVerification } from "../target/types/solana_signature_verification";
 import * as ed from '@noble/ed25519';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getPriceUpdateData, transferLamports, sendTransactions } from "./utils"
-import { confirmTransaction } from "@solana-developers/helpers";
+import { getPriceUpdateData, transferLamports } from "./utils"
 import { assert, expect } from 'chai';
 
 const MSG = Buffer.from('const MSG = Buffer.from');
-// replace with your keypai path
+// replace with your keypair path
 const keypairPath = "/home/mubariz/.config/solana/id.json";
 // the actual keypair
 const payer = anchor.web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(fs.readFileSync(path.resolve(keypairPath), 'utf-8'))));
