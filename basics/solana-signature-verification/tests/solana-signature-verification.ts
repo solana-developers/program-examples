@@ -11,8 +11,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { getPriceUpdateData, transferLamports } from "./utils"
 import { assert, expect } from 'chai';
+import * as crypto from 'crypto';
 
-const MSG = Buffer.from('const MSG = Buffer.from');
+const MSG = crypto.randomBytes(32);
 // replace with your keypair path
 const keypairPath = "~/.config/solana/id.json";
 // the actual keypair
