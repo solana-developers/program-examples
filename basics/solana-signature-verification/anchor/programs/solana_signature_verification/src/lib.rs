@@ -7,7 +7,7 @@ pub mod errors;
 pub mod instructions;
 pub mod state;
 
-declare_id!("AQiz7Ezj4ZNj26FJzTNyhWYJkdexrqAaysYYaVc3iGQt");
+declare_id!("BJuWkTa4GJDn75ENWqZ18ywjRoqxmybQXupAfmSH2Zyv");
 #[program]
 pub mod solana_signature_verification {
 

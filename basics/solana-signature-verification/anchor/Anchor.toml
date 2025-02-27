@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-solana-signature-verification = "AQiz7Ezj4ZNj26FJzTNyhWYJkdexrqAaysYYaVc3iGQt"
+solana-signature-verification = "BJuWkTa4GJDn75ENWqZ18ywjRoqxmybQXupAfmSH2Zyv"
 
 [registry]
 url = "https://api.apr.dev"

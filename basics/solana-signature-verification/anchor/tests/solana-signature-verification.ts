@@ -8,6 +8,7 @@ import { Ed25519Program, Connection } from "@solana/web3.js";
 import { SolanaSignatureVerification } from "../target/types/solana_signature_verification";
 import * as ed from '@noble/ed25519';
 import * as fs from 'fs';
+import * as os from "os";
 import * as path from 'path';
 import { getPriceUpdateData, transferLamports } from "./utils"
 import { assert, expect } from 'chai';
@@ -15,7 +16,8 @@ import * as crypto from 'crypto';
 
 const MSG = crypto.randomBytes(32);
 // replace with your keypair path
-const keypairPath = "~/.config/solana/id.json";
+const keypairPath = path.join(os.homedir(), ".config", "solana", "id.json");
+console.log("Keypair Path:", keypairPath);
 // the actual keypair
 const payer = anchor.web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(fs.readFileSync(path.resolve(keypairPath), 'utf-8'))));
 // according to contract there can be one escrow for one user so we will create a temporary one for testing
