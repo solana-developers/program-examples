@@ -95,9 +95,7 @@ describe('solana-signature-verification', () => {
       await provider.connection.confirmTransaction(txid);
       console.log('Escrow created successfully. TX:', txid);
       const escrowAccount = await program.account.escrowState.fetch(escrowState);
-
-      const escrowBalance = await provider.connection.getBalance(escrowState, 'confirmed');
-      assert(escrowBalance > 0);
+      assert(escrowAccount.escrowAmount.eq(amountToLockUp));
     } catch (error) {
       console.error('Error details:', error.logs);
       throw new Error(`Failed to create escrow: ${error.message}`);
@@ -154,7 +152,7 @@ describe('solana-signature-verification', () => {
         assert.fail('Escrow account should have been closed');
       } catch (error) {
         console.log(error.message);
-        assert(error.message.includes('Account·does·not·exist'), `Unexpected·error:·${error.message}`);
+        assert(error.message.includes('Account does not exist'), `Unexpected error: ${error.message}`);
       }
       // Verify user balance increased
       const userBalanceAfter = await provider.connection.getBalance(temp_payer.publicKey);
