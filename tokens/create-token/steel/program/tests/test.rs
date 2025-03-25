@@ -1,8 +1,8 @@
-use steel_api::prelude::*;
 use solana_program::hash::Hash;
 use solana_program_test::{processor, BanksClient, ProgramTest};
 use solana_sdk::{signature::Keypair, signer::Signer, transaction::Transaction};
 use steel::*;
+use steel_api::prelude::*;
 
 async fn setup() -> (BanksClient, Keypair, Hash) {
     let mut program_test = ProgramTest::new(
@@ -21,7 +21,7 @@ async fn setup() -> (BanksClient, Keypair, Hash) {
 async fn run_test() {
     // Setup test
     let (mut banks, payer, blockhash) = setup().await;
-    
+
     //SPL TOKEN
     let token_mint_keypair = Keypair::new();
 
@@ -30,61 +30,49 @@ async fn run_test() {
     let uri = string_to_bytes::<128>("https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json").unwrap();
     let decimals = 9;
 
-    let data = Token{
-        name, 
-        symbol,
-        uri, 
-        decimals
-    };
-
     // Submit create transaction for spl_token.
     let ix = create_token(
-        payer.pubkey(), 
+        payer.pubkey(),
         token_mint_keypair.pubkey(),
-        data
+        name,
+        symbol,
+        uri,
+        decimals,
     );
     let tx = Transaction::new_signed_with_payer(
-        &[ix], 
-        Some(&payer.pubkey()), 
-        &[&payer, &token_mint_keypair], 
-        blockhash
+        &[ix],
+        Some(&payer.pubkey()),
+        &[&payer, &token_mint_keypair],
+        blockhash,
     );
     let res = banks.process_transaction(tx).await;
     assert!(res.is_ok());
 
-
     //NFT
     let nft_mint_keypair = Keypair::new();
-    
+
     let name = string_to_bytes::<32>("Homer NFT").unwrap();
     let symbol = string_to_bytes::<8>("HOMR").unwrap();
     let uri = string_to_bytes::<128>("https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json").unwrap();
     let decimals = 0;
-    
-    let data = Token{
-        name, 
-        symbol,
-        uri, 
-        decimals
-    };
-    
+
     //Submit create transaction for nft
     let ix = create_token(
         payer.pubkey(),
         nft_mint_keypair.pubkey(),
-        data
+        name,
+        symbol,
+        uri,
+        decimals,
     );
 
     let tx = Transaction::new_signed_with_payer(
-        &[ix], 
-        Some(&payer.pubkey()), 
-        &[&payer, &nft_mint_keypair], 
-        blockhash
+        &[ix],
+        Some(&payer.pubkey()),
+        &[&payer, &nft_mint_keypair],
+        blockhash,
     );
 
     let res = banks.process_transaction(tx).await;
     assert!(res.is_ok());
-
 }
-
-

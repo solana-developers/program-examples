@@ -2,9 +2,9 @@ mod create_token;
 use solana_program::msg;
 
 use create_token::*;
-        
-use steel_api::prelude::*;
+
 use steel::*;
+use steel_api::prelude::*;
 
 pub fn process_instruction(
     program_id: &Pubkey,

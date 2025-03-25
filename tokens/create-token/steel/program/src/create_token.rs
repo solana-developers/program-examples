@@ -1,35 +1,37 @@
-use steel_api::prelude::*;
-use spl_token::state::Mint;
 use solana_program::msg;
 use solana_program::program_pack::Pack;
+use spl_token::state::Mint;
 use steel::*;
+use steel_api::prelude::*;
 
 pub fn process_create_token(accounts: &[AccountInfo<'_>], data: &[u8]) -> ProgramResult {
-
     //Parse Args
     let args = CreateToken::try_from_bytes(data)?;
-    let name = String::from_utf8(args.data.name.to_vec()).expect("Invalid UTF-8");
-    let symbol = String::from_utf8(args.data.symbol.to_vec()).expect("Invalid UTF-8");
-    let uri = String::from_utf8(args.data.uri.to_vec()).expect("Invalid UTF-8");
-    let decimals = args.data.decimals;
+    let name = String::from_utf8(args.name.to_vec()).expect("Invalid UTF-8");
+    let symbol = String::from_utf8(args.symbol.to_vec()).expect("Invalid UTF-8");
+    let uri = String::from_utf8(args.uri.to_vec()).expect("Invalid UTF-8");
+    let decimals = args.decimals;
     msg!("Parsed Arguments");
-    
+
     // Load accounts.
-    let [signer_info, mint_info,metadata_info, system_program, token_program, metadata_program, rent_sysvar] = 
-    accounts else {
-        return Err(ProgramError::NotEnoughAccountKeys);        
+    let [signer_info, mint_info, metadata_info, system_program, token_program, metadata_program, rent_sysvar] =
+        accounts
+    else {
+        return Err(ProgramError::NotEnoughAccountKeys);
     };
     msg!("Loaded Accounts");
 
     //Validation
     signer_info.is_signer()?;
     mint_info.is_signer()?.is_empty()?.is_writable()?;
-    metadata_info.is_empty()?.is_writable()?
-    .has_seeds(
-        &[METADATA, mpl_token_metadata::ID.as_ref(), mint_info.key.as_ref()],
+    metadata_info.is_empty()?.is_writable()?.has_seeds(
+        &[
+            METADATA,
+            mpl_token_metadata::ID.as_ref(),
+            mint_info.key.as_ref(),
+        ],
         &mpl_token_metadata::ID,
-    )?
-    ;
+    )?;
     system_program.is_program(&system_program::ID)?;
     token_program.is_program(&spl_token::ID)?;
     metadata_program.is_program(&mpl_token_metadata::ID)?;
@@ -75,7 +77,6 @@ pub fn process_create_token(accounts: &[AccountInfo<'_>], data: &[u8]) -> Progra
         ],
     )?;
 
-
     // Lastly, create the account for that Mint's metadata
     //
     msg!("Creating metadata account...");
@@ -108,5 +109,4 @@ pub fn process_create_token(accounts: &[AccountInfo<'_>], data: &[u8]) -> Progra
     msg!("Token mint created successfully.");
 
     Ok(())
-
 }
