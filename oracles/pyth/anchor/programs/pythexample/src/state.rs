@@ -2,7 +2,7 @@
 use anchor_lang::prelude::*;
 use pyth_sdk_solana::state::load_price_account;
 use std::ops::Deref;
-use std::str::FromStr;
+use pyth_sdk_solana::state::SolanaPriceAccount;
 
 // import the error code from the error.rs file
 use crate::error::ErrorCode;
@@ -10,17 +10,30 @@ use crate::error::ErrorCode;
 #[derive(Clone)]
 pub struct PriceFeed(pyth_sdk::PriceFeed);
 
-impl anchor_lang::Owner for PriceFeed {
-    fn owner() -> Pubkey {
-        // The mainnet Pyth program ID
-        let oracle_addr = "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH";
-        Pubkey::from_str(oracle_addr).unwrap()
+#[cfg(feature = "idl-build")]
+impl anchor_lang::IdlBuild for PriceFeed {}
+
+#[cfg(feature = "idl-build")]
+impl anchor_lang::Discriminator for PriceFeed {
+    const DISCRIMINATOR: &'static [u8] = &[];
+}
+
+const PYTH_PROGRAM_ID: [Pubkey; 1] = [Pubkey::from_str_const(
+    "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH",
+)];
+
+impl anchor_lang::Owners for PriceFeed {
+    fn owners() -> &'static [Pubkey] {
+        &PYTH_PROGRAM_ID
     }
 }
 
 impl anchor_lang::AccountDeserialize for PriceFeed {
     fn try_deserialize_unchecked(data: &mut &[u8]) -> Result<Self> {
-        let account = load_price_account(data).map_err(|_x| error!(ErrorCode::PythError))?;
+        let account: &SolanaPriceAccount =
+            load_price_account(data).map_err(|x| {
+                error!(ErrorCode::PythError)
+        })?;
         let zeros: [u8; 32] = [0; 32];
         let dummy_key = Pubkey::new_from_array(zeros);
         let feed = account.to_price_feed(&dummy_key);
@@ -28,11 +41,7 @@ impl anchor_lang::AccountDeserialize for PriceFeed {
     }
 }
 
-impl anchor_lang::AccountSerialize for PriceFeed {
-    fn try_serialize<W: std::io::Write>(&self, _writer: &mut W) -> std::result::Result<(), Error> {
-        Err(error!(ErrorCode::TryToSerializePriceAccount))
-    }
-}
+impl anchor_lang::AccountSerialize for PriceFeed {}
 
 impl Deref for PriceFeed {
     type Target = pyth_sdk::PriceFeed;

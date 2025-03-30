@@ -39,7 +39,7 @@ pub mod pythexample {
 
 #[derive(Accounts)]
 pub struct Pyth<'info> {
-    pub price_feed: Account<'info, PriceFeed>,
+    pub price_feed: InterfaceAccount<'info, PriceFeed>,
     pub system_program: Program<'info, System>,
     pub clock: Sysvar<'info, Clock>,
 }
