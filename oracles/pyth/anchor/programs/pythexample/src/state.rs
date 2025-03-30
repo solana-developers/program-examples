@@ -31,7 +31,7 @@ impl anchor_lang::Owners for PriceFeed {
 impl anchor_lang::AccountDeserialize for PriceFeed {
     fn try_deserialize_unchecked(data: &mut &[u8]) -> Result<Self> {
         let account: &SolanaPriceAccount =
-            load_price_account(data).map_err(|x| {
+            load_price_account(data).map_err(|_x| {
                 error!(ErrorCode::PythError)
         })?;
         let zeros: [u8; 32] = [0; 32];
