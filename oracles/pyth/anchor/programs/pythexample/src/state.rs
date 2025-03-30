@@ -18,13 +18,13 @@ impl anchor_lang::Discriminator for PriceFeed {
     const DISCRIMINATOR: &'static [u8] = &[];
 }
 
-const PYTH_PROGRAM_ID: [Pubkey; 1] = [Pubkey::from_str_const(
+const PYTH_PROGRAM_ID: Pubkey = Pubkey::from_str_const(
     "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH",
-)];
+);
 
-impl anchor_lang::Owners for PriceFeed {
-    fn owners() -> &'static [Pubkey] {
-        &PYTH_PROGRAM_ID
+impl anchor_lang::Owner for PriceFeed {
+    fn owner() -> Pubkey {
+        PYTH_PROGRAM_ID
     }
 }
 
