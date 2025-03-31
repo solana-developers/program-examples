@@ -102,7 +102,7 @@ jobs:
           components: rustfmt, clippy
       - name: Run sccache-cache
         if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: Set Rust cache env vars
         if: github.event_name != 'release'
         run: |
@@ -140,7 +140,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Run sccache-cache
         if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: Set Rust cache env vars
         if: github.event_name != 'release'
         run: |
