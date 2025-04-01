@@ -50,6 +50,7 @@ async fn run_test() {
     let res = banks.process_transaction(tx).await;
     assert!(res.is_ok());
 
+    // Check token mint account data
     let mint_account_data = banks
         .get_account(token_mint_keypair.pubkey())
         .await
@@ -64,20 +65,26 @@ async fn run_test() {
         payer.pubkey()
     );
 
-    let metadata_pda = Pubkey::find_program_address(
-        &[
-            METADATA,
-            mpl_token_metadata::ID.as_ref(),
-            token_mint_keypair.pubkey().as_ref(),
-        ],
-        &mpl_token_metadata::ID,
-    )
-    .0;
-    let metadata_account_data = banks.get_account(metadata_pda).await.unwrap().unwrap().data;
+    // Check token metadata account data
+    let metadata_account_data = banks
+        .get_account(metadata_pda(token_mint_keypair.pubkey()).0)
+        .await
+        .unwrap()
+        .unwrap()
+        .data;
     let deserialized_metadata_data =
         mpl_token_metadata::accounts::Metadata::from_bytes(&metadata_account_data).unwrap();
     assert_eq!(deserialized_metadata_data.update_authority, payer.pubkey());
     assert_eq!(deserialized_metadata_data.mint, token_mint_keypair.pubkey());
+    assert_eq!(
+        deserialized_metadata_data.name.trim_end_matches('\0'),
+        "Solana Gold"
+    );
+    assert_eq!(
+        deserialized_metadata_data.symbol.trim_end_matches('\0'),
+        "GOLDSOL"
+    );
+    assert_eq!(deserialized_metadata_data.uri.trim_end_matches('\0'), "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json" );
 
     //NFT
     let nft_mint_keypair = Keypair::new();
@@ -106,4 +113,40 @@ async fn run_test() {
 
     let res = banks.process_transaction(tx).await;
     assert!(res.is_ok());
+
+    //Check nft mint account data
+    let mint_account_data = banks
+        .get_account(nft_mint_keypair.pubkey())
+        .await
+        .unwrap()
+        .unwrap()
+        .data;
+    let deserialized_mint_data = spl_token::state::Mint::unpack(&mint_account_data).unwrap();
+    assert!(deserialized_mint_data.is_initialized);
+    assert_eq!(deserialized_mint_data.decimals, decimals);
+    assert_eq!(
+        deserialized_mint_data.mint_authority.unwrap(),
+        payer.pubkey()
+    );
+
+    //Check nft metadata account data
+    let metadata_account_data = banks
+        .get_account(metadata_pda(nft_mint_keypair.pubkey()).0)
+        .await
+        .unwrap()
+        .unwrap()
+        .data;
+    let deserialized_metadata_data =
+        mpl_token_metadata::accounts::Metadata::from_bytes(&metadata_account_data).unwrap();
+    assert_eq!(deserialized_metadata_data.update_authority, payer.pubkey());
+    assert_eq!(deserialized_metadata_data.mint, nft_mint_keypair.pubkey());
+    assert_eq!(
+        deserialized_metadata_data.name.trim_end_matches('\0'),
+        "Homer NFT"
+    );
+    assert_eq!(
+        deserialized_metadata_data.symbol.trim_end_matches('\0'),
+        "HOMR"
+    );
+    assert_eq!(deserialized_metadata_data.uri.trim_end_matches('\0'), "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json" );
 }
