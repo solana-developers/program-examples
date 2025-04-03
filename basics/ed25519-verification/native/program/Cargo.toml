@@ -1,0 +1,15 @@
+[package]
+name = "ed25519-custodial"
+version = "0.1.0"
+edition = "2021"
+description = "Example Solana program demonstrating Ed25519 signature verification for custodied funds"
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+solana-program = "1.16"
+thiserror = "1.0"
+
+[lib]
+crate-type = ["cdylib", "lib"] 
