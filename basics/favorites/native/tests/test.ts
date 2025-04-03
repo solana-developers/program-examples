@@ -100,7 +100,6 @@ test('Set the favorite pda and cross-check the updated data', async () => {
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash
     tx.sign(payer)
-    tx.recentBlockhash = blockhash;
     await client.processTransaction(tx);
 
     const account = await client.getAccount(favoritesPda);
@@ -132,7 +131,6 @@ test('Set the favorite pda and cross-check the updated data', async () => {
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash
     tx.sign(payer)
-    tx.recentBlockhash = blockhash;
     try {
       await client.processTransaction(tx)
       console.error("Expected the test to fail")
@@ -161,7 +159,6 @@ test('Set the favorite pda and cross-check the updated data', async () => {
     tx1.feePayer = payer.publicKey;
     tx1.recentBlockhash = blockhash
     tx1.sign(payer)
-    tx1.recentBlockhash = blockhash;
     await client.processTransaction(tx1)
 
 
@@ -180,7 +177,6 @@ test('Set the favorite pda and cross-check the updated data', async () => {
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash
     tx.sign(payer)
-    tx.recentBlockhash = blockhash;
     await client.processTransaction(tx);
   })
 })
