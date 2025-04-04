@@ -1,5 +1,6 @@
 import { describe, test } from 'node:test';
 import { PublicKey, Transaction } from '@solana/web3.js';
+import { expect } from 'chai';
 import { start } from 'solana-bankrun';
 import { createCloseUserInstruction, createCreateUserInstruction } from '../ts';
 
@@ -30,6 +31,14 @@ describe('Close Account!', async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer);
 
+    const testAccountInitialBalance = Number(await client.getBalance(testAccountPublicKey));
+    const payerInitialBalance = Number(await client.getBalance(payer.publicKey));
     await client.processTransaction(tx);
+    const payerFinalBalance = Number(await client.getBalance(payer.publicKey));
+    const testAccountFinalBalance = Number(await client.getBalance(testAccountPublicKey));
+
+    expect(payerFinalBalance).to.be.greaterThan(payerInitialBalance); // Assumes rent was > tx fee
+    expect(testAccountInitialBalance).to.be.greaterThan(0);
+    expect(testAccountFinalBalance).to.equal(0);
   });
 });
