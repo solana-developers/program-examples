@@ -252,7 +252,22 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-      - name: Setup Solana stable
+      - name: Setup Solana Beta
+        uses: heyAyushh/setup-solana@v5.5
+        with:
+          solana-cli-version: beta
+      - name: Build and Test with Beta
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: "sccache"
+        run: |
+          source build_and_test.sh
+          solana -V
+          rustc -V
+          solana-keygen new --no-bip39-passphrase
+          process_projects "beta"
+          sccache --show-stats
+      - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v5.5
         with:
           solana-cli-version: stable
@@ -264,23 +279,8 @@ jobs:
           source build_and_test.sh
           solana -V
           rustc -V
-          solana-keygen new --no-bip39-passphrase
-          process_projects "stable"
-          sccache --show-stats
-      - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
-        with:
-          solana-cli-version: 1.18.17
-      - name: Build and Test with 1.18.17
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
-        run: |
-          source build_and_test.sh
-          solana -V
-          rustc -V
           solana-keygen new --no-bip39-passphrase --force
-          process_projects "1.18.17"
+          process_projects "stable"
           sccache --show-stats
 
       - name: Set failed projects output
