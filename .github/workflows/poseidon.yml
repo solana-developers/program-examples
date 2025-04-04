@@ -130,7 +130,7 @@ jobs:
       # Cache Poseidon binary
       - name: Cache Poseidon binary
         id: cache-poseidon
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cargo/bin/poseidon
           key: poseidon-${{ runner.os }}-${{ steps.poseidon-sha.outputs.sha }}
