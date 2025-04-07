@@ -12,6 +12,6 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-borsh = "0.9"
+borsh = "1.5"
 shank = "0.0.8"
 solana-program = "=1.18.17"
