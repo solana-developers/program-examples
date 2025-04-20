@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: heyAyushh/setup-anchor@v4.4
         with:
-          anchor-version: 0.30.1
+          anchor-version: 0.31.1
           solana-cli-version: stable
           node-version: 20.x
           use-avm: false
