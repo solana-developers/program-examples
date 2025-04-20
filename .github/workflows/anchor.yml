@@ -113,7 +113,7 @@ jobs:
       - name: Display Versions and Install pnpm
         run: |
           solana -V
-          solana-keygen new --no-bip39-passphrase
+          solana-keygen new --no-bip39-passphrase --force
           rustc -V
           anchor -V
           npm i -g pnpm
