@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import { closeAccountSchema, MyInstruction } from '.';
+import { MyInstruction, closeAccountSchema } from '.';
 
 export class Close {
   instruction: MyInstruction;
