@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer';
 import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import { closeAccountSchema, MyInstruction } from '.';
+import { MyInstruction, closeAccountSchema } from '.';
 
 export class Create {
   instruction: MyInstruction;
-  name: String;
+  name: string;
 
   constructor(props: { instruction: MyInstruction; name: string }) {
     this.instruction = props.instruction;
@@ -13,7 +13,7 @@ export class Create {
 
   toBuffer() {
     const textBuffer = Buffer.alloc(64);
-    let buffer = Buffer.alloc(1000);
+    const buffer = Buffer.alloc(1000);
 
     textBuffer.write('foobarbaz', 0, 'utf-8');
 
