@@ -1,5 +1,18 @@
 {
-  "license": "ISC",  
+  "private": true,
+  "version": "1.0.0-example",
+  "author": "guibescos (https://github.com/guibescos)",
+  "description": "Example Pyth Oracle Program",
+  "homepage": "https://github.com/guibescos/anchor-pyth",
+  "bugs": {
+    "url": "https://github.com/guibescos/anchor-pyth/issues",
+    "email": "support@pyth.network"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guibescos/anchor-pyth.git"
+  },
+  "license": "ISC",
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"

@@ -1,7 +1,7 @@
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 use anchor_lang::prelude::*;
 
-declare_id!("46T9wfa7dRLJwMmMtLnzQji1B2ydjzm28uxQuhn9p9sR");
+declare_id!("GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2");
 
 #[program]
 pub mod anchor_test {

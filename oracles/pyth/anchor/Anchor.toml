@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-anchor_pyth = "2NDo3yaaVNdUyu7NMXrLXox4HsUi6ubw7Ve2g9pSxrd6"
+pythexample = "GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2"
 
 [registry]
 url = "https://api.apr.dev"
