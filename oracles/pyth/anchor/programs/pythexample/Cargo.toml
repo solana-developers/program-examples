@@ -16,6 +16,6 @@ no-idl = []
 no-log-ix-name = []
 
 [dependencies]
-anchor-lang = "0.28.0"
+anchor-lang = "0.31.1"
 pyth-sdk-solana = "0.8.0"
 pyth-sdk = "0.8.0"
