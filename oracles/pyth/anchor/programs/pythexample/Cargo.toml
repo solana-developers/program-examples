@@ -14,8 +14,8 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
 anchor-lang = "0.31.1"
-pyth-sdk-solana = "0.8.0"
-pyth-sdk = "0.8.0"
+pyth-solana-receiver-sdk = "0.3.2"
