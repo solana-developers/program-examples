@@ -25,7 +25,7 @@ pub mod external_delegate_token_master {
 
     pub fn transfer_tokens(ctx: Context<TransferTokens>, amount: u64, signature: [u8; 65], message: [u8; 32]) -> Result<()> {
         let user_account = &ctx.accounts.user_account;
-        
+
         if !verify_ethereum_signature(&user_account.ethereum_address, &message, &signature) {
             return Err(ErrorCode::InvalidSignature.into());
         }
@@ -142,7 +142,7 @@ fn verify_ethereum_signature(ethereum_address: &[u8; 20], message: &[u8; 32], si
     let recovery_id = signature[64];
     let mut sig = [0u8; 64];
     sig.copy_from_slice(&signature[..64]);
-    
+
     if let Ok(pubkey) = secp256k1_recover(message, recovery_id, &sig) {
         let pubkey_bytes = pubkey.to_bytes();
         let mut recovered_address = [0u8; 20];

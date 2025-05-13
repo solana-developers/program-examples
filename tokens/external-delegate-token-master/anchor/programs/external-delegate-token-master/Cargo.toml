@@ -1,12 +1,12 @@
 [package]
-name = "transfer-fee"
+name = "external-delegate-token-master"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "transfer_fee"
+name = "external_delegate_token_master"
 
 [features]
 default = []
@@ -18,4 +18,6 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
 anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
-anchor-spl = "0.31.1"
+anchor-spl = { version = "0.31.1", features = ["metadata"] }
+sha3 = "0.10.8"
+solana-program = "2.2.1"
