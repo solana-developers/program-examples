@@ -180,7 +180,7 @@ jobs:
           # Install pnpm
           npm install --global pnpm
       - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -189,16 +189,16 @@ jobs:
           solana -V
           rustc -V
           process_projects "stable"
-      - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
+      - name: Setup Solana 2.0.0
+        uses: heyAyushh/setup-solana@v5.9
         with:
-          solana-cli-version: 1.18.17
-      - name: Build and Test with 1.18.17
+          solana-cli-version: 2.0.0
+      - name: Build and Test with 2.0.0
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
-          process_projects "1.18.17"
+          process_projects "2.0.0"
 
       - name: Set failed projects output
         id: set-failed
