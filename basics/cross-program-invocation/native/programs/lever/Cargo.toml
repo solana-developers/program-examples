@@ -10,7 +10,7 @@ cpi = ["no-entrypoint"]
 [dependencies]
 borsh = "0.10"
 borsh-derive = "0.10"
-solana-program = "=1.18.17"
+solana-program = "2.1"
 
 [lib]
 crate-type = ["cdylib", "lib"]
