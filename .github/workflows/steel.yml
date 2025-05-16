@@ -100,14 +100,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Run sccache-cache
-        if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
-      - name: Set Rust cache env vars
-        if: github.event_name != 'release'
-        run: |
-          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
-          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
       - name: Run fmt and clippy
         run: |
           readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
@@ -138,22 +130,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: Run sccache-cache
-        if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
-      - name: Set Rust cache env vars
-        if: github.event_name != 'release'
-        run: |
-          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
-          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.cargo/bin/steel
           key: ${{ runner.os }}-steel-cli
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 'lts/*'
           check-latest: true
       - name: Setup build environment
         id: setup
@@ -253,7 +237,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
@@ -268,20 +252,16 @@ jobs:
           process_projects "beta"
           sccache --show-stats
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           solana-keygen new --no-bip39-passphrase --force
           process_projects "stable"
-          sccache --show-stats
 
       - name: Set failed projects output
         id: set-failed
