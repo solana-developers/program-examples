@@ -237,7 +237,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v5.9
+        uses: heyAyushh/setup-solana@v2
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
@@ -252,7 +252,7 @@ jobs:
           process_projects "beta"
           sccache --show-stats
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v5.9
+        uses: heyAyushh/setup-solana@v2
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable

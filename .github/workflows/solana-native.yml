@@ -106,7 +106,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 'lts/*'
           check-latest: true
       - name: Setup build environment
         id: setup
@@ -180,7 +180,7 @@ jobs:
           # Install pnpm
           npm install --global pnpm
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v5.9
+        uses: heyAyushh/setup-solana@v2
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
@@ -190,7 +190,7 @@ jobs:
           rustc -V
           process_projects "beta"
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v5.5
+        uses: heyAyushh/setup-solana@v2
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
