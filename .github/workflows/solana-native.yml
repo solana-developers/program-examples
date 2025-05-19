@@ -180,7 +180,7 @@ jobs:
           # Install pnpm
           npm install --global pnpm
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v2
+        uses: heyAyushh/setup-solana@v2.01
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
