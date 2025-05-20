@@ -236,17 +236,6 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-      - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v2
-        with:
-          solana-cli-version: beta
-      - name: Build and Test with Beta
-        run: |
-          source build_and_test.sh
-          solana -V
-          rustc -V
-          solana-keygen new --no-bip39-passphrase --force
-          process_projects "beta"
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v2
         with:
@@ -258,6 +247,17 @@ jobs:
           rustc -V
           solana-keygen new --no-bip39-passphrase --force
           process_projects "stable"
+      - name: Setup Solana Beta
+        uses: heyAyushh/setup-solana@v2
+        with:
+          solana-cli-version: beta
+      - name: Build and Test with Beta
+        run: |
+          source build_and_test.sh
+          solana -V
+          rustc -V
+          solana-keygen new --no-bip39-passphrase --force
+          process_projects "beta"
 
       - name: Set failed projects output
         id: set-failed
