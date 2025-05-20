@@ -16,7 +16,7 @@ keywords = ["solana"]
 spl-token-minter-api = { path = "./api", version = "0.1.0" }
 bytemuck = "1.14"
 num_enum = "0.7"
-solana-program = "1.18"
+solana-program = "2.1.21"
 steel = { version = "2.0", features = ["spl"] }
 thiserror = "1.0"
 spl-token = "^4"

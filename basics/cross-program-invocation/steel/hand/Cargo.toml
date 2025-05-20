@@ -20,6 +20,6 @@ lever-program = { path = "../lever/program", version = "0.1.0", features = [
 ] }
 bytemuck = "1.14"
 num_enum = "0.7"
-solana-program = "1.18"
+solana-program = "2.1.21"
 steel = "2.0"
 thiserror = "1.0"
