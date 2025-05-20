@@ -38,3 +38,7 @@ tokens/token-2022/metadata/anchor
 
 # dependency issues
 tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor
+
+tokens/token-2022/mint-close-authority/native
+tokens/token-2022/transfer-fee/native
+tokens/token-2022/non-transferable/native

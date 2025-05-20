@@ -241,16 +241,12 @@ jobs:
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
-          solana-keygen new --no-bip39-passphrase
+          solana-keygen new --no-bip39-passphrase --force
           process_projects "beta"
-          sccache --show-stats
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v2
         with:
