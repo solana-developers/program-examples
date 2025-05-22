@@ -146,6 +146,9 @@ jobs:
         run: |
           npm install --global pnpm
 
+          # Install Steel CLI
+          cargo install --quiet steel-cli
+
           # Create the build and test function
           cat << 'EOF' > build_and_test.sh
           function build_and_test() {
@@ -154,8 +157,9 @@ jobs:
             echo "Building and Testing $project with Solana $solana_version"
             cd "$project" || return 1
 
-            # Install dependencies
+            # Check if this is a pnpm project or Steel CLI project
             if [ -f "package.json" ]; then
+              # Use pnpm for projects with package.json
               if ! pnpm install --frozen-lockfile; then
                 echo "::error::pnpm install failed for $project"
                 echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
@@ -172,20 +176,14 @@ jobs:
               fi
 
               # Test
-              if ! pnpm build-and-test; then
+              if ! pnpm test; then
                 echo "::error::tests failed for $project"
                 echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
                 cd - > /dev/null
                 return 1
               fi
             else
-              # Use Steel CLI
-              if ! cargo install --quiet steel-cli; then
-                echo "::error::steel-cli installation failed for $project"
-                echo "$project: steel-cli installation failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-                cd - > /dev/null
-                return 1
-              fi
+              # Use Steel CLI for pure Steel projects
 
               # Build
               if ! steel build; then
