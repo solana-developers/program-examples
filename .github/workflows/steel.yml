@@ -97,9 +97,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
       - name: Run fmt and clippy
         run: |
           readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
@@ -129,11 +126,16 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: actions/cache@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        if: github.event_name == 'pull_request'
         with:
-          path: ~/.cargo/bin/steel
-          key: ${{ runner.os }}-steel-cli
+          list-files: shell
+          filters: |
+            native:
+              - added|modified: '**/native/**'
+            workflow:
+              - added|modified: '.github/workflows/solana-native.yml'
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
