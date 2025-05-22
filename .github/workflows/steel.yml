@@ -27,6 +27,9 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       - uses: dorny/paths-filter@v3
         id: changes
         if: github.event_name == 'pull_request'
@@ -37,6 +40,23 @@ jobs:
               - added|modified: '**/steel/**'
             workflow:
               - added|modified: '.github/workflows/steel.yml'
+
+      - name: Run fmt and clippy
+        run: |
+          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+          for project in "${all_projects[@]}"; do
+            echo "::group::Checking ${project}"
+            if [ ! -f "${project}/Cargo.toml" ]; then
+              echo "::error::No Cargo.toml found in ${project}"
+              exit 1
+            fi
+            cd "${project}"
+            cargo fmt --check
+            cargo clippy --all-features -- -D warnings
+            cd - > /dev/null
+            echo "::endgroup::"
+          done
+
       - name: Analyze Changes
         id: analyze
         run: |
@@ -146,9 +166,6 @@ jobs:
         run: |
           npm install --global pnpm
 
-          # Install Steel CLI
-          cargo install --quiet steel-cli
-
           # Create the build and test function
           cat << 'EOF' > build_and_test.sh
           function build_and_test() {
@@ -237,7 +254,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v2
+        uses: heyAyushh/setup-solana@v2.01
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -246,9 +263,10 @@ jobs:
           solana -V
           rustc -V
           solana-keygen new --no-bip39-passphrase --force
+          cargo install --quiet steel-cli
           process_projects "stable"
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v2
+        uses: heyAyushh/setup-solana@v2.01
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
@@ -257,6 +275,7 @@ jobs:
           solana -V
           rustc -V
           solana-keygen new --no-bip39-passphrase --force
+          cargo install --quiet steel-cli
           process_projects "beta"
 
       - name: Set failed projects output
