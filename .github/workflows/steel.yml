@@ -254,7 +254,7 @@ jobs:
           chmod +x build_and_test.sh
 
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v2.01
+        uses: heyAyushh/setup-solana@v2.02
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -266,7 +266,7 @@ jobs:
           cargo install --quiet steel-cli
           process_projects "stable"
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v2.01
+        uses: heyAyushh/setup-solana@v2.02
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
