@@ -27,6 +27,9 @@ jobs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       - uses: dorny/paths-filter@v3
         id: changes
         if: github.event_name == 'pull_request'
@@ -37,6 +40,23 @@ jobs:
               - added|modified: '**/steel/**'
             workflow:
               - added|modified: '.github/workflows/steel.yml'
+
+      - name: Run fmt and clippy
+        run: |
+          readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
+          for project in "${all_projects[@]}"; do
+            echo "::group::Checking ${project}"
+            if [ ! -f "${project}/Cargo.toml" ]; then
+              echo "::error::No Cargo.toml found in ${project}"
+              exit 1
+            fi
+            cd "${project}"
+            cargo fmt --check
+            cargo clippy --all-features -- -D warnings
+            cd - > /dev/null
+            echo "::endgroup::"
+          done
+
       - name: Analyze Changes
         id: analyze
         run: |
@@ -97,17 +117,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-      - name: Run sccache-cache
-        if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
-      - name: Set Rust cache env vars
-        if: github.event_name != 'release'
-        run: |
-          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
-          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
       - name: Run fmt and clippy
         run: |
           readarray -t all_projects < <(echo '${{ needs.changes.outputs.changed_projects }}' | jq -r '.[]?')
@@ -137,23 +146,20 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Run sccache-cache
-        if: github.event_name != 'release'
-        uses: mozilla-actions/sccache-action@v0.0.6
-      - name: Set Rust cache env vars
-        if: github.event_name != 'release'
-        run: |
-          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
-          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
-      - uses: actions/cache@v3
+      - uses: dorny/paths-filter@v3
+        id: changes
+        if: github.event_name == 'pull_request'
         with:
-          path: ~/.cargo/bin/steel
-          key: ${{ runner.os }}-steel-cli
+          list-files: shell
+          filters: |
+            native:
+              - added|modified: '**/native/**'
+            workflow:
+              - added|modified: '.github/workflows/solana-native.yml'
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 'lts/*'
           check-latest: true
       - name: Setup build environment
         id: setup
@@ -168,8 +174,9 @@ jobs:
             echo "Building and Testing $project with Solana $solana_version"
             cd "$project" || return 1
 
-            # Install dependencies
+            # Check if this is a pnpm project or Steel CLI project
             if [ -f "package.json" ]; then
+              # Use pnpm for projects with package.json
               if ! pnpm install --frozen-lockfile; then
                 echo "::error::pnpm install failed for $project"
                 echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
@@ -186,20 +193,14 @@ jobs:
               fi
 
               # Test
-              if ! pnpm build-and-test; then
+              if ! pnpm test; then
                 echo "::error::tests failed for $project"
                 echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
                 cd - > /dev/null
                 return 1
               fi
             else
-              # Use Steel CLI
-              if ! cargo install --quiet steel-cli; then
-                echo "::error::steel-cli installation failed for $project"
-                echo "$project: steel-cli installation failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-                cd - > /dev/null
-                return 1
-              fi
+              # Use Steel CLI for pure Steel projects
 
               # Build
               if ! steel build; then
@@ -252,36 +253,30 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-      - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.5
+      - name: Setup Solana Stable
+        uses: heyAyushh/setup-solana@v2.02
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
-        run: |
-          source build_and_test.sh
-          solana -V
-          rustc -V
-          solana-keygen new --no-bip39-passphrase
-          process_projects "stable"
-          sccache --show-stats
-      - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
-        with:
-          solana-cli-version: 1.18.17
-      - name: Build and Test with 1.18.17
-        env:
-          SCCACHE_GHA_ENABLED: "true"
-          RUSTC_WRAPPER: "sccache"
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
           solana-keygen new --no-bip39-passphrase --force
-          process_projects "1.18.17"
-          sccache --show-stats
+          cargo install --quiet steel-cli
+          process_projects "stable"
+      - name: Setup Solana Beta
+        uses: heyAyushh/setup-solana@v2.02
+        with:
+          solana-cli-version: beta
+      - name: Build and Test with Beta
+        run: |
+          source build_and_test.sh
+          solana -V
+          rustc -V
+          solana-keygen new --no-bip39-passphrase --force
+          cargo install --quiet steel-cli
+          process_projects "beta"
 
       - name: Set failed projects output
         id: set-failed
