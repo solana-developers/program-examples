@@ -42,3 +42,26 @@ tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor
 tokens/token-2022/mint-close-authority/native
 tokens/token-2022/transfer-fee/native
 tokens/token-2022/non-transferable/native
+
+# all steel projects
+
+basics/account-data/steel
+basics/checking-accounts/steel
+basics/close-account/steel
+basics/counter/steel
+basics/create-account/steel
+basics/cross-program-invocation/steel
+basics/favorites/steel
+basics/pda-rent-payer/steel
+basics/processing-instructions/steel
+basics/program-derived-addresses/steel
+basics/realloc/steel
+basics/rent/steel
+basics/transfer-sol/steel
+
+tokens/escrow/steel
+
+tokens/pda-mint-authority/steel
+tokens/spl-token-minter/steel
+tokens/token-swap/steel
+tokens/transfer-tokens/steel
