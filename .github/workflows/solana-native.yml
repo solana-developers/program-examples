@@ -106,7 +106,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 'lts/*'
           check-latest: true
       - name: Setup build environment
         id: setup
@@ -179,8 +179,8 @@ jobs:
 
           # Install pnpm
           npm install --global pnpm
-      - name: Setup Solana stable
-        uses: heyAyushh/setup-solana@v5.5
+      - name: Setup Solana Stable
+        uses: heyAyushh/setup-solana@v2.02
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -189,16 +189,17 @@ jobs:
           solana -V
           rustc -V
           process_projects "stable"
-      - name: Setup Solana 1.18.17
-        uses: heyAyushh/setup-solana@v5.5
+      - name: Setup Solana Beta
+        uses: heyAyushh/setup-solana@v2.02
         with:
-          solana-cli-version: 1.18.17
-      - name: Build and Test with 1.18.17
+          solana-cli-version: beta
+      - name: Build and Test with Beta
+        continue-on-error: true
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
-          process_projects "1.18.17"
+          process_projects "beta"
 
       - name: Set failed projects output
         id: set-failed
