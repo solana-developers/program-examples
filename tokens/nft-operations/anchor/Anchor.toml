@@ -1,27 +1,35 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
-[programs.localnet]
-mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
-
 [programs.devnet]
+mint_nft = "3hGsAzu5hQ12ZM2etzoPtXx6eky5crKgqCaCoqvx5t9a"
+
+[programs.localnet]
 mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
+
 [test.validator]
+bind_address = "0.0.0.0"
 url = "https://api.mainnet-beta.solana.com"
+ledger = ".anchor/test-ledger"
+rpc_port = 8899
 
 [[test.validator.clone]]
 address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
