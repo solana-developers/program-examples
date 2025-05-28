@@ -8,7 +8,7 @@ skip-lint = false
 mint_nft = "3hGsAzu5hQ12ZM2etzoPtXx6eky5crKgqCaCoqvx5t9a"
 
 [programs.localnet]
-mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
+mint_nft = "3hGsAzu5hQ12ZM2etzoPtXx6eky5crKgqCaCoqvx5t9a"
 
 [registry]
 url = "https://api.apr.dev"
