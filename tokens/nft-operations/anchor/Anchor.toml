@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-mint_nft = "3hGsAzu5hQ12ZM2etzoPtXx6eky5crKgqCaCoqvx5t9a"
+mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
 
 [programs.localnet]
-mint_nft = "3hGsAzu5hQ12ZM2etzoPtXx6eky5crKgqCaCoqvx5t9a"
+mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
 
 [registry]
 url = "https://api.apr.dev"
