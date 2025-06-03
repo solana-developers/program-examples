@@ -1,23 +1,26 @@
-import assert from 'node:assert';
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { CloseAccountProgram } from '../target/types/close_account_program';
-
+import { Program } from '@coral-xyz/anchor';
+import { Keypair, PublicKey } from '@solana/web3.js';
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
+import { assert } from 'chai';
+import { CloseAccountProgram } from '../target/types/close_account_program';
 const IDL = require('../target/idl/close_account_program.json');
-const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('close-an-account', async () => {
-  // Configure the client to use the local cluster.
-  const context = await startAnchor('', [{ name: 'close_account_program', programId: PROGRAM_ID }], []);
-  const provider = new BankrunProvider(context);
+  let client: any;
+  let provider: LiteSVMProvider;
+  let program: Program<CloseAccountProgram>;
+  let payer: Keypair;
+  let userAccountAddress: PublicKey;
 
-  const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<CloseAccountProgram>(IDL, provider);
-  // Derive the PDA for the user's account.
-  const [userAccountAddress] = PublicKey.findProgramAddressSync([Buffer.from('USER'), payer.publicKey.toBuffer()], program.programId);
+  before(async () => {
+    client = fromWorkspace('');
+    provider = new LiteSVMProvider(client);
+    payer = provider.wallet.payer;
+    program = new Program<CloseAccountProgram>(IDL, provider);
+
+    // Derive the PDA for the user's account.
+    [userAccountAddress] = PublicKey.findProgramAddressSync([Buffer.from('USER'), payer.publicKey.toBuffer()], program.programId);
+  });
 
   it('Create Account', async () => {
     await program.methods

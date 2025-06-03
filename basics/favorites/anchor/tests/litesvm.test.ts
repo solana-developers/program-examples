@@ -1,39 +1,45 @@
-import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import { getCustomErrorMessage } from '@solana-developers/helpers';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
+import { Keypair } from '@solana/web3.js';
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
 import { assert } from 'chai';
-import { startAnchor } from 'solana-bankrun';
-import type { Favorites } from '../target/types/favorites';
+import { Favorites } from '../target/types/favorites';
 import { systemProgramErrors } from './system-errors';
 
 const web3 = anchor.web3;
 const IDL = require('../target/idl/favorites.json');
-const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Favorites Bankrun', async () => {
-  // Use the cluster and the keypair from Anchor.toml
-  // Load programs into anchor-bankrun
-  const context = await startAnchor('', [{ name: 'favorites', programId: PROGRAM_ID }], []);
-  const provider = new BankrunProvider(context);
-  anchor.setProvider(provider);
-  const user = (provider.wallet as anchor.Wallet).payer;
-  const someRandomGuy = anchor.web3.Keypair.generate();
+describe('anchor', () => {
+  let client: any;
+  let provider: LiteSVMProvider;
+  let program: anchor.Program<Favorites>;
+  let user: Keypair;
+  let someRandomGuy: Keypair;
+  let favoriteNumber: anchor.BN;
+  let favoriteColor: string;
+  let favoriteHobbies: string[];
 
-  const program = new anchor.Program<Favorites>(IDL, provider);
+  before(async () => {
+    client = fromWorkspace('');
+    provider = new LiteSVMProvider(client);
+    program = new anchor.Program<Favorites>(IDL, provider);
 
-  // Here's what we want to write to the blockchain
-  const favoriteNumber = new anchor.BN(23);
-  const favoriteColor = 'purple';
-  const favoriteHobbies = ['skiing', 'skydiving', 'biking'];
+    anchor.setProvider(provider);
+    user = (provider.wallet as anchor.Wallet).payer;
+    someRandomGuy = anchor.web3.Keypair.generate();
 
-  // We don't need to airdrop if we're using the local cluster
-  // because the local cluster gives us 1,000,000 SOL
-  const balance = await context.banksClient.getBalance(user.publicKey);
-  const balanceInSOL = balance / BigInt(web3.LAMPORTS_PER_SOL);
-  const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
-  console.log(`Balance: ${formattedBalance} SOL`);
+    // Here's what we want to write to the blockchain
+    favoriteNumber = new anchor.BN(23);
+    favoriteColor = 'purple';
+    favoriteHobbies = ['skiing', 'skydiving', 'biking'];
+
+    // We don't need to airdrop if we're using the local cluster
+    // because the local cluster gives us 1,000,000 SOL
+    const balance = await provider.client.getBalance(user.publicKey);
+    const balanceInSOL = balance / BigInt(web3.LAMPORTS_PER_SOL);
+    const formattedBalance = new Intl.NumberFormat().format(balanceInSOL);
+    console.log(`Balance: ${formattedBalance} SOL`);
+  });
 
   it('Writes our favorites to the blockchain', async () => {
     await program.methods

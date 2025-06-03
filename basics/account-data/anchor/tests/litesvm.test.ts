@@ -1,23 +1,25 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
 import { Keypair } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { AnchorProgramExample } from '../target/types/anchor_program_example';
-
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
+import { AnchorProgramExample } from '../target/types/anchor_program_example';
 const IDL = require('../target/idl/anchor_program_example.json');
-const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Account Data!', async () => {
-  const context = await startAnchor('', [{ name: 'anchor_program_example', programId: PROGRAM_ID }], []);
-  const provider = new BankrunProvider(context);
+describe('anchor', () => {
+  let client: any;
+  let provider: LiteSVMProvider;
+  let program: Program<AnchorProgramExample>;
+  let payer: Keypair;
+  let addressInfoAccount: Keypair;
 
-  const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<AnchorProgramExample>(IDL, provider);
+  before(async () => {
+    client = fromWorkspace('');
+    provider = new LiteSVMProvider(client);
+    payer = provider.wallet.payer;
+    program = new Program<AnchorProgramExample>(IDL, provider);
 
-  // Generate a new keypair for the addressInfo account
-  const addressInfoAccount = new Keypair();
+    // a keypair for the addressInfo account
+    addressInfoAccount = new Keypair();
+  });
 
   it('Create the address info account', async () => {
     console.log(`Payer Address      : ${payer.publicKey}`);
@@ -37,7 +39,7 @@ describe('Account Data!', async () => {
         addressInfo: addressInfoAccount.publicKey,
         payer: payer.publicKey,
       })
-      .signers([addressInfoAccount])
+      .signers([addressInfoAccount, payer])
       .rpc();
   });
 
