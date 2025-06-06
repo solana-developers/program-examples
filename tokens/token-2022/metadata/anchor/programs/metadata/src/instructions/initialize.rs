@@ -62,7 +62,7 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
             TokenMetadataInitialize {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
+                program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),
                 metadata: ctx.accounts.mint_account.to_account_info(),
                 mint_authority: ctx.accounts.payer.to_account_info(),
