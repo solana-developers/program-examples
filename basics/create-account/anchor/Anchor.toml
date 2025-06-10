@@ -13,4 +13,4 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json tests/**/*.ts"
+test = "pnpx ts-mocha -p ./tsconfig.json tests/**/*.ts"
