@@ -1,27 +1,33 @@
+import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import type { Program } from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { assert } from 'chai';
-import { startAnchor } from 'solana-bankrun';
-import type { AnchorRealloc } from '../target/types/anchor_realloc';
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
+import { AnchorRealloc } from '../target/types/anchor_realloc';
 
 const IDL = require('../target/idl/anchor_realloc.json');
-const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('anchor-realloc', async () => {
-  const context = await startAnchor('', [{ name: 'anchor_realloc', programId: PROGRAM_ID }], []);
-  const provider = new BankrunProvider(context);
-  const connection = provider.connection;
-  const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<AnchorRealloc>(IDL, provider);
+describe('anchor', () => {
+  let client: any;
+  let provider: LiteSVMProvider;
+  let program: Program<AnchorRealloc>;
+  let payer: Keypair;
 
   const messageAccount = new Keypair();
 
+  before(async () => {
+    // Configure the Anchor provider & load the program IDL for LiteSVM
+    // The IDL gives you a typescript module
+    client = fromWorkspace('');
+    provider = new LiteSVMProvider(client);
+    payer = provider.wallet.payer;
+    program = new anchor.Program<AnchorRealloc>(IDL, provider);
+  });
+
   // helper function to check the account data and message
   async function checkAccount(publicKey: PublicKey, expectedMessage: string) {
-    const accountInfo = await connection.getAccountInfo(publicKey);
+    const accountInfo = await provider.connection.getAccountInfo(publicKey);
     const accountData = await program.account.message.fetch(publicKey);
 
     // 8 bytes for the discriminator,

@@ -104,7 +104,10 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v4
-      - uses: heyAyushh/setup-anchor@v0.31
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: heyAyushh/setup-anchor@v0.31.2
         with:
           anchor-version: 0.31.1
           solana-cli-version: stable
@@ -115,7 +118,6 @@ jobs:
           solana-keygen new --no-bip39-passphrase --force
           rustc -V
           anchor -V
-          npm i -g pnpm
       - name: Build and Test
         env:
           TOTAL_PROJECTS: ${{ needs.changes.outputs.total_projects }}
