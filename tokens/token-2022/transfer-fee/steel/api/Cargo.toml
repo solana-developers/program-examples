@@ -17,3 +17,4 @@ solana-program.workspace = true
 steel.workspace = true
 thiserror.workspace = true
 spl-token-2022.workspace = true
+spl-associated-token-account.workspace = true

@@ -1,8 +1,7 @@
-use solana_program::{msg, program_pack::Pack};
+use solana_program::{msg, program::invoke};
 use spl_token_2022::{
     extension::{transfer_fee::instruction::initialize_transfer_fee_config, ExtensionType},
-    pod::PodMint,
-    state::{Account, Mint},
+    state::Mint,
 };
 use steel::*;
 use steel_api::prelude::*;
@@ -29,7 +28,6 @@ pub fn process_initialize(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
     //Calculate space for mint and extension data
     let space =
         ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::TransferFeeConfig])?;
-    msg!(&space.to_string());
 
     //Create account for the mint and allocate space
     create_account(
@@ -42,7 +40,7 @@ pub fn process_initialize(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
 
     //Initialize the transfer fee extension
     //This instruction must come before the instruction to initialize mint data
-    solana_program::program::invoke(
+    invoke(
         &initialize_transfer_fee_config(
             token_program.key,
             mint_info.key,
@@ -51,53 +49,19 @@ pub fn process_initialize(accounts: &[AccountInfo<'_>], _data: &[u8]) -> Program
             transfer_fee_basis_points,
             maximum_fee,
         )?,
-        &[
-            mint_info.clone(),
-            token_program.clone(), // If needed — depending on accounts defined in the program
-        ],
-    )?;
-    //Initialize the Token Mint
-    // initialize_mint(mint_info, mint_authority_info, freeze_authority_info, token_program, rent_sysvar, decimals);
-    // msg!(&token_program.key.to_string());
-    // msg!(&mint_info.key.to_string());
-    // msg!(&signer_info.key.to_string());
-    // msg!(&args.decimals.to_string());
-
-    solana_program::program::invoke(
-        &spl_token_2022::instruction::initialize_mint2(
-            token_program.key,
-            mint_info.key,
-            signer_info.key,
-            Some(signer_info.key),
-            9,
-        )?,
-        &[
-            mint_info.clone(),
-            signer_info.clone(),
-            token_program.clone(),
-            // rent_sysvar.clone()
-        ],
+        &[mint_info.clone()],
     )?;
 
-    // initialize_mint2(
-    //     mint_info,
-    //     signer_info,
-    //     Some(signer_info),
-    //     token_program,
-    //     args.decimals,
-    // )?;
+    initialize_mint(
+        mint_info,
+        signer_info,
+        Some(signer_info),
+        token_program,
+        rent_sysvar,
+        args.decimals,
+    )?;
 
-    // initialize_mint(
-    //     mint_info,
-    //     signer_info,
-    //     Some(signer_info),
-    //     token_program,
-    //     rent_sysvar,
-    //     args.decimals,
-    // )?;
+    msg!("Transfer Fee Extension: Initialized.");
 
-    msg!("wani");
-
-    msg!("Space created");
     Ok(())
 }
