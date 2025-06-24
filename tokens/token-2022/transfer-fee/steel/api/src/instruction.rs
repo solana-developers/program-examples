@@ -13,7 +13,7 @@ pub enum SteelInstruction {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct Initialize {
-    pub maximum_fee: [u8; 8], //NOTE: take into consideration the token decimals or maybe I should just scale using the input
+    pub maximum_fee: [u8; 8], //NOTE: take into consideration the token decimals, you can also scale the input to match the decimals
     pub transfer_fee_basis_points: [u8; 2],
     pub decimals: u8,
 }
@@ -37,7 +37,7 @@ pub struct Withdraw {
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 pub struct UpdateFee {
-    pub maximum_fee: [u8; 8], //NOTE: take into consideration the token decimals or maybe I should just scale using the input
+    pub maximum_fee: [u8; 8], //NOTE: take into consideration the token decimals, you can also scale the input to match the decimals.
     pub transfer_fee_basis_points: [u8; 2],
 }
 

@@ -4,13 +4,11 @@ use solana_sdk::{signature::Keypair, signer::Signer, transaction::Transaction};
 use spl_token_2022::{
     extension::{
         mint_close_authority::MintCloseAuthority,
-        transfer_fee::{TransferFeeAmount, TransferFeeConfig},
         BaseStateWithExtensions, ExtensionType, StateWithExtensions,
     },
-    instruction::mint_to,
-    state::{Account, Mint},
+    state::Mint,
 };
-use steel::*;
+
 use steel_api::prelude::*;
 
 async fn setup() -> (BanksClient, Keypair, Hash) {
