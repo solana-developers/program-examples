@@ -1,26 +1,41 @@
 import { Buffer } from 'node:buffer';
+import { readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { Connection, Keypair, SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from '@solana/web3.js';
 import * as borsh from 'borsh';
+import { start } from 'solana-bankrun';
+
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Buffer.from(JSON.parse(readFileSync(path, 'utf-8'))));
 }
 
-describe('CPI Example', () => {
-  const connection = new Connection('http://localhost:8899', 'confirmed');
-  const payer = createKeypairFromFile(`${require('node:os').homedir()}/.config/solana/id.json`);
-  const hand = createKeypairFromFile('./target/so/hand-keypair.json');
-  const lever = createKeypairFromFile('./target/so/lever-keypair.json');
+describe('CPI Example', async () => {
+  //const connection = new Connection('http://localhost:8899', 'confirmed');
+
+  const hand = createKeypairFromFile('./target/deploy/cross_program_invocatio_native_hand-keypair.json');
+  const lever = createKeypairFromFile('./target/deploy/cross_program_invocatio_native_lever-keypair.json');
+
+
+  const context = await start([
+    { name: 'cross_program_invocatio_native_hand', programId: hand.publicKey },
+    { name: 'cross_program_invocatio_native_lever', programId: lever.publicKey }
+  ], [])
+
+  const client = context.banksClient;
+  const payer = context.payer;
 
   class Assignable {
-    constructor(properties) {
+    constructor(properties: any) {
       for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
+        (this as any)[key] = value;
       }
     }
   }
 
   class PowerStatus extends Assignable {
+    is_on!: number;
+
     toBuffer() {
       return Buffer.from(borsh.serialize(PowerStatusSchema, this));
     }
@@ -28,6 +43,8 @@ describe('CPI Example', () => {
   const PowerStatusSchema = new Map([[PowerStatus, { kind: 'struct', fields: [['is_on', 'u8']] }]]);
 
   class SetPowerStatus extends Assignable {
+    name!: string;
+
     toBuffer() {
       return Buffer.from(borsh.serialize(SetPowerStatusSchema, this));
     }
@@ -47,7 +64,12 @@ describe('CPI Example', () => {
       data: new PowerStatus({ is_on: true }).toBuffer(),
     });
 
-    await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, powerAccount]);
+
+    const tx = new Transaction();
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.add(ix).sign(payer);
+
+    await client.processTransaction(tx);
   });
 
   it('Pull the lever!', async () => {
@@ -60,7 +82,11 @@ describe('CPI Example', () => {
       data: new SetPowerStatus({ name: 'Chris' }).toBuffer(),
     });
 
-    await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
+    const tx = new Transaction();
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.add(ix).sign(payer);
+
+    await client.processTransaction(tx);
   });
 
   it('Pull it again!', async () => {
@@ -73,6 +99,11 @@ describe('CPI Example', () => {
       data: new SetPowerStatus({ name: 'Ashley' }).toBuffer(),
     });
 
-    await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
+
+    const tx = new Transaction();
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.add(ix).sign(payer);
+
+    await client.processTransaction(tx);
   });
 });
