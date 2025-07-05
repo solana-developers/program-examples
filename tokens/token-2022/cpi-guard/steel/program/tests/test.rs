@@ -5,7 +5,10 @@ use solana_sdk::{
     transaction::Transaction,
 };
 use spl_token_2022::{
-    extension::{cpi_guard::instruction::enable_cpi_guard, ExtensionType},
+    extension::{
+        cpi_guard::instruction::{disable_cpi_guard, enable_cpi_guard},
+        ExtensionType,
+    },
     instruction::{initialize_account3, initialize_mint2},
     state::{Account, Mint},
 };
@@ -108,4 +111,23 @@ async fn run_test() {
         "Expected TokenError::CpiGuardBurnBlocked(43) , got: {}",
         err_string
     );
+
+    //Disable CPI Guard and try burn again, should pass
+    let disable_cpi_ix = disable_cpi_guard(
+        &spl_token_2022::ID,
+        &token_acc.pubkey(),
+        &payer.pubkey(),
+        &[],
+    )
+    .unwrap();
+    let cpi_burn_ix = cpi_burn(payer.pubkey(), mint.pubkey(), token_acc.pubkey());
+
+    let tx = Transaction::new_signed_with_payer(
+        &[disable_cpi_ix, cpi_burn_ix],
+        Some(&payer.pubkey()),
+        &[&payer],
+        blockhash,
+    );
+    let res = banks.process_transaction(tx).await;
+    assert!(res.is_ok());
 }
