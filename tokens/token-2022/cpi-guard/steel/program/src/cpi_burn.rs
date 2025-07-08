@@ -48,7 +48,7 @@ pub fn process_cpi_burn(accounts: &[AccountInfo<'_>], _data: &[u8]) -> ProgramRe
         ],
     )?;
 
-    msg!("Cpi Guard Extension: Mint Checked.");
+    msg!("Cpi Guard Extension Test: Burn.");
 
     Ok(())
 }

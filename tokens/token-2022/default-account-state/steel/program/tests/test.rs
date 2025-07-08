@@ -19,7 +19,6 @@ async fn setup() -> (BanksClient, Keypair, Hash) {
         steel_api::ID,
         processor!(steel_program::process_instruction),
     );
-    // program_test.add_program("spl_token_2022", spl_token_2022::ID, None);
     program_test.prefer_bpf(true);
     program_test.start().await
 }
@@ -74,10 +73,10 @@ async fn run_test() {
         blockhash,
     );
     let res = banks.process_transaction(tx).await;
+    
     assert!(res.is_err(), "MintTo unexpectedly succeeded");
     let err_string = format!("{:?}", res);
 
-    // TokenError::AccountFrozen = 17 = 0x11
     assert!(
         err_string.contains("Custom(17)"),
         "Expected TokenError::AccountFrozen (17), got: {}",
