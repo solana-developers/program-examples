@@ -37,13 +37,16 @@ pub fn deposit_liquidity(
         // Add as is if there is no liquidity
         (amount_a, amount_b)
     } else {
-        let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+        let amount_ratio = I64F64::from_num(amount_a)
+            .checked_div(I64F64::from_num(amount_b))
             .unwrap();
-        if pool_a.amount > pool_b.amount {
+        let pool_ratio = I64F64::from_num(pool_a.amount)
+            .checked_div(I64F64::from_num(pool_b.amount))
+            .unwrap();
+        if pool_ratio > amount_ratio {
             (
                 I64F64::from_num(amount_b)
-                    .checked_mul(ratio)
+                    .checked_mul(pool_ratio)
                     .unwrap()
                     .to_num::<u64>(),
                 amount_b,
@@ -52,7 +55,7 @@ pub fn deposit_liquidity(
             (
                 amount_a,
                 I64F64::from_num(amount_a)
-                    .checked_div(ratio)
+                    .checked_div(pool_ratio)
                     .unwrap()
                     .to_num::<u64>(),
             )
