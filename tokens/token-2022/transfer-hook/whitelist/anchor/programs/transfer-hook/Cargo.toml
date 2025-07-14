@@ -19,5 +19,5 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 [dependencies]
 anchor-lang = {version = "0.31.0", features = ["interface-instructions", "init-if-needed"]}
 anchor-spl = "0.31.0"
-spl-tlv-account-resolution = "0.10.0"
-spl-transfer-hook-interface = "0.10.0"
+spl-tlv-account-resolution = "0.9.0"
+spl-transfer-hook-interface = "0.9.0"
