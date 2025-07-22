@@ -1,0 +1,14 @@
+# Add files here to ignore them from prettier formatting
+/anchor/target/debug
+/anchor/target/deploy
+/anchor/target/release
+/anchor/target/sbf-solana-solana
+/anchor/target/test-ledger
+/anchor/target/.rustc_info.json
+/dist
+/coverage
+.next
+/tmp
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
