@@ -1,29 +1,14 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{prelude::*, solana_program::sysvar::instructions::ID as INSTRUCTIONS_ID};
 use anchor_spl::{
-    associated_token::AssociatedToken, 
-    metadata::Metadata, 
-    token::{
-        mint_to, 
-        Mint, 
-        MintTo, 
-        Token, 
-        TokenAccount,
-    }
-};
-use anchor_spl::metadata::mpl_token_metadata::{
-    instructions::{
-        CreateMasterEditionV3Cpi, 
-        CreateMasterEditionV3CpiAccounts, 
-        CreateMasterEditionV3InstructionArgs, 
-        CreateMetadataAccountV3Cpi, 
-        CreateMetadataAccountV3CpiAccounts, 
-        CreateMetadataAccountV3InstructionArgs
-    }, 
-    types::{
-        CollectionDetails, 
-        Creator, 
-        DataV2
-    }
+    associated_token::AssociatedToken,
+    metadata::{
+        mpl_token_metadata::{
+            instructions::{CreateV1Cpi, CreateV1CpiAccounts, CreateV1InstructionArgs},
+            types::{CollectionDetails, Creator, PrintSupply, TokenStandard},
+        },
+        Metadata,
+    },
+    token::{mint_to, Mint, MintTo, Token, TokenAccount},
 };
 
 #[derive(Accounts)]
@@ -50,6 +35,9 @@ pub struct CreateCollection<'info> {
     #[account(mut)]
     /// CHECK: This account will be initialized by the metaplex program
     master_edition: UncheckedAccount<'info>,
+    #[account(address = INSTRUCTIONS_ID)]
+    /// CHECK: Sysvar instruction account that is being checked with an address constraint
+    sysvar_instructions: UncheckedAccount<'info>,
     #[account(
         init,
         payer = user,
@@ -65,7 +53,6 @@ pub struct CreateCollection<'info> {
 
 impl<'info> CreateCollection<'info> {
     pub fn create_collection(&mut self, bumps: &CreateCollectionBumps) -> Result<()> {
-
         let metadata = &self.metadata.to_account_info();
         let master_edition = &self.master_edition.to_account_info();
         let mint = &self.mint.to_account_info();
@@ -74,11 +61,9 @@ impl<'info> CreateCollection<'info> {
         let system_program = &self.system_program.to_account_info();
         let spl_token_program = &self.token_program.to_account_info();
         let spl_metadata_program = &self.token_metadata_program.to_account_info();
+        let sysvar_instructions = &self.sysvar_instructions.to_account_info();
 
-        let seeds = &[
-            &b"authority"[..], 
-            &[bumps.mint_authority]
-        ];
+        let seeds = &[&b"authority"[..], &[bumps.mint_authority]];
         let signer_seeds = &[&seeds[..]];
 
         let cpi_program = self.token_program.to_account_info();
@@ -91,66 +76,47 @@ impl<'info> CreateCollection<'info> {
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
-        let creator = vec![
-            Creator {
-                address: self.mint_authority.key().clone(),
-                verified: true,
-                share: 100,
-            },
-        ];
-        
-        let metadata_account = CreateMetadataAccountV3Cpi::new(
-            spl_metadata_program, 
-            CreateMetadataAccountV3CpiAccounts {
+        let creator = vec![Creator {
+            address: self.mint_authority.key().clone(),
+            verified: true,
+            share: 100,
+        }];
+
+        let create_v1_cpi = CreateV1Cpi::new(
+            spl_metadata_program,
+            CreateV1CpiAccounts {
                 metadata,
-                mint,
-                mint_authority: authority,
+                master_edition: Some(master_edition),
+                mint: (mint, true),
+                authority,
                 payer,
                 update_authority: (authority, true),
                 system_program,
-                rent: None,
+                sysvar_instructions,
+                spl_token_program: Some(spl_token_program),
             },
-            CreateMetadataAccountV3InstructionArgs {
-                data: DataV2 {
-                    name: "DummyCollection".to_owned(),
-                    symbol: "DC".to_owned(),
-                    uri: "".to_owned(),
-                    seller_fee_basis_points: 0,
-                    creators: Some(creator),
-                    collection: None,
-                    uses: None,
-                },
+            CreateV1InstructionArgs {
+                name: "DummyCollection".to_owned(),
+                symbol: "DC".to_owned(),
+                uri: "".to_owned(),
+                seller_fee_basis_points: 0,
+                creators: Some(creator),
+                collection: None,
+                uses: None,
+                primary_sale_happened: false,
+                print_supply: Some(PrintSupply::Zero),
                 is_mutable: true,
-                collection_details: Some(
-                    CollectionDetails::V1 { 
-                        size: 0 
-                    }
-                )
-            }
-        );
-        metadata_account.invoke_signed(signer_seeds)?;
-        msg!("Metadata Account created!");
-
-        let master_edition_account = CreateMasterEditionV3Cpi::new(
-            spl_metadata_program,
-            CreateMasterEditionV3CpiAccounts {
-                edition: master_edition,
-                update_authority: authority,
-                mint_authority: authority,
-                mint,
-                payer,
-                metadata,
-                token_program: spl_token_program,
-                system_program,
-                rent: None,
+                token_standard: TokenStandard::NonFungible,
+                collection_details: Some(CollectionDetails::V1 { size: 0 }),
+                rule_set: None,
+                decimals: Some(0),
             },
-            CreateMasterEditionV3InstructionArgs {
-                max_supply: Some(0),
-            }
         );
-        master_edition_account.invoke_signed(signer_seeds)?;
-        msg!("Master Edition Account created");
-        
+
+        create_v1_cpi.invoke_signed(signer_seeds)?;
+
+        msg!("Metadata Account and Master Edition Account created!");
+
         Ok(())
     }
 }
