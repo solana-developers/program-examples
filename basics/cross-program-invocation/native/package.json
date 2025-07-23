@@ -9,7 +9,8 @@
     "@solana/web3.js": "^1.47.3",
     "borsh": "^0.7.0",
     "buffer": "^6.0.3",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "solana-bankrun": "^0.4.0"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
