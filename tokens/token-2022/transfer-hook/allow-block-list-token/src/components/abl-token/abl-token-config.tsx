@@ -4,7 +4,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ExplorerLink } from '../cluster/cluster-ui'
 import { WalletButton } from '../solana/solana-provider'
 import { useAblTokenProgram } from './abl-token-data-access'
-import { AblTokenCreate, AblTokenProgram } from './abl-token-ui'
 import { AppHero } from '../app-hero'
 import { ellipsify } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -14,7 +13,6 @@ import { PublicKey } from '@solana/web3.js'
 export default function AblTokenConfig() {
   const { publicKey } = useWallet()
   const { programId, getConfig, getAbWallets } = useAblTokenProgram()
-  const [lastUpdate, setLastUpdate] = React.useState(0)
 
   const config = getConfig.data;
   let abWallets = getAbWallets.data;
@@ -22,7 +20,6 @@ export default function AblTokenConfig() {
   const handleWalletListUpdate = React.useCallback(async () => {
     await getAbWallets.refetch();
     abWallets = getAbWallets.data;
-    setLastUpdate(Date.now())
   }, [])
 
   return publicKey ? (
@@ -94,7 +91,7 @@ export function AblTokenConfigCreate() {
   );
 }
 
-export function AblTokenConfigList({ abWallets }: { abWallets: any[] | undefined }) {
+export function AblTokenConfigList({ abWallets }: { abWallets: {publicKey: PublicKey, account: {wallet: PublicKey, allowed: boolean}}[] | undefined }) {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">ABL Token Config List</h2>

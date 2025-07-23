@@ -1,4 +1,7 @@
-use std::{fmt::{self, Display}, str::FromStr};
+use std::{
+    fmt::{self, Display},
+    str::FromStr,
+};
 
 use anchor_lang::prelude::*;
 
@@ -20,7 +23,7 @@ pub struct Config {
 pub enum Mode {
     Allow,
     Block,
-    Mixed
+    Mixed,
 }
 
 impl FromStr for Mode {
@@ -45,4 +48,3 @@ impl Display for Mode {
         }
     }
 }
-

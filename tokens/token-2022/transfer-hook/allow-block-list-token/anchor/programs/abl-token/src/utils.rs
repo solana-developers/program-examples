@@ -6,9 +6,6 @@ use spl_tlv_account_resolution::{
 
 use crate::AB_WALLET_SEED;
 
-
-
-
 pub fn get_meta_list_size() -> Result<usize> {
     Ok(ExtraAccountMetaList::size_of(1).unwrap())
 }

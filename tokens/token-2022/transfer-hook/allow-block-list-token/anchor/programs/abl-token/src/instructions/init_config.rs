@@ -1,6 +1,5 @@
-use anchor_lang::prelude::*;
 use crate::{Config, CONFIG_SEED};
-
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct InitConfig<'info> {
@@ -21,7 +20,6 @@ pub struct InitConfig<'info> {
 
 impl InitConfig<'_> {
     pub fn init_config(&mut self, config_bump: u8) -> Result<()> {
-
         self.config.set_inner(Config {
             authority: self.payer.key(),
             bump: config_bump,

@@ -4,9 +4,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { useParams } from 'next/navigation'
 import React from 'react'
-import { useAblTokenProgram, useHasTransferHookEnabled } from './abl-token-data-access'
+import { useAblTokenProgram, useGetToken } from './abl-token-data-access'
 import { PublicKey } from '@solana/web3.js'
-import { PermanentDelegate } from '@solana/spl-token'
 import { BN } from '@coral-xyz/anchor'
 import { Button } from '@/components/ui/button'
 
@@ -19,24 +18,44 @@ interface TokenInfo {
   supply: number;
   mintAuthority: PublicKey | null;
   freezeAuthority: PublicKey | null;
-  permanentDelegate: PermanentDelegate | null;
+  permanentDelegate: PublicKey | null;
+  mode: string | null;
+  threshold: string | null;
+  transferHookProgramId: PublicKey | null;
+  isTransferHookEnabled: boolean;
+  isTransferHookSet: boolean;
 }
 
-function TokenInfo({ tokenInfo }: { tokenInfo: TokenInfo | null }) {
+function TokenInfo({ tokenAddress }: { tokenAddress: string }) {
+  const { attachToExistingToken } = useAblTokenProgram()
+  const tokenInfo = useGetToken(new PublicKey(tokenAddress));
   return (
     <div className="bg-base-200 p-6 rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Token Information</h2>
       {tokenInfo ? (
         <div className="grid grid-cols-2 gap-4">
-          <div>Address: {tokenInfo.address}</div>
-          <div>Name: {tokenInfo.name}</div>
-          <div>Symbol: {tokenInfo.symbol}</div>
-          <div>Decimals: {tokenInfo.decimals}</div>
-          <div>URI: {tokenInfo.uri}</div>
-          <div>Supply: {tokenInfo.supply}</div>
-          <div>Mint Authority: {tokenInfo.mintAuthority?.toString()}</div>
-          <div>Freeze Authority: {tokenInfo.freezeAuthority?.toString()}</div>
-          <div>Permanent Delegate: {tokenInfo.permanentDelegate?.delegate.toString()}</div>
+          <div>Address: {tokenAddress}</div>
+          <div>Name: {tokenInfo.data?.name}</div>
+          <div>Symbol: {tokenInfo.data?.symbol}</div>
+          <div>Decimals: {tokenInfo.data?.decimals}</div>
+          <div>URI: {tokenInfo.data?.uri}</div>
+          <div>Supply: {tokenInfo.data?.supply}</div>
+          <div>Mint Authority: {tokenInfo.data?.mintAuthority?.toString()}</div>
+          <div>Freeze Authority: {tokenInfo.data?.freezeAuthority?.toString()}</div>
+          <div>Permanent Delegate: {tokenInfo.data?.permanentDelegate?.toString()}</div>
+          <br/>
+          <div>
+            <h3 className="text-xl font-bold mb-2">ABL Token</h3>
+            <div>Mode: {tokenInfo.data?.mode}</div>
+            <div>Threshold: {tokenInfo.data?.threshold?.toString()}</div>
+            {tokenInfo.data?.isTransferHookEnabled ? (tokenInfo.data?.isTransferHookSet ? (
+              <div>TxHook: Enabled and Set ✅</div>
+            ) : (
+              <div>TxHook: Enabled. <Button onClick={() => attachToExistingToken.mutateAsync({ mint: new PublicKey(tokenAddress) }).then()}>Set</Button></div>
+            )) : (
+              <div>TxHook: Not enabled ❌</div>
+            )}
+          </div>
         </div>
       ) : (
         <p>No token information available.</p>
@@ -47,15 +66,10 @@ function TokenInfo({ tokenInfo }: { tokenInfo: TokenInfo | null }) {
 
 function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
   const { publicKey } = useWallet()
-  const { changeMode, mintTo, attachToExistingToken } = useAblTokenProgram()
-  const [mode, setMode] = React.useState<'allow' | 'block' | 'mixed'>('allow')
-  const [threshold, setThreshold] = React.useState('100000')
+  const { changeMode, mintTo } = useAblTokenProgram()
+  const [mode, setMode] = React.useState<'Allow' | 'Block' | 'Mixed'>(tokenInfo.mode as 'Allow' | 'Block' | 'Mixed')
+  const [threshold, setThreshold] = React.useState<string | undefined>(tokenInfo.threshold ?? undefined)
   const [destinationWallet, setDestinationWallet] = React.useState('')
-  const hasTransferHookEnabled = useHasTransferHookEnabled(new PublicKey(tokenInfo.address))
-  const [name, setName] = React.useState<string>('')
-  const [symbol, setSymbol] = React.useState<string>('')
-  const [uri, setUri] = React.useState<string>('')
-
 
   const handleApplyChanges = async () => {
     if (!publicKey || !tokenInfo) return;
@@ -63,28 +77,11 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
     try {
       await changeMode.mutateAsync({
         mode,
-        threshold: new BN(threshold),
+        threshold: threshold === undefined ? new BN(0) : new BN(threshold),
         mint: new PublicKey(tokenInfo.address),
       });
     } catch (err) {
       console.error('Failed to apply changes:', err);
-    }
-  };
-
-  const setTransferHook = async () => {
-    if (!publicKey || !tokenInfo) return;
-
-    try {
-      await attachToExistingToken.mutateAsync({
-        mint: new PublicKey(tokenInfo.address),
-        mode,
-        threshold: new BN(threshold),
-        name,
-        symbol,
-        uri,
-      });
-    } catch (err) {
-      console.error('Failed to set transfer hook:', err);
     }
   };
 
@@ -110,37 +107,37 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
       <h2 className="text-2xl font-bold mb-4">Token Management</h2>
       <div className="space-y-4">
         <div>
-          {hasTransferHookEnabled.data ? (
+          {tokenInfo.isTransferHookSet && (
             <div>
               <label className="block mb-2">Mode</label>
               <div className="flex gap-4">
                 <label>
                   <input
                     type="radio"
-                    checked={mode === 'allow'}
-                    onChange={() => setMode('allow')}
+                    checked={mode === 'Allow'}
+                    onChange={() => {setMode('Allow'); setThreshold(tokenInfo.threshold ?? undefined);}}
                     name="mode"
                   /> Allow
                 </label>
                 <label>
                   <input
                     type="radio"
-                    checked={mode === 'block'}
-                    onChange={() => setMode('block')}
+                    checked={mode === 'Block'}
+                    onChange={() => {setMode('Block'); setThreshold(tokenInfo.threshold ?? undefined);}}
                     name="mode"
                   /> Block
                 </label>
                 <label>
                   <input
                     type="radio"
-                    checked={mode === 'mixed'}
-                    onChange={() => setMode('mixed')}
+                    checked={mode === 'Mixed'}
+                    onChange={() => setMode('Mixed')}
                     name="mode"
                   /> Mixed
                 </label>
               </div>
 
-              {mode === 'mixed' && (
+              {mode === 'Mixed' && (
               <div>
                 <label className="block mb-2">Threshold Amount</label>
                 <input
@@ -154,51 +151,14 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
               )}
 
               <div className="mt-4">
-                <Button onClick={handleApplyChanges}>
+                <Button 
+                  onClick={handleApplyChanges}
+                  disabled={mode === tokenInfo.mode && (threshold === tokenInfo.threshold || (threshold === undefined && tokenInfo.threshold === null))}
+                >
                   Apply Changes
                 </Button>
               </div>
               
-            </div>
-          ) : (
-            <div>
-            <div className="space-y-4">
-              <div>
-                <label className="block mb-2">Name (Optional)</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="Enter token name"
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Symbol (Optional)</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded"
-                  value={symbol}
-                  onChange={e => setSymbol(e.target.value)}
-                  placeholder="Enter token symbol"
-                />
-              </div>
-              <div>
-                <label className="block mb-2">URI (Optional)</label>
-                <input
-                  type="text"
-                  className="w-full p-2 border rounded"
-                  value={uri}
-                  onChange={e => setUri(e.target.value)}
-                  placeholder="Enter token URI"
-                />
-              </div>
-            </div>
-            <div className="mt-4">
-              <Button onClick={setTransferHook}>
-                Set Transfer hook
-              </Button>
-            </div>
             </div>
           )}
         </div>
@@ -238,11 +198,9 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
 
 export default function ManageTokenDetail() {
   const { publicKey } = useWallet()
-  const { getToken } = useAblTokenProgram()
   const params = useParams()
   const tokenAddress = params?.address as string
-
-  const tokenQuery = getToken(new PublicKey(tokenAddress));
+  const tokenQuery = useGetToken(new PublicKey(tokenAddress));
 
   const tokenInfo = React.useMemo(() => {
     if (!tokenQuery?.data || !tokenAddress) return null;
@@ -271,7 +229,7 @@ export default function ManageTokenDetail() {
         <p>Error loading token information. Please check the token address.</p>
       ) : (
         <>
-          <TokenInfo tokenInfo={tokenInfo} />
+          <TokenInfo tokenAddress={tokenAddress} />
           {tokenInfo && <TokenManagement tokenInfo={tokenInfo}/>}
           
         </>

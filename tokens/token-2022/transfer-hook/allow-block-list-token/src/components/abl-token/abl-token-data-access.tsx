@@ -10,15 +10,13 @@ import { useAnchorProvider } from '../solana/solana-provider'
 import { useTransactionToast } from '../use-transaction-toast'
 import { toast } from 'sonner'
 import { BN } from '@coral-xyz/anchor'
-import { amountToUiAmount, createAssociatedTokenAccountIdempotentInstruction, createAssociatedTokenAccountIdempotentInstructionWithDerivation, createMintToCheckedInstruction, decodeMintToCheckedInstruction, getAssociatedTokenAddressSync, getMint, getPermanentDelegate, getTokenMetadata, getTransferHook, mintToChecked, mintToCheckedInstructionData, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
-
+import { createAssociatedTokenAccountIdempotentInstruction, createMintToCheckedInstruction, getAssociatedTokenAddressSync, getMint, getPermanentDelegate, getTokenMetadata, getTransferHook, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 
 export function useHasTransferHookEnabled(mint: PublicKey) {
   const { connection } = useConnection()
-  const provider = useAnchorProvider()
   const { cluster } = useCluster()
   const programId = useMemo(() => getABLTokenProgramId(cluster.network as Cluster), [cluster])
-  const program = useMemo(() => getABLTokenProgram(provider, programId), [provider, programId])
+
   return useQuery({
     queryKey: ['has-transfer-hook', { cluster }],
     queryFn: async () => {
@@ -33,6 +31,60 @@ export function useHasTransferHookEnabled(mint: PublicKey) {
     },
   })
 }
+
+export function useGetToken(mint: PublicKey) {
+  const { connection } = useConnection()
+  const { cluster } = useCluster()
+  const programId = useMemo(() => getABLTokenProgramId(cluster.network as Cluster), [cluster])
+
+  return useQuery({
+  queryKey: ['get-token', { endpoint: connection.rpcEndpoint, mint }],
+  queryFn: async () => {
+    const mintInfo = await getMint(
+      connection,
+      mint,
+      "confirmed",
+      TOKEN_2022_PROGRAM_ID,
+    );
+
+    const metadata = await getTokenMetadata(
+      connection,
+      mint,
+      "confirmed",
+      TOKEN_2022_PROGRAM_ID,
+    );
+
+    const mode = metadata?.additionalMetadata.find((metadata) => metadata[0] === "AB")?.[1] || null;
+    const threshold = metadata?.additionalMetadata.find((metadata) => metadata[0] === "threshold")?.[1] || null;
+
+    const permanentDelegate = await getPermanentDelegate(mintInfo);
+
+    const transferHook = getTransferHook(mintInfo);
+
+    const isTransferHookEnabled = transferHook !== null;
+    const isTransferHookSet = transferHook?.programId?.equals(programId) || false;
+    const transferHookProgramId = transferHook?.programId || null;
+
+    return {
+      name: metadata?.name,
+      symbol: metadata?.symbol,
+      uri: metadata?.uri,
+      decimals: mintInfo.decimals,
+      supply: mintInfo.supply,
+      mintAuthority: mintInfo.mintAuthority,
+      freezeAuthority: mintInfo.freezeAuthority,
+      permanentDelegate: permanentDelegate?.delegate ?? null,
+      isTransferHookEnabled,
+      isTransferHookSet,
+      transferHookProgramId,
+      mode,
+      threshold,
+    }
+  },
+})
+}
+
+
 export function useAblTokenProgram() {
   const { connection } = useConnection()
   const { cluster } = useCluster()
@@ -89,21 +141,8 @@ export function useAblTokenProgram() {
     mutationKey: ['abl-token', 'attach-to-existing-token', { cluster }],
     mutationFn: (args: {
       mint: PublicKey,
-      mode: string,
-      threshold: BN,
-      name: string | null,
-      symbol: string | null,
-      uri: string | null,
     }) => {
-      const modeEnum = args.mode === 'allow' ? { allow: {} } : args.mode === 'block' ? { block: {}} : { mixed: {}};
-
-      return program.methods.attachToMint({
-        mode: modeEnum,
-        threshold: args.threshold,
-        name: args.name,
-        symbol: args.symbol,
-        uri: args.uri,
-      }).accounts({
+      return program.methods.attachToMint().accounts({
         mint: args.mint,
       }).rpc()
     },
@@ -120,7 +159,7 @@ export function useAblTokenProgram() {
       threshold: BN,
       mint: PublicKey,
     }) => {
-      const modeEnum = args.mode === 'allow' ? { allow: {} } : args.mode === 'block' ? { block: {}} : { mixed: {}}
+      const modeEnum = args.mode === 'Allow' ? { allow: {} } : args.mode === 'Block' ? { block: {}} : { mixed: {}}
       return program.methods.changeMode({
         mode: modeEnum,
         threshold: args.threshold,
@@ -183,7 +222,7 @@ export function useAblTokenProgram() {
       transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
       //transaction.sign(provider.wallet);
 
-      let signedTx = await provider.wallet.signTransaction(transaction);
+      const  signedTx = await provider.wallet.signTransaction(transaction);
 
       return connection.sendRawTransaction(signedTx.serialize());
 
@@ -243,36 +282,8 @@ export function useAblTokenProgram() {
     },
   })
 
-  const getToken = (mint: PublicKey) => useQuery({
-    queryKey: ['get-token', { endpoint: connection.rpcEndpoint, mint }],
-    queryFn: async () => {
-      const mintInfo = await getMint(
-        connection,
-        mint,
-        "confirmed",
-        TOKEN_2022_PROGRAM_ID,
-      );
 
-      const metadata = await getTokenMetadata(
-        connection,
-        mint,
-        "confirmed",
-        TOKEN_2022_PROGRAM_ID,
-      );
-
-      const permanentDelegate = await getPermanentDelegate(mintInfo);
-
-      return {
-        name: metadata?.name,
-        symbol: metadata?.symbol,
-        uri: metadata?.uri,
-        decimals: mintInfo.decimals,
-        mintAuthority: mintInfo.mintAuthority,
-        freezeAuthority: mintInfo.freezeAuthority,
-        permanentDelegate: permanentDelegate,
-      }
-    },
-  })
+  
 /*
   const getBalance = useQuery({
     queryKey: ['get-balance', { cluster }],
@@ -302,7 +313,7 @@ export function useAblTokenProgram() {
       tx.add(ix, ix2);
       tx.feePayer = provider.wallet.publicKey;
       tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-      let signedTx = await provider.wallet.signTransaction(tx);
+      const  signedTx = await provider.wallet.signTransaction(tx);
       return connection.sendRawTransaction(signedTx.serialize())
     },
     onSuccess: (signature) => {
@@ -310,6 +321,7 @@ export function useAblTokenProgram() {
     },
     onError: () => toast.error('Failed to run program'),
   })
+
 
   return {
     program,
@@ -322,9 +334,9 @@ export function useAblTokenProgram() {
     initConfig,
     getConfig,
     getAbWallets,
-    getToken,
     processBatchWallets,
     mintTo,
     attachToExistingToken,
   }
 }
+
