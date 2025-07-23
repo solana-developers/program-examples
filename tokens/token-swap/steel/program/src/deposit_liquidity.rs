@@ -86,18 +86,21 @@ pub fn process_deposit_liquidity(accounts: &[AccountInfo<'_>], data: &[u8]) -> P
         // Add as is if there is no liquidity
         (amount_a, amount_b)
     } else {
-        let ratio = U256::from(pool_account_a.amount)
-            .checked_mul(U256::from(pool_account_b.amount))
+        let amount_ratio = U256::from(amount_a)
+            .checked_div(U256::from(amount_b))
             .unwrap();
-        if pool_account_a.amount > pool_account_b.amount {
+        let pool_ratio = U256::from(pool_account_a.amount())
+            .checked_div(U256::from(pool_account_b.amount()))
+            .unwrap();
+        if pool_ratio > amount_ratio {
             (
-                U256::from(amount_b).checked_mul(ratio).unwrap().as_u64(),
+                U256::from(amount_b).checked_mul(pool_ratio).unwrap().as_u64(),
                 amount_b,
             )
         } else {
             (
                 amount_a,
-                U256::from(amount_a).checked_div(ratio).unwrap().as_u64(),
+                U256::from(amount_a).checked_div(pool_ratio).unwrap().as_u64(),
             )
         }
     };
