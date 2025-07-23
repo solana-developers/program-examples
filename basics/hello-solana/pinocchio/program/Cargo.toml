@@ -1,0 +1,12 @@
+[package]
+name = "hello-solana-program-pinocchio"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pinocchio = "=0.8.1"
+pinocchio-log = "0.4.0"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
