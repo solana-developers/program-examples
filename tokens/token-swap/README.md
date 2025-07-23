@@ -317,16 +317,5 @@ https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711
 This code burns the specified amount of liquidity tokens (amount) by calling the token::burn function. The liquidity tokens are destroyed, reducing the total supply.
 Finally, this code returns Ok(()) if all operations in the function executed successfully. This indicates that the liquidity withdrawal was completed without any errors.
 
-
-
-
-  
-
-
-
-
-
-
-
-
-
+## Potential extensions
+- Add instruction for the admin to change fee

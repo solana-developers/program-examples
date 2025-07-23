@@ -1,0 +1,15 @@
+[package]
+name = "token-swap-native"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+borsh = "1.5.3"
+borsh-derive = "1.5.3"
+fixed = "=1.27.0"
+solana-program = "=1.18.17"
+spl-associated-token-account = { version = "3.0.0", features = ["no-entrypoint"] }
+spl-token = "4.0.0"
+
+[lib]
+crate-type = ["cdylib", "lib"]
