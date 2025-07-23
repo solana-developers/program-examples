@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ExplorerLink } from '../cluster/cluster-ui'
 import { WalletButton } from '../solana/solana-provider'
 import { useAblTokenProgram } from './abl-token-data-access'
-import { AblTokenCreate, AblTokenProgram } from './abl-token-ui'
+import { AblTokenCreate } from './abl-token-ui'
 import { AppHero } from '../app-hero'
 import { ellipsify } from '@/lib/utils'
 

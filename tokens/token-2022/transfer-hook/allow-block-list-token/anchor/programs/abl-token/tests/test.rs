@@ -1,6 +1,18 @@
 use {
-    anchor_lang::ToAccountMetas, anchor_lang::InstructionData, solana_message::Message,
-    abl_token::{accounts::InitMint, accounts::InitConfig, instructions::InitMintArgs, Mode}, litesvm::LiteSVM, solana_instruction::Instruction, solana_keypair::Keypair, solana_native_token::LAMPORTS_PER_SOL, solana_pubkey::{pubkey, Pubkey}, solana_sdk_ids::system_program::ID as SYSTEM_PROGRAM_ID, solana_signer::Signer, solana_transaction::Transaction, spl_token_2022::ID as TOKEN_22_PROGRAM_ID, std::path::PathBuf
+    abl_token::{accounts::InitConfig, accounts::InitMint, instructions::InitMintArgs, Mode},
+    anchor_lang::InstructionData,
+    anchor_lang::ToAccountMetas,
+    litesvm::LiteSVM,
+    solana_instruction::Instruction,
+    solana_keypair::Keypair,
+    solana_message::Message,
+    solana_native_token::LAMPORTS_PER_SOL,
+    solana_pubkey::{pubkey, Pubkey},
+    solana_sdk_ids::system_program::ID as SYSTEM_PROGRAM_ID,
+    solana_signer::Signer,
+    solana_transaction::Transaction,
+    spl_token_2022::ID as TOKEN_22_PROGRAM_ID,
+    std::path::PathBuf,
 };
 
 const PROGRAM_ID: Pubkey = abl_token::ID_CONST;
@@ -12,12 +24,11 @@ fn setup() -> (LiteSVM, Keypair) {
 
     svm.airdrop(&admin_pk, 10000 * LAMPORTS_PER_SOL).unwrap();
 
-
     let mut so_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     so_path.push("../../target/deploy/abl_token.so");
 
     println!("Deploying program from {}", so_path.display());
-    
+
     let bytecode = std::fs::read(so_path).unwrap();
 
     svm.add_program(PROGRAM_ID, &bytecode);
@@ -27,7 +38,6 @@ fn setup() -> (LiteSVM, Keypair) {
 
 #[test]
 fn test() {
-
     let (mut svm, admin_kp) = setup();
     let admin_pk = admin_kp.pubkey();
 
@@ -36,7 +46,7 @@ fn test() {
     let config = derive_config();
     let meta_list = derive_meta_list(&mint_pk);
 
-    let init_cfg_ix = abl_token::instruction::InitConfig {   };
+    let init_cfg_ix = abl_token::instruction::InitConfig {};
 
     let init_cfg_accounts = InitConfig {
         payer: admin_pk,
@@ -68,9 +78,7 @@ fn test() {
         mode: Mode::Mixed,
         threshold: 100000,
     };
-    let init_mint_ix = abl_token::instruction::InitMint {
-        args: args,
-    };
+    let init_mint_ix = abl_token::instruction::InitMint { args: args };
 
     let data = init_mint_ix.data();
 
@@ -93,9 +101,6 @@ fn test() {
     let tx = Transaction::new(&[&admin_kp, &mint_kp], msg, svm.latest_blockhash());
 
     let _res = svm.send_transaction(tx).unwrap();
-
-    
-
 }
 
 fn derive_config() -> Pubkey {
@@ -107,5 +112,3 @@ fn derive_meta_list(mint: &Pubkey) -> Pubkey {
     let seeds = &[b"extra-account-metas", mint.as_ref()];
     Pubkey::find_program_address(seeds, &PROGRAM_ID).0
 }
-
-

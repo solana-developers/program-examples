@@ -9,13 +9,10 @@ use anchor_spl::{
     },
 };
 
-use spl_tlv_account_resolution::
-    state::ExtraAccountMetaList
-;
+use spl_tlv_account_resolution::state::ExtraAccountMetaList;
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
 use crate::{get_extra_account_metas, get_meta_list_size, Mode, META_LIST_ACCOUNT_SEED};
-
 
 #[derive(Accounts)]
 #[instruction(args: InitMintArgs)]
@@ -62,10 +59,7 @@ impl InitMint<'_> {
             mint_authority: self.payer.to_account_info(),
             update_authority: self.payer.to_account_info(),
         };
-        let cpi_ctx = CpiContext::new(
-            self.token_program.to_account_info(),
-            cpi_accounts,
-        );
+        let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
         token_metadata_initialize(cpi_ctx, args.name, args.symbol, args.uri)?;
 
         let cpi_accounts = TokenMetadataUpdateField {
@@ -74,10 +68,7 @@ impl InitMint<'_> {
             program_id: self.token_program.to_account_info(),
         };
 
-        let cpi_ctx = CpiContext::new(
-            self.token_program.to_account_info(),
-            cpi_accounts,
-        );
+        let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
 
         token_metadata_update_field(cpi_ctx, Field::Key("AB".to_string()), args.mode.to_string())?;
 
@@ -87,10 +78,7 @@ impl InitMint<'_> {
                 update_authority: self.payer.to_account_info(),
                 program_id: self.token_program.to_account_info(),
             };
-            let cpi_ctx = CpiContext::new(
-                self.token_program.to_account_info(),
-                cpi_accounts,
-            );
+            let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
 
             token_metadata_update_field(
                 cpi_ctx,

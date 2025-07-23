@@ -1,12 +1,11 @@
 'use client'
 
-import { createAssociatedTokenAccountIdempotentInstruction, createTransferCheckedInstruction, createTransferCheckedWithTransferHookInstruction, getAssociatedTokenAddressSync, getExtraAccountMetaAddress, getExtraAccountMetas, getMint, getTransferHook, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { createAssociatedTokenAccountIdempotentInstruction, createTransferCheckedInstruction, getAssociatedTokenAddressSync, getExtraAccountMetaAddress, getMint, getTransferHook, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SendTransactionError,
   SystemProgram,
   Transaction,
   TransactionMessage,
@@ -16,7 +15,6 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTransactionErrorToast, useTransactionToast } from '../use-transaction-toast'
 import { useAnchorProvider } from '../solana/solana-provider'
-import { toast } from 'sonner'
 import { Buffer } from "buffer"
 
 export function useGetBalance({ address }: { address: PublicKey }) {
@@ -58,14 +56,7 @@ export function useSendTokens() {
       const ix = createAssociatedTokenAccountIdempotentInstruction(publicKey, ataDestination, destination, mint, TOKEN_2022_PROGRAM_ID);
       const bi = BigInt(amount);
       const decimals = mintInfo.decimals;
-      console.log("BI: ", bi);
-      console.log("AMOUNT: ", amount);
-      console.log("DECIMALS: ", decimals);
-      const buf = Buffer.alloc(10);
-      console.dir(buf);
-  
-      buf.writeBigUInt64LE(bi, 0);
-      console.log(buf);
+
       const ix3 = await createTransferCheckedInstruction(ataSource, mint, ataDestination, publicKey, bi, decimals, undefined, TOKEN_2022_PROGRAM_ID);
 
       const transferHook = getTransferHook(mintInfo);
@@ -78,25 +69,16 @@ export function useSendTokens() {
       ix3.keys.push({ pubkey: abWallet, isSigner: false, isWritable: false });
       ix3.keys.push({ pubkey: transferHook.programId, isSigner: false, isWritable: false });
       ix3.keys.push({ pubkey: extraMetas, isSigner: false, isWritable: false });
-
-      console.log("tx-hook: ", transferHook.programId.toString());
-      console.log("extra-metas: ", extraMetas.toString());
-      console.log("ab-wallet: ", abWallet.toString());
-      console.log("KEYS: ", ix3.keys);
       
       const validateStateAccount = await connection.getAccountInfo(extraMetas, 'confirmed');
       if (!validateStateAccount) throw new Error('validate-state-account not found');
-      const validateStateData = getExtraAccountMetas(validateStateAccount);
-      console.log("validate-state-data: ", validateStateData);
-    
-      //const ix2 = await createTransferCheckedWithTransferHookInstruction(connection, ataSource, mint, ataDestination, publicKey, bi, decimals, undefined, 'confirmed', TOKEN_2022_PROGRAM_ID);
-      
+
       const transaction = new Transaction();
       transaction.add(ix, ix3);
       transaction.feePayer = provider.wallet.publicKey;
       transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-      let signedTx = await provider.wallet.signTransaction(transaction);
+      const signedTx = await provider.wallet.signTransaction(transaction);
 
       return connection.sendRawTransaction(signedTx.serialize());
     },

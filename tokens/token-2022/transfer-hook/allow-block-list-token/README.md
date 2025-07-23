@@ -9,6 +9,7 @@ The allow/block list is then consumed by a transfer-hook.
 
 The list is managed by a single authority and can be used by several token mints. This enables a separation of concerns between token management and allow/block list management, ideal for scenarios where an issuer wants a 3rd party managed allow/block list or wants to share the same list across a group of assets.
 
+
 Initializes new tokens with several configuration options:
 - Permanent delegate
 - Allow list
@@ -30,7 +31,7 @@ This repo includes a UI to manage the allow/block list based on the `legacy-next
 Install dependencies:
 `yarn install`
 
-Compile the program:
+Compile the program (make sure to replace your program ID):
 `anchor build`
 
 Compile the UI:
@@ -43,7 +44,7 @@ Serve the UI:
 
 There are a couple scripts to manage the local validator and deployment.
 
-To start the local validator and deploy the program:
+To start the local validator and deploy the program (uses the anchor CLI and default anchor keypair):
 `./scripts/start.sh`
 
 To stop the local validator:

@@ -1,17 +1,15 @@
-use anchor_lang::{prelude::*, solana_program::system_instruction::transfer };
 use anchor_lang::solana_program::program::invoke;
+use anchor_lang::{prelude::*, solana_program::system_instruction::transfer};
 use anchor_spl::token_interface::spl_token_metadata_interface::state::TokenMetadata;
 use anchor_spl::{
     token_2022::{
         spl_token_2022::extension::{BaseStateWithExtensions, StateWithExtensions},
         spl_token_2022::state::Mint,
         Token2022,
-        
     },
     token_interface::{
-        Mint as MintAccount,
         spl_token_metadata_interface::state::Field, token_metadata_update_field,
-        TokenMetadataUpdateField,
+        Mint as MintAccount, TokenMetadataUpdateField,
     },
 };
 
@@ -21,7 +19,7 @@ use crate::Mode;
 pub struct ChangeMode<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-    
+
     #[account(
         mut,
         mint::token_program = token_program,
@@ -72,8 +70,6 @@ impl ChangeMode<'_> {
                 threshold.to_string(),
             )?;
         }
-
-        
 
         let data = self.mint.to_account_info().data_len();
         let min_balance = Rent::get()?.minimum_balance(data);
