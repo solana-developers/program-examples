@@ -21,6 +21,9 @@ importers:
       '@types/mocha':
         specifier: ^9.1.1
         version: 9.1.1
+      '@types/node':
+        specifier: ^22.15.29
+        version: 22.15.29
       chai:
         specifier: ^4.3.4
         version: 4.5.0
@@ -98,8 +101,8 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@22.15.19':
-    resolution: {integrity: sha512-3vMNr4TzNQyjHcRZadojpRaD9Ofr6LsonZAoQ+HMUa/9ORTPoxVIw0e0mpqWpdjj8xybyCM+oKOUH2vwFu/oEw==}
+  '@types/node@22.15.29':
+    resolution: {integrity: sha512-LNdjOkUDlU1RZb8e1kOIUpN1qQUlzGkEtbVNo53vbrwDg5om6oduhm4SiUaPW5ASTXhAiP0jInWG8Qx9fVlOeQ==}
 
   '@types/uuid@8.3.4':
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
@@ -754,13 +757,13 @@ snapshots:
 
   '@types/bn.js@5.1.6':
     dependencies:
-      '@types/node': 22.15.19
+      '@types/node': 22.15.29
 
   '@types/chai@4.3.20': {}
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 22.15.29
 
   '@types/json5@0.0.29':
     optional: true
@@ -769,7 +772,7 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@22.15.19':
+  '@types/node@22.15.29':
     dependencies:
       undici-types: 6.21.0
 
@@ -777,11 +780,11 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 22.15.29
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 22.15.19
+      '@types/node': 22.15.29
 
   '@ungap/promise-all-settled@1.1.2': {}
 
