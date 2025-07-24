@@ -1,12 +1,18 @@
 import * as anchor from '@coral-xyz/anchor';
-import { Keypair, LAMPORTS_PER_SOL, type PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
-import type { TransferSol } from '../target/types/transfer_sol';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
+import { TransferSol } from '../target/types/transfer_sol';
 
-describe('transfer-sol', () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
-  const payer = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.TransferSol as anchor.Program<TransferSol>;
+const IDL = require('../target/idl/transfer_sol.json');
+
+describe('transfer-sol', async () => {
+  const client = fromWorkspace('');
+  const provider = new LiteSVMProvider(client);
+  const payer = provider.wallet.payer;
+  const program = new anchor.Program<TransferSol>(IDL, provider);
+
+  // airdrop the payer account 2 SOL
+  client.airdrop(payer.publicKey, BigInt(2 * 1000000000));
 
   // 1 SOL
   const transferAmount = 1 * LAMPORTS_PER_SOL;
@@ -40,9 +46,11 @@ describe('transfer-sol', () => {
       programId: program.programId, // Program Owner, our program's address
     });
 
-    const transaction = new Transaction().add(instruction);
+    const tx = new Transaction();
+    tx.recentBlockhash = client.latestBlockhash();
+    tx.add(instruction).sign(payer, programOwnedAccount);
 
-    await sendAndConfirmTransaction(provider.connection, transaction, [payer.payer, programOwnedAccount]);
+    client.sendTransaction(tx);
   });
 
   it('Transfer SOL with Program', async () => {
@@ -60,10 +68,11 @@ describe('transfer-sol', () => {
   });
 
   async function getBalances(payerPubkey: PublicKey, recipientPubkey: PublicKey, timeframe: string) {
-    const payerBalance = await provider.connection.getBalance(payerPubkey);
-    const recipientBalance = await provider.connection.getBalance(recipientPubkey);
+    const payerBalance = provider.client.getBalance(payerPubkey);
+    const recipientBalance = provider.client.getBalance(recipientPubkey);
     console.log(`${timeframe} balances:`);
-    console.log(`   Payer: ${payerBalance / LAMPORTS_PER_SOL}`);
-    console.log(`   Recipient: ${recipientBalance / LAMPORTS_PER_SOL}`);
+
+    console.log(`   Payer: ${Number(payerBalance) / LAMPORTS_PER_SOL}`);
+    console.log(`   Recipient: ${Number(recipientBalance) / LAMPORTS_PER_SOL}`);
   }
 });

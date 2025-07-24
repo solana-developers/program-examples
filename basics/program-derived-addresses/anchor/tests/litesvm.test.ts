@@ -7,21 +7,13 @@ import { AnchorProgramExample } from '../target/types/anchor_program_example';
 const IDL = require('../target/idl/anchor_program_example.json');
 
 describe('PDAs', async () => {
-  let client: any;
-  let provider: LiteSVMProvider;
-  let program: Program<AnchorProgramExample>;
-  let payer: Keypair;
-  let pageVisitPDA: PublicKey;
+  const client = fromWorkspace('');
+  const provider = new LiteSVMProvider(client);
+  const payer = provider.wallet.payer;
+  const program = new anchor.Program<AnchorProgramExample>(IDL, provider);
 
-  before(async () => {
-    client = fromWorkspace('');
-    provider = new LiteSVMProvider(client);
-    payer = provider.wallet.payer;
-    program = new anchor.Program<AnchorProgramExample>(IDL, provider);
-
-    // PDA for the page visits account
-    [pageVisitPDA] = PublicKey.findProgramAddressSync([Buffer.from('page_visits'), payer.publicKey.toBuffer()], program.programId);
-  });
+  // PDA for the page visits account
+  const [pageVisitPDA] = PublicKey.findProgramAddressSync([Buffer.from('page_visits'), payer.publicKey.toBuffer()], program.programId);
 
   it('Create the page visits tracking PDA', async () => {
     await program.methods
@@ -39,6 +31,15 @@ describe('PDAs', async () => {
         user: payer.publicKey,
       })
       .rpc();
+  });
+
+  it('Visit the page!', async () => {
+    await client.expireBlockhash();
+    const recentBlockhash = await client.latestBlockhash();
+    const tx = await program.methods.incrementPageVisits().accounts({ user: payer.publicKey }).transaction();
+    tx.recentBlockhash = recentBlockhash;
+    tx.feePayer = payer.publicKey;
+    await provider.sendAndConfirm(tx, [payer]);
   });
 
   it('View page visits', async () => {

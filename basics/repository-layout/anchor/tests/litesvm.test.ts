@@ -1,18 +1,24 @@
 import * as anchor from '@coral-xyz/anchor';
-import type { Carnival } from '../target/types/carnival';
+import { Transaction } from '@solana/web3.js';
+import { LiteSVMProvider, fromWorkspace } from 'anchor-litesvm';
+import { Carnival } from '../target/types/carnival';
 
-describe('Carnival', () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
-  const wallet = provider.wallet as anchor.Wallet;
-  const program = anchor.workspace.Carnival as anchor.Program<Carnival>;
+const IDL = require('../target/idl/carnival.json');
+
+describe('anchor', () => {
+  // Configure the Anchor provider & load the program IDL for LiteSVM
+  // The IDL gives you a typescript module
+  const client = fromWorkspace('');
+  const provider = new LiteSVMProvider(client);
+  const payer = provider.wallet.payer;
+  const program = new anchor.Program<Carnival>(IDL, provider);
 
   async function sendCarnivalInstructions(instructionsList: anchor.web3.TransactionInstruction[]) {
-    const tx = new anchor.web3.Transaction();
+    const tx = new Transaction();
     for (const ix of instructionsList) {
       tx.add(ix);
     }
-    await anchor.web3.sendAndConfirmTransaction(provider.connection, tx, [wallet.payer]);
+    await provider.sendAndConfirm(tx, [payer]);
   }
 
   it('Go on some rides!', async () => {
