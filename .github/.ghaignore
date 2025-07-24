@@ -38,7 +38,13 @@ tokens/token-2022/metadata/anchor
 
 # dependency issues
 tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor
-
+tokens/token-2022/transfer-hook/account-data-as-seed/anchor
+tokens/token-2022/transfer-hook/counter/anchor
+tokens/token-2022/transfer-hook/hello-world/anchor
+tokens/token-2022/transfer-hook/transfer-cost/anchor
+tokens/token-2022/transfer-hook/transfer-switch/anchor
+tokens/token-2022/transfer-hook/whitelist/anchor
+tokens/token-2022/transfer-hook/allow-block-list-token
 tokens/token-2022/mint-close-authority/native
 tokens/token-2022/transfer-fee/native
 tokens/token-2022/non-transferable/native
