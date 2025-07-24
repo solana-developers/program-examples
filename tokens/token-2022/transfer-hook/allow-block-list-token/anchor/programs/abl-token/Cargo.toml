@@ -1,0 +1,45 @@
+[package]
+name = "abl-token"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "abl_token"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["interface-instructions"] }
+anchor-spl = { version = "0.31.1", features = [
+    "token_2022_extensions",
+    "token_2022",
+] }
+
+
+spl-tlv-account-resolution = "0.8.1"
+spl-transfer-hook-interface = { version = "0.8.2" }
+spl-discriminator = "0.3"
+
+[dev-dependencies]
+litesvm = "0.6.1"
+
+
+solana-instruction = "2.2.1"
+solana-keypair = "2.2.1"
+solana-native-token = "2.2.1"
+solana-pubkey = "2.2.1"
+solana-signer = "2.2.1"
+solana-system-interface = "1.0.0"
+solana-transaction = "2.2.1"
+solana-message = "2.2.1"
+solana-sdk-ids = "2.2.1"
+spl-token-2022 = { version = "8.0.1", features = ["no-entrypoint"]}

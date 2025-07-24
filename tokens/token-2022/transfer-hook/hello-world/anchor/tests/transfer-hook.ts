@@ -9,6 +9,7 @@ import {
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import { Keypair, SendTransactionError, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { BN } from 'bn.js';
 import { expect } from 'chai';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -130,7 +131,7 @@ describe('transfer-hook', () => {
 
   it('Try call transfer hook without transfer', async () => {
     const transferHookIx = await program.methods
-      .transferHook(new anchor.BN(1))
+      .transferHook(new BN(1))
       .accounts({
         sourceToken: sourceTokenAccount,
         mint: mint.publicKey,
