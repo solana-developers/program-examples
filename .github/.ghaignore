@@ -71,3 +71,8 @@ tokens/pda-mint-authority/steel
 tokens/spl-token-minter/steel
 tokens/token-swap/steel
 tokens/transfer-tokens/steel
+
+# std::bad_alloc
+basics/create-account/anchor
+basics/processing-instructions/anchor
+basics/repository-layout/anchor
