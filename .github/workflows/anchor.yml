@@ -26,7 +26,7 @@ jobs:
       total_projects: ${{ steps.analyze.outputs.total_projects }}
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dorny/paths-filter@v3
         id: changes
         if: github.event_name == 'pull_request'
@@ -103,7 +103,7 @@ jobs:
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: heyAyushh/setup-anchor@v0.31
         with:
           anchor-version: 0.31.1
@@ -204,7 +204,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Create job summary
         run: |
           echo "## Anchor Workflow Summary" >> $GITHUB_STEP_SUMMARY
