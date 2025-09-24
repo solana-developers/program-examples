@@ -4,9 +4,9 @@ import { Keypair, SystemProgram, Transaction, sendAndConfirmTransaction } from '
 import { PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
-import type { AnchorProgramExample } from '../target/types/anchor_program_example';
+import type { AnchorProgramExample } from '../target/types/anchor_program_example.ts';
 
-const IDL = require('../target/idl/anchor_program_example.json');
+import IDL from '../target/idl/anchor_program_example.json' with { type: 'json' };
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Bankrun example', async () => {
@@ -14,7 +14,7 @@ describe('Bankrun example', async () => {
   const provider = new BankrunProvider(context);
 
   const wallet = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<AnchorProgramExample>(IDL, provider);
+  const program = new anchor.Program<AnchorProgramExample>(IDL as AnchorProgramExample, provider);
   const client = context.banksClient;
 
   // We'll create this ahead of time.
