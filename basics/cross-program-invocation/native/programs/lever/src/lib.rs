@@ -1,4 +1,4 @@
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::{to_vec, BorshDeserialize, BorshSerialize};
 #[cfg(not(feature = "no-entrypoint"))]
 use solana_program::entrypoint;
 use solana_program::{
@@ -42,7 +42,7 @@ pub fn initialize(
     let user = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (power_status.try_to_vec()?).len();
+    let account_span = (to_vec(&power_status))?.len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke(
