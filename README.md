@@ -1,6 +1,6 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor :crab: Native Rust, [TS] TypeScript  and :snake: Python
+## Onchain program examples for :anchor: Anchor :crab: Native Rust, and [TS] TypeScript.
 
 [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml)
 
@@ -13,8 +13,6 @@ Each folder includes examples for one or more of the following:
 
 - `anchor` - Written using [Anchor](https://www.anchor-lang.com/), the most popular framework for Solana Development, which uses Rust. Use `anchor build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 - `native` - Written using Solana's native Rust crates and vanilla Rust. Use `cicd.sh` to build & deploy the program. Run `yarn run test` to test it.
-- `poseidon` - Written using [Poseidon](https://turbin3.github.io/poseidon), which converts your TypeScript code to Anchor Rust.
-- `seahorse` - Written using the [Seahorse framework](https://seahorse-lang.org/), which converts your Python code to Anchor Rust. Use `seahorse build && anchor deploy` to build & deploy the program. Run `anchor run test` to test it.
 
 **If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
 
@@ -27,7 +25,7 @@ Each folder includes examples for one or more of the following:
 
 [Hello World on Solana! A minimal program that logs a greeting.](./basics/hello-solana/README.md)
 
-[anchor](./basics/hello-solana/anchor) [native](./basics/hello-solana/native) [seahorse](./basics/hello-solana/seahorse)
+[anchor](./basics/hello-solana/anchor) [native](./basics/hello-solana/native)
 
 ### Account-data
 
@@ -39,13 +37,13 @@ Store and retrieve data using Solana accounts.
 
 [Use a PDA to store global state, making a counter that increments when called.](./basics/counter/README.md)
 
-[anchor](./basics/counter/anchor) [native](./basics/counter/native) [seahorse](./basics/counter/seahorse)
+[anchor](./basics/counter/anchor) [native](./basics/counter/native)
 
 ### Saving per-user state - Favorites
 
 Save and update per-user state on the blockchain, ensuring users can only update their own information.
 
-[anchor](./basics/favorites/anchor)
+[anchor](./basics/favorites/anchor) [native](./basics/favorites/native)
 
 ### Checking Instruction Accounts
 
@@ -111,7 +109,7 @@ How to store state that changes size in Solana.
 
 [Send SOL between two accounts.](./basics/transfer-sol/README.md)
 
-[anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native) [seahorse](./basics/transfer-sol/seahorse)
+[anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native)
 
 </details>
 <details>
@@ -139,13 +137,13 @@ How to store state that changes size in Solana.
 
 [Transfer tokens between accounts](./tokens/transfer-tokens/README.md)
 
-[anchor](./tokens/transfer-tokens/anchor) [native](./tokens/transfer-tokens/native) [seahorse](./tokens/transfer-tokens/seahorse)
+[anchor](./tokens/transfer-tokens/anchor) [native](./tokens/transfer-tokens/native)
 
 ### Allowing users to swap digital assets - Escrow
 
 Allow two users to swap digital assets with each other, each getting 100% of what the other has offered due to the power of decentralization!
 
-[anchor](./tokens/escrow/anchor)
+[anchor](./tokens/escrow/anchor) [native](./tokens/escrow/native)
 
 ### Minting a token from inside a program with a PDA as the mint authority
 
@@ -276,7 +274,7 @@ Work with Metaplex compressed NFTs.
 
 Use a data source for offchain data (called an Oracle) to perform activities onchain.
 
-[anchor](./oracles/pyth/anchor) [seahorse](./oracles/pyth/seahorse)
+[anchor](./oracles/pyth/anchor)
 
 </details>
 
