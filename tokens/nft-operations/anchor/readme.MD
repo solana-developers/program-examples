@@ -50,6 +50,11 @@ pub struct CreateCollection<'info> {
     /// CHECK: This account will be initialized by the metaplex program
     master_edition: UncheckedAccount<'info>,
     #[account(
+        address = INSTRUCTIONS_ID
+    )]
+    /// CHECK: This account is used by the CreateV1 instruction
+    sysvar_instructions: UncheckedAccount<'info>,
+    #[account(
         init,
         payer = user,
         associated_token::mint = mint,
@@ -74,6 +79,9 @@ pub struct CreateCollection<'info> {
 - metadata: the metadata account of the collection NFT
 
 - master_edition: the master edition account of the collection NFT
+
+- sysvar_instruction: the instructions sysvar provides access to the serialized instruction data
+for the currently-running transaction
 
 - destination: the token account where the collection NFT will minted to. We will be initializing this account and verifying the correct mint and authority
 
@@ -106,7 +114,6 @@ However, if the account was already initialized (you'll see that while we verify
 ```rust
 impl<'info> CreateCollection<'info> {
     pub fn create_collection(&mut self, bumps: &CreateCollectionBumps) -> Result<()> {
-
         let metadata = &self.metadata.to_account_info();
         let master_edition = &self.master_edition.to_account_info();
         let mint = &self.mint.to_account_info();
@@ -115,11 +122,9 @@ impl<'info> CreateCollection<'info> {
         let system_program = &self.system_program.to_account_info();
         let spl_token_program = &self.token_program.to_account_info();
         let spl_metadata_program = &self.token_metadata_program.to_account_info();
+        let sysvar_instructions = &self.sysvar_instructions.to_account_info();
 
-        let seeds = &[
-            &b"authority"[..], 
-            &[bumps.mint_authority]
-        ];
+        let seeds = &[&b"authority"[..], &[bumps.mint_authority]];
         let signer_seeds = &[&seeds[..]];
 
         let cpi_program = self.token_program.to_account_info();
@@ -132,78 +137,59 @@ impl<'info> CreateCollection<'info> {
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
-        let creator = vec![
-            Creator {
-                address: self.mint_authority.key().clone(),
-                verified: true,
-                share: 100,
-            },
-        ];
-        
-        let metadata_account = CreateMetadataAccountV3Cpi::new(
-            spl_metadata_program, 
-            CreateMetadataAccountV3CpiAccounts {
-                metadata,
-                mint,
-                mint_authority: authority,
-                payer,
-                update_authority: (authority, true),
-                system_program,
-                rent: None,
-            },
-            CreateMetadataAccountV3InstructionArgs {
-                data: DataV2 {
-                    name: "DummyCollection".to_owned(),
-                    symbol: "DC".to_owned(),
-                    uri: "".to_owned(),
-                    seller_fee_basis_points: 0,
-                    creators: Some(creator),
-                    collection: None,
-                    uses: None,
-                },
-                is_mutable: true,
-                collection_details: Some(
-                    CollectionDetails::V1 { 
-                        size: 0 
-                    }
-                )
-            }
-        );
-        metadata_account.invoke_signed(signer_seeds)?;
-        msg!("Metadata Account created!");
+        let creator = vec![Creator {
+            address: self.mint_authority.key().clone(),
+            verified: true,
+            share: 100,
+        }];
 
-        let master_edition_account = CreateMasterEditionV3Cpi::new(
+        let create_v1_cpi = CreateV1Cpi::new(
             spl_metadata_program,
-            CreateMasterEditionV3CpiAccounts {
-                edition: master_edition,
-                update_authority: authority,
-                mint_authority: authority,
-                mint,
-                payer,
-                metadata,
-                token_program: spl_token_program,
-                system_program,
-                rent: None,
-            },
-            CreateMasterEditionV3InstructionArgs {
-                max_supply: Some(0),
-            }
+            CreateV1CpiAccounts {
+            metadata,
+            master_edition: Some(master_edition),
+            mint: (mint, true),
+            authority,
+            payer,
+            update_authority: (authority, true),
+            system_program,
+            sysvar_instructions,
+            spl_token_program: Some(spl_token_program),
+        },
+            CreateV1InstructionArgs {
+            name: "DummyCollection".to_owned(),
+            symbol: "DC".to_owned(),
+            uri: "".to_owned(),
+            seller_fee_basis_points: 0,
+            creators: Some(creator),
+            collection: None,
+            uses: None,
+            primary_sale_happened: false,
+            print_supply: Some(PrintSupply::Zero),
+            is_mutable: true,
+            token_standard: TokenStandard::NonFungible,
+            collection_details: Some(CollectionDetails::V1 { size: 0 }),
+            rule_set: None,
+            decimals: Some(0),
+        },
         );
-        master_edition_account.invoke_signed(signer_seeds)?;
-        msg!("Master Edition Account created");
-        
+
+        create_v1_cpi.invoke_signed(signer_seeds)?;
+
+        msg!("Metadata Account and Master Edition Account created!");
+
         Ok(())
     }
 }
 ```
 
-The create collection method consists of 3 steps:
+The create collection method consists of 2 steps:
 
 - Mint one token to the destination token account by performing a CPI to the Token Program
 
-- Create a metadata account for the mint account to store standardized data that can be understood by apps and marketplaces. This is achieved by performing a CPI to the Token Metadata Program. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
-
-- Create a master edition account for the mint account by performing a CPI to the Token Metadata Program. That will ensure that the special characteristics on Non-Fungible Tokens are met. It will also transfer both the mint authority and the freeze authority to the Master Edition PDA. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
+- Create a metadata account and the master edition account for the mint account by performing a CPI into the token metadata program.
+ The metadata account stores standardized data that can be understood by apps and marketplaces. 
+ The master edition account will ensure that the special characteristics on Non-Fungible Tokens are met. It will also transfer both the mint authority and the freeze authority to the Master Edition PDA. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
 
 
 More information on Token Metadata can be found at https://developers.metaplex.com/token-metadata
@@ -246,6 +232,11 @@ pub struct MintNFT<'info> {
     )]
     /// CHECK: This is account is not initialized and is being used for signing purposes only
     pub mint_authority: UncheckedAccount<'info>,
+        #[account(
+        address = INSTRUCTIONS_ID
+    )]
+    /// CHECK: This account is used by the CreateV1 instruction
+    sysvar_instructions: UncheckedAccount<'info>,
     #[account(mut)]
     pub collection_mint: Account<'info, Mint>,
     pub system_program: Program<'info, System>,
@@ -269,6 +260,9 @@ pub struct MintNFT<'info> {
 
 - mint_authority: the account with authority to mint tokens from the collection NFT mint account
 
+- sysvar_instruction: the instructions sysvar provides access to the serialized instruction data
+for the currently-running transaction
+
 - collection_mint: the collection account that the NFT that we are minting should be part of
 
 - system_program: Program resposible for the initialization of any new account
@@ -278,7 +272,7 @@ pub struct MintNFT<'info> {
 - token_metadata_program: MPL token metadata program that will be used to create the metadata and master edition accounts
 
 If you take a closer look, you will see that the accounts (apart from "collection_mint") are the same.
-This is due to the fact that the a collection is basically just a regular NFT but, the "collection_details" field will be set with a CollectionDetails struct and the "collection" field under "data" set to None.
+This is due to the fact that the collection is basically just a regular NFT but, the "collection_details" field will be set with a CollectionDetails struct and the "collection" field under "data" set to None.
 
 On the other hand, a NFT will have "collection_details" field set to None and with a CollectionDetails and the "collection" field under "data" set to a Collection struct, containing the key of the collection it belongs to and a verified boolean (set to False, it will be automatically set to True once the NFT gets verified as part of the collection)
 
@@ -289,7 +283,6 @@ This is actually where the "collection" account comes from. This account is used
 ```rust
 impl<'info> MintNFT<'info> {
     pub fn mint_nft(&mut self, bumps: &MintNFTBumps) -> Result<()> {
-
         let metadata = &self.metadata.to_account_info();
         let master_edition = &self.master_edition.to_account_info();
         let mint = &self.mint.to_account_info();
@@ -298,11 +291,9 @@ impl<'info> MintNFT<'info> {
         let system_program = &self.system_program.to_account_info();
         let spl_token_program = &self.token_program.to_account_info();
         let spl_metadata_program = &self.token_metadata_program.to_account_info();
+        let sysvar_instructions = &self.sysvar_instructions.to_account_info();
 
-        let seeds = &[
-            &b"authority"[..], 
-            &[bumps.mint_authority]
-        ];
+        let seeds = &[&b"authority"[..], &[bumps.mint_authority]];
         let signer_seeds = &[&seeds[..]];
 
         let cpi_program = self.token_program.to_account_info();
@@ -315,65 +306,51 @@ impl<'info> MintNFT<'info> {
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
-        let creator = vec![
-            Creator {
-                address: self.mint_authority.key(),
-                verified: true,
-                share: 100,
-            },
-        ];
+        let creator = vec![Creator {
+            address: self.mint_authority.key(),
+            verified: true,
+            share: 100,
+        }];
 
-        let metadata_account = CreateMetadataAccountV3Cpi::new(
+        let create_v1_cpi = CreateV1Cpi::new(
             spl_metadata_program,
-            CreateMetadataAccountV3CpiAccounts {
-                metadata,
-                mint,
-                mint_authority: authority,
-                payer,
-                update_authority: (authority, true),
-                system_program,
-                rent: None,
-            }, 
-            CreateMetadataAccountV3InstructionArgs {
-                data: DataV2 {
-                    name: "Mint Test".to_string(),
-                    symbol: "YAY".to_string(),
-                    uri: "".to_string(),
-                    seller_fee_basis_points: 0,
-                    creators: Some(creator),
-                    collection: Some(Collection {
-                        verified: false,
-                        key: self.collection_mint.key(),
-                    }),
-                    uses: None
-                },
-                is_mutable: true,
-                collection_details: None,
-            }
+            CreateV1CpiAccounts {
+            metadata,
+            master_edition: Some(master_edition),
+            mint: (mint, true),
+            authority,
+            payer,
+            update_authority: (authority, true),
+            system_program,
+            sysvar_instructions,
+            spl_token_program: Some(spl_token_program),
+        },
+            CreateV1InstructionArgs {
+            name: "Mint Test".to_string(),
+            symbol: "YAY".to_string(),
+            uri: "".to_string(),
+            seller_fee_basis_points: 0,
+            creators: Some(creator),
+            collection: Some(Collection {
+                verified: false,
+                key: self.collection_mint.key(),
+            }),
+            uses: None,
+            primary_sale_happened: false,
+            print_supply: Some(PrintSupply::Zero),
+            is_mutable: true,
+            token_standard: TokenStandard::NonFungible,
+            collection_details: None,
+            rule_set: None,
+            decimals: Some(0),
+        }
         );
-        metadata_account.invoke_signed(signer_seeds)?;
 
-        let master_edition_account = CreateMasterEditionV3Cpi::new(
-            spl_metadata_program,
-            CreateMasterEditionV3CpiAccounts {
-                edition: master_edition,
-                update_authority: authority,
-                mint_authority: authority,
-                mint,
-                payer,
-                metadata,
-                token_program: spl_token_program,
-                system_program,
-                rent: None,
-            },
-            CreateMasterEditionV3InstructionArgs {
-                max_supply: Some(0),
-            }
-        );
-        master_edition_account.invoke_signed(signer_seeds)?;
+        create_v1_cpi.invoke_signed(signer_seeds)?;
+
+        msg!("Metadata Account and Master Edition Account created!");
 
         Ok(())
-        
     }
 }
 ```
@@ -382,31 +359,30 @@ Since a collection NFT is just a regular NFT with "special" metadata, again you 
 
 - Mint one token to the destination token account by performing a CPI to the Token Program
 
-- Create a metadata account for the mint account to store standardized data that can be understood by apps and marketplaces. This is achieved by performing a CPI to the Token Metadata Program. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
-
-- Create a master edition account for the mint account by performing a CPI to the Token Metadata Program. That will ensure that the special characteristics on Non-Fungible Tokens are met. It will also transfer both the mint authority and the freeze authority to the Master Edition PDA. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
+- Create a metadata account and the master edition account for the mint account by performing a CPI into the token metadata program.
+ The metadata account stores standardized data that can be understood by apps and marketplaces. 
+ The master edition account will ensure that the special characteristics on Non-Fungible Tokens are met. It will also transfer both the mint authority and the freeze authority to the Master Edition PDA. The mint authority needs to sign that CPI, therefore we use "invoke_signed" and pass in the seeds of our authority PDA
 
 
 The difference is in the data of our metadata account.
 
 for our collection NFT, we have
 ```rust
-CreateMetadataAccountV3InstructionArgs {
-    data: DataV2 {
-        name: "DummyCollection".to_owned(),
-        symbol: "DC".to_owned(),
-        uri: "".to_owned(),
-        seller_fee_basis_points: 0,
-        creators: Some(creator),
-        collection: None,
-        uses: None,
-    },
+CreateV1InstructionArgs {
+    name: "DummyCollection".to_owned(),
+    symbol: "DC".to_owned(),
+    uri: "".to_owned(),
+    seller_fee_basis_points: 0,
+    creators: Some(creator),
+    collection: None,
+    uses: None,
+    primary_sale_happened: false,
+    print_supply: Some(PrintSupply::Zero),
     is_mutable: true,
-    collection_details: Some(
-        CollectionDetails::V1 { 
-            size: 0 
-        }
-    )
+    token_standard: TokenStandard::NonFungible,
+    collection_details: Some(CollectionDetails::V1 { size: 0 }),
+    rule_set: None,
+    decimals: Some(0),
 }
 ```
 where we set the "collection_details" field
@@ -414,21 +390,24 @@ where we set the "collection_details" field
 
 for our "regular" NFT we have
 ```rust
-CreateMetadataAccountV3InstructionArgs {
-    data: DataV2 {
-        name: "Mint Test".to_string(),
-        symbol: "YAY".to_string(),
-        uri: "".to_string(),
-        seller_fee_basis_points: 0,
-        creators: Some(creator),
-        collection: Some(Collection {
-            verified: false,
-            key: self.collection_mint.key(),
-        }),
-        uses: None
-    },
+CreateV1InstructionArgs {
+    name: "Mint Test".to_string(),
+    symbol: "YAY".to_string(),
+    uri: "".to_string(),
+    seller_fee_basis_points: 0,
+    creators: Some(creator),
+    collection: Some(Collection {
+        verified: false,
+        key: self.collection_mint.key(),
+    }),
+    uses: None,
+    primary_sale_happened: false,
+    print_supply: Some(PrintSupply::Zero),
     is_mutable: true,
+    token_standard: TokenStandard::NonFungible,
     collection_details: None,
+    rule_set: None,
+    decimals: Some(0),
 }
 ```
 where we set the "collection" field with the key of the collection account.
@@ -489,8 +468,8 @@ for the currently-running transaction
 
 - token_metadata_program: MPL token metadata program that will be used to verify the NFT as part of the desired collection
 
-Note that the only account that need to be mutable in here, are the NFT and Colelction NFT metadata accounts.
-This is due to the fact that both will be updated. The NFT metadata account will have the "verified" boolean set to true, and the Collection NFT metadata account will have the colelction size incremented
+Note that the only account that need to be mutable in here, are the NFT and Collection NFT metadata accounts.
+This is due to the fact that both will be updated. The NFT metadata account will have the "verified" boolean set to true, and the Collection NFT metadata account will have the collection size incremented
 
 ### We then implement some functionality for our VerifyCollectionMint context:
 
@@ -512,20 +491,26 @@ impl<'info> VerifyCollectionMint<'info> {
         ];
         let signer_seeds = &[&seeds[..]];
 
-        let verify_collection = VerifyCollectionV1Cpi::new(
+        // Invoke CPI
+        let verify_cpi = VerifyCpi::new(
             spl_metadata_program,
-            VerifyCollectionV1CpiAccounts {
-                authority,
-                delegate_record: None,
-                metadata,
-                collection_mint,
-                collection_metadata: Some(collection_metadata),
-                collection_master_edition: Some(collection_master_edition),
-                system_program,
-                sysvar_instructions,
-            }
+            VerifyCpiAccounts {
+            authority,
+            delegate_record: None,
+            metadata,
+            collection_mint: Some(collection_mint),
+            collection_metadata: Some(collection_metadata),
+            collection_master_edition: Some(collection_master_edition),
+            system_program,
+            sysvar_instructions,
+        },
+            VerifyInstructionArgs { 
+            verification_args:VerificationArgs::CollectionV1 
+            },
         );
-        verify_collection.invoke_signed(signer_seeds)?;
+
+        verify_cpi.invoke_signed(signer_seeds)?;
+
 
         msg!("Collection Verified!");
         
