@@ -14,7 +14,7 @@ name = "account-data-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -768,7 +768,7 @@ name = "close-account-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1091,7 +1091,7 @@ name = "favorites-native"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1238,6 +1238,14 @@ name = "hello-solana-program"
 version = "0.1.0"
 dependencies = [
  "solana-program 2.2.1",
+]
+
+[[package]]
+name = "hello-solana-program-pinocchio"
+version = "0.1.0"
+dependencies = [
+ "pinocchio",
+ "pinocchio-log",
 ]
 
 [[package]]
@@ -1655,7 +1663,7 @@ name = "pda-rent-payer-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1664,6 +1672,32 @@ name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
+
+[[package]]
+name = "pinocchio"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "530596fa307103e53257f2cf064815919ee7fbc4c7ab999f6f13cc7067c3aff1"
+
+[[package]]
+name = "pinocchio-log"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f89f8ffd986174cefe59448295a004aaf70c3605f30de066f42d27b06188f267"
+dependencies = [
+ "pinocchio-log-macro",
+]
+
+[[package]]
+name = "pinocchio-log-macro"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6edac6ac2c9c456b850d3e908b7f224a54623f6c5b75906b9e48a4e248fb332b"
+dependencies = [
+ "quote",
+ "regex",
+ "syn 1.0.109",
+]
 
 [[package]]
 name = "polyval"
@@ -1735,7 +1769,7 @@ name = "processing-instructions-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1744,7 +1778,7 @@ name = "program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1753,7 +1787,7 @@ name = "program-derived-addresses-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1897,7 +1931,7 @@ name = "realloc-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -1951,7 +1985,7 @@ name = "repository-layout-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
@@ -3604,7 +3638,7 @@ name = "token-2022-default-account-state-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 1.18.26",
  "spl-associated-token-account",
  "spl-token-2022 0.7.0",
@@ -3615,7 +3649,7 @@ name = "token-2022-mint-close-authority-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
  "spl-associated-token-account",
  "spl-token-2022 0.7.0",
@@ -3626,7 +3660,7 @@ name = "token-2022-multiple-extensions-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 1.18.26",
  "spl-associated-token-account",
  "spl-token-2022 0.7.0",
@@ -3637,7 +3671,7 @@ name = "token-2022-non-transferable-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
  "spl-associated-token-account",
  "spl-token-2022 0.7.0",
@@ -3648,7 +3682,7 @@ name = "token-2022-transfer-fees-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.10.4",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
  "spl-associated-token-account",
  "spl-token-2022 0.7.0",
@@ -3727,7 +3761,7 @@ name = "transfer-sol-program"
 version = "0.1.0"
 dependencies = [
  "borsh 0.9.3",
- "borsh-derive 0.9.3",
+ "borsh-derive 1.5.7",
  "solana-program 2.2.1",
 ]
 
