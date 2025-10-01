@@ -1,4 +1,3 @@
-#![allow(clippy::result_large_err)]
 use anchor_lang::prelude::*;
 use instructions::*;
 pub mod instructions;

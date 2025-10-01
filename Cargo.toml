@@ -31,6 +31,8 @@ members = [
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/anchor/programs/*",
+
+    # tokens
     "tokens/token-2022/mint-close-authority/native/program",
     "tokens/token-2022/non-transferable/native/program",
     "tokens/token-2022/default-account-state/native/program",
@@ -41,3 +43,27 @@ resolver = "2"
 
 [profile.release]
 overflow-checks = true
+
+[workspace.dependencies]
+
+# misc
+borsh = "1.5.7"
+borsh-derive = "1.5.7"
+mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
+
+
+# spl
+solana-program = "3.0"
+spl-token = { version = "8.0.0", features = [ "no-entrypoint" ] }
+spl-token-2022 = {version = "9.0.0" , features = [ "no-entrypoint" ] }
+spl-associated-token-account = { version = "7.0.0", features = [ "no-entrypoint" ] }
+
+# interface
+solana-system-interface = {version = "2.0.0", features = ["bincode"]}
+spl-token-interface = "2.0.0"
+spl-associated-token-account-interface = "2.0.0"
+spl-token-2022-interface = "2.0.0"
+
+# pinocchio
+pinocchio = "=0.8.1"
+pinocchio-log = "0.4.0"

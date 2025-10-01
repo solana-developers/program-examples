@@ -15,7 +15,13 @@ no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
 idl-build = ["anchor-lang/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
 
 [dependencies]
-anchor-lang = "0.31.1"
+anchor-lang = "0.32.1"
 pyth-solana-receiver-sdk = "0.3.2"
+
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -14,9 +14,15 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
 
 [dependencies]
 anchor-lang = "0.26.0"
 solana-program = "1.14"
 spl-account-compression = { version="0.1.8", features = ["cpi"] }
 mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

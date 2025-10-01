@@ -1,9 +1,16 @@
-import { Blockhash, Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { BN } from 'bn.js';
-import * as borsh from 'borsh';
-import { assert, expect } from 'chai';
-import { describe, test } from 'mocha';
-import { BanksClient, ProgramTestContext, Rent, start } from 'solana-bankrun';
+import {
+  Blockhash,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import { BN } from "bn.js";
+import * as borsh from "borsh";
+import { assert, expect } from "chai";
+import { describe, test } from "mocha";
+import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 
 // This is a helper class to assign properties to the class
 class Assignable {
@@ -14,10 +21,10 @@ class Assignable {
   }
 }
 
-enum MyInstruction {
-  CreateFav = 0,
-  GetFav = 1,
-}
+const MyInstruction = {
+  CreateFav: 0,
+  GetFav: 1,
+} as const;
 
 class CreateFav extends Assignable {
   number: number;
@@ -33,11 +40,11 @@ class CreateFav extends Assignable {
     return borsh.deserialize(
       {
         struct: {
-          number: 'u64',
-          color: 'string',
+          number: "u64",
+          color: "string",
           hobbies: {
             array: {
-              type: 'string',
+              type: "string",
             },
           },
         },
@@ -48,12 +55,12 @@ class CreateFav extends Assignable {
 }
 const CreateNewAccountSchema = {
   struct: {
-    instruction: 'u8',
-    number: 'u64',
-    color: 'string',
+    instruction: "u8",
+    number: "u64",
+    color: "string",
     hobbies: {
       array: {
-        type: 'string',
+        type: "string",
       },
     },
   },
@@ -66,11 +73,11 @@ class GetFav extends Assignable {
 }
 const GetFavSchema = {
   struct: {
-    instruction: 'u8',
+    instruction: "u8",
   },
 };
 
-describe('Favorites Solana Native', () => {
+describe("Favorites Solana Native", () => {
   // Randomly generate the program keypair and load the program to solana-bankrun
   const programId = PublicKey.unique();
 
@@ -80,16 +87,24 @@ describe('Favorites Solana Native', () => {
   let blockhash: Blockhash;
 
   beforeEach(async () => {
-    context = await start([{ name: 'favorites_native', programId }], []);
+    context = await start([{ name: "favorites_native", programId }], []);
     client = context.banksClient;
     // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
     payer = context.payer;
     blockhash = context.lastBlockhash;
   });
 
-  test('Set the favorite pda and cross-check the updated data', async () => {
-    const favoritesPda = PublicKey.findProgramAddressSync([Buffer.from('favorite'), payer.publicKey.toBuffer()], programId)[0];
-    const favData = { instruction: MyInstruction.CreateFav, number: 42, color: 'blue', hobbies: ['coding', 'reading', 'traveling'] };
+  test("Set the favorite pda and cross-check the updated data", async () => {
+    const favoritesPda = PublicKey.findProgramAddressSync(
+      [Buffer.from("favorite"), payer.publicKey.toBuffer()],
+      programId,
+    )[0];
+    const favData = {
+      instruction: MyInstruction.CreateFav,
+      number: 42,
+      color: "blue",
+      hobbies: ["coding", "reading", "traveling"],
+    };
     const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({
@@ -115,17 +130,27 @@ describe('Favorites Solana Native', () => {
 
     const favoritesData = CreateFav.fromBuffer(data);
 
-    console.log('Deserialized data:', favoritesData);
+    console.log("Deserialized data:", favoritesData);
 
-    expect(new BN(favoritesData.number as any, 'le').toNumber()).to.equal(favData.number);
+    expect(new BN(favoritesData.number as any, "le").toNumber()).to.equal(
+      favData.number,
+    );
     expect(favoritesData.color).to.equal(favData.color);
     expect(favoritesData.hobbies).to.deep.equal(favData.hobbies);
   });
 
   test("Check if the test fails if the pda seeds aren't same", async () => {
     // We put the wrong seeds knowingly to see if the test fails because of checks
-    const favoritesPda = PublicKey.findProgramAddressSync([Buffer.from('favorite'), payer.publicKey.toBuffer()], programId)[0];
-    const favData = { instruction: MyInstruction.CreateFav, number: 42, color: 'blue', hobbies: ['coding', 'reading', 'traveling'] };
+    const favoritesPda = PublicKey.findProgramAddressSync(
+      [Buffer.from("favorite"), payer.publicKey.toBuffer()],
+      programId,
+    )[0];
+    const favData = {
+      instruction: MyInstruction.CreateFav,
+      number: 42,
+      color: "blue",
+      hobbies: ["coding", "reading", "traveling"],
+    };
     const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({
@@ -146,16 +171,24 @@ describe('Favorites Solana Native', () => {
     tx.recentBlockhash = blockhash;
     try {
       await client.processTransaction(tx);
-      console.error('Expected the test to fail');
-    } catch (err) {
+      console.error("Expected the test to fail");
+    } catch (_err) {
       assert(true);
     }
   });
 
-  test('Get the favorite pda and cross-check the data', async () => {
+  test("Get the favorite pda and cross-check the data", async () => {
     // Creating a new account with payer's pubkey
-    const favoritesPda = PublicKey.findProgramAddressSync([Buffer.from('favorite'), payer.publicKey.toBuffer()], programId)[0];
-    const favData = { instruction: MyInstruction.CreateFav, number: 42, color: 'hazel', hobbies: ['singing', 'dancing', 'skydiving'] };
+    const favoritesPda = PublicKey.findProgramAddressSync(
+      [Buffer.from("favorite"), payer.publicKey.toBuffer()],
+      programId,
+    )[0];
+    const favData = {
+      instruction: MyInstruction.CreateFav,
+      number: 42,
+      color: "hazel",
+      hobbies: ["singing", "dancing", "skydiving"],
+    };
     const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({

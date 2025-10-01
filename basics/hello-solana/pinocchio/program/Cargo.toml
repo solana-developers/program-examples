@@ -4,9 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pinocchio = "=0.8.1"
-pinocchio-log = "0.4.0"
-
+pinocchio.workspace = true
+pinocchio-log.workspace = true
 
 [lib]
 crate-type = ["cdylib", "rlib"]
+
+[features]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

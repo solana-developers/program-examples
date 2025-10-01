@@ -1,6 +1,6 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import { TOKEN_2022_PROGRAM_ID, closeAccount } from '@solana/spl-token';
+import * as anchor from '@coral-xyz/anchor';
+import { closeAccount, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { MintCloseAuthority } from '../target/types/mint_close_authority';
 
 describe('mint-close-authority', () => {

@@ -6,8 +6,8 @@ import { startAnchor } from 'solana-bankrun';
 import type { Hand } from '../target/types/hand';
 import type { Lever } from '../target/types/lever';
 
-const HAND_IDL = require('../target/idl/hand.json');
-const LEVER_IDL = require('../target/idl/lever.json');
+import HAND_IDL from "../target/idl/hand.json" with { type: "json" };
+import LEVER_IDL from "../target/idl/lever.json" with { type: "json" };
 const HAND_PROGRAM_ID = new PublicKey(HAND_IDL.address);
 const LEVER_PROGRAM_ID = new PublicKey(LEVER_IDL.address);
 

@@ -1,5 +1,5 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { Keypair } from '@solana/web3.js';
 import { assert } from 'chai';
 import type { AnchorRealloc } from '../target/types/anchor_realloc';

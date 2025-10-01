@@ -14,6 +14,9 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
 
 [dependencies]
 anchor-lang = "0.26.0"
@@ -25,3 +28,6 @@ mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] }
 getrandom = { version = "0.2.10", features = ["custom"] }
 winnow = "=0.4.1"
 toml_datetime = "=0.6.1"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -1,11 +1,9 @@
-use borsh::BorshSerialize;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     program::invoke_signed,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -22,11 +20,11 @@ pub fn create_page_visits(
     let payer = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (page_visits.try_to_vec()?).len();
+    let account_span = borsh::to_vec(&page_visits)?.len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke_signed(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             payer.key,
             page_visits_account.key,
             lamports_required,

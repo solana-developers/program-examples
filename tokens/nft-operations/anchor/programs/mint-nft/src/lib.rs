@@ -13,7 +13,7 @@ pub mod mint_nft {
     pub fn create_collection(ctx: Context<CreateCollection>) -> Result<()> {
         ctx.accounts.create_collection(&ctx.bumps)
     }
-    
+
     pub fn mint_nft(ctx: Context<MintNFT>) -> Result<()> {
         ctx.accounts.mint_nft(&ctx.bumps)
     }

@@ -1,6 +1,6 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import { TOKEN_2022_PROGRAM_ID, createAccount, mintTo } from '@solana/spl-token';
+import * as anchor from '@coral-xyz/anchor';
+import { createAccount, mintTo, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { DefaultAccountState } from '../target/types/default_account_state';
 
 describe('default-account-state', () => {

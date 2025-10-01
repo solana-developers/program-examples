@@ -1,3 +1,4 @@
+use solana_system_interface::instruction as system_instruction;
 use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{
@@ -8,10 +9,9 @@ use {
         program::invoke,
         pubkey::Pubkey,
         rent::Rent,
-        system_instruction,
         sysvar::Sysvar,
     },
-    spl_token_2022::{
+    spl_token_2022_interface::{
         extension::{
             default_account_state::instruction::{
                 initialize_default_account_state, update_default_account_state,
@@ -48,7 +48,8 @@ fn process_instruction(
     let token_program = next_account_info(accounts_iter)?;
 
     // Find the size for the account with the Extension
-    let space = ExtensionType::get_account_len::<Mint>(&[ExtensionType::DefaultAccountState]);
+    let space =
+        ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::DefaultAccountState])?;
 
     // Get the required rent exemption amount for the account
     let rent_required = Rent::get()?.minimum_balance(space);

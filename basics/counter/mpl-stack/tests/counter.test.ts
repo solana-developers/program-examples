@@ -4,14 +4,14 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   SystemProgram,
+  sendAndConfirmTransaction,
   Transaction,
   type TransactionInstruction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import { BN } from 'bn.js';
 import { assert } from 'chai';
 
-import { Counter, PROGRAM_ID, createIncrementInstruction } from '../ts';
+import { Counter, createIncrementInstruction, PROGRAM_ID } from '../ts';
 
 function convertBignumToNumber(bignum: bignum): number {
   return new BN(bignum).toNumber();

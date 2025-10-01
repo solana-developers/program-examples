@@ -1,23 +1,23 @@
-import fs from 'node:fs';
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Keypair } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { NftMinter } from '../target/types/nft_minter';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { startAnchor } from "solana-bankrun";
+import type { NftMinter } from "../target/types/nft_minter";
 
-const IDL = require('../target/idl/nft_minter.json');
+import IDL from "../target/idl/nft_minter.json" with { type: "json" };
 const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+const METADATA_PROGRAM_ID = new PublicKey(
+  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+);
 
-describe('NFT bankrun Minter', async () => {
+describe("NFT bankrun Minter", async () => {
   const context = await startAnchor(
-    '',
+    "",
     [
-      { name: 'nft_minter', programId: PROGRAM_ID },
-      { name: 'token_metadata', programId: METADATA_PROGRAM_ID },
+      { name: "nft_minter", programId: PROGRAM_ID },
+      { name: "token_metadata", programId: METADATA_PROGRAM_ID },
     ],
     [],
   );
@@ -28,17 +28,20 @@ describe('NFT bankrun Minter', async () => {
 
   // The metadata for our NFT
   const metadata = {
-    name: 'Homer NFT',
-    symbol: 'HOMR',
-    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
+    name: "Homer NFT",
+    symbol: "HOMR",
+    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
   };
 
-  it('Create an NFT!', async () => {
+  it("Create an NFT!", async () => {
     // Generate a keypair to use as the address of our mint account
     const mintKeypair = new Keypair();
 
     // Derive the associated token address account for the mint and payer.
-    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
+      mintKeypair.publicKey,
+      payer.publicKey,
+    );
 
     const transactionSignature = await program.methods
       .mintNft(metadata.name, metadata.symbol, metadata.uri)
@@ -50,7 +53,7 @@ describe('NFT bankrun Minter', async () => {
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });

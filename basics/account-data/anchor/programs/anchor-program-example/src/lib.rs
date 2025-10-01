@@ -1,4 +1,3 @@
-#![allow(clippy::result_large_err)]
 use anchor_lang::prelude::*;
 use instructions::*;
 
@@ -9,7 +8,7 @@ pub mod state;
 declare_id!("GpVcgWdgVErgLqsn8VYUch6EqDerMgNqoLSmGyKrd6MR");
 
 #[program]
-pub mod anchor_program_example {
+pub mod account_data_anchor_program {
     use super::*;
 
     pub fn create_address_info(

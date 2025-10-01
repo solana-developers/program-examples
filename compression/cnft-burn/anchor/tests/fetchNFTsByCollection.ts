@@ -5,12 +5,12 @@
 
 // imports from other libraries
 import type { PublicKey } from '@solana/web3.js';
-// import custom helpers for demos
-import { printConsoleSeparator } from './utils/helpers';
+import { RPC_PATH } from './cnft-burn';
 
 // local import of the connection wrapper, to help with using the ReadApi
 import { WrapperConnection } from './ReadApi/WrapperConnection';
-import { RPC_PATH } from './cnft-burn';
+// import custom helpers for demos
+import { printConsoleSeparator } from './utils/helpers';
 
 export async function getcNFTsFromCollection(collectionMint: PublicKey, owner: string) {
   // load the stored PublicKeys for ease of use
@@ -65,6 +65,7 @@ export async function getcNFTsFromCollection(collectionMint: PublicKey, owner: s
           console.log('assetId:', asset.id);
           return asset.id;
         }
+        return undefined;
       });
 
       return assetsIds;

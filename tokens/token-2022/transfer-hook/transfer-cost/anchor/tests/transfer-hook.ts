@@ -1,12 +1,8 @@
 import assert from 'node:assert';
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  ExtensionType,
-  NATIVE_MINT,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
   createApproveInstruction,
   createAssociatedTokenAccountInstruction,
   createInitializeMintInstruction,
@@ -14,6 +10,7 @@ import {
   createMintToInstruction,
   createSyncNativeInstruction,
   createTransferCheckedWithTransferHookInstruction,
+  ExtensionType,
   getAccount,
   getAssociatedTokenAddressSync,
   getExtraAccountMetaAddress,
@@ -22,8 +19,11 @@ import {
   getMintLen,
   getOrCreateAssociatedTokenAccount,
   getTransferHook,
+  NATIVE_MINT,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import type { TransferHook } from '../target/types/transfer_hook';
 
 describe('transfer-hook', () => {

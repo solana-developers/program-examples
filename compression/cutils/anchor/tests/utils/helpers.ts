@@ -24,7 +24,7 @@ export function loadPublicKeysFromFile(absPath = `${DEFAULT_KEY_DIR_NAME}/${DEFA
     }
 
     return data;
-  } catch (err) {
+  } catch (_err) {
     // console.warn("Unable to load local file");
   }
   // always return an object
@@ -49,7 +49,7 @@ export function saveDemoDataToFile(name: string, newData: any, absPath = `${DEFA
     });
 
     return data;
-  } catch (err) {
+  } catch (_err) {
     console.warn('Unable to save to file');
     // console.warn(err);
   }
@@ -84,7 +84,7 @@ export function savePublicKeyToFile(name: string, publicKey: PublicKey, absPath 
     data = loadPublicKeysFromFile(absPath);
 
     return data;
-  } catch (err) {
+  } catch (_err) {
     console.warn('Unable to save to file');
   }
   // always return an object

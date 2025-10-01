@@ -1,22 +1,24 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Keypair } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { TransferTokens } from '../target/types/transfer_tokens';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import BN from "bn.js";
+import { startAnchor } from "solana-bankrun";
+import IDL from "../target/idl/transfer_tokens.json";
+import type { TransferTokens } from "../target/types/transfer_tokens";
 
-const IDL = require('../target/idl/transfer_tokens.json');
 const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+const METADATA_PROGRAM_ID = new PublicKey(
+  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+);
 
-describe('Transfer Tokens Bankrun', async () => {
+describe("Transfer Tokens Bankrun", async () => {
   const context = await startAnchor(
-    '',
+    "",
     [
-      { name: 'transfer_tokens', programId: PROGRAM_ID },
-      { name: 'token_metadata', programId: METADATA_PROGRAM_ID },
+      { name: "transfer_tokens", programId: PROGRAM_ID },
+      { name: "token_metadata", programId: METADATA_PROGRAM_ID },
     ],
     [],
   );
@@ -26,9 +28,9 @@ describe('Transfer Tokens Bankrun', async () => {
   const program = new anchor.Program<TransferTokens>(IDL, provider);
 
   const metadata = {
-    name: 'Solana Gold',
-    symbol: 'GOLDSOL',
-    uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
+    name: "Solana Gold",
+    symbol: "GOLDSOL",
+    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
   };
 
   // Generate new keypair to use as address for mint account.
@@ -38,12 +40,18 @@ describe('Transfer Tokens Bankrun', async () => {
   const recipient = new Keypair();
 
   // Derive the associated token address account for the mint and payer.
-  const senderTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
+  const senderTokenAddress = getAssociatedTokenAddressSync(
+    mintKeypair.publicKey,
+    payer.publicKey,
+  );
 
   // Derive the associated token address account for the mint and recipient.
-  const recepientTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, recipient.publicKey);
+  const recepientTokenAddress = getAssociatedTokenAddressSync(
+    mintKeypair.publicKey,
+    recipient.publicKey,
+  );
 
-  it('Create an SPL Token!', async () => {
+  it("Create an SPL Token!", async () => {
     const transactionSignature = await program.methods
       .createToken(metadata.name, metadata.symbol, metadata.uri)
       .accounts({
@@ -53,14 +61,14 @@ describe('Transfer Tokens Bankrun', async () => {
       .signers([mintKeypair])
       .rpc();
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it('Mint tokens!', async () => {
+  it("Mint tokens!", async () => {
     // Amount of tokens to mint.
-    const amount = new anchor.BN(100);
+    const amount = new BN(100);
 
     // Mint the tokens to the associated token account.
     const transactionSignature = await program.methods
@@ -73,14 +81,14 @@ describe('Transfer Tokens Bankrun', async () => {
       })
       .rpc();
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Associated Token Account Address: ${senderTokenAddress}`);
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 
-  it('Transfer tokens!', async () => {
+  it("Transfer tokens!", async () => {
     // Amount of tokens to transfer.
-    const amount = new anchor.BN(50);
+    const amount = new BN(50);
 
     const transactionSignature = await program.methods
       .transferTokens(amount)
@@ -93,7 +101,7 @@ describe('Transfer Tokens Bankrun', async () => {
       })
       .rpc();
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Transaction Signature: ${transactionSignature}`);
   });
 });
