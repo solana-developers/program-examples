@@ -7,10 +7,18 @@
  */
 
 import {
+  type Account,
+  type Address,
   assertAccountExists,
   assertAccountsExist,
+  type Codec,
   combineCodec,
+  type Decoder,
   decodeAccount,
+  type EncodedAccount,
+  type Encoder,
+  type FetchAccountConfig,
+  type FetchAccountsConfig,
   fetchEncodedAccount,
   fetchEncodedAccounts,
   getAddressDecoder,
@@ -18,18 +26,10 @@ import {
   getStructDecoder,
   getStructEncoder,
   getU8Encoder,
-  type Account,
-  type Address,
-  type Codec,
-  type Decoder,
-  type EncodedAccount,
-  type Encoder,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
   type MaybeAccount,
   type MaybeEncodedAccount,
 } from '@solana/kit';
-import { WalletBlockSeeds, findWalletBlockPda } from '../pdas';
+import { findWalletBlockPda, WalletBlockSeeds } from '../pdas';
 
 export const WALLET_BLOCK_DISCRIMINATOR = 1;
 
@@ -53,25 +53,20 @@ export function getWalletBlockCodec(): Codec<WalletBlockArgs, WalletBlock> {
   return combineCodec(getWalletBlockEncoder(), getWalletBlockDecoder());
 }
 
+export function decodeWalletBlock<TAddress extends string = string>(encodedAccount: EncodedAccount<TAddress>): Account<WalletBlock, TAddress>;
 export function decodeWalletBlock<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
-): Account<WalletBlock, TAddress>;
-export function decodeWalletBlock<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
+  encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<WalletBlock, TAddress>;
 export function decodeWalletBlock<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<WalletBlock, TAddress> | MaybeAccount<WalletBlock, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getWalletBlockDecoder()
-  );
+  return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getWalletBlockDecoder());
 }
 
 export async function fetchWalletBlock<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<WalletBlock, TAddress>> {
   const maybeAccount = await fetchMaybeWalletBlock(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -81,7 +76,7 @@ export async function fetchWalletBlock<TAddress extends string = string>(
 export async function fetchMaybeWalletBlock<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<WalletBlock, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeWalletBlock(maybeAccount);
@@ -90,7 +85,7 @@ export async function fetchMaybeWalletBlock<TAddress extends string = string>(
 export async function fetchAllWalletBlock(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<WalletBlock>[]> {
   const maybeAccounts = await fetchAllMaybeWalletBlock(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -100,7 +95,7 @@ export async function fetchAllWalletBlock(
 export async function fetchAllMaybeWalletBlock(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<WalletBlock>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeWalletBlock(maybeAccount));
@@ -113,7 +108,7 @@ export function getWalletBlockSize(): number {
 export async function fetchWalletBlockFromSeeds(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   seeds: WalletBlockSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+  config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<Account<WalletBlock>> {
   const maybeAccount = await fetchMaybeWalletBlockFromSeeds(rpc, seeds, config);
   assertAccountExists(maybeAccount);
@@ -123,7 +118,7 @@ export async function fetchWalletBlockFromSeeds(
 export async function fetchMaybeWalletBlockFromSeeds(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   seeds: WalletBlockSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+  config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<MaybeAccount<WalletBlock>> {
   const { programAddress, ...fetchConfig } = config;
   const [address] = await findWalletBlockPda(seeds, { programAddress });

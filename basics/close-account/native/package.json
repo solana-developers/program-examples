@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "test": "pnpm ts-mocha -p ./tests/tsconfig.test.json -t 1000000 ./tests/close-account.test.ts",
     "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",

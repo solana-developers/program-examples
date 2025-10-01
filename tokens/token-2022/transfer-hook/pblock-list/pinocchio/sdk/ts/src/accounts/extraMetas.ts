@@ -7,22 +7,22 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  getStructDecoder,
-  getStructEncoder,
   type Account,
   type Address,
+  assertAccountExists,
+  assertAccountsExist,
   type Codec,
+  combineCodec,
   type Decoder,
+  decodeAccount,
   type EncodedAccount,
   type Encoder,
   type FetchAccountConfig,
   type FetchAccountsConfig,
+  fetchEncodedAccount,
+  fetchEncodedAccounts,
+  getStructDecoder,
+  getStructEncoder,
   type MaybeAccount,
   type MaybeEncodedAccount,
 } from '@solana/kit';
@@ -44,25 +44,18 @@ export function getExtraMetasCodec(): Codec<ExtraMetasArgs, ExtraMetas> {
   return combineCodec(getExtraMetasEncoder(), getExtraMetasDecoder());
 }
 
+export function decodeExtraMetas<TAddress extends string = string>(encodedAccount: EncodedAccount<TAddress>): Account<ExtraMetas, TAddress>;
+export function decodeExtraMetas<TAddress extends string = string>(encodedAccount: MaybeEncodedAccount<TAddress>): MaybeAccount<ExtraMetas, TAddress>;
 export function decodeExtraMetas<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>
-): Account<ExtraMetas, TAddress>;
-export function decodeExtraMetas<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>
-): MaybeAccount<ExtraMetas, TAddress>;
-export function decodeExtraMetas<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>
+  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<ExtraMetas, TAddress> | MaybeAccount<ExtraMetas, TAddress> {
-  return decodeAccount(
-    encodedAccount as MaybeEncodedAccount<TAddress>,
-    getExtraMetasDecoder()
-  );
+  return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getExtraMetasDecoder());
 }
 
 export async function fetchExtraMetas<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<Account<ExtraMetas, TAddress>> {
   const maybeAccount = await fetchMaybeExtraMetas(rpc, address, config);
   assertAccountExists(maybeAccount);
@@ -72,7 +65,7 @@ export async function fetchExtraMetas<TAddress extends string = string>(
 export async function fetchMaybeExtraMetas<TAddress extends string = string>(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   address: Address<TAddress>,
-  config?: FetchAccountConfig
+  config?: FetchAccountConfig,
 ): Promise<MaybeAccount<ExtraMetas, TAddress>> {
   const maybeAccount = await fetchEncodedAccount(rpc, address, config);
   return decodeExtraMetas(maybeAccount);
@@ -81,7 +74,7 @@ export async function fetchMaybeExtraMetas<TAddress extends string = string>(
 export async function fetchAllExtraMetas(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<Account<ExtraMetas>[]> {
   const maybeAccounts = await fetchAllMaybeExtraMetas(rpc, addresses, config);
   assertAccountsExist(maybeAccounts);
@@ -91,7 +84,7 @@ export async function fetchAllExtraMetas(
 export async function fetchAllMaybeExtraMetas(
   rpc: Parameters<typeof fetchEncodedAccounts>[0],
   addresses: Array<Address>,
-  config?: FetchAccountsConfig
+  config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<ExtraMetas>[]> {
   const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
   return maybeAccounts.map((maybeAccount) => decodeExtraMetas(maybeAccount));
@@ -100,7 +93,7 @@ export async function fetchAllMaybeExtraMetas(
 export async function fetchExtraMetasFromSeeds(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   seeds: ExtraMetasSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+  config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<Account<ExtraMetas>> {
   const maybeAccount = await fetchMaybeExtraMetasFromSeeds(rpc, seeds, config);
   assertAccountExists(maybeAccount);
@@ -110,7 +103,7 @@ export async function fetchExtraMetasFromSeeds(
 export async function fetchMaybeExtraMetasFromSeeds(
   rpc: Parameters<typeof fetchEncodedAccount>[0],
   seeds: ExtraMetasSeeds,
-  config: FetchAccountConfig & { programAddress?: Address } = {}
+  config: FetchAccountConfig & { programAddress?: Address } = {},
 ): Promise<MaybeAccount<ExtraMetas>> {
   const { programAddress, ...fetchConfig } = config;
   const [address] = await findExtraMetasPda(seeds, { programAddress });

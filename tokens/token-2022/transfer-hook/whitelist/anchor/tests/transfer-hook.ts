@@ -1,18 +1,18 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  ExtensionType,
-  TOKEN_2022_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createInitializeMintInstruction,
   createInitializeTransferHookInstruction,
   createMintToInstruction,
   createTransferCheckedWithTransferHookInstruction,
+  ExtensionType,
   getAssociatedTokenAddressSync,
   getMintLen,
+  TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token';
-import { Keypair, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import type { TransferHook } from '../target/types/transfer_hook';
 
 describe('transfer-hook', () => {

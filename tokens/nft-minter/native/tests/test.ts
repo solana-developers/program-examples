@@ -1,15 +1,15 @@
 import { Buffer } from 'node:buffer';
 import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   Connection,
   Keypair,
   PublicKey,
   SYSVAR_RENT_PUBKEY,
   SystemProgram,
+  sendAndConfirmTransaction,
   Transaction,
   TransactionInstruction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import { CreateTokenArgs, MintToArgs, NftMinterInstruction } from './instructions';
 

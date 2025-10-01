@@ -1,3 +1,6 @@
+#![allow(deprecated)]
+#![allow(unexpected_cfgs)]
+
 use anchor_lang::prelude::*;
 use anchor_spl::token_2022::spl_token_2022::extension::group_pointer::GroupPointer;
 use anchor_spl::token_interface::{

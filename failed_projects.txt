@@ -1,0 +1,5 @@
+./basics/cross-program-invocation/anchor: anchor test failed
+./basics/favorites/anchor: anchor build failed
+./basics/hello-solana/anchor: anchor build failed
+./basics/pda-rent-payer/anchor: anchor test failed
+./basics/program-derived-addresses/anchor: anchor build failed

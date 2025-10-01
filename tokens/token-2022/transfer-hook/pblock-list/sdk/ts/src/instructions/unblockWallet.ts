@@ -7,16 +7,15 @@
  */
 
 import {
+  type Address,
+  type Codec,
   combineCodec,
+  type Decoder,
+  type Encoder,
   getStructDecoder,
   getStructEncoder,
   getU8Decoder,
   getU8Encoder,
-  transformEncoder,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
   type IAccountMeta,
   type IAccountSignerMeta,
   type IInstruction,
@@ -24,6 +23,7 @@ import {
   type IInstructionWithData,
   type ReadonlyAccount,
   type TransactionSigner,
+  transformEncoder,
   type WritableAccount,
   type WritableSignerAccount,
 } from '@solana/kit';
@@ -42,27 +42,16 @@ export type UnblockWalletInstruction<
   TAccountAuthority extends string | IAccountMeta<string> = string,
   TAccountConfig extends string | IAccountMeta<string> = string,
   TAccountWalletBlock extends string | IAccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | IAccountMeta<string> = '11111111111111111111111111111111',
+  TAccountSystemProgram extends string | IAccountMeta<string> = '11111111111111111111111111111111',
   TRemainingAccounts extends readonly IAccountMeta<string>[] = [],
 > = IInstruction<TProgram> &
   IInstructionWithData<Uint8Array> &
   IInstructionWithAccounts<
     [
-      TAccountAuthority extends string
-        ? WritableSignerAccount<TAccountAuthority> &
-            IAccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountConfig extends string
-        ? WritableAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountWalletBlock extends string
-        ? WritableAccount<TAccountWalletBlock>
-        : TAccountWalletBlock,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
+      TAccountAuthority extends string ? WritableSignerAccount<TAccountAuthority> & IAccountSignerMeta<TAccountAuthority> : TAccountAuthority,
+      TAccountConfig extends string ? WritableAccount<TAccountConfig> : TAccountConfig,
+      TAccountWalletBlock extends string ? WritableAccount<TAccountWalletBlock> : TAccountWalletBlock,
+      TAccountSystemProgram extends string ? ReadonlyAccount<TAccountSystemProgram> : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
@@ -72,24 +61,15 @@ export type UnblockWalletInstructionData = { discriminator: number };
 export type UnblockWalletInstructionDataArgs = {};
 
 export function getUnblockWalletInstructionDataEncoder(): Encoder<UnblockWalletInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: 243 })
-  );
+  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), (value) => ({ ...value, discriminator: 243 }));
 }
 
 export function getUnblockWalletInstructionDataDecoder(): Decoder<UnblockWalletInstructionData> {
   return getStructDecoder([['discriminator', getU8Decoder()]]);
 }
 
-export function getUnblockWalletInstructionDataCodec(): Codec<
-  UnblockWalletInstructionDataArgs,
-  UnblockWalletInstructionData
-> {
-  return combineCodec(
-    getUnblockWalletInstructionDataEncoder(),
-    getUnblockWalletInstructionDataDecoder()
-  );
+export function getUnblockWalletInstructionDataCodec(): Codec<UnblockWalletInstructionDataArgs, UnblockWalletInstructionData> {
+  return combineCodec(getUnblockWalletInstructionDataEncoder(), getUnblockWalletInstructionDataDecoder());
 }
 
 export type UnblockWalletAsyncInput<
@@ -111,22 +91,9 @@ export async function getUnblockWalletInstructionAsync<
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof BLOCK_LIST_PROGRAM_ADDRESS,
 >(
-  input: UnblockWalletAsyncInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountWalletBlock,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress }
-): Promise<
-  UnblockWalletInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountWalletBlock,
-    TAccountSystemProgram
-  >
-> {
+  input: UnblockWalletAsyncInput<TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram>,
+  config?: { programAddress?: TProgramAddress },
+): Promise<UnblockWalletInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram>> {
   // Program address.
   const programAddress = config?.programAddress ?? BLOCK_LIST_PROGRAM_ADDRESS;
 
@@ -137,18 +104,14 @@ export async function getUnblockWalletInstructionAsync<
     walletBlock: { value: input.walletBlock ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Resolve default values.
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
@@ -161,13 +124,7 @@ export async function getUnblockWalletInstructionAsync<
     ],
     programAddress,
     data: getUnblockWalletInstructionDataEncoder().encode({}),
-  } as UnblockWalletInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountWalletBlock,
-    TAccountSystemProgram
-  >;
+  } as UnblockWalletInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram>;
 
   return instruction;
 }
@@ -191,20 +148,9 @@ export function getUnblockWalletInstruction<
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof BLOCK_LIST_PROGRAM_ADDRESS,
 >(
-  input: UnblockWalletInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountWalletBlock,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress }
-): UnblockWalletInstruction<
-  TProgramAddress,
-  TAccountAuthority,
-  TAccountConfig,
-  TAccountWalletBlock,
-  TAccountSystemProgram
-> {
+  input: UnblockWalletInput<TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram>,
+  config?: { programAddress?: TProgramAddress },
+): UnblockWalletInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram> {
   // Program address.
   const programAddress = config?.programAddress ?? BLOCK_LIST_PROGRAM_ADDRESS;
 
@@ -215,15 +161,11 @@ export function getUnblockWalletInstruction<
     walletBlock: { value: input.walletBlock ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Resolve default values.
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
@@ -236,13 +178,7 @@ export function getUnblockWalletInstruction<
     ],
     programAddress,
     data: getUnblockWalletInstructionDataEncoder().encode({}),
-  } as UnblockWalletInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountWalletBlock,
-    TAccountSystemProgram
-  >;
+  } as UnblockWalletInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountWalletBlock, TAccountSystemProgram>;
 
   return instruction;
 }
@@ -261,13 +197,8 @@ export type ParsedUnblockWalletInstruction<
   data: UnblockWalletInstructionData;
 };
 
-export function parseUnblockWalletInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly IAccountMeta[],
->(
-  instruction: IInstruction<TProgram> &
-    IInstructionWithAccounts<TAccountMetas> &
-    IInstructionWithData<Uint8Array>
+export function parseUnblockWalletInstruction<TProgram extends string, TAccountMetas extends readonly IAccountMeta[]>(
+  instruction: IInstruction<TProgram> & IInstructionWithAccounts<TAccountMetas> & IInstructionWithData<Uint8Array>,
 ): ParsedUnblockWalletInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 4) {
     // TODO: Coded error.
@@ -275,7 +206,7 @@ export function parseUnblockWalletInstruction<
   }
   let accountIndex = 0;
   const getNextAccount = () => {
-    const accountMeta = instruction.accounts![accountIndex]!;
+    const accountMeta = instruction.accounts?.[accountIndex]!;
     accountIndex += 1;
     return accountMeta;
   };

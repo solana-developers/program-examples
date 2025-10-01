@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",
     "@solana/spl-token": "^0.4.0"

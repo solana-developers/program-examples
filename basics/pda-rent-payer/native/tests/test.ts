@@ -1,12 +1,21 @@
-import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { Buffer } from "node:buffer";
+import { describe, test } from "node:test";
+import {
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import * as borsh from "borsh";
+import { start } from "solana-bankrun";
 
-describe('PDA Rent-Payer', async () => {
+describe("PDA Rent-Payer", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'pda_rent_payer_program', programId: PROGRAM_ID }], []);
+  const context = await start(
+    [{ name: "pda_rent_payer_program", programId: PROGRAM_ID }],
+    [],
+  );
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -18,10 +27,10 @@ describe('PDA Rent-Payer', async () => {
     }
   }
 
-  enum MyInstruction {
-    InitRentVault = 0,
-    CreateNewAccount = 1,
-  }
+  const MyInstruction = {
+    InitRentVault: 0,
+    CreateNewAccount: 1,
+  } as const;
 
   class InitRentVault extends Assignable {
     toBuffer() {
@@ -32,10 +41,10 @@ describe('PDA Rent-Payer', async () => {
     [
       InitRentVault,
       {
-        kind: 'struct',
+        kind: "struct",
         fields: [
-          ['instruction', 'u8'],
-          ['fund_lamports', 'u64'],
+          ["instruction", "u8"],
+          ["fund_lamports", "u64"],
         ],
       },
     ],
@@ -50,19 +59,22 @@ describe('PDA Rent-Payer', async () => {
     [
       CreateNewAccount,
       {
-        kind: 'struct',
-        fields: [['instruction', 'u8']],
+        kind: "struct",
+        fields: [["instruction", "u8"]],
       },
     ],
   ]);
 
   function deriveRentVaultPda() {
-    const pda = PublicKey.findProgramAddressSync([Buffer.from('rent_vault')], PROGRAM_ID);
+    const pda = PublicKey.findProgramAddressSync(
+      [Buffer.from("rent_vault")],
+      PROGRAM_ID,
+    );
     console.log(`PDA: ${pda[0].toBase58()}`);
     return pda;
   }
 
-  test('Initialize the Rent Vault', async () => {
+  test("Initialize the Rent Vault", async () => {
     const blockhash = context.lastBlockhash;
     const [rentVaultPda, _] = deriveRentVaultPda();
     const ix = new TransactionInstruction({
@@ -85,7 +97,7 @@ describe('PDA Rent-Payer', async () => {
     await client.processTransaction(tx);
   });
 
-  test('Create a new account using the Rent Vault', async () => {
+  test("Create a new account using the Rent Vault", async () => {
     const blockhash = context.lastBlockhash;
     const newAccount = Keypair.generate();
     const [rentVaultPda, _] = deriveRentVaultPda();

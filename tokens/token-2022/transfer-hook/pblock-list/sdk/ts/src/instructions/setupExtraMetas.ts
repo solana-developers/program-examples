@@ -7,18 +7,17 @@
  */
 
 import {
+  type Address,
+  type Codec,
   combineCodec,
+  type Decoder,
+  type Encoder,
   getBooleanDecoder,
   getBooleanEncoder,
   getStructDecoder,
   getStructEncoder,
   getU8Decoder,
   getU8Encoder,
-  transformEncoder,
-  type Address,
-  type Codec,
-  type Decoder,
-  type Encoder,
   type IAccountMeta,
   type IAccountSignerMeta,
   type IInstruction,
@@ -26,6 +25,7 @@ import {
   type IInstructionWithData,
   type ReadonlyAccount,
   type TransactionSigner,
+  transformEncoder,
   type WritableAccount,
   type WritableSignerAccount,
 } from '@solana/kit';
@@ -45,30 +45,17 @@ export type SetupExtraMetasInstruction<
   TAccountConfig extends string | IAccountMeta<string> = string,
   TAccountMint extends string | IAccountMeta<string> = string,
   TAccountExtraMetas extends string | IAccountMeta<string> = string,
-  TAccountSystemProgram extends
-    | string
-    | IAccountMeta<string> = '11111111111111111111111111111111',
+  TAccountSystemProgram extends string | IAccountMeta<string> = '11111111111111111111111111111111',
   TRemainingAccounts extends readonly IAccountMeta<string>[] = [],
 > = IInstruction<TProgram> &
   IInstructionWithData<Uint8Array> &
   IInstructionWithAccounts<
     [
-      TAccountAuthority extends string
-        ? WritableSignerAccount<TAccountAuthority> &
-            IAccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountConfig extends string
-        ? ReadonlyAccount<TAccountConfig>
-        : TAccountConfig,
-      TAccountMint extends string
-        ? ReadonlyAccount<TAccountMint>
-        : TAccountMint,
-      TAccountExtraMetas extends string
-        ? WritableAccount<TAccountExtraMetas>
-        : TAccountExtraMetas,
-      TAccountSystemProgram extends string
-        ? ReadonlyAccount<TAccountSystemProgram>
-        : TAccountSystemProgram,
+      TAccountAuthority extends string ? WritableSignerAccount<TAccountAuthority> & IAccountSignerMeta<TAccountAuthority> : TAccountAuthority,
+      TAccountConfig extends string ? ReadonlyAccount<TAccountConfig> : TAccountConfig,
+      TAccountMint extends string ? ReadonlyAccount<TAccountMint> : TAccountMint,
+      TAccountExtraMetas extends string ? WritableAccount<TAccountExtraMetas> : TAccountExtraMetas,
+      TAccountSystemProgram extends string ? ReadonlyAccount<TAccountSystemProgram> : TAccountSystemProgram,
       ...TRemainingAccounts,
     ]
   >;
@@ -90,7 +77,7 @@ export function getSetupExtraMetasInstructionDataEncoder(): Encoder<SetupExtraMe
       ...value,
       discriminator: 106,
       checkBothWallets: value.checkBothWallets ?? false,
-    })
+    }),
   );
 }
 
@@ -101,14 +88,8 @@ export function getSetupExtraMetasInstructionDataDecoder(): Decoder<SetupExtraMe
   ]);
 }
 
-export function getSetupExtraMetasInstructionDataCodec(): Codec<
-  SetupExtraMetasInstructionDataArgs,
-  SetupExtraMetasInstructionData
-> {
-  return combineCodec(
-    getSetupExtraMetasInstructionDataEncoder(),
-    getSetupExtraMetasInstructionDataDecoder()
-  );
+export function getSetupExtraMetasInstructionDataCodec(): Codec<SetupExtraMetasInstructionDataArgs, SetupExtraMetasInstructionData> {
+  return combineCodec(getSetupExtraMetasInstructionDataEncoder(), getSetupExtraMetasInstructionDataDecoder());
 }
 
 export type SetupExtraMetasAsyncInput<
@@ -134,24 +115,9 @@ export async function getSetupExtraMetasInstructionAsync<
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof BLOCK_LIST_PROGRAM_ADDRESS,
 >(
-  input: SetupExtraMetasAsyncInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountMint,
-    TAccountExtraMetas,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress }
-): Promise<
-  SetupExtraMetasInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountMint,
-    TAccountExtraMetas,
-    TAccountSystemProgram
-  >
-> {
+  input: SetupExtraMetasAsyncInput<TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram>,
+  config?: { programAddress?: TProgramAddress },
+): Promise<SetupExtraMetasInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram>> {
   // Program address.
   const programAddress = config?.programAddress ?? BLOCK_LIST_PROGRAM_ADDRESS;
 
@@ -163,10 +129,7 @@ export async function getSetupExtraMetasInstructionAsync<
     extraMetas: { value: input.extraMetas ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Original args.
   const args = { ...input };
@@ -179,8 +142,7 @@ export async function getSetupExtraMetasInstructionAsync<
     accounts.extraMetas.value = await findExtraMetasPda();
   }
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
@@ -193,17 +155,8 @@ export async function getSetupExtraMetasInstructionAsync<
       getAccountMeta(accounts.systemProgram),
     ],
     programAddress,
-    data: getSetupExtraMetasInstructionDataEncoder().encode(
-      args as SetupExtraMetasInstructionDataArgs
-    ),
-  } as SetupExtraMetasInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountMint,
-    TAccountExtraMetas,
-    TAccountSystemProgram
-  >;
+    data: getSetupExtraMetasInstructionDataEncoder().encode(args as SetupExtraMetasInstructionDataArgs),
+  } as SetupExtraMetasInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram>;
 
   return instruction;
 }
@@ -231,22 +184,9 @@ export function getSetupExtraMetasInstruction<
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof BLOCK_LIST_PROGRAM_ADDRESS,
 >(
-  input: SetupExtraMetasInput<
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountMint,
-    TAccountExtraMetas,
-    TAccountSystemProgram
-  >,
-  config?: { programAddress?: TProgramAddress }
-): SetupExtraMetasInstruction<
-  TProgramAddress,
-  TAccountAuthority,
-  TAccountConfig,
-  TAccountMint,
-  TAccountExtraMetas,
-  TAccountSystemProgram
-> {
+  input: SetupExtraMetasInput<TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram>,
+  config?: { programAddress?: TProgramAddress },
+): SetupExtraMetasInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram> {
   // Program address.
   const programAddress = config?.programAddress ?? BLOCK_LIST_PROGRAM_ADDRESS;
 
@@ -258,18 +198,14 @@ export function getSetupExtraMetasInstruction<
     extraMetas: { value: input.extraMetas ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Original args.
   const args = { ...input };
 
   // Resolve default values.
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value =
-      '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
   }
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
@@ -282,17 +218,8 @@ export function getSetupExtraMetasInstruction<
       getAccountMeta(accounts.systemProgram),
     ],
     programAddress,
-    data: getSetupExtraMetasInstructionDataEncoder().encode(
-      args as SetupExtraMetasInstructionDataArgs
-    ),
-  } as SetupExtraMetasInstruction<
-    TProgramAddress,
-    TAccountAuthority,
-    TAccountConfig,
-    TAccountMint,
-    TAccountExtraMetas,
-    TAccountSystemProgram
-  >;
+    data: getSetupExtraMetasInstructionDataEncoder().encode(args as SetupExtraMetasInstructionDataArgs),
+  } as SetupExtraMetasInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountMint, TAccountExtraMetas, TAccountSystemProgram>;
 
   return instruction;
 }
@@ -312,13 +239,8 @@ export type ParsedSetupExtraMetasInstruction<
   data: SetupExtraMetasInstructionData;
 };
 
-export function parseSetupExtraMetasInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly IAccountMeta[],
->(
-  instruction: IInstruction<TProgram> &
-    IInstructionWithAccounts<TAccountMetas> &
-    IInstructionWithData<Uint8Array>
+export function parseSetupExtraMetasInstruction<TProgram extends string, TAccountMetas extends readonly IAccountMeta[]>(
+  instruction: IInstruction<TProgram> & IInstructionWithAccounts<TAccountMetas> & IInstructionWithData<Uint8Array>,
 ): ParsedSetupExtraMetasInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 5) {
     // TODO: Coded error.
@@ -326,7 +248,7 @@ export function parseSetupExtraMetasInstruction<
   }
   let accountIndex = 0;
   const getNextAccount = () => {
-    const accountMeta = instruction.accounts![accountIndex]!;
+    const accountMeta = instruction.accounts?.[accountIndex]!;
     accountIndex += 1;
     return accountMeta;
   };

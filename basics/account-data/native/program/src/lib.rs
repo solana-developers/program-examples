@@ -1,3 +1,5 @@
+#![allow(unexpected_cfgs)]
+
 use solana_program::entrypoint;
 
 use processor::process_instruction;

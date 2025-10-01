@@ -46,7 +46,7 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  async getAssetsByCreator(assetId: string, sortBy: any, limit: number, page: number, before: string, after: string): Promise<any> {
+  async getAssetsByCreator(assetId: string, sortBy: any, limit: number, page: number, _before: string, _after: string): Promise<any> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
         jsonrpc: '2.0',

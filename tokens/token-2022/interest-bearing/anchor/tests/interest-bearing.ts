@@ -1,6 +1,6 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import { TOKEN_2022_PROGRAM_ID, amountToUiAmount } from '@solana/spl-token';
+import * as anchor from '@coral-xyz/anchor';
+import { amountToUiAmount, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { InterestBearing } from '../target/types/interest_bearing';
 
 describe('interest-bearing', () => {

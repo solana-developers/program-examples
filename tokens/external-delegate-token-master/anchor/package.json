@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "external-delegate-token-master",
   "version": "1.0.0",
   "license": "MIT",

@@ -1,17 +1,16 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_2022_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createMintToInstruction,
   createTransferCheckedWithTransferHookInstruction,
   getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token';
-import { Keypair, SendTransactionError, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, SendTransactionError, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { BN } from 'bn.js';
-import { expect } from 'chai';
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type { TransferHook } from '../target/types/transfer_hook';
 

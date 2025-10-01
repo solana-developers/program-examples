@@ -20,4 +20,3 @@ idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
 anchor-spl = { version = "0.31.1", features = ["metadata"] }
 sha3 = "0.10.8"
-solana-program = "2.2.1"
