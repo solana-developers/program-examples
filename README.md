@@ -280,3 +280,4 @@ Use a data source for offchain data (called an Oracle) to perform activities onc
 
 ---
 - Yeni örnek eklendi: Token Transferi
+- Yeni örnek eklendi: Token Transferi
