@@ -4,7 +4,6 @@ use solana_program::{
     entrypoint::ProgramResult,
     program::invoke,
     rent::Rent,
-    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -23,12 +22,12 @@ pub fn reallocate_without_zero_init(
     let enhanced_address_info_data =
         EnhancedAddressInfo::from_address_info(address_info_data, args.state, args.zip);
 
-    let account_span = (enhanced_address_info_data.try_to_vec()?).len();
+    let account_span = borsh::to_vec(&enhanced_address_info_data)?.len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     let diff = lamports_required - target_account.lamports();
     invoke(
-        &system_instruction::transfer(payer.key, target_account.key, diff),
+        &solana_system_interface::instruction::transfer(payer.key, target_account.key, diff),
         &[
             payer.clone(),
             target_account.clone(),
@@ -36,7 +35,7 @@ pub fn reallocate_without_zero_init(
         ],
     )?;
 
-    target_account.realloc(account_span, false)?;
+    target_account.resize(account_span)?;
 
     enhanced_address_info_data.serialize(&mut &mut target_account.data.borrow_mut()[..])?;
 
@@ -47,9 +46,9 @@ pub fn reallocate_zero_init(accounts: &[AccountInfo], data: WorkInfo) -> Program
     let accounts_iter = &mut accounts.iter();
     let target_account = next_account_info(accounts_iter)?;
 
-    let account_span = (data.try_to_vec()?).len();
+    let account_span = borsh::to_vec(&data)?.len();
 
-    target_account.realloc(account_span, true)?;
+    target_account.resize(account_span)?;
 
     data.serialize(&mut &mut target_account.data.borrow_mut()[..])?;
 

@@ -1,3 +1,4 @@
+#![allow(unexpected_cfgs)]
 use borsh::BorshDeserialize;
 use cross_program_invocatio_native_lever::SetPowerStatus;
 use solana_program::{
