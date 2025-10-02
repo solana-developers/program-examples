@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-solana-program = "3.0"
+solana-program.workspace = true
+solana-system-interface.workspace = true
 
 [lib]
 crate-type = ["cdylib", "lib"]

@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-borsh = "1.5.7"
-borsh-derive = "1.5.7"
-solana-program = "3.0"
+borsh.workspace = true
+borsh-derive.workspace = true
+solana-program.workspace = true
 
 [lib]
 crate-type = ["cdylib", "lib"]

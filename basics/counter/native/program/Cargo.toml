@@ -12,6 +12,6 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-borsh = "1.5.7"
-borsh-derive = "1.5.7"
-solana-program = "3.0"
+borsh.workspace = true
+borsh-derive.workspace = true
+solana-program.workspace = true
