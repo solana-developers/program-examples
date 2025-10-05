@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
 import { start } from 'solana-bankrun';
 

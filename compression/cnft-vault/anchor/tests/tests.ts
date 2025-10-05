@@ -2,9 +2,9 @@ import * as anchor from '@coral-xyz/anchor';
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
 import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
 import type { AccountMeta } from '@solana/web3.js';
-import { type CnftVault, IDL } from '../target/types/cnft_vault';
+import { type CnftVault } from '../target/types/cnft_vault';
 import { getAsset, getAssetProof } from './readAPI';
-import { decode, loadWalletKey, mapProof } from './utils';
+import { decode, mapProof } from './utils';
 
 describe('cNFT Vault', () => {
   const provider = anchor.AnchorProvider.env();

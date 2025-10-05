@@ -1,5 +1,5 @@
-import { ASSOCIATED_TOKEN_PROGRAM_ID, AccountLayout, MintLayout, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Connection, Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { AccountLayout, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, MintLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
@@ -48,8 +48,8 @@ describe('Token Swap Program: Create and withdraw all liquidity', () => {
   let depositorAccountLp: PublicKey;
   let depositorAccountA: PublicKey;
   let depositorAccountB: PublicKey;
-  let traderAccountA: PublicKey;
-  let traderAccountB: PublicKey;
+  let _traderAccountA: PublicKey;
+  let _traderAccountB: PublicKey;
 
   const MINIMUM_LIQUIDITY = 100;
 
@@ -71,9 +71,9 @@ describe('Token Swap Program: Create and withdraw all liquidity', () => {
 
     depositorAccountB = getAssociatedTokenAddressSync(mint_b.publicKey, payer.publicKey, false);
 
-    traderAccountA = getAssociatedTokenAddressSync(mint_a.publicKey, trader.publicKey, false);
+    _traderAccountA = getAssociatedTokenAddressSync(mint_a.publicKey, trader.publicKey, false);
 
-    traderAccountB = getAssociatedTokenAddressSync(mint_b.publicKey, trader.publicKey, false);
+    _traderAccountB = getAssociatedTokenAddressSync(mint_b.publicKey, trader.publicKey, false);
 
     await mintTo(context, payer, payer.publicKey, mint_a.publicKey);
     await mintTo(context, payer, payer.publicKey, mint_b.publicKey);

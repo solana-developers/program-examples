@@ -1,22 +1,19 @@
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
   AccountLayout,
-  ExtensionType,
-  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createInitializeMintInstruction,
   createInitializeTransferHookInstruction,
   createMintToInstruction,
   createTransferCheckedWithTransferHookInstruction,
+  ExtensionType,
   getAssociatedTokenAddressSync,
   getMintLen,
+  TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token';
-import { PublicKey } from '@solana/web3.js';
-import { Keypair, SystemProgram } from '@solana/web3.js';
-import { Transaction } from '@solana/web3.js';
-import { TransactionInstruction } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
@@ -38,7 +35,7 @@ describe('Transfer switch', async () => {
   const context = await startAnchor('', [{ name: 'transfer_switch', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
 
-  const wallet = provider.wallet as anchor.Wallet;
+  const _wallet = provider.wallet as anchor.Wallet;
   const program = new anchor.Program<TransferSwitch>(IDL, provider);
   const connection = provider.connection;
 
@@ -236,7 +233,7 @@ describe('Transfer switch', async () => {
     const amount = 1 * 10 ** decimals;
     const bigIntAmount = BigInt(amount);
 
-    const [recipient, recipientTokenAccount, recipientTokenAccountCreateIx] = newUser();
+    const [_recipient, recipientTokenAccount, recipientTokenAccountCreateIx] = newUser();
 
     // Standard token transfer instruction
     const transferInstruction = await createTransferCheckedWithTransferHookInstruction(

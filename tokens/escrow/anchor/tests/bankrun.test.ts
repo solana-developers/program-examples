@@ -1,24 +1,23 @@
 import { randomBytes } from 'node:crypto';
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { BN, type Program } from '@coral-xyz/anchor';
+import { BN } from '@coral-xyz/anchor';
 import {
-  MINT_SIZE,
-  TOKEN_2022_PROGRAM_ID,
-  type TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountIdempotentInstruction,
   createInitializeMint2Instruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
+  MINT_SIZE,
+  TOKEN_2022_PROGRAM_ID,
+  type TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
+import { confirmTransaction, makeKeypairs } from '@solana-developers/helpers';
 import { BankrunProvider } from 'anchor-bankrun';
 import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import type { Escrow } from '../target/types/escrow';
-
-import { confirmTransaction, makeKeypairs } from '@solana-developers/helpers';
 
 const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;
 const IDL = require('../target/idl/escrow.json');

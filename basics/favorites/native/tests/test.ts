@@ -3,7 +3,7 @@ import { BN } from 'bn.js';
 import * as borsh from 'borsh';
 import { assert, expect } from 'chai';
 import { describe, test } from 'mocha';
-import { BanksClient, ProgramTestContext, Rent, start } from 'solana-bankrun';
+import { BanksClient, ProgramTestContext, start } from 'solana-bankrun';
 
 // This is a helper class to assign properties to the class
 class Assignable {
@@ -147,7 +147,7 @@ describe('Favorites Solana Native', () => {
     try {
       await client.processTransaction(tx);
       console.error('Expected the test to fail');
-    } catch (err) {
+    } catch (_err) {
       assert(true);
     }
   });

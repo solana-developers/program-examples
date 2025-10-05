@@ -1,8 +1,7 @@
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
 import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Keypair } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { TransferTokens } from '../target/types/transfer_tokens';

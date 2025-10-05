@@ -1,7 +1,6 @@
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { Keypair } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { CreateToken } from '../target/types/create_token';

@@ -1,10 +1,10 @@
 import {
-  MINT_SIZE,
-  TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
   createInitializeMint2Instruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
+  MINT_SIZE,
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import * as borsh from 'borsh';

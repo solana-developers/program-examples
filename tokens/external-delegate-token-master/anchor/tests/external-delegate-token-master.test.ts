@@ -1,4 +1,4 @@
-import { TOKEN_PROGRAM_ID, createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { expect } from 'chai';
 import { start } from 'solana-bankrun';
@@ -19,14 +19,14 @@ async function retryWithBackoff(fn: () => Promise<any>, retries = 5, delay = 500
 
 describe('External Delegate Token Master Tests', () => {
   let context: any;
-  let program: any;
+  let _program: any;
   let authority: Keypair;
   let userAccount: Keypair;
   let mint: PublicKey;
   let userTokenAccount: PublicKey;
-  let recipientTokenAccount: PublicKey;
-  let userPda: PublicKey;
-  let bumpSeed: number;
+  let _recipientTokenAccount: PublicKey;
+  let _userPda: PublicKey;
+  let _bumpSeed: number;
 
   beforeEach(async () => {
     authority = Keypair.generate();
@@ -61,13 +61,13 @@ describe('External Delegate Token Master Tests', () => {
     const recipientTokenAccountInfo = await retryWithBackoff(
       async () => await getOrCreateAssociatedTokenAccount(connection, authority, mint, Keypair.generate().publicKey),
     );
-    recipientTokenAccount = recipientTokenAccountInfo.address;
+    _recipientTokenAccount = recipientTokenAccountInfo.address;
 
     // Mint tokens to the user's account
     await retryWithBackoff(async () => await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000));
 
     // Find program-derived address (PDA)
-    [userPda, bumpSeed] = await retryWithBackoff(
+    [_userPda, _bumpSeed] = await retryWithBackoff(
       async () => await PublicKey.findProgramAddress([userAccount.publicKey.toBuffer()], context.program.programId),
     );
   });

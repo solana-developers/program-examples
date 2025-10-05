@@ -1,8 +1,8 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import type { SwapExample } from '../target/types/swap_example';
-import { type TestValues, createValues, expectRevert, mintingTokens } from './utils';
+import { createValues, expectRevert, mintingTokens, type TestValues } from './utils';
 
 describe('Create pool', () => {
   const provider = anchor.AnchorProvider.env();

@@ -12,7 +12,7 @@ describe('custom-instruction-data', async () => {
   const context = await startAnchor('', [{ name: 'processing_instructions', programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
 
-  const payer = provider.wallet as anchor.Wallet;
+  const _payer = provider.wallet as anchor.Wallet;
   const program = new anchor.Program<ProcessingInstructions>(IDL, provider);
 
   it('Go to the park!', async () => {

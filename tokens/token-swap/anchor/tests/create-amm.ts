@@ -1,12 +1,12 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { expect } from 'chai';
 import type { SwapExample } from '../target/types/swap_example';
-import { type TestValues, createValues, expectRevert } from './utils';
+import { createValues, expectRevert, type TestValues } from './utils';
 
 describe('Create AMM', () => {
   const provider = anchor.AnchorProvider.env();
-  const connection = provider.connection;
+  const _connection = provider.connection;
   anchor.setProvider(provider);
 
   const program = anchor.workspace.SwapExample as Program<SwapExample>;

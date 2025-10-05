@@ -1,7 +1,6 @@
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { Keypair, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { AnchorProgramExample } from '../target/types/anchor_program_example';

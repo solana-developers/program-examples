@@ -13,20 +13,18 @@ export function getDepsCount(files: string[] = []): Record<string, Record<string
 
     const merged = { ...deps, ...devDeps };
 
-    Object.keys(merged)
-      .sort()
-      .map((pkg) => {
-        const pkgVersion = merged[pkg];
-        if (!depsCounter[pkg]) {
-          depsCounter[pkg] = { [pkgVersion]: [file] };
-          return;
-        }
-        if (!depsCounter[pkg][pkgVersion]) {
-          depsCounter[pkg][pkgVersion] = [file];
-          return;
-        }
-        depsCounter[pkg][pkgVersion] = [...depsCounter[pkg][pkgVersion], file];
-      });
+    for (const pkg of Object.keys(merged).sort()) {
+      const pkgVersion = merged[pkg];
+      if (!depsCounter[pkg]) {
+        depsCounter[pkg] = { [pkgVersion]: [file] };
+        continue;
+      }
+      if (!depsCounter[pkg][pkgVersion]) {
+        depsCounter[pkg][pkgVersion] = [file];
+        continue;
+      }
+      depsCounter[pkg][pkgVersion] = [...depsCounter[pkg][pkgVersion], file];
+    }
   }
   return depsCounter;
 }

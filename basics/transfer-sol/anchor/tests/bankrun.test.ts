@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import * as anchor from '@coral-xyz/anchor';
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { TransferSol } from '../target/types/transfer_sol';

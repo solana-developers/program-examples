@@ -1,5 +1,5 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import type { Hand } from '../target/types/hand';
 import type { Lever } from '../target/types/lever';
 
