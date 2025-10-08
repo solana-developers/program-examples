@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
     "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
@@ -17,6 +18,5 @@
     "solana-bankrun": "^0.3.0",
     "ts-mocha": "^10.0.0",
     "typescript": "^4.3.5"
-  },
-  "type": "module"
+  }
 }
