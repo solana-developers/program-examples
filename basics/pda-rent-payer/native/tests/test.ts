@@ -18,10 +18,10 @@ describe('PDA Rent-Payer', async () => {
     }
   }
 
-  enum MyInstruction {
-    InitRentVault = 0,
-    CreateNewAccount = 1,
-  }
+  const MyInstruction = {
+    InitRentVault: 0,
+    CreateNewAccount: 1,
+  } as const;
 
   class InitRentVault extends Assignable {
     toBuffer() {
