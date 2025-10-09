@@ -1,5 +1,5 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createMint,
@@ -7,17 +7,21 @@ import {
   getOrCreateAssociatedTokenAccount,
   mintTo,
   TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { Fundraiser } from '../target/types/fundraiser';
+} from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { startAnchor } from "solana-bankrun";
+import type { Fundraiser } from "../target/types/fundraiser";
 
-import { IDL } from "../target/idl/fundraiser.json";
+import IDL from "../target/idl/fundraiser.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('fundraiser bankrun', async () => {
-  const context = await startAnchor('', [{ name: 'fundraiser', programId: PROGRAM_ID }], []);
+describe("fundraiser bankrun", async () => {
+  const context = await startAnchor(
+    "",
+    [{ name: "fundraiser", programId: PROGRAM_ID }],
+    [],
+  );
   const provider = new BankrunProvider(context);
   anchor.setProvider(provider);
   const wallet = provider.wallet as anchor.Wallet;
@@ -31,10 +35,17 @@ describe('fundraiser bankrun', async () => {
 
   let makerATA: anchor.web3.PublicKey;
 
-  const fundraiser = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('fundraiser'), maker.publicKey.toBuffer()], program.programId)[0];
+  const fundraiser = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("fundraiser"), maker.publicKey.toBuffer()],
+    program.programId,
+  )[0];
 
   const contributor = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from('contributor'), fundraiser.toBuffer(), provider.publicKey.toBuffer()],
+    [
+      Buffer.from("contributor"),
+      fundraiser.toBuffer(),
+      provider.publicKey.toBuffer(),
+    ],
     program.programId,
   )[0];
 
@@ -47,22 +58,51 @@ describe('fundraiser bankrun', async () => {
     return signature;
   };
 
-  it('Test Preparation', async () => {
-    const airdrop = await provider.connection.requestAirdrop(maker.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL).then(confirm);
-    console.log('\nAirdropped 1 SOL to maker', airdrop);
+  it("Test Preparation", async () => {
+    const airdrop = await provider.connection
+      .requestAirdrop(maker.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL)
+      .then(confirm);
+    console.log("\nAirdropped 1 SOL to maker", airdrop);
 
-    mint = await createMint(provider.connection, wallet.payer, provider.publicKey, provider.publicKey, 6);
-    console.log('Mint created', mint.toBase58());
+    mint = await createMint(
+      provider.connection,
+      wallet.payer,
+      provider.publicKey,
+      provider.publicKey,
+      6,
+    );
+    console.log("Mint created", mint.toBase58());
 
-    contributorATA = (await getOrCreateAssociatedTokenAccount(provider.connection, wallet.payer, mint, wallet.publicKey)).address;
+    contributorATA = (
+      await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        wallet.payer,
+        mint,
+        wallet.publicKey,
+      )
+    ).address;
 
-    makerATA = (await getOrCreateAssociatedTokenAccount(provider.connection, wallet.payer, mint, maker.publicKey)).address;
+    makerATA = (
+      await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        wallet.payer,
+        mint,
+        maker.publicKey,
+      )
+    ).address;
 
-    const mintTx = await mintTo(provider.connection, wallet.payer, mint, contributorATA, provider.publicKey, 1_000_000_0);
-    console.log('Minted 10 tokens to contributor', mintTx);
+    const mintTx = await mintTo(
+      provider.connection,
+      wallet.payer,
+      mint,
+      contributorATA,
+      provider.publicKey,
+      1_000_000_0,
+    );
+    console.log("Minted 10 tokens to contributor", mintTx);
   });
 
-  it('Initialize Fundaraiser', async () => {
+  it("Initialize Fundaraiser", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program.methods
@@ -80,11 +120,11 @@ describe('fundraiser bankrun', async () => {
       .rpc()
       .then(confirm);
 
-    console.log('\nInitialized fundraiser Account');
-    console.log('Your transaction signature', tx);
+    console.log("\nInitialized fundraiser Account");
+    console.log("Your transaction signature", tx);
   });
 
-  it('Contribute to Fundraiser', async () => {
+  it("Contribute to Fundraiser", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program.methods
@@ -100,14 +140,18 @@ describe('fundraiser bankrun', async () => {
       .rpc()
       .then(confirm);
 
-    console.log('\nContributed to fundraiser', tx);
-    console.log('Your transaction signature', tx);
-    console.log('Vault balance', (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    console.log("\nContributed to fundraiser", tx);
+    console.log("Your transaction signature", tx);
+    console.log(
+      "Vault balance",
+      (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+    );
 
-    const contributorAccount = await program.account.contributor.fetch(contributor);
-    console.log('Contributor balance', contributorAccount.amount.toString());
+    const contributorAccount =
+      await program.account.contributor.fetch(contributor);
+    console.log("Contributor balance", contributorAccount.amount.toString());
   });
-  it('Contribute to Fundraiser', async () => {
+  it("Contribute to Fundraiser", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program.methods
@@ -123,15 +167,19 @@ describe('fundraiser bankrun', async () => {
       .rpc()
       .then(confirm);
 
-    console.log('\nContributed to fundraiser', tx);
-    console.log('Your transaction signature', tx);
-    console.log('Vault balance', (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    console.log("\nContributed to fundraiser", tx);
+    console.log("Your transaction signature", tx);
+    console.log(
+      "Vault balance",
+      (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+    );
 
-    const contributorAccount = await program.account.contributor.fetch(contributor);
-    console.log('Contributor balance', contributorAccount.amount.toString());
+    const contributorAccount =
+      await program.account.contributor.fetch(contributor);
+    console.log("Contributor balance", contributorAccount.amount.toString());
   });
 
-  it('Contribute to Fundraiser - Robustness Test', async () => {
+  it("Contribute to Fundraiser - Robustness Test", async () => {
     try {
       const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
@@ -148,16 +196,19 @@ describe('fundraiser bankrun', async () => {
         .rpc()
         .then(confirm);
 
-      console.log('\nContributed to fundraiser', tx);
-      console.log('Your transaction signature', tx);
-      console.log('Vault balance', (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+      console.log("\nContributed to fundraiser", tx);
+      console.log("Your transaction signature", tx);
+      console.log(
+        "Vault balance",
+        (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+      );
     } catch (error) {
-      console.log('\nError contributing to fundraiser');
+      console.log("\nError contributing to fundraiser");
       console.log(error.msg);
     }
   });
 
-  it('Check contributions - Robustness Test', async () => {
+  it("Check contributions - Robustness Test", async () => {
     try {
       const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
@@ -175,20 +226,24 @@ describe('fundraiser bankrun', async () => {
         .rpc()
         .then(confirm);
 
-      console.log('\nChecked contributions');
-      console.log('Your transaction signature', tx);
-      console.log('Vault balance', (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+      console.log("\nChecked contributions");
+      console.log("Your transaction signature", tx);
+      console.log(
+        "Vault balance",
+        (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+      );
     } catch (error) {
-      console.log('\nError checking contributions');
+      console.log("\nError checking contributions");
       console.log(error.msg);
     }
   });
 
-  it('Refund Contributions', async () => {
+  it("Refund Contributions", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const contributorAccount = await program.account.contributor.fetch(contributor);
-    console.log('\nContributor balance', contributorAccount.amount.toString());
+    const contributorAccount =
+      await program.account.contributor.fetch(contributor);
+    console.log("\nContributor balance", contributorAccount.amount.toString());
 
     const tx = await program.methods
       .refund()
@@ -206,8 +261,11 @@ describe('fundraiser bankrun', async () => {
       .rpc()
       .then(confirm);
 
-    console.log('\nRefunded contributions', tx);
-    console.log('Your transaction signature', tx);
-    console.log('Vault balance', (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    console.log("\nRefunded contributions", tx);
+    console.log("Your transaction signature", tx);
+    console.log(
+      "Vault balance",
+      (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+    );
   });
 });

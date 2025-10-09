@@ -1,15 +1,19 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { AnchorProgramExample } from '../target/types/anchor_program_example';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import { PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { startAnchor } from "solana-bankrun";
+import type { AnchorProgramExample } from "../target/types/anchor_program_example";
 
-import { IDL } from "../target/idl/anchor_program_example.json";
+import IDL from "../target/idl/anchor_program_example.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('PDAs', async () => {
-  const context = await startAnchor('', [{ name: 'anchor_program_example', programId: PROGRAM_ID }], []);
+describe("PDAs", async () => {
+  const context = await startAnchor(
+    "",
+    [{ name: "anchor_program_example", programId: PROGRAM_ID }],
+    [],
+  );
   const provider = new BankrunProvider(context);
   const _client = context.banksClient;
 
@@ -17,9 +21,12 @@ describe('PDAs', async () => {
   const program = new anchor.Program<AnchorProgramExample>(IDL, provider);
 
   // PDA for the page visits account
-  const [pageVisitPDA] = PublicKey.findProgramAddressSync([Buffer.from('page_visits'), payer.publicKey.toBuffer()], program.programId);
+  const [pageVisitPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from("page_visits"), payer.publicKey.toBuffer()],
+    program.programId,
+  );
 
-  it('Create the page visits tracking PDA', async () => {
+  it("Create the page visits tracking PDA", async () => {
     await program.methods
       .createPageVisits()
       .accounts({
@@ -28,7 +35,7 @@ describe('PDAs', async () => {
       .rpc();
   });
 
-  it('Visit the page!', async () => {
+  it("Visit the page!", async () => {
     await program.methods
       .incrementPageVisits()
       .accounts({
@@ -37,7 +44,7 @@ describe('PDAs', async () => {
       .rpc();
   });
 
-  it('Visit the page!', async () => {
+  it("Visit the page!", async () => {
     await program.methods
       .incrementPageVisits()
       .accounts({
@@ -46,7 +53,7 @@ describe('PDAs', async () => {
       .rpc();
   });
 
-  it('View page visits', async () => {
+  it("View page visits", async () => {
     const pageVisits = await program.account.pageVisits.fetch(pageVisitPDA);
     console.log(`Number of page visits: ${pageVisits.pageVisits}`);
   });

@@ -6,7 +6,7 @@ import { assert } from "chai";
 import { startAnchor } from "solana-bankrun";
 import type { PdaRentPayer } from "../target/types/pda_rent_payer";
 
-import { IDL } from "../target/idl/pda_rent_payer.json";
+import IDL from "../target/idl/pda_rent_payer.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("PDA Rent-Payer", async () => {
