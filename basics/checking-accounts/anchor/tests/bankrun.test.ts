@@ -5,7 +5,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { AnchorProgramExample } from '../target/types/anchor_program_example';
 
-const IDL = require('../target/idl/anchor_program_example.json');
+import { IDL } from "../target/idl/anchor_program_example.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Bankrun example', async () => {

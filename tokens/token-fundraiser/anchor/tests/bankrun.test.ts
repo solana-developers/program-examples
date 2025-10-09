@@ -13,7 +13,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { Fundraiser } from '../target/types/fundraiser';
 
-const IDL = require('../target/idl/fundraiser.json');
+import { IDL } from "../target/idl/fundraiser.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('fundraiser bankrun', async () => {

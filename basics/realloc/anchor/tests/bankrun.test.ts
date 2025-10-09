@@ -6,7 +6,7 @@ import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import type { AnchorRealloc } from '../target/types/anchor_realloc';
 
-const IDL = require('../target/idl/anchor_realloc.json');
+import { IDL } from "../target/idl/anchor_realloc.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('anchor-realloc', async () => {

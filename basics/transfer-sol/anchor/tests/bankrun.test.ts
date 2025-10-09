@@ -5,7 +5,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { TransferSol } from '../target/types/transfer_sol';
 
-const IDL = require('../target/idl/transfer_sol.json');
+import { IDL } from "../target/idl/transfer_sol.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Bankrun example', async () => {

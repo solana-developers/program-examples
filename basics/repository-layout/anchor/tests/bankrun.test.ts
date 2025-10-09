@@ -5,7 +5,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { Carnival } from '../target/types/carnival';
 
-const IDL = require('../target/idl/carnival.json');
+import { IDL } from "../target/idl/carnival.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Bankrun example', async () => {

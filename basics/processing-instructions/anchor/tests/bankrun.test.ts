@@ -5,7 +5,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { ProcessingInstructions } from '../target/types/processing_instructions';
 
-const IDL = require('../target/idl/processing_instructions.json');
+import { IDL } from "../target/idl/processing_instructions.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('custom-instruction-data', async () => {

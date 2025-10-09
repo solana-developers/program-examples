@@ -6,7 +6,7 @@ import { startAnchor } from 'solana-bankrun';
 import Idl from '../target/idl/rent_example.json';
 import type { RentExample } from '../target/types/rent_example';
 
-const IDL = require('../target/idl/rent_example.json');
+import { IDL } from "../target/idl/rent_example.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Bankrun example', async () => {

@@ -9,7 +9,7 @@ import type { Favorites } from '../target/types/favorites';
 import { systemProgramErrors } from './system-errors';
 
 const web3 = anchor.web3;
-const IDL = require('../target/idl/favorites.json');
+import { IDL } from "../target/idl/favorites.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Favorites Bankrun', async () => {

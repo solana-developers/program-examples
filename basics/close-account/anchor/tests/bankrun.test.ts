@@ -6,7 +6,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { CloseAccountProgram } from '../target/types/close_account_program';
 
-const IDL = require('../target/idl/close_account_program.json');
+import { IDL } from "../target/idl/close_account_program.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('close-an-account', async () => {

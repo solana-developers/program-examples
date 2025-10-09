@@ -6,7 +6,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { NftMinter } from '../target/types/nft_minter';
 
-const IDL = require('../target/idl/nft_minter.json');
+import { IDL } from "../target/idl/nft_minter.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 

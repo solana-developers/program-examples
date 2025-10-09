@@ -19,7 +19,7 @@ import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import type { TransferSwitch } from '../target/types/transfer_switch';
 
-const IDL = require('../target/idl/transfer_switch.json');
+import { IDL } from "../target/idl/transfer_switch.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 const expectRevert = async (promise: Promise<any>) => {

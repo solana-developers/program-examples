@@ -5,7 +5,7 @@ import { BankrunProvider } from 'anchor-bankrun';
 import { startAnchor } from 'solana-bankrun';
 import type { CreateToken } from '../target/types/create_token';
 
-const IDL = require('../target/idl/create_token.json');
+import { IDL } from "../target/idl/create_token.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 const METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 

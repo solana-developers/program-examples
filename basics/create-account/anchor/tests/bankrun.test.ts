@@ -6,7 +6,7 @@ import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import type { CreateSystemAccount } from '../target/types/create_system_account';
 
-const IDL = require('../target/idl/create_system_account.json');
+import { IDL } from "../target/idl/create_system_account.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('Create a system account', async () => {

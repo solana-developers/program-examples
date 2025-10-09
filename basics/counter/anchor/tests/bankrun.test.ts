@@ -6,7 +6,7 @@ import { assert } from 'chai';
 import { startAnchor } from 'solana-bankrun';
 import type { CounterAnchor } from '../target/types/counter_anchor';
 
-const IDL = require('../target/idl/counter_anchor.json');
+import { IDL } from "../target/idl/counter_anchor.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe('counter_anchor', async () => {
