@@ -1,9 +1,10 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { getCustomErrorMessage } from '@solana-developers/helpers';
 import { assert } from 'chai';
 import type { Favorites } from '../target/types/favorites';
 import { systemProgramErrors } from './system-errors';
+
 const web3 = anchor.web3;
 
 describe('Favorites', () => {

@@ -1,6 +1,6 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getOrCreateAssociatedTokenAccount, mintTo, transfer } from '@solana/spl-token';
+import * as anchor from '@coral-xyz/anchor';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_2022_PROGRAM_ID, transfer } from '@solana/spl-token';
 import type { NonTransferable } from '../target/types/non_transferable';
 
 describe('non-transferable', () => {

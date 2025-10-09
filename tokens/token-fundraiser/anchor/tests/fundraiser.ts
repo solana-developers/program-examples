@@ -1,13 +1,13 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import type NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
   createMint,
   getAssociatedTokenAddressSync,
   getOrCreateAssociatedTokenAccount,
   mintTo,
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import type { Fundraiser } from '../target/types/fundraiser';
 

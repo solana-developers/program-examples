@@ -1,5 +1,5 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { sendAndConfirmTransaction } from '@solana/web3.js';
 import type { Anchor } from '../target/types/anchor';
 

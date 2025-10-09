@@ -115,7 +115,7 @@ export const ReallocateZeroInitSchema = new Map([
 
 export function createReallocateZeroInitInstruction(
   target: PublicKey,
-  payer: PublicKey,
+  _payer: PublicKey,
   programId: PublicKey,
   name: string,
   position: string,

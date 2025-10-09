@@ -6,12 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import {
-  containsBytes,
-  getU8Encoder,
-  type Address,
-  type ReadonlyUint8Array,
-} from '@solana/kit';
+import { type Address, containsBytes, getU8Encoder, type ReadonlyUint8Array } from '@solana/kit';
 import {
   type ParsedBlockWalletInstruction,
   type ParsedInitInstruction,
@@ -19,8 +14,7 @@ import {
   type ParsedUnblockWalletInstruction,
 } from '../instructions';
 
-export const BLOCK_LIST_PROGRAM_ADDRESS =
-  'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'>;
+export const BLOCK_LIST_PROGRAM_ADDRESS = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'>;
 
 export enum BlockListAccount {
   Config,
@@ -28,9 +22,7 @@ export enum BlockListAccount {
   ExtraMetas,
 }
 
-export function identifyBlockListAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
-): BlockListAccount {
+export function identifyBlockListAccount(account: { data: ReadonlyUint8Array } | ReadonlyUint8Array): BlockListAccount {
   const data = 'data' in account ? account.data : account;
   if (containsBytes(data, getU8Encoder().encode(0), 0)) {
     return BlockListAccount.Config;
@@ -38,9 +30,7 @@ export function identifyBlockListAccount(
   if (containsBytes(data, getU8Encoder().encode(1), 0)) {
     return BlockListAccount.WalletBlock;
   }
-  throw new Error(
-    'The provided account could not be identified as a blockList account.'
-  );
+  throw new Error('The provided account could not be identified as a blockList account.');
 }
 
 export enum BlockListInstruction {
@@ -50,9 +40,7 @@ export enum BlockListInstruction {
   SetupExtraMetas,
 }
 
-export function identifyBlockListInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
-): BlockListInstruction {
+export function identifyBlockListInstruction(instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array): BlockListInstruction {
   const data = 'data' in instruction ? instruction.data : instruction;
   if (containsBytes(data, getU8Encoder().encode(241), 0)) {
     return BlockListInstruction.Init;
@@ -66,14 +54,10 @@ export function identifyBlockListInstruction(
   if (containsBytes(data, getU8Encoder().encode(106), 0)) {
     return BlockListInstruction.SetupExtraMetas;
   }
-  throw new Error(
-    'The provided instruction could not be identified as a blockList instruction.'
-  );
+  throw new Error('The provided instruction could not be identified as a blockList instruction.');
 }
 
-export type ParsedBlockListInstruction<
-  TProgram extends string = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf',
-> =
+export type ParsedBlockListInstruction<TProgram extends string = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'> =
   | ({
       instructionType: BlockListInstruction.Init;
     } & ParsedInitInstruction<TProgram>)

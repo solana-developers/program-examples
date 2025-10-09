@@ -1,3 +1,4 @@
+#![allow(unexpected_cfgs)]
 use solana_program::entrypoint;
 
 pub mod instructions;

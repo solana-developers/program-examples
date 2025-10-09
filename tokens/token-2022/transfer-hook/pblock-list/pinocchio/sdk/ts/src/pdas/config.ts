@@ -6,19 +6,10 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import {
-  getProgramDerivedAddress,
-  getUtf8Encoder,
-  type Address,
-  type ProgramDerivedAddress,
-} from '@solana/kit';
+import { type Address, getProgramDerivedAddress, getUtf8Encoder, type ProgramDerivedAddress } from '@solana/kit';
 
-export async function findConfigPda(
-  config: { programAddress?: Address | undefined } = {}
-): Promise<ProgramDerivedAddress> {
-  const {
-    programAddress = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'>,
-  } = config;
+export async function findConfigPda(config: { programAddress?: Address | undefined } = {}): Promise<ProgramDerivedAddress> {
+  const { programAddress = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'> } = config;
   return await getProgramDerivedAddress({
     programAddress,
     seeds: [getUtf8Encoder().encode('config')],

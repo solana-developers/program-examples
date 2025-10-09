@@ -1,3 +1,4 @@
+#![allow(unexpected_cfgs)]
 use borsh::{BorshDeserialize, BorshSerialize};
 use shank::ShankInstruction;
 use solana_program::{

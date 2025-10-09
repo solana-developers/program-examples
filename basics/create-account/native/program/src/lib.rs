@@ -1,3 +1,5 @@
+#![allow(unexpected_cfgs)]
+
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
@@ -6,7 +8,6 @@ use solana_program::{
     native_token::LAMPORTS_PER_SOL,
     program::invoke,
     pubkey::Pubkey,
-    system_instruction, system_program,
 };
 
 entrypoint!(process_instruction);
@@ -25,12 +26,12 @@ fn process_instruction(
     msg!("  New public key will be: {}", &new_account.key.to_string());
 
     invoke(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             payer.key,
             new_account.key,
             LAMPORTS_PER_SOL,
             0,
-            &system_program::ID,
+            &solana_system_interface::program::ID,
         ),
         &[payer.clone(), new_account.clone(), system_program.clone()],
     )?;

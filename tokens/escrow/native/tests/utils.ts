@@ -1,11 +1,11 @@
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  MINT_SIZE,
-  TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountIdempotentInstruction,
   createInitializeMint2Instruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
+  MINT_SIZE,
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { Keypair, PublicKey, type Signer, SystemProgram, Transaction } from '@solana/web3.js';
 import BN from 'bn.js';
