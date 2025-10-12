@@ -23,6 +23,7 @@ members = [
     "basics/processing-instructions/anchor/programs/*",
     "basics/program-derived-addresses/native/program",
     "basics/program-derived-addresses/anchor/programs/*",
+    "basics/program-derived-addresses/pinocchio/program",
     "basics/realloc/native/program",
     "basics/realloc/anchor/programs/*",
     "basics/rent/native/program",
