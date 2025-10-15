@@ -12,7 +12,7 @@ import { BN } from "bn.js";
 import { startAnchor } from "solana-bankrun";
 import type { TransferSol } from "../target/types/transfer_sol";
 
-import IDL from "../target/idl/transfer_sol.json" with { type: "json" };
+import IDL from "../target/idl/transfer_sol.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("Bankrun example", async () => {

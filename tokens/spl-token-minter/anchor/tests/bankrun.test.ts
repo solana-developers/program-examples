@@ -7,7 +7,7 @@ import { BN } from "bn.js";
 import { startAnchor } from "solana-bankrun";
 import type { SplTokenMinter } from "../target/types/spl_token_minter";
 
-import IDL from "../target/idl/spl_token_minter.json" with { type: "json" };
+import IDL from "../target/idl/spl_token_minter.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 const METADATA_PROGRAM_ID = new PublicKey(
 	"metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
