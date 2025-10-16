@@ -8,3 +8,11 @@ solana-program.workspace = true
 
 [lib]
 crate-type = ["cdylib", "lib"]
+
+[features]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -10,8 +10,14 @@ crate-type = ["cdylib", "lib"]
 no-entrypoint = []
 cpi = ["no-entrypoint"]
 default = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
 
 [dependencies]
 borsh.workspace = true
 borsh-derive.workspace = true
 solana-program.workspace = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
