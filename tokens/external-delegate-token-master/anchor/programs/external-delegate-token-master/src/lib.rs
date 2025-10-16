@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::{Token, TokenAccount, Transfer};

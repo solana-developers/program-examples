@@ -4,7 +4,7 @@
 		"postinstall": "zx prepare.mjs"
 	},
 	"devDependencies": {
-		"@coral-xyz/anchor": "0.31.1",
+		"@coral-xyz/anchor": "0.32.1",
 		"@solana/spl-token": "^0.3.11",
 		"@types/bn.js": "^5.1.0",
 		"@types/chai": "^4.3.0",

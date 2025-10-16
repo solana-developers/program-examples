@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 mod error;
 mod instructions;
 mod state;

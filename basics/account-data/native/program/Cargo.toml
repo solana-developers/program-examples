@@ -9,5 +9,14 @@ borsh-derive.workspace = true
 solana-program.workspace = true
 solana-system-interface.workspace = true
 
+[features]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+
 [lib]
 crate-type = ["cdylib", "lib"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

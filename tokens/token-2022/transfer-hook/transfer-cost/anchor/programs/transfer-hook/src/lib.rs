@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use anchor_lang::{prelude::*, solana_program::pubkey::Pubkey};
 use anchor_spl::{
     associated_token::AssociatedToken,

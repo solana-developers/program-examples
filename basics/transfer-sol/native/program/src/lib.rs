@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 pub mod instruction;
 pub mod processor;
 

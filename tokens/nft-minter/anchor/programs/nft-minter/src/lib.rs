@@ -1,7 +1,3 @@
-#![allow(clippy::result_large_err)]
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use {
     anchor_lang::prelude::*,
     anchor_spl::{

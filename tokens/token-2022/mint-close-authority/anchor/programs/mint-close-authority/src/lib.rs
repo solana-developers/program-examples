@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use anchor_lang::prelude::*;
 use anchor_spl::{
     token_2022::{close_account, CloseAccount},

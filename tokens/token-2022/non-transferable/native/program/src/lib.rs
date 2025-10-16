@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::{

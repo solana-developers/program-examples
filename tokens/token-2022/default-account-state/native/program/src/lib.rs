@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use solana_system_interface::instruction as system_instruction;
 use {
     borsh::{BorshDeserialize, BorshSerialize},

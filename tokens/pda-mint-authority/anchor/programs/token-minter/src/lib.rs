@@ -1,7 +1,3 @@
-#![allow(clippy::result_large_err)]
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use anchor_lang::prelude::*;
 use instructions::*;
 pub mod instructions;

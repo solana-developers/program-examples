@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use std::cell::RefMut;
 
 use anchor_lang::prelude::*;

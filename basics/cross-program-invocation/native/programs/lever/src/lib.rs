@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use borsh::{BorshDeserialize, BorshSerialize};
 #[cfg(not(feature = "no-entrypoint"))]
 use solana_program::entrypoint;

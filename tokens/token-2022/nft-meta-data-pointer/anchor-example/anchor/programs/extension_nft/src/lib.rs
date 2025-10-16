@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 pub use crate::errors::GameErrorCode;
 pub use anchor_lang::prelude::*;
 pub use session_keys::{session_auth_or, Session, SessionError};

@@ -1,6 +1,3 @@
-#![allow(deprecated)]
-#![allow(unexpected_cfgs)]
-
 use anchor_lang::prelude::*;
 use spl_discriminator::SplDiscriminate;
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;

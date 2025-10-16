@@ -1,7 +1,7 @@
 {
 	"type": "module",
 	"dependencies": {
-		"@coral-xyz/anchor": "0.31.1"
+		"@coral-xyz/anchor": "0.32.1"
 	},
 	"scripts": {
 		"postinstall": "zx prepare.mjs"
