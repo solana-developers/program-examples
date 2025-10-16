@@ -1,21 +1,21 @@
 import {
   PROGRAM_ID as BUBBLEGUM_PROGRAM_ID,
-  type MetadataArgs,
   computeCreatorHash,
   computeDataHash,
   createCreateTreeInstruction,
   createMintToCollectionV1Instruction,
+  type MetadataArgs,
 } from '@metaplex-foundation/mpl-bubblegum';
 import {
   type CreateMetadataAccountArgsV3,
-  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
   createCreateMasterEditionV3Instruction,
   createCreateMetadataAccountV3Instruction,
   createSetCollectionSizeInstruction,
+  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
 } from '@metaplex-foundation/mpl-token-metadata';
-import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID, type ValidDepthSizePair, createAllocTreeIx } from '@solana/spl-account-compression';
-import { TOKEN_PROGRAM_ID, createAccount, createMint, mintTo } from '@solana/spl-token';
-import { type Connection, type Keypair, PublicKey, Transaction, type TransactionInstruction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { createAllocTreeIx, SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID, type ValidDepthSizePair } from '@solana/spl-account-compression';
+import { createAccount, createMint, mintTo, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { type Connection, type Keypair, PublicKey, sendAndConfirmTransaction, Transaction, type TransactionInstruction } from '@solana/web3.js';
 
 // import local helper functions
 import { explorerURL, extractSignatureFromFailedTransaction } from './helpers';
@@ -125,7 +125,7 @@ export async function createCollection(connection: Connection, payer: Keypair, m
 
   // mint 1 token ()
   console.log('Minting 1 token for the collection...');
-  const mintSig = await mintTo(
+  const _mintSig = await mintTo(
     connection,
     payer,
     mint,

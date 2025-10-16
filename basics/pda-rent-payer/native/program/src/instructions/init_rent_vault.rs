@@ -5,7 +5,6 @@ use solana_program::{
     program::invoke_signed,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -35,7 +34,7 @@ pub fn init_rent_vault(
     let lamports_required = (Rent::get()?).minimum_balance(0) + args.fund_lamports;
 
     invoke_signed(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             payer.key,
             rent_vault.key,
             lamports_required,

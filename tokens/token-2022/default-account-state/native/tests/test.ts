@@ -1,15 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
-import {
-  Keypair,
-  PublicKey,
-  SYSVAR_RENT_PUBKEY,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-  sendAndConfirmTransaction,
-} from '@solana/web3.js';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';

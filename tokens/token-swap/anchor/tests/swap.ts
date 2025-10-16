@@ -1,9 +1,9 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { BN } from 'bn.js';
 import { expect } from 'chai';
 import type { SwapExample } from '../target/types/swap_example';
-import { type TestValues, createValues, mintingTokens } from './utils';
+import { createValues, mintingTokens, type TestValues } from './utils';
 
 describe('Swap', () => {
   const provider = anchor.AnchorProvider.env();

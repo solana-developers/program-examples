@@ -1,5 +1,3 @@
-#![allow(clippy::result_large_err)]
-
 pub mod actions;
 pub use actions::*;
 

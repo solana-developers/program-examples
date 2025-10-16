@@ -1,12 +1,11 @@
 import { randomBytes } from 'node:crypto';
 import * as anchor from '@coral-xyz/anchor';
 import { BN, type Program } from '@coral-xyz/anchor';
-import { TOKEN_2022_PROGRAM_ID, type TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, type TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { confirmTransaction, createAccountsMintsAndTokenAccounts, makeKeypairs } from '@solana-developers/helpers';
 import { assert } from 'chai';
 import type { Escrow } from '../target/types/escrow';
-
-import { confirmTransaction, createAccountsMintsAndTokenAccounts, makeKeypairs } from '@solana-developers/helpers';
 
 // Work on both Token Program and new Token Extensions Program
 const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;

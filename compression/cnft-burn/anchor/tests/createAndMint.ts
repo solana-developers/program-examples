@@ -12,19 +12,18 @@
   less console logging and explanation of what is occurring
 */
 
+import * as anchor from '@coral-xyz/anchor';
 import { type MetadataArgs, TokenProgramVersion, TokenStandard } from '@metaplex-foundation/mpl-bubblegum';
-import { Keypair, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js';
+import type { CreateMetadataAccountArgsV3 } from '@metaplex-foundation/mpl-token-metadata';
+import type { ValidDepthSizePair } from '@solana/spl-account-compression';
+import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { RPC_PATH } from './cnft-burn';
+// local import of the connection wrapper, to help with using the ReadApi
+import { WrapperConnection } from './ReadApi/WrapperConnection';
 // import custom helpers to mint compressed NFTs
 import { createCollection, createTree, mintCompressedNFT } from './utils/compression';
 // import custom helpers for demos
-import { loadKeypairFromFile, numberFormatter } from './utils/helpers';
-
-import * as anchor from '@coral-xyz/anchor';
-import type { CreateMetadataAccountArgsV3 } from '@metaplex-foundation/mpl-token-metadata';
-import type { ValidDepthSizePair } from '@solana/spl-account-compression';
-// local import of the connection wrapper, to help with using the ReadApi
-import { WrapperConnection } from './ReadApi/WrapperConnection';
-import { RPC_PATH } from './cnft-burn';
+import { numberFormatter } from './utils/helpers';
 
 // define some reusable balance values for tracking
 let initBalance: number;

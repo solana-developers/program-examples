@@ -1,25 +1,22 @@
 use std::cell::RefMut;
 
-use anchor_lang::{ prelude::* };
+use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
     token_2022::{
         spl_token_2022::{
             extension::{
-                transfer_hook::TransferHookAccount,
-                BaseStateWithExtensionsMut,
+                transfer_hook::TransferHookAccount, BaseStateWithExtensionsMut,
                 PodStateWithExtensionsMut,
             },
             pod::PodAccount,
         },
         Token2022,
     },
-    token_interface::{ Mint, TokenAccount },
+    token_interface::{Mint, TokenAccount},
 };
 use spl_tlv_account_resolution::{
-    account::ExtraAccountMeta,
-    seeds::Seed,
-    state::ExtraAccountMetaList,
+    account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
@@ -39,14 +36,14 @@ pub mod transfer_hook {
 
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>
+        ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
-            &extra_account_metas
+            &extra_account_metas,
         )?;
 
         Ok(())
@@ -64,7 +61,10 @@ pub mod transfer_hook {
         }
 
         // Increment the transfer count safely
-        let count = ctx.accounts.counter_account.counter
+        let count = ctx
+            .accounts
+            .counter_account
+            .counter
             .checked_add(1)
             .ok_or(TransferError::AmountTooBig)?;
 
@@ -114,20 +114,20 @@ pub struct InitializeExtraAccountMetaList<'info> {
 // Define extra account metas to store on extra_account_meta_list account
 impl<'info> InitializeExtraAccountMetaList<'info> {
     pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
-        Ok(
-            vec![
-                ExtraAccountMeta::new_with_seeds(
-                    &[
-                        Seed::Literal {
-                            bytes: b"counter".to_vec(),
-                        },
-                        Seed::AccountData { account_index: 0, data_index: 32, length: 32 },
-                    ],
-                    false, // is_signer
-                    true // is_writable
-                )?
-            ]
-        )
+        Ok(vec![ExtraAccountMeta::new_with_seeds(
+            &[
+                Seed::Literal {
+                    bytes: b"counter".to_vec(),
+                },
+                Seed::AccountData {
+                    account_index: 0,
+                    data_index: 32,
+                    length: 32,
+                },
+            ],
+            false, // is_signer
+            true,  // is_writable
+        )?])
     }
 }
 

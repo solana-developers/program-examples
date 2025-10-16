@@ -6,13 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import {
-  getAddressEncoder,
-  getProgramDerivedAddress,
-  getUtf8Encoder,
-  type Address,
-  type ProgramDerivedAddress,
-} from '@solana/kit';
+import { type Address, getAddressEncoder, getProgramDerivedAddress, getUtf8Encoder, type ProgramDerivedAddress } from '@solana/kit';
 
 export type ExtraMetasSeeds = {
   mint: Address;
@@ -20,16 +14,11 @@ export type ExtraMetasSeeds = {
 
 export async function findExtraMetasPda(
   seeds: ExtraMetasSeeds,
-  config: { programAddress?: Address | undefined } = {}
+  config: { programAddress?: Address | undefined } = {},
 ): Promise<ProgramDerivedAddress> {
-  const {
-    programAddress = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'>,
-  } = config;
+  const { programAddress = 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf' as Address<'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf'> } = config;
   return await getProgramDerivedAddress({
     programAddress,
-    seeds: [
-      getUtf8Encoder().encode('extra-account-metas'),
-      getAddressEncoder().encode(seeds.mint),
-    ],
+    seeds: [getUtf8Encoder().encode('extra-account-metas'), getAddressEncoder().encode(seeds.mint)],
   });
 }

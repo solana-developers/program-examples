@@ -6,7 +6,6 @@ use solana_program::{
     program::invoke,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction, system_program,
     sysvar::Sysvar,
 };
 
@@ -34,12 +33,12 @@ fn process_instruction(
     msg!("Lamports required: {}", &lamports_required);
 
     invoke(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             payer.key,
             new_account.key,
             lamports_required,
             account_span as u64,
-            &system_program::ID,
+            &solana_system_interface::program::ID,
         ),
         &[payer.clone(), new_account.clone(), system_program.clone()],
     )?;

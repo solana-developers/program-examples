@@ -1,5 +1,3 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
 use mpl_bubblegum::state::TreeConfig;
 use solana_program::pubkey::Pubkey;

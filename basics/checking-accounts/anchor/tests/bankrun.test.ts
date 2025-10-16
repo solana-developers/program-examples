@@ -1,16 +1,24 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import { Keypair, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { startAnchor } from 'solana-bankrun';
-import type { AnchorProgramExample } from '../target/types/anchor_program_example';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import {
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { startAnchor } from "solana-bankrun";
+import type { AnchorProgramExample } from "../target/types/anchor_program_example";
 
-const IDL = require('../target/idl/anchor_program_example.json');
+import IDL from "../target/idl/anchor_program_example.json" with { type: "json" };
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('Bankrun example', async () => {
-  const context = await startAnchor('', [{ name: 'anchor_program_example', programId: PROGRAM_ID }], []);
+describe("Bankrun example", async () => {
+  const context = await startAnchor(
+    "",
+    [{ name: "anchor_program_example", programId: PROGRAM_ID }],
+    [],
+  );
   const provider = new BankrunProvider(context);
 
   const wallet = provider.wallet as anchor.Wallet;
@@ -23,7 +31,7 @@ describe('Bankrun example', async () => {
   // Our program will create this.
   const accountToCreate = new Keypair();
 
-  it('Create an account owned by our program', async () => {
+  it("Create an account owned by our program", async () => {
     const instruction = SystemProgram.createAccount({
       fromPubkey: provider.wallet.publicKey,
       newAccountPubkey: accountToChange.publicKey,
@@ -40,7 +48,7 @@ describe('Bankrun example', async () => {
     await client.processTransaction(transaction);
   });
 
-  it('Check accounts', async () => {
+  it("Check accounts", async () => {
     await program.methods
       .checkAccounts()
       .accounts({

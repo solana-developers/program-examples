@@ -1,8 +1,8 @@
 import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
+import { Keypair, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
-import { COUNTER_ACCOUNT_SIZE, PROGRAM_ID, createIncrementInstruction, deserializeCounterAccount } from '../ts';
+import { COUNTER_ACCOUNT_SIZE, createIncrementInstruction, deserializeCounterAccount, PROGRAM_ID } from '../ts';
 
 describe('Counter Solana Native', async () => {
   // Randomly generate the program keypair and load the program to solana-bankrun

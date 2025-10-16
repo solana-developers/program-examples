@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import type { CloseAccountProgram } from '../target/types/close_account_program';
 

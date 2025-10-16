@@ -9,7 +9,6 @@ use solana_program::{
     program_error::ProgramError,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -42,11 +41,11 @@ pub fn initialize(
     let user = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (power_status.try_to_vec()?).len();
+    let account_span = borsh::to_vec(&power_status)?.len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             user.key,
             power.key,
             lamports_required,

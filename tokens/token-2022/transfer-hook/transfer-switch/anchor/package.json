@@ -1,18 +1,19 @@
 {
-  "dependencies": {
-    "@coral-xyz/anchor": "^0.30.1",
-    "@solana/spl-token": "^0.4.0"
-  },
-  "devDependencies": {
-    "anchor-bankrun": "^0.5.0",
-    "solana-bankrun": "^0.4.0",
-    "@types/bn.js": "^5.1.0",
-    "@types/chai": "^4.3.0",
-    "@types/mocha": "10.0.9",
-    "chai": "^4.3.4",
-    "mocha": "^10.8.2",
-    "prettier": "^2.6.2",
-    "ts-mocha": "^10.0.0",
-    "typescript": "^5"
-  }
+	"type": "module",
+	"dependencies": {
+		"@coral-xyz/anchor": "^0.32.1",
+		"@solana/spl-token": "^0.4.0"
+	},
+	"devDependencies": {
+		"@types/bn.js": "^5.1.0",
+		"@types/chai": "^4.3.0",
+		"@types/mocha": "10.0.9",
+		"anchor-bankrun": "^0.5.0",
+		"chai": "^4.3.4",
+		"mocha": "^10.8.2",
+		"prettier": "^2.6.2",
+		"solana-bankrun": "^0.4.0",
+		"ts-mocha": "^10.0.0",
+		"typescript": "^5"
+	}
 }

@@ -5,8 +5,7 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_2022::spl_token_2022::{
         extension::{
-            transfer_hook::TransferHookAccount,
-            BaseStateWithExtensionsMut,
+            transfer_hook::TransferHookAccount, BaseStateWithExtensionsMut,
             PodStateWithExtensionsMut,
         },
         pod::PodAccount,
@@ -15,18 +14,15 @@ use anchor_spl::{
         spl_pod::optional_keys::OptionalNonZeroPubkey,
         spl_token_2022::{
             extension::{
-                transfer_hook::TransferHook as TransferHookExtension,
-                BaseStateWithExtensions,
+                transfer_hook::TransferHook as TransferHookExtension, BaseStateWithExtensions,
                 StateWithExtensions,
             },
             state::Mint as MintState,
         },
-        Mint,
-        Token2022,
-        TokenAccount,
+        Mint, Token2022, TokenAccount,
     },
 };
-use spl_tlv_account_resolution::{ account::ExtraAccountMeta, state::ExtraAccountMetaList };
+use spl_tlv_account_resolution::{account::ExtraAccountMeta, state::ExtraAccountMetaList};
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
 declare_id!("jY5DfVksJT8Le38LCaQhz5USeiGu4rUeVSS8QRAMoba");
@@ -49,14 +45,14 @@ pub mod transfer_hook {
 
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>
+        ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
-            &extra_account_metas
+            &extra_account_metas,
         )?;
 
         Ok(())
@@ -118,7 +114,10 @@ impl<'info> Initialize<'info> {
             OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
         );
 
-        assert_eq!(extension_data.program_id, OptionalNonZeroPubkey::try_from(Some(crate::ID))?);
+        assert_eq!(
+            extension_data.program_id,
+            OptionalNonZeroPubkey::try_from(Some(crate::ID))?
+        );
 
         msg!("{:?}", extension_data);
         Ok(())

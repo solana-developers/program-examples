@@ -4,7 +4,7 @@ import { Connection, Keypair } from '@solana/web3.js';
 import { createCollection, createTree } from './utils/compression';
 import { loadOrGenerateKeypair, savePublicKeyToFile } from './utils/helpers';
 
-async function setup() {
+async function _setup() {
   const rpc = 'https://api.devnet.solana.com';
   const connection = new Connection(rpc, 'confirmed');
 

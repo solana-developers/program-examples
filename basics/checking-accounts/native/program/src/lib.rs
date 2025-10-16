@@ -5,7 +5,6 @@ use solana_program::{
     msg,
     program_error::ProgramError,
     pubkey::Pubkey,
-    system_program,
 };
 
 entrypoint!(process_instruction);
@@ -17,7 +16,7 @@ fn process_instruction(
 ) -> ProgramResult {
     // You can verify the program ID from the instruction is in fact
     //      the program ID of your program.
-    if system_program::check_id(program_id) {
+    if solana_system_interface::program::check_id(program_id) {
         return Err(ProgramError::IncorrectProgramId);
     };
 
@@ -60,7 +59,7 @@ fn process_instruction(
     };
 
     // You can also check pubkeys against constants.
-    if system_program.key != &system_program::ID {
+    if system_program.key != &solana_system_interface::program::ID {
         return Err(ProgramError::IncorrectProgramId);
     };
 

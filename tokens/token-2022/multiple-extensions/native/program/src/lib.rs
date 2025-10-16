@@ -8,10 +8,12 @@ use {
         program::invoke,
         pubkey::Pubkey,
         rent::Rent,
-        system_instruction,
         sysvar::Sysvar,
     },
-    spl_token_2022::{extension::ExtensionType, instruction as token_instruction, state::Mint},
+    solana_system_interface::instruction as system_instruction,
+    spl_token_2022_interface::{
+        extension::ExtensionType, instruction as token_instruction, state::Mint,
+    },
 };
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
@@ -39,10 +41,10 @@ fn process_instruction(
     let token_program = next_account_info(accounts_iter)?;
 
     // Find the size for the Mint account with the the number of extensions we want to use.
-    let space = ExtensionType::get_account_len::<Mint>(&[
+    let space = ExtensionType::try_calculate_account_len::<Mint>(&[
         ExtensionType::MintCloseAuthority,
         ExtensionType::NonTransferable,
-    ]);
+    ])?;
 
     // Get the required rent exemption amount for the account
     let rent_required = Rent::get()?.minimum_balance(space);
