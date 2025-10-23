@@ -1,5 +1,5 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { unpack } from '@solana/spl-token-metadata';
 import type { Metadata } from '../target/types/metadata';
 

@@ -5,7 +5,6 @@ use solana_program::{
     program::invoke,
     pubkey::Pubkey,
     rent::Rent,
-    system_instruction,
     sysvar::Sysvar,
 };
 
@@ -21,11 +20,11 @@ pub fn create_address_info(
     let payer = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
-    let account_span = (data.try_to_vec()?).len();
+    let account_span = borsh::to_vec(&data)?.len();
     let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
     invoke(
-        &system_instruction::create_account(
+        &solana_system_interface::instruction::create_account(
             payer.key,
             target_account.key,
             lamports_required,

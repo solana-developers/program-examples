@@ -7,9 +7,9 @@ import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
   SystemProgram,
+  sendAndConfirmTransaction,
   Transaction,
   TransactionInstruction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import * as borsh from 'borsh';
 

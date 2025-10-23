@@ -1,5 +1,5 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
 import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
 import type { CnftBurn } from '../target/types/cnft_burn';
@@ -9,7 +9,7 @@ import { getAsset, getAssetProof } from './readApi';
 import { decode, mapProof } from './utils';
 
 // Replace this with your custom RPC endpoint that supports cNFT indexing
-const RPC_PATH = 'https://api.devnet.solana.com';
+const _RPC_PATH = 'https://api.devnet.solana.com';
 
 describe('cnft-burn', () => {
   // Configure the client to use the local cluster.
@@ -19,7 +19,7 @@ describe('cnft-burn', () => {
   const provider = anchor.AnchorProvider.env();
   const payerWallet = provider.wallet as anchor.Wallet;
 
-  let treeAddress: anchor.web3.PublicKey | undefined = undefined;
+  let treeAddress: anchor.web3.PublicKey | undefined;
   const MPL_BUBBLEGUM_PROGRAM_ID_KEY = new anchor.web3.PublicKey(BUBBLEGUM_PROGRAM_ID);
 
   // this is the assetId of the cNft you want to burn

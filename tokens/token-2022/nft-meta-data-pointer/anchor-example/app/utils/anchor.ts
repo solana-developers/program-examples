@@ -1,5 +1,5 @@
 import { BN, type IdlAccounts, Program } from '@coral-xyz/anchor';
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { type ExtensionNft, IDL } from '../idl/extension_nft';
 import { WrappedConnection } from './wrappedConnection';
 

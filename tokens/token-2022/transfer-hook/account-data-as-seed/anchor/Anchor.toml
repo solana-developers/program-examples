@@ -1,5 +1,5 @@
 [toolchain]
-anchor_version = "0.31.1"
+anchor_version = "0.32.1"
 solana_version = "2.1.15"
 
 [programs.localnet]

@@ -6,10 +6,10 @@ import {
   AddressLookupTableProgram,
   type PublicKey,
   SystemProgram,
+  sendAndConfirmTransaction,
   Transaction,
   TransactionMessage,
   VersionedTransaction,
-  sendAndConfirmTransaction,
 } from '@solana/web3.js';
 import { getAsset, getAssetProof } from '../readAPI';
 import { decode, mapProof } from '../utils';

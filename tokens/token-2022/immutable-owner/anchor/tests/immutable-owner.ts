@@ -1,6 +1,6 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
-import { AuthorityType, TOKEN_2022_PROGRAM_ID, createMint, setAuthority } from '@solana/spl-token';
+import * as anchor from '@coral-xyz/anchor';
+import { AuthorityType, createMint, setAuthority, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { ImmutableOwner } from '../target/types/immutable_owner';
 
 describe('immutable-owner', () => {

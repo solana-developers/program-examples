@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: heyAyushh/setup-anchor@v0.31
         with:
-          anchor-version: 0.31.1
+          anchor-version: 0.32.1
           solana-cli-version: stable
       - name: Display Versions and Install pnpm
         run: |
@@ -126,19 +126,19 @@ jobs:
             echo "Building and Testing $project"
             cd "$project" || return 1
 
+            # Install dependencies first
+            if ! pnpm install --frozen-lockfile; then
+              echo "::error::pnpm install failed for $project"
+              echo "$project: pnpm install failed" >> $GITHUB_WORKSPACE/failed_projects.txt
+              cd - > /dev/null
+              return 1
+            fi
+
             # Run anchor build
             if ! anchor build; then
               echo "::error::anchor build failed for $project"
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target
-              cd - > /dev/null
-              return 1
-            fi
-
-            # Install dependencies
-            if ! pnpm install --frozen-lockfile; then
-              echo "::error::pnpm install failed for $project"
-              echo "$project: pnpm install failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
             fi

@@ -8,10 +8,10 @@ use {
         program::invoke,
         pubkey::Pubkey,
         rent::Rent,
-        system_instruction,
         sysvar::Sysvar,
     },
-    spl_token_2022::{
+    solana_system_interface::instruction as system_instruction,
+    spl_token_2022_interface::{
         extension::{
             transfer_fee::instruction::{initialize_transfer_fee_config, set_transfer_fee},
             ExtensionType,
@@ -45,7 +45,8 @@ fn process_instruction(
     let token_program = next_account_info(accounts_iter)?;
 
     // Find the size for the account with the Extension
-    let space = ExtensionType::get_account_len::<Mint>(&[ExtensionType::TransferFeeConfig]);
+    let space =
+        ExtensionType::try_calculate_account_len::<Mint>(&[ExtensionType::TransferFeeConfig])?;
 
     // Get the required rent exemption amount for the account
     let rent_required = Rent::get()?.minimum_balance(space);

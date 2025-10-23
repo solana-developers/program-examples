@@ -1,14 +1,14 @@
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { describe, it } from 'mocha';
 import {
   type AddCarArgs,
   Car,
-  RentalOrder,
-  RentalOrderStatus,
   createAddCarInstruction,
   createBookRentalInstruction,
   createPickUpCarInstruction,
   createReturnCarInstruction,
+  RentalOrder,
+  RentalOrderStatus,
 } from './generated';
 
 function loadKeypairFromFile(path: string): Keypair {
@@ -40,7 +40,7 @@ describe('Car Rental Service', () => {
   const program = loadKeypairFromFile('./program/target/deploy/car_rental_service-keypair.json');
 
   let bmwPublicKey: PublicKey;
-  let mercedesPublicKey: PublicKey;
+  let _mercedesPublicKey: PublicKey;
 
   async function createCar(car: AddCarArgs): Promise<PublicKey> {
     const carAccountPublicKey = PublicKey.findProgramAddressSync(
@@ -69,7 +69,7 @@ describe('Car Rental Service', () => {
     bmwPublicKey = await createCar(carBmw);
   });
   it('Create another car that can be rented', async () => {
-    mercedesPublicKey = await createCar(carMercedes);
+    _mercedesPublicKey = await createCar(carMercedes);
   });
 
   const evaluateStatus = (status: RentalOrderStatus): string => {

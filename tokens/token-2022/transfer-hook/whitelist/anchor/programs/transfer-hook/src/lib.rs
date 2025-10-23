@@ -4,18 +4,15 @@ use anchor_lang::prelude::*;
 use anchor_spl::{
     token_2022::spl_token_2022::{
         extension::{
-            transfer_hook::TransferHookAccount,
-            BaseStateWithExtensionsMut,
+            transfer_hook::TransferHookAccount, BaseStateWithExtensionsMut,
             PodStateWithExtensionsMut,
         },
         pod::PodAccount,
     },
-    token_interface::{ Mint, TokenAccount },
+    token_interface::{Mint, TokenAccount},
 };
 use spl_tlv_account_resolution::{
-    account::ExtraAccountMeta,
-    seeds::Seed,
-    state::ExtraAccountMetaList,
+    account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
 use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 
@@ -33,7 +30,7 @@ pub mod transfer_hook {
 
     #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>
+        ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         // set authority field on white_list account as payer address
         ctx.accounts.white_list.authority = ctx.accounts.payer.key();
@@ -43,7 +40,7 @@ pub mod transfer_hook {
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
-            &extra_account_metas
+            &extra_account_metas,
         )?;
         Ok(())
     }
@@ -53,7 +50,12 @@ pub mod transfer_hook {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&ctx)?;
 
-        if !ctx.accounts.white_list.white_list.contains(&ctx.accounts.destination_token.key()) {
+        if !ctx
+            .accounts
+            .white_list
+            .white_list
+            .contains(&ctx.accounts.destination_token.key())
+        {
             panic!("Account not in white list!");
         }
 
@@ -67,9 +69,18 @@ pub mod transfer_hook {
             panic!("Only the authority can add to the white list!");
         }
 
-        ctx.accounts.white_list.white_list.push(ctx.accounts.new_account.key());
-        msg!("New account white listed! {0}", ctx.accounts.new_account.key().to_string());
-        msg!("White list length! {0}", ctx.accounts.white_list.white_list.len());
+        ctx.accounts
+            .white_list
+            .white_list
+            .push(ctx.accounts.new_account.key());
+        msg!(
+            "New account white listed! {0}",
+            ctx.accounts.new_account.key().to_string()
+        );
+        msg!(
+            "White list length! {0}",
+            ctx.accounts.white_list.white_list.len()
+        );
 
         Ok(())
     }
@@ -113,19 +124,13 @@ pub struct InitializeExtraAccountMetaList<'info> {
 // Define extra account metas to store on extra_account_meta_list account
 impl<'info> InitializeExtraAccountMetaList<'info> {
     pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
-        Ok(
-            vec![
-                ExtraAccountMeta::new_with_seeds(
-                    &[
-                        Seed::Literal {
-                            bytes: "white_list".as_bytes().to_vec(),
-                        },
-                    ],
-                    false, // is_signer
-                    true // is_writable
-                )?
-            ]
-        )
+        Ok(vec![ExtraAccountMeta::new_with_seeds(
+            &[Seed::Literal {
+                bytes: "white_list".as_bytes().to_vec(),
+            }],
+            false, // is_signer
+            true,  // is_writable
+        )?])
     }
 }
 

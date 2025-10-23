@@ -1,16 +1,16 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import {
-  ExtensionType,
-  TOKEN_2022_PROGRAM_ID,
   createEnableCpiGuardInstruction,
   createInitializeAccountInstruction,
   createMint,
   disableCpiGuard,
+  ExtensionType,
   getAccountLen,
   mintTo,
+  TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token';
-import { SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import type { CpiGuard } from '../target/types/cpi_guard';
 
 describe('cpi-guard', () => {

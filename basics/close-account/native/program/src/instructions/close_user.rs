@@ -21,7 +21,7 @@ pub fn close_user(accounts: &[AccountInfo]) -> ProgramResult {
     **payer.lamports.borrow_mut() += diff;
 
     // Realloc the account to zero
-    target_account.realloc(account_span, true)?;
+    target_account.resize(account_span)?;
 
     // Assign the account to the System Program
     target_account.assign(system_program.key);

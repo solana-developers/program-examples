@@ -1,17 +1,20 @@
-import { describe, it } from 'node:test';
-import * as anchor from '@coral-xyz/anchor';
-import type { Program } from '@coral-xyz/anchor';
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { BankrunProvider } from 'anchor-bankrun';
-import { assert } from 'chai';
-import { startAnchor } from 'solana-bankrun';
-import type { AnchorRealloc } from '../target/types/anchor_realloc';
+import { describe, it } from "node:test";
+import * as anchor from "@coral-xyz/anchor";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import { BankrunProvider } from "anchor-bankrun";
+import { assert } from "chai";
+import { startAnchor } from "solana-bankrun";
+import type { AnchorRealloc } from "../target/types/anchor_realloc";
 
-const IDL = require('../target/idl/anchor_realloc.json');
+import IDL from "../target/idl/anchor_realloc.json" with { type: "json" };
 const PROGRAM_ID = new PublicKey(IDL.address);
 
-describe('anchor-realloc', async () => {
-  const context = await startAnchor('', [{ name: 'anchor_realloc', programId: PROGRAM_ID }], []);
+describe("anchor-realloc", async () => {
+  const context = await startAnchor(
+    "",
+    [{ name: "anchor_realloc", programId: PROGRAM_ID }],
+    [],
+  );
   const provider = new BankrunProvider(context);
   const connection = provider.connection;
   const payer = provider.wallet as anchor.Wallet;
@@ -34,8 +37,8 @@ describe('anchor-realloc', async () => {
     console.log(`Message: ${accountData.message}`);
   }
 
-  it('Is initialized!', async () => {
-    const input = 'hello';
+  it("Is initialized!", async () => {
+    const input = "hello";
 
     await program.methods
       .initialize(input)
@@ -49,8 +52,8 @@ describe('anchor-realloc', async () => {
     await checkAccount(messageAccount.publicKey, input);
   });
 
-  it('Update', async () => {
-    const input = 'hello world';
+  it("Update", async () => {
+    const input = "hello world";
 
     await program.methods
       .update(input)
@@ -63,8 +66,8 @@ describe('anchor-realloc', async () => {
     await checkAccount(messageAccount.publicKey, input);
   });
 
-  it('Update', async () => {
-    const input = 'hi';
+  it("Update", async () => {
+    const input = "hi";
 
     await program.methods
       .update(input)

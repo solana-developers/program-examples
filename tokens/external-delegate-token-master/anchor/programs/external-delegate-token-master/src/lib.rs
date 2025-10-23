@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 use anchor_spl::token::{Token, TokenAccount, Transfer};
-use solana_program::secp256k1_recover::secp256k1_recover;
 use sha3::{Digest, Keccak256};
+use solana_secp256k1_recover::secp256k1_recover;
 
 declare_id!("FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD");
 
@@ -17,13 +17,21 @@ pub mod external_delegate_token_master {
         Ok(())
     }
 
-    pub fn set_ethereum_address(ctx: Context<SetEthereumAddress>, ethereum_address: [u8; 20]) -> Result<()> {
+    pub fn set_ethereum_address(
+        ctx: Context<SetEthereumAddress>,
+        ethereum_address: [u8; 20],
+    ) -> Result<()> {
         let user_account = &mut ctx.accounts.user_account;
         user_account.ethereum_address = ethereum_address;
         Ok(())
     }
 
-    pub fn transfer_tokens(ctx: Context<TransferTokens>, amount: u64, signature: [u8; 65], message: [u8; 32]) -> Result<()> {
+    pub fn transfer_tokens(
+        ctx: Context<TransferTokens>,
+        amount: u64,
+        signature: [u8; 65],
+        message: [u8; 32],
+    ) -> Result<()> {
         let user_account = &ctx.accounts.user_account;
 
         if !verify_ethereum_signature(&user_account.ethereum_address, &message, &signature) {
@@ -41,10 +49,7 @@ pub mod external_delegate_token_master {
             CpiContext::new_with_signer(
                 ctx.accounts.token_program.to_account_info(),
                 transfer_instruction,
-                &[&[
-                    user_account.key().as_ref(),
-                    &[ctx.bumps.user_pda],
-                ]],
+                &[&[user_account.key().as_ref(), &[ctx.bumps.user_pda]]],
             ),
             amount,
         )?;
@@ -78,7 +83,8 @@ pub mod external_delegate_token_master {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = authority, space = 8 + 32 + 20)] // Ensure this is only for user_account
+    #[account(init, payer = authority, space = 8 + 32 + 20)]
+    // Ensure this is only for user_account
     pub user_account: Account<'info, UserAccount>,
     #[account(mut)]
     pub authority: Signer<'info>, // This should remain as a signer
@@ -138,7 +144,11 @@ pub enum ErrorCode {
     InvalidSignature,
 }
 
-fn verify_ethereum_signature(ethereum_address: &[u8; 20], message: &[u8; 32], signature: &[u8; 65]) -> bool {
+fn verify_ethereum_signature(
+    ethereum_address: &[u8; 20],
+    message: &[u8; 32],
+    signature: &[u8; 65],
+) -> bool {
     let recovery_id = signature[64];
     let mut sig = [0u8; 64];
     sig.copy_from_slice(&signature[..64]);

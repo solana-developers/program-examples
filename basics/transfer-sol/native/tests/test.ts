@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
-import { InstructionType, createTransferInstruction } from './instruction';
+import { createTransferInstruction, InstructionType } from './instruction';
 
 describe('transfer-sol', async () => {
   const PROGRAM_ID = PublicKey.unique();

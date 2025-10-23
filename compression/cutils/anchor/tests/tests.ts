@@ -1,10 +1,8 @@
 import * as anchor from '@coral-xyz/anchor';
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum/dist/src/generated';
-import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
 import type { Cutils } from '../target/types/cutils';
 import { loadOrGenerateKeypair, loadPublicKeysFromFile } from './utils/helpers';
-import { getAsset, getAssetProof } from './utils/readAPI';
-import { decode, getAccounts, mapProof } from './utils/utils';
+import { getAccounts } from './utils/utils';
 
 describe('cutils', () => {
   const provider = anchor.AnchorProvider.env();

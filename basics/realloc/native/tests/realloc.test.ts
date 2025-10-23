@@ -3,11 +3,11 @@ import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
 import { start } from 'solana-bankrun';
 import {
   AddressInfo,
-  EnhancedAddressInfo,
-  WorkInfo,
   createCreateInstruction,
   createReallocateWithoutZeroInitInstruction,
   createReallocateZeroInitInstruction,
+  EnhancedAddressInfo,
+  WorkInfo,
 } from '../ts';
 
 describe('Realloc!', async () => {

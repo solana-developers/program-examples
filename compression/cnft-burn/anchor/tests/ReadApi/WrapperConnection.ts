@@ -1,4 +1,12 @@
 // local imports for the ReadApi types
+
+import type { Metadata, Mint, NftOriginalEdition, SplTokenCurrency } from '@metaplex-foundation/js';
+// import from the `@metaplex-foundation/js`
+import { amount, MetaplexError, Pda, toBigNumber } from '@metaplex-foundation/js';
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
+import { TokenStandard } from '@metaplex-foundation/mpl-token-metadata';
+import { Connection, PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
 import type {
   GetAssetProofRpcInput,
   GetAssetProofRpcResponse,
@@ -8,14 +16,6 @@ import type {
   ReadApiAsset,
   ReadApiAssetList,
 } from '@/ReadApi/types';
-import type { Metadata, Mint, NftOriginalEdition, SplTokenCurrency } from '@metaplex-foundation/js';
-// import from the `@metaplex-foundation/js`
-import { MetaplexError, Pda, amount, toBigNumber } from '@metaplex-foundation/js';
-import { type Commitment, Connection, type ConnectionConfig, PublicKey } from '@solana/web3.js';
-
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
-import { TokenStandard } from '@metaplex-foundation/mpl-token-metadata';
-import BN from 'bn.js';
 
 type JsonRpcParams<ReadApiMethodParams> = {
   method: string;
@@ -110,7 +110,7 @@ export const toMetadataFromReadApiAsset = (input: ReadApiAsset): Metadata => {
     collection: collection ? { address: new PublicKey(collection.group_value), verified: false } : null,
 
     // Current regular `Metadata` does not currently have a `compression` value
-    // @ts-ignore
+    // @ts-expect-error
     compression: input.compression,
 
     // Read API doesn't return this info, yet

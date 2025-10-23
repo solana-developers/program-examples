@@ -3,7 +3,7 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-anchor_program_example = "GpVcgWdgVErgLqsn8VYUch6EqDerMgNqoLSmGyKrd6MR"
+account_data_anchor_program = "GpVcgWdgVErgLqsn8VYUch6EqDerMgNqoLSmGyKrd6MR"
 
 [registry]
 url = "https://api.apr.dev"

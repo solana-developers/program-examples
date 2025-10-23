@@ -1,8 +1,8 @@
-import * as anchor from '@coral-xyz/anchor';
 import type { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import { createMemoInstruction } from '@solana/spl-memo';
-import { TOKEN_2022_PROGRAM_ID, createAccount, createMint, createTransferInstruction, mintTo } from '@solana/spl-token';
-import { Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
+import { createAccount, createMint, createTransferInstruction, mintTo, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
+import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import type { MemoTransfer } from '../target/types/memo_transfer';
 
 describe('memo-transfer', () => {

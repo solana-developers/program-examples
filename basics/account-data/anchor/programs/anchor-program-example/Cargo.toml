@@ -1,12 +1,12 @@
 [package]
-name = "account-data-anchor-program-example"
+name = "account-data-anchor-program"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "anchor_program_example"
+name = "account_data_anchor_program"
 
 [features]
 default = []
@@ -15,6 +15,12 @@ no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
 idl-build = ["anchor-lang/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
 
 [dependencies]
-anchor-lang = "0.31.1"
+anchor-lang = "0.32.1"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
