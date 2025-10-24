@@ -19,3 +19,7 @@ custom-panic = []
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[dev-dependencies]
+litesvm = "0.8.1"
+solana-sdk = "3.0.0"
