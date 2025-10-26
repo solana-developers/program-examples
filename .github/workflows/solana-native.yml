@@ -135,6 +135,17 @@ jobs:
               return 1
             fi
 
+            # Run Rust unit tests
+            if [ -d "program" ]; then
+              echo "Running Rust unit tests for $project"
+              if ! cargo test --manifest-path=./program/Cargo.toml; then
+                echo "::error::Rust unit tests failed for $project"
+                echo "$project: Rust unit tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+                cd - > /dev/null
+                return 1
+              fi
+            fi
+
             # Test
             if ! pnpm build-and-test; then
               echo "::error::tests failed for $project"
