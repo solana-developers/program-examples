@@ -17,7 +17,7 @@ custom-panic = []
 [dependencies]
 borsh = "0.9"
 shank = "0.0.8"
-solana-program = "2.1"
+solana-program = "3.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
