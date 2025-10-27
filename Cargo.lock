@@ -947,7 +947,15 @@ version = "0.1.0"
 dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
+ "litesvm",
+ "solana-instruction 3.0.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
  "solana-program 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-rent 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction",
 ]
 
 [[package]]
