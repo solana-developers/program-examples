@@ -1486,7 +1486,13 @@ dependencies = [
 name = "hello-solana-program"
 version = "0.1.0"
 dependencies = [
+ "litesvm",
+ "solana-instruction 3.0.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
  "solana-program 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-transaction",
 ]
 
 [[package]]
