@@ -6,7 +6,7 @@ import { start } from 'solana-bankrun';
 
 describe('PDAs', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program_derived_addresses_program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: 'program_derived_addresses_native_program', programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
   const rent = await client.getRent();
