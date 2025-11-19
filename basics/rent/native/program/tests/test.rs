@@ -10,7 +10,7 @@ fn test_rent() {
     let mut svm = LiteSVM::new();
 
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../../../../target/deploy/program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/program.so");
 
     svm.add_program(program_id, program_bytes).unwrap();
 
