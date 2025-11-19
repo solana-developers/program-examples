@@ -10,7 +10,7 @@ use solana_transaction::Transaction;
 #[test]
 fn test_pda_rent_payer() {
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../../../../target/deploy/pda_rent_payer_program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/pda_rent_payer_program.so");
 
     let mut svm = LiteSVM::new();
     svm.add_program(program_id, program_bytes).unwrap();
