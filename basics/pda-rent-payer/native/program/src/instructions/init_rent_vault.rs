@@ -12,7 +12,7 @@ use crate::state::RentVault;
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct InitRentVaultArgs {
-    fund_lamports: u64,
+    pub fund_lamports: u64,
 }
 
 pub fn init_rent_vault(

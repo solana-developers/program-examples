@@ -67,3 +67,11 @@ spl-token-2022-interface = "2.0.0"
 # pinocchio
 pinocchio = "=0.8.1"
 pinocchio-log = "0.4.0"
+
+# testing
+litesvm = "0.8.1"
+solana-instruction = "3.0.0"
+solana-keypair = "3.0.1"
+solana-pubkey = "3.0.0"
+solana-transaction = "3.0.1"
+solana-native-token = "3.0.0"
