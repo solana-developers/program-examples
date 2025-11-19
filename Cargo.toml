@@ -66,7 +66,7 @@ spl-token-2022-interface = "2.0.0"
 
 # pinocchio
 pinocchio = "=0.8.1"
-pinocchio-log = "0.4.0"
+pinocchio-log = "0.5.1"
 
 # testing
 litesvm = "0.8.1"
