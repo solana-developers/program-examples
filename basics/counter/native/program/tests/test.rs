@@ -12,7 +12,7 @@ use solana_transaction::Transaction;
 #[test]
 fn test_counter() {
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../../../../target/deploy/counter_solana_native.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/counter_solana_native.so");
 
     let mut svm = LiteSVM::new();
     svm.add_program(program_id, program_bytes).unwrap();
