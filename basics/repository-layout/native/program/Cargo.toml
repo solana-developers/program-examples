@@ -12,9 +12,16 @@ solana-program = "2.0"
 crate-type = ["cdylib", "lib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[dev-dependencies]
+litesvm = "0.8.1"
+solana-instruction = "3.0.0"
+solana-keypair = "3.0.1"
+solana-native-token = "3.0.0"
+solana-pubkey = "3.0.0"
+solana-transaction = "3.0.1"
