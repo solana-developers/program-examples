@@ -16,8 +16,7 @@ fn test_checking_accounts() {
     svm.airdrop(&payer.pubkey(), LAMPORTS_PER_SOL * 10).unwrap();
 
     let program_id = Pubkey::new_unique();
-    let program_bytes =
-        include_bytes!("../../../../../target/deploy/checking_accounts_native_program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/checking_accounts_native_program.so");
 
     svm.add_program(program_id, program_bytes).unwrap();
 

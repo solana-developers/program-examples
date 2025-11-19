@@ -6,6 +6,8 @@ edition = "2021"
 [features]
 no-entrypoint = []
 cpi = ["no-entrypoint"]
+custom-heap = []
+custom-panic = []
 
 [dependencies]
 borsh = "1.5.7"
@@ -15,3 +17,6 @@ solana-system-interface = {version = "2.0.0", features = ["bincode"]}
 
 [lib]
 crate-type = ["cdylib", "lib"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
