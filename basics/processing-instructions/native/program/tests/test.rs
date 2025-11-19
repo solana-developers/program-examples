@@ -11,8 +11,7 @@ fn test_processing_ixs() {
     let mut svm = LiteSVM::new();
 
     let program_id = Pubkey::new_unique();
-    let program_bytes =
-        include_bytes!("../../../../../target/deploy/processing_instructions_program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/processing_instructions_program.so");
 
     svm.add_program(program_id, program_bytes).unwrap();
 
