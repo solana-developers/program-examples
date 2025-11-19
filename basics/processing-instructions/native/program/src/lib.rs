@@ -27,6 +27,6 @@ fn process_instruction(
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct InstructionData {
-    name: String,
-    height: u32,
+    pub name: String,
+    pub height: u32,
 }
