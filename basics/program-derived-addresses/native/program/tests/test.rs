@@ -15,7 +15,7 @@ fn test_pda() {
 
     let program_id = Pubkey::new_unique();
     let program_bytes =
-        include_bytes!("../../../../../target/deploy/program_derived_addresses_native_program.so");
+        include_bytes!("../../tests/fixtures/program_derived_addresses_native_program.so");
     svm.add_program(program_id, program_bytes).unwrap();
 
     let payer = Keypair::new();
