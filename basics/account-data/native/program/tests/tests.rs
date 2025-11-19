@@ -19,8 +19,7 @@ fn test_account_data() {
 
     svm.airdrop(&payer.pubkey(), LAMPORTS_PER_SOL * 10).unwrap();
 
-    let program_bytes =
-        include_bytes!("../../../../../target/deploy/account_data_native_program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/account_data_native_program.so");
 
     svm.add_program(program_id, program_bytes).unwrap();
 
