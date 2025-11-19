@@ -1,7 +1,7 @@
 use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey};
 
 use crate::instructions::{create_pda::*, get_pda::*};
-use crate::state::Favorites;
+pub use crate::state::Favorites;
 use borsh::{BorshDeserialize, BorshSerialize};
 
 #[derive(BorshDeserialize, BorshSerialize)]
