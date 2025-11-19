@@ -30,5 +30,5 @@ fn test_hello_solana() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_err();
+    assert!(svm.send_transaction(tx).is_ok());
 }
