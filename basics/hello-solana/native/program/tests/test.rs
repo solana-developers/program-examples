@@ -8,7 +8,7 @@ use solana_transaction::Transaction;
 #[test]
 fn test_hello_solana() {
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../../../../target/deploy/hello_solana_program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/hello_solana_program.so");
 
     let mut svm = LiteSVM::new();
     svm.add_program(program_id, program_bytes).unwrap();
