@@ -12,7 +12,6 @@ solana-program = "2.0"
 crate-type = ["cdylib", "lib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 
