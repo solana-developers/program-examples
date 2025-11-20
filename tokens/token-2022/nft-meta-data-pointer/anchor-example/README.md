@@ -12,7 +12,7 @@ The nft will have a name, symbol and a uri. The uri is a link to a json file whi
 
 There is a video walkthrough of this example on the Solana Foundation Youtube channel.
 
-[![Solana Foundation Youtube channel]](https://www.youtube.com/@SolanaFndn/videos)
+[![Solana Foundation Youtube channel]](https://www.youtube.com/watch?v=n-ym1utpzhk&ab_channel=Solana)
 
 # How to run this example
 
