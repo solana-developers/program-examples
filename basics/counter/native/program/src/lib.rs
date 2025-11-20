@@ -9,7 +9,7 @@ use solana_program::{
 };
 
 mod state;
-use state::*;
+pub use state::*;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
