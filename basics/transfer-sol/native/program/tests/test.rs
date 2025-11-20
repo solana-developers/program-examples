@@ -45,7 +45,7 @@ fn test_transfer_sol() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let payer_balance_after = svm.get_balance(&payer.pubkey()).unwrap();
     let recipient_balance_after = svm.get_balance(&test_recipient1.pubkey()).unwrap_or(0);
@@ -68,7 +68,7 @@ fn test_transfer_sol() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let data = borsh::to_vec(&TransferInstruction::ProgramTransfer(LAMPORTS_PER_SOL)).unwrap();
 
@@ -89,5 +89,5 @@ fn test_transfer_sol() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

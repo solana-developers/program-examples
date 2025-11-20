@@ -41,14 +41,14 @@ fn test_repo_layout() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let data = borsh::to_vec(&CarnivalInstructionData {
         name: "Jimmy".to_string(),
         height: 36,
         ticket_count: 15,
         attraction: "game".to_string(),
-        attraction_name: "I Got it!".to_string(),
+        attraction_name: "I Got It!".to_string(),
     })
     .unwrap();
 
@@ -65,7 +65,8 @@ fn test_repo_layout() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
+
     let data = borsh::to_vec(&CarnivalInstructionData {
         name: "Jimmy".to_string(),
         height: 36,
@@ -88,5 +89,5 @@ fn test_repo_layout() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

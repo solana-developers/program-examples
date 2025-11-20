@@ -40,7 +40,7 @@ fn test_pda() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let (pda, bump) =
         Pubkey::find_program_address(&[b"page_visits", test_user.pubkey().as_ref()], &program_id);
@@ -69,7 +69,7 @@ fn test_pda() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let data = borsh::to_vec(&IncrementPageVisits {}).unwrap();
 
@@ -89,7 +89,7 @@ fn test_pda() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     // read page visits
     let account_info = svm.get_account(&pda).unwrap();

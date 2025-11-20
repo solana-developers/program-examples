@@ -51,7 +51,7 @@ fn test_favorites() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let favorites_account_data = svm.get_account(&favorites_pda).unwrap().data;
 
@@ -79,5 +79,5 @@ fn test_favorites() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

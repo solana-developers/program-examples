@@ -46,7 +46,7 @@ fn test_close_account() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     // clsose user ix
     let data = borsh::to_vec(&MyInstruction::CloseUser).unwrap();
@@ -68,5 +68,5 @@ fn test_close_account() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

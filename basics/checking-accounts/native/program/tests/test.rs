@@ -36,7 +36,7 @@ fn test_checking_accounts() {
     );
 
     // verify tx was sent successfully
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let ix = Instruction {
         program_id,
@@ -57,5 +57,5 @@ fn test_checking_accounts() {
     );
 
     // verify tx was sent successfully
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

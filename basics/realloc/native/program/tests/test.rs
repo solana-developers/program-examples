@@ -47,7 +47,7 @@ fn test_realloc() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let data = borsh::to_vec(&ReallocInstruction::ReallocateWithoutZeroInit(
         EnhancedAddressInfoExtender {
@@ -74,7 +74,7 @@ fn test_realloc() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let data = borsh::to_vec(&ReallocInstruction::ReallocateZeroInit(WorkInfo {
         name: "Pete".to_string(),
@@ -97,5 +97,5 @@ fn test_realloc() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

@@ -38,7 +38,7 @@ fn test_counter() {
         &[&payer, &counter_account],
         svm.latest_blockhash(),
     );
-    svm.send_transaction(tx).unwrap();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let ix = Instruction {
         program_id,
