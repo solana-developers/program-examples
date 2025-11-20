@@ -49,7 +49,7 @@ fn test_account_data() {
         svm.latest_blockhash(),
     );
 
-    svm.send_transaction(tx).unwrap();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let address_info_account_data = &svm
         .get_account(&address_info_account.pubkey())

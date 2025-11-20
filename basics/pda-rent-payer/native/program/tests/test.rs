@@ -43,7 +43,7 @@ fn test_pda_rent_payer() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     let new_account = Keypair::new();
 
@@ -66,5 +66,5 @@ fn test_pda_rent_payer() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 }

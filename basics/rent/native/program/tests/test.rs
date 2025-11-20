@@ -37,7 +37,7 @@ fn test_rent() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    assert!(svm.send_transaction(tx).is_ok());
 
     // rent
     let _rent = svm.get_account(&new_keypair.pubkey()).unwrap().lamports;
