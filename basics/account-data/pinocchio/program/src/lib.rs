@@ -82,7 +82,7 @@ fn process_create(
     .invoke()?;
 
     let mut address_info_data = address_info.try_borrow_mut_data()?;
-    address_info_data.copy_from_slice(&instruction_data);
+    address_info_data.copy_from_slice(instruction_data);
 
     Ok(())
 }
