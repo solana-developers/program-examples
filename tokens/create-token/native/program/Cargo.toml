@@ -15,7 +15,6 @@ mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
 crate-type = ["cdylib", "lib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 

@@ -6,6 +6,7 @@ members = [
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
     "basics/close-account/native/program",
+    "basics/close-account/pinocchio/program",
     "basics/close-account/anchor/programs/close-account",
     "basics/counter/native/program",
     "basics/counter/anchor/programs/counter_anchor",
@@ -65,8 +66,9 @@ spl-associated-token-account-interface = "2.0.0"
 spl-token-2022-interface = "2.0.0"
 
 # pinocchio
-pinocchio = "=0.8.1"
+pinocchio = "0.9.2"
 pinocchio-log = "0.4.0"
+pinocchio-system = "0.4.0"
 
 # testing
 litesvm = "0.8.1"

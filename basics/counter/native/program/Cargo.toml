@@ -10,7 +10,6 @@ crate-type = ["cdylib", "lib"]
 no-entrypoint = []
 cpi = ["no-entrypoint"]
 default = []
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 

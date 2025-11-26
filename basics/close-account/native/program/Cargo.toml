@@ -13,7 +13,6 @@ solana-system-interface.workspace = true
 crate-type = ["cdylib", "lib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 
