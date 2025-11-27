@@ -11,6 +11,7 @@ members = [
     "basics/counter/anchor/programs/counter_anchor",
     "basics/counter/mpl-stack",
     "basics/create-account/native/program",
+    "basics/create-account/pinocchio/program",
     "basics/create-account/anchor/programs/create-system-account",
     "basics/cross-program-invocation/anchor/programs/*",
     "basics/hello-solana/native/program",
@@ -65,8 +66,10 @@ spl-associated-token-account-interface = "2.0.0"
 spl-token-2022-interface = "2.0.0"
 
 # pinocchio
-pinocchio = "=0.8.1"
+pinocchio = "0.9.2"
 pinocchio-log = "0.4.0"
+pinocchio-system = "0.4.0"
+pinocchio-pubkey = "0.3.0"
 
 # testing
 litesvm = "0.8.1"
