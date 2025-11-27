@@ -25,7 +25,7 @@ fn process_instruction(
 
     log!("Program invoked. Creating a system account...");
     log!("  New public key will be:");
-    pinocchio::pubkey::log(&new_account.key());
+    pinocchio::pubkey::log(new_account.key());
 
     CreateAccount {
         from: payer,
