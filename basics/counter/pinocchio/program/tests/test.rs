@@ -1,5 +1,4 @@
-use borsh::BorshDeserialize;
-use counter_solana_native::Counter;
+use counter_solana_pinocchio::Counter;
 use litesvm::LiteSVM;
 use solana_instruction::{AccountMeta, Instruction};
 use solana_keypair::{Keypair, Signer};
@@ -12,7 +11,7 @@ use solana_transaction::Transaction;
 #[test]
 fn test_counter() {
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../tests/fixtures/counter_solana_native.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/counter_solana_pinocchio.so");
 
     let mut svm = LiteSVM::new();
     svm.add_program(program_id, program_bytes).unwrap();
@@ -38,7 +37,9 @@ fn test_counter() {
         &[&payer, &counter_account],
         svm.latest_blockhash(),
     );
-    assert!(svm.send_transaction(tx).is_ok());
+
+    let res = svm.send_transaction(tx);
+    assert!(res.is_ok());
 
     let ix = Instruction {
         program_id,
@@ -53,9 +54,11 @@ fn test_counter() {
         svm.latest_blockhash(),
     );
 
-    let _ = svm.send_transaction(tx).is_ok();
+    let res = svm.send_transaction(tx);
+    assert!(res.is_ok());
 
     let counter_account_data = svm.get_account(&counter_account.pubkey()).unwrap().data;
-    let counter = Counter::try_from_slice(&counter_account_data).unwrap();
-    assert_eq!(counter.count, 1);
+    let counter_bytes: [u8; 8] = counter_account_data[0..8].try_into().unwrap();
+    let count = u64::from_le_bytes(counter_bytes);
+    assert_eq!(count, 1);
 }
