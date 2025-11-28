@@ -13,4 +13,7 @@ cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"  #For all test
+#test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/test.ts"   #For specific anchor test
+bankrun-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/bankrun.test.ts" #For bankrun test
+litesvm-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/litesvm.test.ts" #For litesvm test
