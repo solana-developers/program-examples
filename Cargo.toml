@@ -2,6 +2,7 @@
 members = [
     #basics
     "basics/account-data/native/program",
+    "basics/account-data/pinocchio/program",
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
@@ -69,7 +70,6 @@ spl-token-2022-interface = "2.0.0"
 pinocchio = "0.9.2"
 pinocchio-log = "0.4.0"
 pinocchio-system = "0.4.0"
-pinocchio-pubkey = "0.3.0"
 
 # testing
 litesvm = "0.8.1"
