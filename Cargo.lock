@@ -27,6 +27,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "account-data-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "pinocchio",
+ "pinocchio-log",
+ "pinocchio-system",
+ "solana-keypair",
+ "solana-message 3.0.1",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-signer",
+ "solana-system-interface 2.0.0",
+ "solana-transaction",
+]
+
+[[package]]
 name = "aead"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
