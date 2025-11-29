@@ -165,7 +165,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
-Create token mints, mint tokens, and transferr tokens using Token Extensions.
+Create token mints, mint tokens, and transfer tokens using Token Extensions.
 
 [anchor](./tokens/token-2022/basics/anchor)
 
@@ -217,7 +217,7 @@ Allow a designated account to close a Mint.
 
 [anchor](./tokens/token-2022/mint-close-authority/anchor) [native](./tokens/token-2022/mint-close-authority/native)
 
-### Usng multiple token extensions
+### Using multiple token extensions
 
 Use multiple Token Extensions at once.
 
