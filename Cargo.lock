@@ -1022,6 +1022,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "counter-solana-pinocchio"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "pinocchio",
+ "pinocchio-log",
+ "pinocchio-pubkey",
+ "solana-instruction 3.0.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-rent 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction",
+]
+
+[[package]]
 name = "counter_anchor"
 version = "0.1.0"
 dependencies = [
