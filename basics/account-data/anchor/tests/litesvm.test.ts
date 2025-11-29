@@ -94,8 +94,6 @@ describe("Account Data!", () => {
 			throw new Error("Failed to fetch account info");
 		}
 
-		// console.log(accountInfoAcc)
-
 		/**
 		 * Decode the accounts' data
 		 */
