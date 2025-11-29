@@ -875,6 +875,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "checking-accounts-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "pinocchio",
+ "pinocchio-log",
+ "pinocchio-system",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-sdk",
+ "solana-system-interface 2.0.0",
+ "solana-transaction",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
