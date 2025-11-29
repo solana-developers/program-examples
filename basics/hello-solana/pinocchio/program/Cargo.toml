@@ -11,7 +11,6 @@ pinocchio-log.workspace = true
 crate-type = ["cdylib", "rlib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 

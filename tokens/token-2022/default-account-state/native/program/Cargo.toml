@@ -16,7 +16,6 @@ spl-token-2022-interface.workspace = true
 crate-type = ["cdylib", "lib"]
 
 [features]
-anchor-debug = []
 custom-heap = []
 custom-panic = []
 
