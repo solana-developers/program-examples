@@ -28,7 +28,7 @@ fn process_instruction(
 
     log!("Program invoked. Creating a system account...");
     log!("  New public key will be: ");
-    pinocchio::pubkey::log(&new_account.key());
+    pinocchio::pubkey::log(new_account.key());
 
     let rent = Rent {
         lamports_per_byte_year: DEFAULT_LAMPORTS_PER_BYTE_YEAR,
