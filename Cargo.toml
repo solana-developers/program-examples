@@ -35,6 +35,7 @@ members = [
     "basics/repository-layout/native/program",
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
+    "basics/transfer-sol/pinocchio/program",
     "basics/transfer-sol/anchor/programs/*",
 
     # tokens
