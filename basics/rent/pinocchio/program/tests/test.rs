@@ -10,7 +10,7 @@ fn test_rent() {
     let mut svm = LiteSVM::new();
 
     let program_id = Pubkey::new_unique();
-    let program_bytes = include_bytes!("../../tests/fixtures/program.so");
+    let program_bytes = include_bytes!("../../tests/fixtures/rent_pinocchio_program.so");
 
     svm.add_program(program_id, program_bytes).unwrap();
 
@@ -36,7 +36,8 @@ fn test_rent() {
         svm.latest_blockhash(),
     );
 
-    assert!(svm.send_transaction(tx).is_ok());
+    let res = svm.send_transaction(tx);
+    assert!(res.is_ok());
 
     // rent
     let _rent = svm.get_account(&new_keypair.pubkey()).unwrap().lamports;
