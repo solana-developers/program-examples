@@ -1,0 +1,28 @@
+[package]
+name = "steel-program"
+description = ""
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+steel-api.workspace = true
+solana-program.workspace = true
+steel.workspace = true
+spl-token-2022.workspace = true
+
+[dev-dependencies]
+base64 = "0.21"
+rand = "0.8.5"
+solana-program-test = "2.1"
+solana-sdk = "2.1"
+tokio = { version = "1.35", features = ["full"] }
+spl-associated-token-account = {version = "7.0.0", features = ["no-entrypoint"]}
