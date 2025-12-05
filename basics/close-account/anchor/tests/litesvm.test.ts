@@ -1,5 +1,3 @@
-import assert from "node:assert/strict";
-import { describe, it } from "node:test";
 import anchor from "@coral-xyz/anchor";
 import {
 	Keypair,
@@ -9,8 +7,8 @@ import {
 	Transaction,
 	TransactionInstruction,
 } from "@solana/web3.js";
+import { assert } from "chai";
 import { LiteSVM } from "litesvm";
-
 import IDL from "../target/idl/close_account_program.json" with {
 	type: "json",
 };
