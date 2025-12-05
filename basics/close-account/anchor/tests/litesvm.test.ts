@@ -81,7 +81,6 @@ describe("LiteSVM: Close an account", () => {
 			keys: [
 				{ pubkey: payer.publicKey, isSigner: true, isWritable: true },
 				{ pubkey: userAccountAddress, isSigner: false, isWritable: true },
-				{ pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
 			],
 			programId,
 			data,
