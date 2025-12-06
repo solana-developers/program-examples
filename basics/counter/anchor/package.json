@@ -5,7 +5,8 @@
 	},
 	"dependencies": {
 		"@coral-xyz/anchor": "0.32.1",
-		"@solana/web3.js": "^1.95.2"
+		"@solana/web3.js": "^1.98.4",
+		"litesvm": "^0.4.0"
 	},
 	"devDependencies": {
 		"@types/bn.js": "^5.1.0",
