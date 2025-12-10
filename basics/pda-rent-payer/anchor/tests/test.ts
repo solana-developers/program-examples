@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { assert } from "chai";
-import type { PdaRentPayer } from "../target/types/pda_rent_payer";
+import type { PdaRentPayer } from "../target/types/pda_rent_payer.ts";
 
 describe("PDA Rent-Payer", () => {
 	const provider = anchor.AnchorProvider.env();
