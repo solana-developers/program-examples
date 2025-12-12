@@ -1,8 +1,9 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
-import type { ProgramDerivedAddressesProgram } from "../target/types/program_derived_addresses_program";
+import { assert } from "chai";
+import type { ProgramDerivedAddressesProgram } from "../target/types/program_derived_addresses_program.ts";
 
-describe("PDAs", () => {
+describe("Anchor: PDAs", () => {
 	const provider = anchor.AnchorProvider.env();
 	anchor.setProvider(provider);
 	const payer = provider.wallet as anchor.Wallet;
@@ -22,28 +23,32 @@ describe("PDAs", () => {
 				payer: payer.publicKey,
 			})
 			.rpc();
-	});
 
-	it("Visit the page!", async () => {
-		await program.methods
-			.incrementPageVisits()
-			.accounts({
-				user: payer.publicKey,
-			})
-			.rpc();
-	});
-
-	it("Visit the page!", async () => {
-		await program.methods
-			.incrementPageVisits()
-			.accounts({
-				user: payer.publicKey,
-			})
-			.rpc();
-	});
-
-	it("View page visits", async () => {
 		const pageVisits = await program.account.pageVisits.fetch(pageVisitPDA);
-		console.log(`Number of page visits: ${pageVisits.pageVisits}`);
+		assert.equal(pageVisits.pageVisits, 0);
+	});
+
+	it("Visit the page!", async () => {
+		await program.methods
+			.incrementPageVisits()
+			.accounts({
+				user: payer.publicKey,
+			})
+			.rpc();
+
+		const pageVisits = await program.account.pageVisits.fetch(pageVisitPDA);
+		assert.equal(pageVisits.pageVisits, 1);
+	});
+
+	it("Again visit the page!", async () => {
+		await program.methods
+			.incrementPageVisits()
+			.accounts({
+				user: payer.publicKey,
+			})
+			.rpc();
+
+		const pageVisits = await program.account.pageVisits.fetch(pageVisitPDA);
+		assert.equal(pageVisits.pageVisits, 2);
 	});
 });
