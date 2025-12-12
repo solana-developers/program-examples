@@ -1,8 +1,9 @@
 import * as anchor from "@coral-xyz/anchor";
+import { assert } from "chai";
 import Idl from "../target/idl/rent_example.json" with { type: "json" };
-import type { RentExample } from "../target/types/rent_example";
+import type { RentExample } from "../target/types/rent_example.ts";
 
-describe("Create a system account", () => {
+describe("Anchor: Create a system account", () => {
 	const provider = anchor.AnchorProvider.env();
 	anchor.setProvider(provider);
 	const wallet = provider.wallet as anchor.Wallet;
@@ -22,7 +23,6 @@ describe("Create a system account", () => {
 		const addressDataBuffer = new anchor.BorshCoder(
 			Idl as anchor.Idl,
 		).types.encode("AddressData", addressData);
-		console.log(`Address data buffer length: ${addressDataBuffer.length}`);
 
 		await program.methods
 			.createSystemAccount(addressData)
@@ -32,5 +32,11 @@ describe("Create a system account", () => {
 			})
 			.signers([wallet.payer, newKeypair])
 			.rpc();
+
+		const newKeypairInfo = await provider.connection.getAccountInfo(
+			newKeypair.publicKey,
+		);
+
+		assert.equal(newKeypairInfo.data.length, addressDataBuffer.length);
 	});
 });
