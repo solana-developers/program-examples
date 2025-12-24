@@ -1,14 +1,11 @@
 #![no_std]
-#![allow(deprecated)]
 
 use pinocchio::{
     account_info::AccountInfo,
     entrypoint, nostd_panic_handler,
     program_error::ProgramError,
     pubkey::Pubkey,
-    sysvars::rent::{
-        Rent, DEFAULT_BURN_PERCENT, DEFAULT_EXEMPTION_THRESHOLD, DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-    },
+    sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
 use pinocchio_system::instructions::CreateAccount;
@@ -63,11 +60,7 @@ fn process_create(
         return Err(ProgramError::InvalidInstructionData);
     }
 
-    let rent = Rent {
-        lamports_per_byte_year: DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-        exemption_threshold: DEFAULT_EXEMPTION_THRESHOLD,
-        burn_percent: DEFAULT_BURN_PERCENT,
-    };
+    let rent = Rent::get()?;
 
     let account_span = AddressInfo::LEN;
     let lamports_required = rent.minimum_balance(account_span);

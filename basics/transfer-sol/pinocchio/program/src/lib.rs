@@ -1,5 +1,4 @@
 #![no_std]
-#![allow(deprecated)]
 
 use pinocchio::{
     account_info::AccountInfo, entrypoint, nostd_panic_handler, program_error::ProgramError,
