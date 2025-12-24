@@ -1,0 +1,29 @@
+[package]
+name = "pda-rent-payer-pinocchio-program"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pinocchio.workspace = true
+pinocchio-log.workspace = true
+pinocchio-system.workspace = true
+
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+custom-heap = []
+custom-panic = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[dev-dependencies]
+litesvm.workspace = true
+solana-instruction.workspace = true
+solana-keypair.workspace = true
+solana-pubkey.workspace = true
+solana-transaction.workspace = true
+solana-native-token.workspace = true
+solana-system-interface.workspace = true
