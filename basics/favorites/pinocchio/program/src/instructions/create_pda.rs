@@ -26,7 +26,7 @@ pub fn create_pda(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) ->
     }
 
     // Checking if the pda is already initialized
-    if favorite_account.try_borrow_data()?.len() == 0 {
+    if favorite_account.try_borrow_data()?.is_empty() {
         let rent = Rent::get()?;
 
         // Initialize the favorite account if it's not initialized
