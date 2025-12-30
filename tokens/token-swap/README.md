@@ -145,7 +145,7 @@ This code implements a constant LEN for the Pool struct, which represents the si
 
    https://github.com/solana-developers/program-examples/blob/419cb6b6c20e8b1c65711b68a4dde2527725cc1a/tokens/token-swap/anchor/programs/token-swap/src/instructions/create_amm.rs#L1-L12
 
-   The above code defines a function named **`create_amm`** that is used to create an AMM account. It takes four parameters:
+   The above code defines a function named **`create_amm`** that is used to create an AMM account. It takes three parameters:
 
 1. **`ctx`**: The **`Context<CreateAmm>`** parameter contains the context data required to execute the function.
 2. **`id`**: The **`Pubkey`** parameter represents the ID for the new AMM account.
