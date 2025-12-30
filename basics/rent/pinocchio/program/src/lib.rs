@@ -1,14 +1,11 @@
 #![no_std]
-#![allow(deprecated)]
 
 use pinocchio::{
     account_info::AccountInfo,
     entrypoint, nostd_panic_handler,
     program_error::ProgramError,
     pubkey::Pubkey,
-    sysvars::rent::{
-        Rent, DEFAULT_BURN_PERCENT, DEFAULT_EXEMPTION_THRESHOLD, DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-    },
+    sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
 use pinocchio_log::log;
@@ -30,11 +27,7 @@ fn process_instruction(
     log!("  New public key will be: ");
     pinocchio::pubkey::log(new_account.key());
 
-    let rent = Rent {
-        lamports_per_byte_year: DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-        exemption_threshold: DEFAULT_EXEMPTION_THRESHOLD,
-        burn_percent: DEFAULT_BURN_PERCENT,
-    };
+    let rent = Rent::get()?;
 
     // Determine the necessary minimum rent by calculating the account's size
     //

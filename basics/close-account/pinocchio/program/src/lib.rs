@@ -1,5 +1,4 @@
 #![no_std]
-#![allow(deprecated)]
 
 use pinocchio::{
     account_info::AccountInfo,
@@ -8,9 +7,7 @@ use pinocchio::{
     nostd_panic_handler,
     program_error::ProgramError,
     pubkey::Pubkey,
-    sysvars::rent::{
-        Rent, DEFAULT_BURN_PERCENT, DEFAULT_EXEMPTION_THRESHOLD, DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-    },
+    sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
 use pinocchio_system::instructions::CreateAccount;
@@ -51,11 +48,7 @@ fn process_user(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    let rent = Rent {
-        lamports_per_byte_year: DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-        exemption_threshold: DEFAULT_EXEMPTION_THRESHOLD,
-        burn_percent: DEFAULT_BURN_PERCENT,
-    };
+    let rent = Rent::get()?;
 
     let account_span = User::LEN;
     let lamports_required = rent.minimum_balance(account_span);
@@ -93,11 +86,7 @@ fn process_close(accounts: &[AccountInfo]) -> ProgramResult {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    let rent = Rent {
-        lamports_per_byte_year: DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-        exemption_threshold: DEFAULT_EXEMPTION_THRESHOLD,
-        burn_percent: DEFAULT_BURN_PERCENT,
-    };
+    let rent = Rent::get()?;
 
     let account_span = 0usize;
     let lamports_required = rent.minimum_balance(account_span);
