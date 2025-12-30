@@ -1,5 +1,3 @@
-import assert from "node:assert/strict";
-import { describe, it } from "node:test";
 import {
 	Keypair,
 	LAMPORTS_PER_SOL,
@@ -8,6 +6,7 @@ import {
 	Transaction,
 	TransactionInstruction,
 } from "@solana/web3.js";
+import { assert } from "chai";
 import { LiteSVM } from "litesvm";
 
 import IDL from "../target/idl/checking_account_program.json" with {
