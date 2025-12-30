@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "test": "steel test",
+    "build-and-test": "steel build && steel test",
+    "build": "steel build",
+    "deploy": "solana program deploy ./program/target/so/program.so"
+  }
+}
