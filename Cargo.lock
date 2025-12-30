@@ -2336,6 +2336,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "processing-instructions-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "pinocchio",
+ "pinocchio-log",
+ "solana-instruction 3.0.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-transaction",
+]
+
+[[package]]
 name = "processing-instructions-program"
 version = "0.1.0"
 dependencies = [

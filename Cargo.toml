@@ -25,6 +25,7 @@ members = [
     "basics/pda-rent-payer/pinocchio/program",
     "basics/pda-rent-payer/anchor/programs/*",
     "basics/processing-instructions/native/program",
+    "basics/processing-instructions/pinocchio/program",
     "basics/processing-instructions/anchor/programs/*",
     "basics/program-derived-addresses/native/program",
     "basics/program-derived-addresses/anchor/programs/*",
