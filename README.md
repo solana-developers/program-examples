@@ -20,7 +20,7 @@ Each folder includes examples for one or more of the following:
   Tests should be executed using `pnpm test` as defined in the `Anchor.toml` scripts section.
 
 - `native` - Written using Solana's native Rust crates and vanilla Rust.
-  Build and test commands are defined via pnpm scripts and use `solana-bankrun` for testing.
+  Build and test commands are defined via pnpm scripts and use `litesvm` for testing.
   Run `pnpm test` to execute tests.
 
 
