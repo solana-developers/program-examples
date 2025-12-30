@@ -5,9 +5,9 @@ import {
 	Transaction,
 	sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import type { CheckingAccountProgram } from "../target/types/checking_account_program";
+import type { CheckingAccountProgram } from "../target/types/checking_account_program.ts";
 
-describe("Anchor example", () => {
+describe("Anchor: Checking accounts", () => {
 	const provider = anchor.AnchorProvider.env();
 	anchor.setProvider(provider);
 	const program = anchor.workspace
