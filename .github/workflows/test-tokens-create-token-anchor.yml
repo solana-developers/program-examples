@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install pnpm
+        run: npm install -g pnpm
       - name: Install Rust and Anchor
         run: |
           curl --proto '=https' --tlsv1.2 -sSfL https://sh.rustup.rs | sh -s -- -y
@@ -24,5 +26,5 @@ jobs:
         run: |
           cd tokens/create-token/anchor
           anchor build
-          npm install
-          npm test
+          pnpm install
+          pnpm test

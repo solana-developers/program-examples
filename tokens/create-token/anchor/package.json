@@ -5,7 +5,7 @@
 	},
 	"scripts": {
 		"pretest": "mkdir -p target/deploy && cp tests/fixtures/mpl_token_metadata.so target/deploy/",
-		"test": "npm run pretest && ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts",
+		"test": "pnpm run pretest && ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts",
 		"lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w"
 	},
 	"devDependencies": {
