@@ -1,70 +1,57 @@
-import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
-import { startAnchor } from "solana-bankrun";
-import type { CreateToken } from "../target/types/create_token";
+import { Program } from "@coral-xyz/anchor";
+import { CreateToken } from "../target/types/create_token"; // ts-mocha handles resolution
+import { BankrunProvider, startAnchor } from "anchor-bankrun";
+import { PublicKey } from "@solana/web3.js";
+// import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+const MPL_TOKEN_METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+import { assert } from "chai";
+import { readFileSync } from "fs";
 
-import IDL from "../target/idl/create_token.json" with { type: "json" };
-const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-);
+describe("Create Token with Metadata", () => {
+  it("Mints and adds metadata!", async () => {
+    const context = await startAnchor(
+      "", 
+      [
+        { name: "create_token", programId: new PublicKey("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS") },
+        { name: "mpl_token_metadata", programId: new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s") }
+      ],
+      []
+    );
+    const provider = new BankrunProvider(context);
+    anchor.setProvider(provider);
+    
+    // Load IDL
+    const idl = JSON.parse(readFileSync("./target/idl/create_token.json", "utf-8"));
+    const program = new Program<CreateToken>(idl, provider);
 
-describe("Bankrun example", async () => {
-  const context = await startAnchor(
-    "",
-    [
-      { name: "create_token", programId: PROGRAM_ID },
-      { name: "token_metadata", programId: METADATA_PROGRAM_ID },
-    ],
-    [],
-  );
-  const provider = new BankrunProvider(context);
-  const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<CreateToken>(IDL, provider);
+    const mintKeypair = anchor.web3.Keypair.generate();
+    
+    // Derive Metadata PDA (Crucial Step)
+    const [metadataAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("metadata"),
+        new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID).toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+      ],
+      new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID)
+    );
 
-  const metadata = {
-    name: "Solana Gold",
-    symbol: "GOLDSOL",
-    uri: "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json",
-  };
+    await program.methods.createToken(
+        "SuperToken", "SUP", "http://uri", new anchor.BN(1000)
+    )
+    .accounts({
+        mint: mintKeypair.publicKey,
+        metadataAccount: metadataAddress,
+        tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
+    })
+    .signers([mintKeypair])
+    .rpc();
 
-  it("Create an SPL Token!", async () => {
-    // Generate new keypair to use as address for mint account.
-    const mintKeypair = new Keypair();
+    // Verify metadata account exists
+    const accountInfo = await context.banksClient.getAccount(metadataAddress);
+    assert.isNotNull(accountInfo, "Metadata account should exist");
 
-    // SPL Token default = 9 decimals
-    const transactionSignature = await program.methods
-      .createTokenMint(9, metadata.name, metadata.symbol, metadata.uri)
-      .accounts({
-        payer: payer.publicKey,
-        mintAccount: mintKeypair.publicKey,
-      })
-      .signers([mintKeypair])
-      .rpc();
-
-    console.log("Success!");
-    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-    console.log(`   Transaction Signature: ${transactionSignature}`);
-  });
-
-  it("Create an NFT!", async () => {
-    // Generate new keypair to use as address for mint account.
-    const mintKeypair = new Keypair();
-
-    // NFT default = 0 decimals
-    const transactionSignature = await program.methods
-      .createTokenMint(0, metadata.name, metadata.symbol, metadata.uri)
-      .accounts({
-        payer: payer.publicKey,
-        mintAccount: mintKeypair.publicKey,
-      })
-      .signers([mintKeypair])
-      .rpc();
-
-    console.log("Success!");
-    console.log(`   Mint Address: ${mintKeypair.publicKey}`);
-    console.log(`   Transaction Signature: ${transactionSignature}`);
+    console.log("Success: Token Minted with Metadata!");
   });
 });
