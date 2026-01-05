@@ -45,12 +45,12 @@ pub struct CancelOffer<'a> {
     pub system_program: Program<'a, System>,
 }
 
-pub fn handler(ctx: Context<CancelOffer>, _id: u64) -> Result<()> {
+pub fn handler(ctx: Context<CancelOffer>, id: u64) -> Result<()> {
     // 1. Transfer Token A from the vault back to the maker
     let seeds = &[
         b"offer",
         ctx.accounts.maker.to_account_info().key.as_ref(),
-        &_id.to_le_bytes(),
+        &id.to_le_bytes(),
         &[ctx.accounts.offer.bump],
     ];
 
