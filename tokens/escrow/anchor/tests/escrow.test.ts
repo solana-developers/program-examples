@@ -165,4 +165,67 @@ describe('escrow', async () => {
     const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccountBalanceAfterResponse.value.amount);
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
+
+  it('Allows Alice to cancel an offer and reclaim her tokens', async () => {
+    // Pick a random ID for the offer we'll make
+    const offerId = getRandomBigNumber();
+
+    // Then determine the account addresses we'll use for the offer and the vault
+    const offer = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('offer'),
+        accounts.maker.toBuffer(),
+        offerId.toArrayLike(Buffer, 'le', 8),
+      ],
+      program.programId,
+    )[0];
+
+    const vault = getAssociatedTokenAddressSync(
+      accounts.tokenMintA,
+      offer,
+      true,
+      TOKEN_PROGRAM,
+    );
+
+    accounts.offer = offer;
+    accounts.vault = vault;
+
+    // Get initial balance
+    const initialBalanceResponse = await connection.getTokenAccountBalance(
+      accounts.makerTokenAccountA,
+    );
+    const initialBalance = new BN(initialBalanceResponse.value.amount);
+
+    // Make the offer
+    await program.methods
+      .makeOffer(offerId, tokenAOfferedAmount, tokenBWantedAmount)
+      .accounts({ ...accounts })
+      .signers([alice])
+      .rpc();
+
+    // Check balance decreased
+    const postOfferBalanceResponse = await connection.getTokenAccountBalance(
+      accounts.makerTokenAccountA,
+    );
+    const postOfferBalance = new BN(postOfferBalanceResponse.value.amount);
+    assert(postOfferBalance.eq(initialBalance.sub(tokenAOfferedAmount)));
+
+    // Cancel the offer
+    await program.methods
+      .cancelOffer(offerId)
+      .accounts({ ...accounts })
+      .signers([alice])
+      .rpc();
+
+    // Check balance restored
+    const finalBalanceResponse = await connection.getTokenAccountBalance(
+      accounts.makerTokenAccountA,
+    );
+    const finalBalance = new BN(finalBalanceResponse.value.amount);
+    assert(finalBalance.eq(initialBalance));
+
+    // Check vault account is closed
+    const vaultAccountInfo = await connection.getAccountInfo(vault);
+    assert.isNull(vaultAccountInfo, 'Vault account should be closed');
+  }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
 });
