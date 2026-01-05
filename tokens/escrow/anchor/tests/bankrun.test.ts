@@ -27,7 +27,7 @@ import type { Escrow } from '../target/types/escrow';
 
 const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
   TOKEN_2022_PROGRAM_ID;
-import IDL from '../target/idl/escrow.json';
+import IDL from '../target/idl/escrow.json' with { type: 'json' };
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 const getRandomBigNumber = (size = 8) => {
