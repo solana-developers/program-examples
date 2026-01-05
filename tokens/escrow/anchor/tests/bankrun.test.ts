@@ -8,6 +8,7 @@ import {
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
   getAccount,
+  unpackAccount,
   MINT_SIZE,
   TOKEN_2022_PROGRAM_ID,
   type TOKEN_PROGRAM_ID,
@@ -225,12 +226,15 @@ describe('Escrow Bankrun example', () => {
 
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccount = await getAccount(
-      connection,
+    const bobTokenAccountInfo = await connection.getAccountInfo(
       accounts.takerTokenAccountA,
-      'processed',
+    );
+    const bobTokenAccount = unpackAccount(
+      accounts.takerTokenAccountA,
+      bobTokenAccountInfo,
       TOKEN_PROGRAM,
     );
+
     const bobTokenAccountBalanceAfter = new BN(
       bobTokenAccount.amount.toString(),
     );
@@ -238,10 +242,15 @@ describe('Escrow Bankrun example', () => {
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccount = await getAccount(
-      connection,
+    const aliceTokenAccountInfo = await connection.getAccountInfo(
       accounts.makerTokenAccountB,
     );
+    const aliceTokenAccount = unpackAccount(
+      accounts.makerTokenAccountB,
+      aliceTokenAccountInfo,
+      TOKEN_PROGRAM,
+    );
+
     const aliceTokenAccountBalanceAfter = new BN(
       aliceTokenAccount.amount.toString(),
     );
