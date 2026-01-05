@@ -25,7 +25,8 @@ import { assert } from 'chai';
 import { ProgramTestContext, startAnchor } from 'solana-bankrun';
 import type { Escrow } from '../target/types/escrow';
 
-const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;
+const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
+  TOKEN_2022_PROGRAM_ID;
 import IDL from '../target/idl/escrow.json';
 const PROGRAM_ID = new PublicKey(IDL.address);
 
@@ -49,24 +50,39 @@ describe('Escrow Bankrun example', () => {
   before(
     'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
     async () => {
-      context = await startAnchor('', [{ name: 'escrow', programId: PROGRAM_ID }], []);
+      context = await startAnchor(
+        '',
+        [{ name: 'escrow', programId: PROGRAM_ID }],
+        [],
+      );
       provider = new BankrunProvider(context);
       connection = provider.connection;
       program = new anchor.Program<Escrow>(IDL, provider);
 
-      const [aliceTokenAccountA, aliceTokenAccountB, bobTokenAccountA, bobTokenAccountB] = [
-        alice,
-        bob,
-      ].flatMap((keypair) =>
+      const [
+        aliceTokenAccountA,
+        aliceTokenAccountB,
+        bobTokenAccountA,
+        bobTokenAccountB,
+      ] = [alice, bob].flatMap((keypair) =>
         [tokenMintA, tokenMintB].map((mint) =>
-          getAssociatedTokenAddressSync(mint.publicKey, keypair.publicKey, false, TOKEN_PROGRAM),
+          getAssociatedTokenAddressSync(
+            mint.publicKey,
+            keypair.publicKey,
+            false,
+            TOKEN_PROGRAM,
+          ),
         ),
       );
 
       // Airdrops to users, and creates two tokens mints 'A' and 'B'"
-      const minimumLamports = await getMinimumBalanceForRentExemptMint(connection);
+      const minimumLamports =
+        await getMinimumBalanceForRentExemptMint(connection);
 
-      const sendSolInstructions: Array<TransactionInstruction> = [alice, bob].map((account) =>
+      const sendSolInstructions: Array<TransactionInstruction> = [
+        alice,
+        bob,
+      ].map((account) =>
         SystemProgram.transfer({
           fromPubkey: provider.publicKey,
           toPubkey: account.publicKey,
@@ -74,15 +90,17 @@ describe('Escrow Bankrun example', () => {
         }),
       );
 
-      const createMintInstructions: Array<TransactionInstruction> = [tokenMintA, tokenMintB].map(
-        (mint) =>
-          SystemProgram.createAccount({
-            fromPubkey: provider.publicKey,
-            newAccountPubkey: mint.publicKey,
-            lamports: minimumLamports,
-            space: MINT_SIZE,
-            programId: TOKEN_PROGRAM,
-          }),
+      const createMintInstructions: Array<TransactionInstruction> = [
+        tokenMintA,
+        tokenMintB,
+      ].map((mint) =>
+        SystemProgram.createAccount({
+          fromPubkey: provider.publicKey,
+          newAccountPubkey: mint.publicKey,
+          lamports: minimumLamports,
+          space: MINT_SIZE,
+          programId: TOKEN_PROGRAM,
+        }),
       );
 
       // Make tokenA and tokenB mints, mint tokens and create ATAs
@@ -154,11 +172,20 @@ describe('Escrow Bankrun example', () => {
 
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
-      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
+      [
+        Buffer.from('offer'),
+        accounts.maker.toBuffer(),
+        offerId.toArrayLike(Buffer, 'le', 8),
+      ],
       program.programId,
     )[0];
 
-    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
+    const vault = getAssociatedTokenAddressSync(
+      accounts.tokenMintA,
+      offer,
+      true,
+      TOKEN_PROGRAM,
+    );
 
     accounts.offer = offer;
     accounts.vault = vault;
@@ -170,7 +197,12 @@ describe('Escrow Bankrun example', () => {
       .rpc();
 
     // Check our vault contains the tokens offered
-    const vaultAccount = await getAccount(connection, vault, 'processed', TOKEN_PROGRAM);
+    const vaultAccount = await getAccount(
+      connection,
+      vault,
+      'processed',
+      TOKEN_PROGRAM,
+    );
     const vaultBalance = new BN(vaultAccount.amount.toString());
     assert(vaultBalance.eq(tokenAOfferedAmount));
 
@@ -199,13 +231,20 @@ describe('Escrow Bankrun example', () => {
       'processed',
       TOKEN_PROGRAM,
     );
-    const bobTokenAccountBalanceAfter = new BN(bobTokenAccount.amount.toString());
+    const bobTokenAccountBalanceAfter = new BN(
+      bobTokenAccount.amount.toString(),
+    );
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccount = await getAccount(connection, accounts.makerTokenAccountB);
-    const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccount.amount.toString());
+    const aliceTokenAccount = await getAccount(
+      connection,
+      accounts.makerTokenAccountB,
+    );
+    const aliceTokenAccountBalanceAfter = new BN(
+      aliceTokenAccount.amount.toString(),
+    );
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   };
 

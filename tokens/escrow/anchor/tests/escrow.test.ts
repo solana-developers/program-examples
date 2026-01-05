@@ -16,7 +16,8 @@ import { assert } from 'chai';
 import type { Escrow } from '../target/types/escrow';
 
 // Work on both Token Program and new Token Extensions Program
-const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;
+const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
+  TOKEN_2022_PROGRAM_ID;
 
 const SECONDS = 1000;
 
@@ -60,27 +61,28 @@ describe('escrow', async () => {
   before(
     'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
     async () => {
-      const usersMintsAndTokenAccounts = await createAccountsMintsAndTokenAccounts(
-        [
-          // Alice's token balances
+      const usersMintsAndTokenAccounts =
+        await createAccountsMintsAndTokenAccounts(
           [
-            // 1_000_000_000 of token A
-            1_000_000_000,
-            // 0 of token B
-            0,
+            // Alice's token balances
+            [
+              // 1_000_000_000 of token A
+              1_000_000_000,
+              // 0 of token B
+              0,
+            ],
+            // Bob's token balances
+            [
+              // 0 of token A
+              0,
+              // 1_000_000_000 of token B
+              1_000_000_000,
+            ],
           ],
-          // Bob's token balances
-          [
-            // 0 of token A
-            0,
-            // 1_000_000_000 of token B
-            1_000_000_000,
-          ],
-        ],
-        1 * LAMPORTS_PER_SOL,
-        connection,
-        payer,
-      );
+          1 * LAMPORTS_PER_SOL,
+          connection,
+          payer,
+        );
 
       // Alice will be the maker (creator) of the offer
       // Bob will be the taker (acceptor) of the offer
@@ -124,11 +126,20 @@ describe('escrow', async () => {
 
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
-      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
+      [
+        Buffer.from('offer'),
+        accounts.maker.toBuffer(),
+        offerId.toArrayLike(Buffer, 'le', 8),
+      ],
       program.programId,
     )[0];
 
-    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
+    const vault = getAssociatedTokenAddressSync(
+      accounts.tokenMintA,
+      offer,
+      true,
+      TOKEN_PROGRAM,
+    );
 
     accounts.offer = offer;
     accounts.vault = vault;
@@ -166,17 +177,17 @@ describe('escrow', async () => {
 
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(
-      accounts.takerTokenAccountA,
+    const bobTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountBalanceAfter = new BN(
+      bobTokenAccountBalanceAfterResponse.value.amount,
     );
-    const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(
-      accounts.makerTokenAccountB,
-    );
+    const aliceTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
     const aliceTokenAccountBalanceAfter = new BN(
       aliceTokenAccountBalanceAfterResponse.value.amount,
     );
