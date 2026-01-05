@@ -79,7 +79,7 @@ describe('escrow', async () => {
         ],
         1 * LAMPORTS_PER_SOL,
         connection,
-        payer
+        payer,
       );
 
       // Alice will be the maker (creator) of the offer
@@ -115,7 +115,7 @@ describe('escrow', async () => {
       accounts.tokenMintB = tokenMintB.publicKey;
       accounts.makerTokenAccountB = aliceTokenAccountB;
       accounts.takerTokenAccountB = bobTokenAccountB;
-    }
+    },
   );
 
   it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
@@ -125,7 +125,7 @@ describe('escrow', async () => {
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
       [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
-      program.programId
+      program.programId,
     )[0];
 
     const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
@@ -167,7 +167,7 @@ describe('escrow', async () => {
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
     const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(
-      accounts.takerTokenAccountA
+      accounts.takerTokenAccountA,
     );
     const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
@@ -175,10 +175,10 @@ describe('escrow', async () => {
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
     const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(
-      accounts.makerTokenAccountB
+      accounts.makerTokenAccountB,
     );
     const aliceTokenAccountBalanceAfter = new BN(
-      aliceTokenAccountBalanceAfterResponse.value.amount
+      aliceTokenAccountBalanceAfterResponse.value.amount,
     );
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   }).slow(ANCHOR_SLOW_TEST_THRESHOLD);

@@ -59,8 +59,8 @@ describe('Escrow Bankrun example', () => {
         bob,
       ].flatMap((keypair) =>
         [tokenMintA, tokenMintB].map((mint) =>
-          getAssociatedTokenAddressSync(mint.publicKey, keypair.publicKey, false, TOKEN_PROGRAM)
-        )
+          getAssociatedTokenAddressSync(mint.publicKey, keypair.publicKey, false, TOKEN_PROGRAM),
+        ),
       );
 
       // Airdrops to users, and creates two tokens mints 'A' and 'B'"
@@ -71,7 +71,7 @@ describe('Escrow Bankrun example', () => {
           fromPubkey: provider.publicKey,
           toPubkey: account.publicKey,
           lamports: 10 * LAMPORTS_PER_SOL,
-        })
+        }),
       );
 
       const createMintInstructions: Array<TransactionInstruction> = [tokenMintA, tokenMintB].map(
@@ -82,7 +82,7 @@ describe('Escrow Bankrun example', () => {
             lamports: minimumLamports,
             space: MINT_SIZE,
             programId: TOKEN_PROGRAM,
-          })
+          }),
       );
 
       // Make tokenA and tokenB mints, mint tokens and create ATAs
@@ -103,14 +103,14 @@ describe('Escrow Bankrun example', () => {
           6,
           mintDetails.authority,
           null,
-          TOKEN_PROGRAM
+          TOKEN_PROGRAM,
         ),
         createAssociatedTokenAccountIdempotentInstruction(
           provider.publicKey,
           mintDetails.ata,
           mintDetails.authority,
           mintDetails.mint,
-          TOKEN_PROGRAM
+          TOKEN_PROGRAM,
         ),
         createMintToInstruction(
           mintDetails.mint,
@@ -118,7 +118,7 @@ describe('Escrow Bankrun example', () => {
           mintDetails.authority,
           1_000_000_000,
           [],
-          TOKEN_PROGRAM
+          TOKEN_PROGRAM,
         ),
       ]);
 
@@ -141,7 +141,7 @@ describe('Escrow Bankrun example', () => {
       accounts.tokenMintB = tokenMintB.publicKey;
       accounts.makerTokenAccountB = aliceTokenAccountB;
       accounts.takerTokenAccountB = bobTokenAccountB;
-    }
+    },
   );
 
   const tokenAOfferedAmount = new BN(1_000_000);
@@ -155,7 +155,7 @@ describe('Escrow Bankrun example', () => {
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
       [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
-      program.programId
+      program.programId,
     )[0];
 
     const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
@@ -197,7 +197,7 @@ describe('Escrow Bankrun example', () => {
       connection,
       accounts.takerTokenAccountA,
       'processed',
-      TOKEN_PROGRAM
+      TOKEN_PROGRAM,
     );
     const bobTokenAccountBalanceAfter = new BN(bobTokenAccount.amount.toString());
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
