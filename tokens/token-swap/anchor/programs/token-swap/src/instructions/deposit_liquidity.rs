@@ -37,25 +37,30 @@ pub fn deposit_liquidity(
         // Add as is if there is no liquidity
         (amount_a, amount_b)
     } else {
-        let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+        // u128 is enough precision here
+        let amount_a_u128 = amount_a as u128;
+        let amount_b_u128 = amount_b as u128;
+        let pool_a_u128 = pool_a.amount as u128;
+        let pool_b_u128 = pool_b.amount as u128;
+
+        // Calculate the amount of B required if we deposit all of A provided
+        let amount_b_required = amount_a_u128
+            .checked_mul(pool_b_u128)
+            .unwrap()
+            .checked_div(pool_a_u128)
             .unwrap();
-        if pool_a.amount > pool_b.amount {
-            (
-                I64F64::from_num(amount_b)
-                    .checked_mul(ratio)
-                    .unwrap()
-                    .to_num::<u64>(),
-                amount_b,
-            )
+
+        if amount_b_required <= amount_b_u128 {
+            // We have enough B to match the A provided
+            (amount_a, amount_b_required as u64)
         } else {
-            (
-                amount_a,
-                I64F64::from_num(amount_a)
-                    .checked_div(ratio)
-                    .unwrap()
-                    .to_num::<u64>(),
-            )
+            // We don't have enough B, so we must limit by B and calculate A required
+            let amount_a_required = amount_b_u128
+                .checked_mul(pool_a_u128)
+                .unwrap()
+                .checked_div(pool_b_u128)
+                .unwrap();
+            (amount_a_required as u64, amount_b)
         }
     };
 
