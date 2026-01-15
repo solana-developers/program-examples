@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import { readFileSync } from "node:fs";
 import { describe, test } from "node:test";
 import {
 	Keypair,
@@ -8,7 +9,7 @@ import {
 	TransactionInstruction,
 } from "@solana/web3.js";
 import * as borsh from "borsh";
-import { start } from "solana-bankrun";
+import { LiteSVM } from "litesvm";
 
 class Assignable {
 	constructor(properties) {
@@ -19,10 +20,6 @@ class Assignable {
 }
 
 class AddressInfo extends Assignable {
-	street: string;
-	city: string;
-	name: string;
-	house_number: number;
 	toBuffer() {
 		return Buffer.from(borsh.serialize(AddressInfoSchema, this));
 	}
@@ -46,18 +43,34 @@ const AddressInfoSchema = new Map([
 	],
 ]);
 
-describe("Account Data!", async () => {
+describe("Account Data!", () => {
 	const addressInfoAccount = Keypair.generate();
-	const PROGRAM_ID = PublicKey.unique();
-	const context = await start(
-		[{ name: "account_data_native_program", programId: PROGRAM_ID }],
-		[],
-	);
-	const client = context.banksClient;
 
-	test("Create the address info account", async () => {
-		const payer = context.payer;
+	// Load the program keypair
+	const programKeypairPath = new URL(
+		"./fixtures/account_data_native_program-keypair.json",
+		// @ts-ignore
+		import.meta.url,
+	).pathname;
+	const programKeypairData = JSON.parse(readFileSync(programKeypairPath, "utf-8"));
+	const programKeypair = Keypair.fromSecretKey(new Uint8Array(programKeypairData));
+	const PROGRAM_ID = programKeypair.publicKey;
 
+	const litesvm = new LiteSVM();
+	const payer = Keypair.generate();
+
+	// Load the program
+	const programPath = new URL(
+		"./fixtures/account_data_native_program.so",
+		// @ts-ignore
+		import.meta.url,
+	).pathname;
+	litesvm.addProgramFromFile(PROGRAM_ID, programPath);
+
+	// Fund the payer account
+	litesvm.airdrop(payer.publicKey, BigInt(100000000000));
+
+	test("Create the address info account", () => {
 		console.log(`Program Address      : ${PROGRAM_ID}`);
 		console.log(`Payer Address      : ${payer.publicKey}`);
 		console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
@@ -81,16 +94,19 @@ describe("Account Data!", async () => {
 			}).toBuffer(),
 		});
 
-		const blockhash = context.lastBlockhash;
-
-		const tx = new Transaction();
-		tx.recentBlockhash = blockhash;
-		tx.add(ix).sign(payer, addressInfoAccount);
-		await client.processTransaction(tx);
+		const tx = new Transaction().add(ix);
+		tx.feePayer = payer.publicKey;
+		tx.recentBlockhash = litesvm.latestBlockhash();
+		tx.sign(payer, addressInfoAccount);
+		litesvm.sendTransaction(tx);
 	});
 
-	test("Read the new account's data", async () => {
-		const accountInfo = await client.getAccount(addressInfoAccount.publicKey);
+	test("Read the new account's data", () => {
+		const accountInfo = litesvm.getAccount(addressInfoAccount.publicKey);
+
+		if (!accountInfo) {
+			throw new Error("Failed to fetch account info");
+		}
 
 		const readAddressInfo = AddressInfo.fromBuffer(
 			Buffer.from(accountInfo.data),
