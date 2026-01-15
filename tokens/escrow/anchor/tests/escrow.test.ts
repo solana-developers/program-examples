@@ -1,14 +1,23 @@
 import { randomBytes } from 'node:crypto';
-import * as anchor from '@coral-xyz/anchor';
-import { BN, type Program } from '@coral-xyz/anchor';
-import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, type TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import anchor from '@coral-xyz/anchor';
+const BN = anchor.BN;
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  type TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { confirmTransaction, createAccountsMintsAndTokenAccounts, makeKeypairs } from '@solana-developers/helpers';
+import {
+  confirmTransaction,
+  createAccountsMintsAndTokenAccounts,
+  makeKeypairs,
+} from '@solana-developers/helpers';
 import { assert } from 'chai';
 import type { Escrow } from '../target/types/escrow';
 
 // Work on both Token Program and new Token Extensions Program
-const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;
+const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
+  TOKEN_2022_PROGRAM_ID;
 
 const SECONDS = 1000;
 
@@ -32,7 +41,7 @@ describe('escrow', async () => {
 
   const connection = provider.connection;
 
-  const program = anchor.workspace.Escrow as Program<Escrow>;
+  const program = anchor.workspace.Escrow as anchor.Program<Escrow>;
 
   // We're going to reuse these accounts across multiple tests
   const accounts: Record<string, PublicKey> = {
@@ -49,63 +58,67 @@ describe('escrow', async () => {
   const tokenAOfferedAmount = new BN(1_000_000);
   const tokenBWantedAmount = new BN(1_000_000);
 
-  before('Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users', async () => {
-    const usersMintsAndTokenAccounts = await createAccountsMintsAndTokenAccounts(
-      [
-        // Alice's token balances
-        [
-          // 1_000_000_000 of token A
-          1_000_000_000,
-          // 0 of token B
-          0,
-        ],
-        // Bob's token balances
-        [
-          // 0 of token A
-          0,
-          // 1_000_000_000 of token B
-          1_000_000_000,
-        ],
-      ],
-      1 * LAMPORTS_PER_SOL,
-      connection,
-      payer,
-    );
+  before(
+    'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
+    async () => {
+      const usersMintsAndTokenAccounts =
+        await createAccountsMintsAndTokenAccounts(
+          [
+            // Alice's token balances
+            [
+              // 1_000_000_000 of token A
+              1_000_000_000,
+              // 0 of token B
+              0,
+            ],
+            // Bob's token balances
+            [
+              // 0 of token A
+              0,
+              // 1_000_000_000 of token B
+              1_000_000_000,
+            ],
+          ],
+          1 * LAMPORTS_PER_SOL,
+          connection,
+          payer,
+        );
 
-    // Alice will be the maker (creator) of the offer
-    // Bob will be the taker (acceptor) of the offer
-    const users = usersMintsAndTokenAccounts.users;
-    alice = users[0];
-    bob = users[1];
+      // Alice will be the maker (creator) of the offer
+      // Bob will be the taker (acceptor) of the offer
+      const users = usersMintsAndTokenAccounts.users;
+      alice = users[0];
+      bob = users[1];
 
-    // tokenMintA represents the token Alice is offering
-    // tokenMintB represents the token Alice wants in return
-    const mints = usersMintsAndTokenAccounts.mints;
-    tokenMintA = mints[0];
-    tokenMintB = mints[1];
+      // tokenMintA represents the token Alice is offering
+      // tokenMintB represents the token Alice wants in return
+      const mints = usersMintsAndTokenAccounts.mints;
+      tokenMintA = mints[0];
+      tokenMintB = mints[1];
 
-    const tokenAccounts = usersMintsAndTokenAccounts.tokenAccounts;
+      const tokenAccounts = usersMintsAndTokenAccounts.tokenAccounts;
 
-    // aliceTokenAccountA is Alice's account for tokenA (the token she's offering)
-    // aliceTokenAccountB is Alice's account for tokenB (the token she wants)
-    const aliceTokenAccountA = tokenAccounts[0][0];
-    const aliceTokenAccountB = tokenAccounts[0][1];
+      // aliceTokenAccountA is Alice's account for tokenA (the token she's offering)
+      // aliceTokenAccountB is Alice's account for tokenB (the token she wants)
+      const aliceTokenAccountA = tokenAccounts[0][0];
+      const aliceTokenAccountB = tokenAccounts[0][1];
 
-    // bobTokenAccountA is Bob's account for tokenA (the token Alice is offering)
-    // bobTokenAccountB is Bob's account for tokenB (the token Alice wants)
-    const bobTokenAccountA = tokenAccounts[1][0];
-    const bobTokenAccountB = tokenAccounts[1][1];
+      // bobTokenAccountA is Bob's account for tokenA (the token Alice is offering)
+      // bobTokenAccountB is Bob's account for tokenB (the token Alice wants)
+      const bobTokenAccountA = tokenAccounts[1][0];
+      const bobTokenAccountB = tokenAccounts[1][1];
 
-    // Save the accounts for later use
-    accounts.maker = alice.publicKey;
-    accounts.taker = bob.publicKey;
-    accounts.tokenMintA = tokenMintA.publicKey;
-    accounts.makerTokenAccountA = aliceTokenAccountA;
-    accounts.takerTokenAccountA = bobTokenAccountA;
-    accounts.tokenMintB = tokenMintB.publicKey;
-    accounts.makerTokenAccountB = aliceTokenAccountB;
-    accounts.takerTokenAccountB = bobTokenAccountB;
-  });
+      // Save the accounts for later use
+      accounts.maker = alice.publicKey;
+      accounts.taker = bob.publicKey;
+      accounts.tokenMintA = tokenMintA.publicKey;
+      accounts.makerTokenAccountA = aliceTokenAccountA;
+      accounts.takerTokenAccountA = bobTokenAccountA;
+      accounts.tokenMintB = tokenMintB.publicKey;
+      accounts.makerTokenAccountB = aliceTokenAccountB;
+      accounts.takerTokenAccountB = bobTokenAccountB;
+    },
+  );
 
   it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
     // Pick a random ID for the offer we'll make
@@ -113,11 +126,20 @@ describe('escrow', async () => {
 
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
-      [Buffer.from('offer'), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, 'le', 8)],
+      [
+        Buffer.from('offer'),
+        accounts.maker.toBuffer(),
+        offerId.toArrayLike(Buffer, 'le', 8),
+      ],
       program.programId,
     )[0];
 
-    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
+    const vault = getAssociatedTokenAddressSync(
+      accounts.tokenMintA,
+      offer,
+      true,
+      TOKEN_PROGRAM,
+    );
 
     accounts.offer = offer;
     accounts.vault = vault;
@@ -155,14 +177,20 @@ describe('escrow', async () => {
 
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
-    const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
+    const bobTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountBalanceAfter = new BN(
+      bobTokenAccountBalanceAfterResponse.value.amount,
+    );
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
-    const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccountBalanceAfterResponse.value.amount);
+    const aliceTokenAccountBalanceAfterResponse =
+      await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
+    const aliceTokenAccountBalanceAfter = new BN(
+      aliceTokenAccountBalanceAfterResponse.value.amount,
+    );
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
 });

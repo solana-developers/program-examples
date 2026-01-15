@@ -1,49 +1,45 @@
-import { randomBytes } from "node:crypto";
-import { describe, it } from "node:test";
-import * as anchor from "@coral-xyz/anchor";
-import { BN } from "@coral-xyz/anchor";
+import { randomBytes } from 'node:crypto';
+import anchor from '@coral-xyz/anchor';
+const BN = anchor.BN;
 import {
   createAssociatedTokenAccountIdempotentInstruction,
   createInitializeMint2Instruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
+  getAccount,
+  unpackAccount,
   MINT_SIZE,
   TOKEN_2022_PROGRAM_ID,
   type TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+} from '@solana/spl-token';
 import {
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
   Transaction,
   type TransactionInstruction,
-} from "@solana/web3.js";
-import { confirmTransaction, makeKeypairs } from "@solana-developers/helpers";
-import { BankrunProvider } from "anchor-bankrun";
-import { assert } from "chai";
-import { startAnchor } from "solana-bankrun";
-import type { Escrow } from "../target/types/escrow";
+} from '@solana/web3.js';
+import { makeKeypairs } from '@solana-developers/helpers';
+import { BankrunProvider } from 'anchor-bankrun';
+import { assert } from 'chai';
+import { ProgramTestContext, startAnchor } from 'solana-bankrun';
+import type { Escrow } from '../target/types/escrow';
 
 const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
   TOKEN_2022_PROGRAM_ID;
-import IDL from "../target/idl/escrow.json" with { type: "json" };
+import IDL from '../target/idl/escrow.json' with { type: 'json' };
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 const getRandomBigNumber = (size = 8) => {
   return new BN(randomBytes(size));
 };
 
-describe("Escrow Bankrun example", async () => {
-  const context = await startAnchor(
-    "",
-    [{ name: "escrow", programId: PROGRAM_ID }],
-    [],
-  );
-  const provider = new BankrunProvider(context);
-  const connection = provider.connection;
-  // const payer = provider.wallet as anchor.Wallet;
-  const program = new anchor.Program<Escrow>(IDL, provider);
+describe('Escrow Bankrun example', () => {
+  let context: ProgramTestContext;
+  let provider: BankrunProvider;
+  let connection: anchor.web3.Connection;
+  let program: anchor.Program<Escrow>;
 
   // We're going to reuse these accounts across multiple tests
   const accounts: Record<string, PublicKey> = {
@@ -53,8 +49,17 @@ describe("Escrow Bankrun example", async () => {
   const [alice, bob, tokenMintA, tokenMintB] = makeKeypairs(4);
 
   before(
-    "Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users",
+    'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
     async () => {
+      context = await startAnchor(
+        '',
+        [{ name: 'escrow', programId: PROGRAM_ID }],
+        [],
+      );
+      provider = new BankrunProvider(context);
+      connection = provider.connection;
+      program = new anchor.Program<Escrow>(IDL, provider);
+
       const [
         aliceTokenAccountA,
         aliceTokenAccountB,
@@ -169,9 +174,9 @@ describe("Escrow Bankrun example", async () => {
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("offer"),
+        Buffer.from('offer'),
         accounts.maker.toBuffer(),
-        offerId.toArrayLike(Buffer, "le", 8),
+        offerId.toArrayLike(Buffer, 'le', 8),
       ],
       program.programId,
     )[0];
@@ -192,11 +197,14 @@ describe("Escrow Bankrun example", async () => {
       .signers([alice])
       .rpc();
 
-    await confirmTransaction(connection, transactionSignature);
-
     // Check our vault contains the tokens offered
-    const vaultBalanceResponse = await connection.getTokenAccountBalance(vault);
-    const vaultBalance = new BN(vaultBalanceResponse.value.amount);
+    const vaultAccount = await getAccount(
+      connection,
+      vault,
+      'processed',
+      TOKEN_PROGRAM,
+    );
+    const vaultBalance = new BN(vaultAccount.amount.toString());
     assert(vaultBalance.eq(tokenAOfferedAmount));
 
     // Check our Offer account contains the correct data
@@ -216,28 +224,40 @@ describe("Escrow Bankrun example", async () => {
       .signers([bob])
       .rpc();
 
-    await confirmTransaction(connection, transactionSignature);
-
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccountBalanceAfterResponse =
-      await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountInfo = await connection.getAccountInfo(
+      accounts.takerTokenAccountA,
+    );
+    const bobTokenAccount = unpackAccount(
+      accounts.takerTokenAccountA,
+      bobTokenAccountInfo,
+      TOKEN_PROGRAM,
+    );
+
     const bobTokenAccountBalanceAfter = new BN(
-      bobTokenAccountBalanceAfterResponse.value.amount,
+      bobTokenAccount.amount.toString(),
     );
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccountBalanceAfterResponse =
-      await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
+    const aliceTokenAccountInfo = await connection.getAccountInfo(
+      accounts.makerTokenAccountB,
+    );
+    const aliceTokenAccount = unpackAccount(
+      accounts.makerTokenAccountB,
+      aliceTokenAccountInfo,
+      TOKEN_PROGRAM,
+    );
+
     const aliceTokenAccountBalanceAfter = new BN(
-      aliceTokenAccountBalanceAfterResponse.value.amount,
+      aliceTokenAccount.amount.toString(),
     );
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   };
 
-  it("Puts the tokens Alice offers into the vault when Alice makes an offer", async () => {
+  it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
     await make();
   });
 
