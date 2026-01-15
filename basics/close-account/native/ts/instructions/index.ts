@@ -1,5 +1,5 @@
-export * from "./close";
-export * from "./create";
+export * from "./close.ts";
+export * from "./create.ts";
 
 export const MyInstruction = {
   CreateUser: 0,
