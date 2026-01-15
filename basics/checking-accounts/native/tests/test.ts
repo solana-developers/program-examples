@@ -1,13 +1,32 @@
+import { readFileSync } from 'node:fs';
 import { describe, test } from 'node:test';
 import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
-describe('Checking accounts', async () => {
-  const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'checking_accounts_native_program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
-  const rent = await client.getRent();
+describe('Checking accounts', () => {
+  // Load the program keypair
+  const programKeypairPath = new URL(
+    './fixtures/checking_accounts_native_program-keypair.json',
+    // @ts-ignore
+    import.meta.url,
+  ).pathname;
+  const programKeypairData = JSON.parse(readFileSync(programKeypairPath, 'utf-8'));
+  const programKeypair = Keypair.fromSecretKey(new Uint8Array(programKeypairData));
+  const PROGRAM_ID = programKeypair.publicKey;
+
+  const litesvm = new LiteSVM();
+  const payer = Keypair.generate();
+
+  // Load the program
+  const programPath = new URL(
+    './fixtures/checking_accounts_native_program.so',
+    // @ts-ignore
+    import.meta.url,
+  ).pathname;
+  litesvm.addProgramFromFile(PROGRAM_ID, programPath);
+
+  // Fund the payer account
+  litesvm.airdrop(payer.publicKey, BigInt(100000000000));
 
   // We'll create this ahead of time.
   // Our program will try to modify it.
@@ -15,25 +34,24 @@ describe('Checking accounts', async () => {
   // Our program will create this.
   const accountToCreate = Keypair.generate();
 
-  test('Create an account owned by our program', async () => {
-    const blockhash = context.lastBlockhash;
+  test('Create an account owned by our program', () => {
     const ix = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       newAccountPubkey: accountToChange.publicKey,
-      lamports: Number(rent.minimumBalance(BigInt(0))),
+      lamports: 0, // Minimum rent for 0 space
       space: 0,
       programId: PROGRAM_ID, // Our program
     });
 
-    const tx = new Transaction();
-    tx.recentBlockhash = blockhash;
-    tx.add(ix).sign(payer, accountToChange);
+    const tx = new Transaction().add(ix);
+    tx.feePayer = payer.publicKey;
+    tx.recentBlockhash = litesvm.latestBlockhash();
+    tx.sign(payer, accountToChange);
 
-    await client.processTransaction(tx);
+    litesvm.sendTransaction(tx);
   });
 
-  test('Check accounts', async () => {
-    const blockhash = context.lastBlockhash;
+  test('Check accounts', () => {
     const ix = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
@@ -45,10 +63,11 @@ describe('Checking accounts', async () => {
       data: Buffer.alloc(0),
     });
 
-    const tx = new Transaction();
-    tx.recentBlockhash = blockhash;
-    tx.add(ix).sign(payer, accountToChange, accountToCreate);
+    const tx = new Transaction().add(ix);
+    tx.feePayer = payer.publicKey;
+    tx.recentBlockhash = litesvm.latestBlockhash();
+    tx.sign(payer, accountToChange, accountToCreate);
 
-    await client.processTransaction(tx);
+    litesvm.sendTransaction(tx);
   });
 });
