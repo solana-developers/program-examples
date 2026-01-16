@@ -24,12 +24,12 @@ importers:
       chai:
         specifier: ^4.3.4
         version: 4.5.0
+      litesvm:
+        specifier: ^0.3.3
+        version: 0.3.3(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)
       mocha:
         specifier: ^9.0.3
         version: 9.2.2
-      solana-bankrun:
-        specifier: ^0.3.0
-        version: 0.3.1(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)
       ts-mocha:
         specifier: ^10.0.0
         version: 10.1.0(mocha@9.2.2)
@@ -76,6 +76,9 @@ packages:
 
   '@solana/web3.js@1.98.2':
     resolution: {integrity: sha512-BqVwEG+TaG2yCkBMbD3C4hdpustR4FpuUFRPUmqRZYYlPI9Hg4XMWxHWOWRzHE9Lkc9NDjzXFX7lDXSgzC7R1A==}
+
+  '@solana/web3.js@1.98.4':
+    resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
@@ -149,6 +152,9 @@ packages:
   base-x@3.0.11:
     resolution: {integrity: sha512-xz7wQ8xDhdyP7tQxwdteLYeFfS68tSMNCZ/Y37WJ4bhGfKPpqEIlmIyueQHqOyoPhE6xNUqjzRr8ra0eF9VRvA==}
 
+  base-x@5.0.1:
+    resolution: {integrity: sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg==}
+
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
@@ -174,6 +180,9 @@ packages:
 
   bs58@4.0.1:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
+
+  bs58@6.0.0:
+    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -283,6 +292,9 @@ packages:
 
   fast-stable-stringify@1.0.0:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
+
+  fastestsmallesttextencoderdecoder@1.0.22:
+    resolution: {integrity: sha512-Pb8d48e+oIuY4MaM64Cd7OW1gt4nxCHs7/ddPPZ/Ic3sg8yVGM7O9wDvZ7us6ScaUupzM+pfBolwtYhN1IxBIw==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -396,6 +408,40 @@ packages:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
     hasBin: true
 
+  litesvm-darwin-arm64@0.3.3:
+    resolution: {integrity: sha512-81YimsV3ezWjWLgoKixsXfVznaaecbURE3RtECgNb6Din6Za03pKGKGEN4gkyecHkv8uoPaEZv5cl6ARsgeN1Q==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [darwin]
+
+  litesvm-darwin-x64@0.3.3:
+    resolution: {integrity: sha512-pYietuU165Bl+2eDnVp2Eidiedfjt+pljyyBAfJPbYriaFyG577mU364NiNcsfQ8ZZWbe+ygIEAVq4Ol247+1g==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [darwin]
+
+  litesvm-linux-arm64-musl@0.3.3:
+    resolution: {integrity: sha512-mkI15rWtNbaJxVFUfh+qnolqnDCZEqhwSZo/XZ48TZNsQ69vAqY00KhyFhTVJ+jeaYCAZTSNamuFIiRBxqVmNg==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [linux]
+
+  litesvm-linux-x64-gnu@0.3.3:
+    resolution: {integrity: sha512-Qai2/E8Eq03w8VKnJDREyiWxwavjykW/H6onE179ayMnBjVVmkj5fN7XF50VV4z73kasx5bpDzBNK8fcaxMdzA==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [linux]
+
+  litesvm-linux-x64-musl@0.3.3:
+    resolution: {integrity: sha512-bpWZ2f506hbfu1y6bkmuZf+qqtnLDxggpOMTQbibjd+q6faEO3sETWwKGlIgHB99P8wyU+aXKwLSGQX2sJEw6Q==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [linux]
+
+  litesvm@0.3.3:
+    resolution: {integrity: sha512-QHXjAIXzvG0uAMOza6aJcYl19yTKz3guwq/z0Zml4KnQxyQvPhjaBpUFc5sf2ey/NxMVdqFhoXmL02CXOOomjw==}
+    engines: {node: '>= 20'}
+
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
@@ -502,39 +548,6 @@ packages:
 
   serialize-javascript@6.0.0:
     resolution: {integrity: sha512-Qr3TosvguFt8ePWqsvRfrKyQXIiW+nGbYpy8XK24NQHE83caxWt+mIymTT19DGFbNWNLfEwsrkSmN64lVWB9ag==}
-
-  solana-bankrun-darwin-arm64@0.3.1:
-    resolution: {integrity: sha512-9LWtH/3/WR9fs8Ve/srdo41mpSqVHmRqDoo69Dv1Cupi+o1zMU6HiEPUHEvH2Tn/6TDbPEDf18MYNfReLUqE6A==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  solana-bankrun-darwin-universal@0.3.1:
-    resolution: {integrity: sha512-muGHpVYWT7xCd8ZxEjs/bmsbMp8XBqroYGbE4lQPMDUuLvsJEIrjGqs3MbxEFr71sa58VpyvgywWd5ifI7sGIg==}
-    engines: {node: '>= 10'}
-    os: [darwin]
-
-  solana-bankrun-darwin-x64@0.3.1:
-    resolution: {integrity: sha512-oCaxfHyt7RC3ZMldrh5AbKfy4EH3YRMl8h6fSlMZpxvjQx7nK7PxlRwMeflMnVdkKKp7U8WIDak1lilIPd3/lg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  solana-bankrun-linux-x64-gnu@0.3.1:
-    resolution: {integrity: sha512-PfRFhr7igGFNt2Ecfdzh3li9eFPB3Xhmk0Eib17EFIB62YgNUg3ItRnQQFaf0spazFjjJLnglY1TRKTuYlgSVA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  solana-bankrun-linux-x64-musl@0.3.1:
-    resolution: {integrity: sha512-6r8i0NuXg3CGURql8ISMIUqhE7Hx/O7MlIworK4oN08jYrP0CXdLeB/hywNn7Z8d1NXrox/NpYUgvRm2yIzAsQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  solana-bankrun@0.3.1:
-    resolution: {integrity: sha512-inRwON7fBU5lPC36HdEqPeDg15FXJYcf77+o0iz9amvkUMJepcwnRwEfTNyMVpVYdgjTOBW5vg+596/3fi1kGA==}
-    engines: {node: '>= 10'}
 
   source-map-support@0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
@@ -748,6 +761,29 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@babel/runtime': 7.27.1
+      '@noble/curves': 1.9.1
+      '@noble/hashes': 1.8.0
+      '@solana/buffer-layout': 4.0.1
+      '@solana/codecs-numbers': 2.1.1(typescript@4.9.5)
+      agentkeepalive: 4.6.0
+      bn.js: 5.2.2
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.3
+      fast-stable-stringify: 1.0.0
+      jayson: 4.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      node-fetch: 2.7.0
+      rpc-websockets: 9.1.1
+      superstruct: 2.0.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+
   '@swc/helpers@0.5.17':
     dependencies:
       tslib: 2.8.1
@@ -814,6 +850,8 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  base-x@5.0.1: {}
+
   base64-js@1.5.1: {}
 
   binary-extensions@2.3.0: {}
@@ -840,6 +878,10 @@ snapshots:
   bs58@4.0.1:
     dependencies:
       base-x: 3.0.11
+
+  bs58@6.0.0:
+    dependencies:
+      base-x: 5.0.1
 
   buffer-from@1.1.2: {}
 
@@ -941,6 +983,8 @@ snapshots:
   eyes@0.1.8: {}
 
   fast-stable-stringify@1.0.0: {}
+
+  fastestsmallesttextencoderdecoder@1.0.22: {}
 
   fill-range@7.1.1:
     dependencies:
@@ -1046,6 +1090,38 @@ snapshots:
     dependencies:
       minimist: 1.2.8
     optional: true
+
+  litesvm-darwin-arm64@0.3.3:
+    optional: true
+
+  litesvm-darwin-x64@0.3.3:
+    optional: true
+
+  litesvm-linux-arm64-musl@0.3.3:
+    optional: true
+
+  litesvm-linux-x64-gnu@0.3.3:
+    optional: true
+
+  litesvm-linux-x64-musl@0.3.3:
+    optional: true
+
+  litesvm@0.3.3(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10):
+    dependencies:
+      '@solana/web3.js': 1.98.4(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)
+      bs58: 6.0.0
+      fastestsmallesttextencoderdecoder: 1.0.22
+    optionalDependencies:
+      litesvm-darwin-arm64: 0.3.3
+      litesvm-darwin-x64: 0.3.3
+      litesvm-linux-arm64-musl: 0.3.3
+      litesvm-linux-x64-gnu: 0.3.3
+      litesvm-linux-x64-musl: 0.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
 
   locate-path@6.0.0:
     dependencies:
@@ -1166,37 +1242,6 @@ snapshots:
   serialize-javascript@6.0.0:
     dependencies:
       randombytes: 2.1.0
-
-  solana-bankrun-darwin-arm64@0.3.1:
-    optional: true
-
-  solana-bankrun-darwin-universal@0.3.1:
-    optional: true
-
-  solana-bankrun-darwin-x64@0.3.1:
-    optional: true
-
-  solana-bankrun-linux-x64-gnu@0.3.1:
-    optional: true
-
-  solana-bankrun-linux-x64-musl@0.3.1:
-    optional: true
-
-  solana-bankrun@0.3.1(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10):
-    dependencies:
-      '@solana/web3.js': 1.98.2(bufferutil@4.0.9)(typescript@4.9.5)(utf-8-validate@5.0.10)
-      bs58: 4.0.1
-    optionalDependencies:
-      solana-bankrun-darwin-arm64: 0.3.1
-      solana-bankrun-darwin-universal: 0.3.1
-      solana-bankrun-darwin-x64: 0.3.1
-      solana-bankrun-linux-x64-gnu: 0.3.1
-      solana-bankrun-linux-x64-musl: 0.3.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
 
   source-map-support@0.5.21:
     dependencies:
