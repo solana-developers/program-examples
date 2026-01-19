@@ -38,7 +38,7 @@ pub fn deposit_liquidity(
         (amount_a, amount_b)
     } else {
         let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+            .checked_div(I64F64::from_num(pool_b.amount))
             .unwrap();
         if pool_a.amount > pool_b.amount {
             (
