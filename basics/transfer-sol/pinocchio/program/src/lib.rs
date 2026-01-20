@@ -1,8 +1,7 @@
 #![no_std]
 
 use pinocchio::{
-    account_info::AccountInfo, entrypoint, nostd_panic_handler, program_error::ProgramError,
-    pubkey::Pubkey, ProgramResult,
+    entrypoint, error::ProgramError, nostd_panic_handler, AccountView, Address, ProgramResult,
 };
 use pinocchio_system::instructions::Transfer;
 
@@ -10,8 +9,8 @@ entrypoint!(process_instruction);
 nostd_panic_handler!();
 
 fn process_instruction(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     match instruction_data.split_first() {
@@ -24,7 +23,7 @@ fn process_instruction(
 pub const CPI_TRANSFER_DISCRIMINATOR: u8 = 0;
 pub const PROGRAM_TRANSFER_DISCRIMINATOR: u8 = 1;
 
-fn transfer_sol_with_cpi(accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
+fn transfer_sol_with_cpi(accounts: &[AccountView], instruction_data: &[u8]) -> ProgramResult {
     let [payer, recipient, _system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
@@ -44,7 +43,7 @@ fn transfer_sol_with_cpi(accounts: &[AccountInfo], instruction_data: &[u8]) -> P
     Ok(())
 }
 
-fn transfer_sol_with_program(accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
+fn transfer_sol_with_program(accounts: &[AccountView], instruction_data: &[u8]) -> ProgramResult {
     let [payer, recipient] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
@@ -54,8 +53,8 @@ fn transfer_sol_with_program(accounts: &[AccountInfo], instruction_data: &[u8]) 
         .map_err(|_| ProgramError::InvalidInstructionData)?;
     let amount = u64::from_le_bytes(amount_bytes);
 
-    *payer.try_borrow_mut_lamports()? -= amount;
-    *recipient.try_borrow_mut_lamports()? += amount;
+    payer.set_lamports(payer.lamports() - amount);
+    recipient.set_lamports(recipient.lamports() + amount);
 
     Ok(())
 }

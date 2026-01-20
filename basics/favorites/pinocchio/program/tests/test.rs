@@ -17,12 +17,13 @@ fn test_favorites() {
 
     svm.airdrop(&payer.pubkey(), LAMPORTS_PER_SOL * 10).unwrap();
 
-    let favorites_pda =
-        Pubkey::find_program_address(&[b"favorite", payer.pubkey().as_ref()], &program_id).0;
+    let (favorites_pda, favorites_bump) =
+        Pubkey::find_program_address(&[b"favorite", payer.pubkey().as_ref()], &program_id);
 
     let mut data = Vec::new();
 
     data.push(1);
+    data.push(favorites_bump);
 
     data.extend_from_slice(&u64::to_le_bytes(42));
 
@@ -73,6 +74,7 @@ fn test_favorites() {
 
     let mut data = Vec::new();
     data.push(2);
+    data.push(favorites_bump);
 
     let ix = Instruction {
         program_id,

@@ -22,8 +22,16 @@ fn test_close_account() {
     let test_account_pubkey =
         Pubkey::find_program_address(&[b"USER".as_ref(), &payer.pubkey().as_ref()], &program_id).0;
 
+    let bump = Pubkey::find_program_address(
+        &[User::SEED_PREFIX.as_bytes(), payer.pubkey().as_ref()],
+        &program_id,
+    )
+    .1;
+
+    // process_user
     let mut data = Vec::new();
     data.push(CREATE_DISCRIMINATOR);
+    data.push(bump);
     let mut name = [0u8; User::LEN];
     let name_len = b"Jacob".len().min(User::LEN);
     name[..name_len].copy_from_slice(&b"Jacob"[..name_len]);
@@ -54,6 +62,7 @@ fn test_close_account() {
     assert_eq!(account.owner, program_id);
     assert_eq!(&account.data[..5], b"Jacob");
 
+    // process_close
     let mut data = Vec::new();
     data.push(CLOSE_DISCRIMINATOR);
 

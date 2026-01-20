@@ -1,8 +1,5 @@
 use pinocchio::{
-    account_info::AccountInfo,
-    default_panic_handler, no_allocator, program_entrypoint,
-    pubkey::{self, Pubkey},
-    ProgramResult,
+    default_panic_handler, no_allocator, program_entrypoint, AccountView, Address, ProgramResult,
 };
 use pinocchio_log::log;
 
@@ -15,13 +12,13 @@ default_panic_handler!();
 
 #[inline(always)]
 fn process_instruction(
-    program_id: &Pubkey,
-    _accounts: &[AccountInfo],
+    program_id: &Address,
+    _accounts: &[AccountView],
     _instruction_data: &[u8],
 ) -> ProgramResult {
     log!("Hello, Solana!");
 
-    pubkey::log(program_id);
+    log!("{}", program_id.as_array());
 
     Ok(())
 }

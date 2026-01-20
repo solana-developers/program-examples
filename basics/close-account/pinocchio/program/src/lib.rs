@@ -1,14 +1,12 @@
 #![no_std]
 
 use pinocchio::{
-    account_info::AccountInfo,
+    cpi::{Seed, Signer},
     entrypoint,
-    instruction::{Seed, Signer},
+    error::ProgramError,
     nostd_panic_handler,
-    program_error::ProgramError,
-    pubkey::Pubkey,
     sysvars::{rent::Rent, Sysvar},
-    ProgramResult,
+    AccountView, Address, ProgramResult,
 };
 use pinocchio_system::instructions::CreateAccount;
 
@@ -16,8 +14,8 @@ entrypoint!(process_instruction);
 nostd_panic_handler!();
 
 fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     match instruction_data.split_first() {
@@ -40,8 +38,8 @@ impl<'a> User<'a> {
 }
 
 fn process_user(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let [target_account, payer, _system_program] = accounts else {
@@ -51,17 +49,13 @@ fn process_user(
     let rent = Rent::get()?;
 
     let account_span = User::LEN;
-    let lamports_required = rent.minimum_balance(account_span);
+    let lamports_required = rent.try_minimum_balance(account_span)?;
 
-    let (_, bump) = pinocchio::pubkey::find_program_address(
-        &[User::SEED_PREFIX.as_bytes(), payer.key()],
-        program_id,
-    );
-    let bump_bytes = bump.to_le_bytes();
+    let bump_bytes = instruction_data[0].to_le_bytes();
 
     let seeds = [
         Seed::from(User::SEED_PREFIX.as_bytes()),
-        Seed::from(payer.key().as_ref()),
+        Seed::from(payer.address().as_ref()),
         Seed::from(&bump_bytes),
     ];
     let signers = [Signer::from(&seeds)];
@@ -75,13 +69,13 @@ fn process_user(
     }
     .invoke_signed(&signers)?;
 
-    let mut address_info_data = target_account.try_borrow_mut_data()?;
-    address_info_data.copy_from_slice(instruction_data);
+    let mut address_info_data = target_account.try_borrow_mut()?;
+    address_info_data.copy_from_slice(&instruction_data[1..]);
 
     Ok(())
 }
 
-fn process_close(accounts: &[AccountInfo]) -> ProgramResult {
+fn process_close(accounts: &[AccountView]) -> ProgramResult {
     let [target_account, payer, system_program] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
@@ -89,17 +83,17 @@ fn process_close(accounts: &[AccountInfo]) -> ProgramResult {
     let rent = Rent::get()?;
 
     let account_span = 0usize;
-    let lamports_required = rent.minimum_balance(account_span);
+    let lamports_required = rent.try_minimum_balance(account_span)?;
 
     let diff = target_account.lamports() - lamports_required;
 
-    *target_account.try_borrow_mut_lamports()? -= diff;
-    *payer.try_borrow_mut_lamports()? += diff;
+    target_account.set_lamports(target_account.lamports() - diff);
+    payer.set_lamports(payer.lamports() + diff);
 
     target_account.resize(account_span)?;
 
     unsafe {
-        target_account.assign(system_program.key());
+        target_account.assign(system_program.address());
     }
 
     Ok(())

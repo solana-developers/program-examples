@@ -1,12 +1,11 @@
 #![no_std]
 
 use pinocchio::{
-    account_info::AccountInfo,
-    entrypoint, nostd_panic_handler,
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    entrypoint,
+    error::ProgramError,
+    nostd_panic_handler,
     sysvars::{rent::Rent, Sysvar},
-    ProgramResult,
+    AccountView, Address, ProgramResult,
 };
 use pinocchio_system::instructions::CreateAccount;
 
@@ -14,8 +13,8 @@ entrypoint!(process_instruction);
 nostd_panic_handler!();
 
 fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     match instruction_data.split_first() {
@@ -36,8 +35,8 @@ impl<'a> AddressInfo<'a> {
 }
 
 fn process_create(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let [address_info, payer, system_program] = accounts else {
@@ -52,7 +51,7 @@ fn process_create(
         return Err(ProgramError::InvalidAccountData);
     };
 
-    if !pinocchio_system::check_id(system_program.key()) {
+    if !pinocchio_system::check_id(system_program.address()) {
         return Err(ProgramError::InvalidAccountData);
     }
 
@@ -63,7 +62,7 @@ fn process_create(
     let rent = Rent::get()?;
 
     let account_span = AddressInfo::LEN;
-    let lamports_required = rent.minimum_balance(account_span);
+    let lamports_required = rent.try_minimum_balance(account_span)?;
 
     CreateAccount {
         from: payer,
@@ -74,7 +73,7 @@ fn process_create(
     }
     .invoke()?;
 
-    let mut address_info_data = address_info.try_borrow_mut_data()?;
+    let mut address_info_data = address_info.try_borrow_mut()?;
     address_info_data.copy_from_slice(instruction_data);
 
     Ok(())

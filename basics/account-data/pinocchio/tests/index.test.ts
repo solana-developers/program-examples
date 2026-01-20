@@ -1,13 +1,13 @@
-import { Buffer } from "node:buffer";
+import { readFileSync } from "node:fs";
 import { describe, test } from "node:test";
 import {
 	Keypair,
-	PublicKey,
+	LAMPORTS_PER_SOL,
 	SystemProgram,
 	Transaction,
 	TransactionInstruction,
 } from "@solana/web3.js";
-import { start } from "solana-bankrun";
+import { LiteSVM } from "litesvm";
 
 interface AddressInfo {
 	name: string;
@@ -71,19 +71,34 @@ function fromBytes(buffer: Buffer): AddressInfo {
 	return { name, house_number, street, city };
 }
 
-describe("Account Data!", async () => {
+describe("Account Data!", () => {
+	// Load the program keypair
+	const programKeypairPath = new URL(
+		"./fixtures/account_data_pinocchio_program-keypair.json",
+		// @ts-ignore
+		import.meta.url,
+	).pathname;
+	const programKeypairData = JSON.parse(readFileSync(programKeypairPath, "utf-8"));
+	const programKeypair = Keypair.fromSecretKey(new Uint8Array(programKeypairData));
+	const PROGRAM_ID = programKeypair.publicKey;
+
+	// Load the program
+	const programPath = new URL(
+		"./fixtures/account_data_pinocchio_program.so",
+		// @ts-ignore
+		import.meta.url,
+	).pathname;
+
+	const litesvm = new LiteSVM();
+	litesvm.addProgramFromFile(PROGRAM_ID, programPath);
+
+	const payer = Keypair.generate();
+	litesvm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+
 	const addressInfoAccount = Keypair.generate();
-	const PROGRAM_ID = PublicKey.unique();
-	const context = await start(
-		[{ name: "account_data_pinocchio_program", programId: PROGRAM_ID }],
-		[],
-	);
-	const client = context.banksClient;
 
-	test("Create the address info account", async () => {
-		const payer = context.payer;
-
-		console.log(`Program Address      : ${PROGRAM_ID}`);
+	test("Create the address info account", () => {
+		console.log(`Program Address    : ${PROGRAM_ID}`);
 		console.log(`Payer Address      : ${payer.publicKey}`);
 		console.log(`Address Info Acct  : ${addressInfoAccount.publicKey}`);
 
@@ -108,16 +123,20 @@ describe("Account Data!", async () => {
 			data: toBytes(addressInfo),
 		});
 
-		const blockhash = context.lastBlockhash;
+		const tx = new Transaction().add(ix);
+		tx.feePayer = payer.publicKey;
+		tx.recentBlockhash = litesvm.latestBlockhash();
+		tx.sign(payer, addressInfoAccount);
 
-		const tx = new Transaction();
-		tx.recentBlockhash = blockhash;
-		tx.add(ix).sign(payer, addressInfoAccount);
-		await client.processTransaction(tx);
+		litesvm.sendTransaction(tx);
 	});
 
-	test("Read the new account's data", async () => {
-		const accountInfo = await client.getAccount(addressInfoAccount.publicKey);
+	test("Read the new account's data", () => {
+		const accountInfo = litesvm.getAccount(addressInfoAccount.publicKey);
+
+		if (!accountInfo) {
+			throw new Error("Account not found");
+		}
 
 		const readAddressInfo = fromBytes(Buffer.from(accountInfo.data));
 

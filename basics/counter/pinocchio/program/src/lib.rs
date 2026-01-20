@@ -1,9 +1,6 @@
 #![no_std]
 
-use pinocchio::{
-    account_info::AccountInfo, nostd_panic_handler, program_error::ProgramError, pubkey::Pubkey,
-    ProgramResult,
-};
+use pinocchio::{error::ProgramError, nostd_panic_handler, AccountView, Address, ProgramResult};
 use pinocchio_log::log;
 
 mod state;
@@ -20,8 +17,8 @@ entrypoint!(process_instruction);
 nostd_panic_handler!();
 
 pub fn process_instruction(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let (instruction_discriminant, instruction_data_inner) = instruction_data.split_at(1);
@@ -38,7 +35,7 @@ pub fn process_instruction(
 }
 
 pub fn process_increment_counter(
-    accounts: &[AccountInfo],
+    accounts: &[AccountView],
     _instruction_data: &[u8],
 ) -> Result<(), ProgramError> {
     let [counter_account] = accounts else {
@@ -50,7 +47,7 @@ pub fn process_increment_counter(
         "Counter account must be writable"
     );
 
-    let mut counter_account_data = counter_account.try_borrow_mut_data()?;
+    let mut counter_account_data = counter_account.try_borrow_mut()?;
 
     // Read the current counter value (first 8 bytes)
     let counter_bytes: [u8; 8] = counter_account_data[0..8]
