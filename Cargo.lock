@@ -144,7 +144,7 @@ dependencies = [
  "solana-cpi 3.0.0",
  "solana-curve25519 3.0.7",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keccak-hasher 3.0.0",
  "solana-loader-v3-interface 6.1.0",
  "solana-poseidon",
@@ -916,7 +916,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -934,7 +934,7 @@ dependencies = [
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-message 3.0.1",
  "solana-native-token 3.0.0",
@@ -1012,7 +1012,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -1030,7 +1030,7 @@ dependencies = [
  "pinocchio 0.10.1",
  "pinocchio-log",
  "pinocchio-pubkey",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -1064,7 +1064,7 @@ dependencies = [
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -1077,7 +1077,7 @@ name = "create-account-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -1404,7 +1404,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -1422,7 +1422,7 @@ dependencies = [
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -1634,7 +1634,7 @@ name = "hello-solana-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -1878,7 +1878,7 @@ dependencies = [
  "solana-fee",
  "solana-fee-structure",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instructions-sysvar 3.0.0",
  "solana-keypair",
  "solana-last-restart-slot 3.0.0",
@@ -2199,7 +2199,7 @@ dependencies = [
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -2214,7 +2214,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -2376,7 +2376,7 @@ dependencies = [
  "litesvm",
  "pinocchio 0.10.1",
  "pinocchio-log",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -2390,7 +2390,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -2405,7 +2405,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -2422,7 +2422,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -2439,7 +2439,7 @@ dependencies = [
  "litesvm",
  "pinocchio 0.10.1",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -2569,7 +2569,7 @@ dependencies = [
  "pinocchio 0.10.1",
  "pinocchio-log",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -2584,7 +2584,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
@@ -2646,7 +2646,7 @@ dependencies = [
  "pinocchio 0.10.1",
  "pinocchio-log",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -2662,7 +2662,7 @@ dependencies = [
  "borsh 0.9.3",
  "borsh-derive 0.9.3",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 2.3.0",
@@ -3029,8 +3029,11 @@ checksum = "e37320fd2945c5d654b2c6210624a52d66c3f1f73b653ed211ab91a703b35bdd"
 dependencies = [
  "five8 1.0.0",
  "five8_const 1.0.0",
+ "serde",
+ "serde_derive",
  "solana-define-syscall 4.0.1",
  "solana-program-error 3.0.0",
+ "solana-sanitize 3.0.1",
 ]
 
 [[package]]
@@ -3061,7 +3064,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-clock 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instruction-error",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
@@ -3199,7 +3202,7 @@ dependencies = [
  "solana-account 3.1.0",
  "solana-bincode 3.0.0",
  "solana-clock 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-loader-v3-interface 6.1.0",
  "solana-loader-v4-interface 3.1.0",
  "solana-packet",
@@ -3313,7 +3316,7 @@ dependencies = [
  "solana-builtins-default-costs",
  "solana-compute-budget",
  "solana-compute-budget-interface",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-packet",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
@@ -3329,7 +3332,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8292c436b269ad23cecc8b24f7da3ab07ca111661e25e00ce0e1d22771951ab9"
 dependencies = [
  "borsh 1.5.7",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-sdk-ids 3.0.0",
 ]
 
@@ -3352,7 +3355,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-account 3.1.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
  "solana-short-vec 3.0.0",
@@ -3381,7 +3384,7 @@ checksum = "16238feb63d1cbdf915fb287f29ef7a7ebf81469bd6214f8b72a53866b593f8f"
 dependencies = [
  "solana-account-info 3.0.0",
  "solana-define-syscall 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-stable-layout 3.0.0",
@@ -3461,7 +3464,7 @@ checksum = "e1419197f1c06abf760043f6d64ba9d79a03ad5a43f18c7586471937122094da"
 dependencies = [
  "bytemuck",
  "bytemuck_derive",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-sdk-ids 3.0.0",
 ]
 
@@ -3582,7 +3585,7 @@ dependencies = [
  "solana-address-lookup-table-interface 3.0.0",
  "solana-clock 3.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keccak-hasher 3.0.0",
  "solana-message 3.0.1",
  "solana-nonce 3.0.0",
@@ -3751,17 +3754,17 @@ dependencies = [
 
 [[package]]
 name = "solana-instruction"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8df4e8fcba01d7efa647ed20a081c234475df5e11a93acb4393cc2c9a7b99bab"
+checksum = "ee1b699a2c1518028a9982e255e0eca10c44d90006542d9d7f9f40dbce3f7c78"
 dependencies = [
  "bincode",
  "borsh 1.5.7",
  "serde",
  "serde_derive",
- "solana-define-syscall 3.0.0",
+ "solana-define-syscall 4.0.1",
  "solana-instruction-error",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
 ]
 
 [[package]]
@@ -3813,7 +3816,7 @@ checksum = "7ddf67876c541aa1e21ee1acae35c95c6fbc61119814bfef70579317a5e26955"
 dependencies = [
  "bitflags",
  "solana-account-info 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instruction-error",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
@@ -3956,7 +3959,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_derive",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
 ]
@@ -3985,7 +3988,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_derive",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
  "solana-system-interface 2.0.0",
@@ -4002,7 +4005,7 @@ dependencies = [
  "solana-account 3.1.0",
  "solana-bincode 3.0.0",
  "solana-bpf-loader-program",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-loader-v3-interface 6.1.0",
  "solana-loader-v4-interface 3.1.0",
  "solana-packet",
@@ -4052,7 +4055,7 @@ dependencies = [
  "serde_derive",
  "solana-address 1.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.0.0",
  "solana-short-vec 3.0.0",
@@ -4292,7 +4295,7 @@ dependencies = [
  "solana-example-mocks 3.0.0",
  "solana-fee-calculator 3.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instruction-error",
  "solana-instructions-sysvar 3.0.0",
  "solana-keccak-hasher 3.0.0",
@@ -4438,7 +4441,7 @@ dependencies = [
  "solana-epoch-schedule 3.0.0",
  "solana-fee-structure",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-last-restart-slot 3.0.0",
  "solana-program-entrypoint 3.1.0",
  "solana-pubkey 3.0.0",
@@ -4494,6 +4497,15 @@ checksum = "8909d399deb0851aa524420beeb5646b115fd253ef446e35fe4504c904da3941"
 dependencies = [
  "rand 0.8.5",
  "solana-address 1.0.0",
+]
+
+[[package]]
+name = "solana-pubkey"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6f7104d456b58e1418c21a8581e89810278d1190f70f27ece7fc0b2c9282a57"
+dependencies = [
+ "solana-address 2.0.0",
 ]
 
 [[package]]
@@ -4675,7 +4687,7 @@ checksum = "445d8e12592631d76fc4dc57858bae66c9fd7cc838c306c62a472547fc9d0ce6"
 dependencies = [
  "bytemuck",
  "openssl",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-sdk-ids 3.0.0",
 ]
 
@@ -4893,7 +4905,7 @@ version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1da74507795b6e8fb60b7c7306c0c36e2c315805d16eaaf479452661234685ac"
 dependencies = [
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
 ]
 
@@ -4929,7 +4941,7 @@ dependencies = [
  "serde_derive",
  "solana-clock 3.0.0",
  "solana-cpi 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-system-interface 2.0.0",
@@ -4951,7 +4963,7 @@ dependencies = [
  "solana-clock 3.0.0",
  "solana-config-interface",
  "solana-genesis-config",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-native-token 3.0.0",
  "solana-packet",
  "solana-program-runtime",
@@ -5058,7 +5070,7 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_derive",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-msg 3.0.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
@@ -5077,7 +5089,7 @@ dependencies = [
  "solana-account 3.1.0",
  "solana-bincode 3.0.0",
  "solana-fee-calculator 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-nonce 3.0.0",
  "solana-nonce-account",
  "solana-packet",
@@ -5148,7 +5160,7 @@ dependencies = [
  "solana-epoch-schedule 3.0.0",
  "solana-fee-calculator 3.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-last-restart-slot 3.0.0",
  "solana-program-entrypoint 3.1.0",
  "solana-program-error 3.0.0",
@@ -5199,7 +5211,7 @@ dependencies = [
  "serde_derive",
  "solana-address 1.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instruction-error",
  "solana-message 3.0.1",
  "solana-sanitize 3.0.1",
@@ -5220,7 +5232,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-account 3.1.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instructions-sysvar 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-rent 3.0.0",
@@ -5289,7 +5301,7 @@ dependencies = [
  "serde_with",
  "solana-clock 3.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instruction-error",
  "solana-pubkey 3.0.0",
  "solana-rent 3.0.0",
@@ -5318,7 +5330,7 @@ dependencies = [
  "solana-clock 3.0.0",
  "solana-epoch-schedule 3.0.0",
  "solana-hash 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-packet",
  "solana-program-runtime",
@@ -5343,7 +5355,7 @@ dependencies = [
  "bytemuck",
  "num-derive",
  "num-traits",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-runtime",
  "solana-sdk-ids 3.0.0",
  "solana-svm-log-collector",
@@ -5374,7 +5386,7 @@ dependencies = [
  "serde_json",
  "sha3",
  "solana-derivation-path",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
  "solana-seed-derivable",
@@ -5397,7 +5409,7 @@ dependencies = [
  "bytemuck",
  "num-derive",
  "num-traits",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-runtime",
  "solana-sdk-ids 3.0.0",
  "solana-svm-log-collector",
@@ -5427,7 +5439,7 @@ dependencies = [
  "sha3",
  "solana-curve25519 3.0.7",
  "solana-derivation-path",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
  "solana-sdk-ids 3.0.0",
  "solana-seed-derivable",
@@ -5455,7 +5467,7 @@ version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6433917b60441d68d99a17e121d9db0ea15a9a69c0e5afa34649cf5ba12612f"
 dependencies = [
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-pubkey 3.0.0",
 ]
 
@@ -5526,7 +5538,7 @@ dependencies = [
  "num-traits",
  "num_enum",
  "solana-account-info 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-program-option 3.0.0",
  "solana-program-pack 3.0.0",
@@ -5551,7 +5563,7 @@ dependencies = [
  "bytemuck",
  "solana-account-info 3.0.0",
  "solana-curve25519 2.3.12",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-instructions-sysvar 3.0.0",
  "solana-msg 3.0.0",
  "solana-program-error 3.0.0",
@@ -5583,7 +5595,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "num_enum",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
  "spl-discriminator",
@@ -5602,7 +5614,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "num_enum",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-program-option 3.0.0",
  "solana-program-pack 3.0.0",
@@ -5621,7 +5633,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "solana-borsh 3.0.0",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-program-error 3.0.0",
  "solana-pubkey 3.0.0",
  "spl-discriminator",
@@ -5858,7 +5870,7 @@ dependencies = [
  "litesvm",
  "pinocchio 0.10.1",
  "pinocchio-system",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
@@ -5873,7 +5885,7 @@ dependencies = [
  "borsh 1.5.7",
  "borsh-derive 1.5.7",
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.1.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
