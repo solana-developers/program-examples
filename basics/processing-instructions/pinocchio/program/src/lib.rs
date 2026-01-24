@@ -1,14 +1,11 @@
-use pinocchio::{
-    account_info::AccountInfo, entrypoint, program_error::ProgramError, pubkey::Pubkey,
-    ProgramResult,
-};
+use pinocchio::{entrypoint, error::ProgramError, AccountView, Address, ProgramResult};
 use pinocchio_log::log;
 
 entrypoint!(process_instruction);
 
 fn process_instruction(
-    _program_id: &Pubkey,
-    _accounts: &[AccountInfo],
+    _program_id: &Address,
+    _accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let name = core::str::from_utf8(&instruction_data[0..8])

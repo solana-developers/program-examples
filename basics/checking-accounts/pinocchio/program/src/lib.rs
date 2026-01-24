@@ -1,8 +1,7 @@
 #![no_std]
 
 use pinocchio::{
-    account_info::AccountInfo, entrypoint, nostd_panic_handler, program_error::ProgramError,
-    pubkey::Pubkey, ProgramResult,
+    entrypoint, error::ProgramError, nostd_panic_handler, AccountView, Address, ProgramResult,
 };
 use pinocchio_log::log;
 
@@ -10,8 +9,8 @@ entrypoint!(process_instruction);
 nostd_panic_handler!();
 
 fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     _instruction_data: &[u8],
 ) -> ProgramResult {
     // You can verify the list has the correct number of accounts.
@@ -32,7 +31,7 @@ fn process_instruction(
 
     // You can make sure an account has NOT been initialized.
 
-    log!("New account: {}", account_to_create.key());
+    log!("New account: {}", account_to_create.address().as_array());
     if account_to_create.lamports() != 0 {
         log!("The program expected the account to create to not yet be initialized.");
         return Err(ProgramError::AccountAlreadyInitialized);
@@ -40,20 +39,23 @@ fn process_instruction(
     // (Create account...)
 
     // You can also make sure an account has been initialized.
-    log!("Account to change: {}", account_to_change.key());
+    log!(
+        "Account to change: {}",
+        account_to_change.address().as_array()
+    );
     if account_to_change.lamports() == 0 {
         log!("The program expected the account to change to be initialized.");
         return Err(ProgramError::UninitializedAccount);
     };
 
     // If we want to modify an account's data, it must be owned by our program.
-    if account_to_change.owner() != program_id {
+    if !account_to_change.owned_by(program_id) {
         log!("Account to change does not have the correct program id.");
         return Err(ProgramError::IncorrectProgramId);
     };
 
     // You can also check pubkeys against constants.
-    if system_program.key() != &pinocchio_system::ID {
+    if system_program.address() != &pinocchio_system::ID {
         return Err(ProgramError::IncorrectProgramId);
     };
 

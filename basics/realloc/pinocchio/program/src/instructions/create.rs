@@ -1,17 +1,15 @@
 use pinocchio::{
-    account_info::AccountInfo,
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    error::ProgramError,
     sysvars::{rent::Rent, Sysvar},
-    ProgramResult,
+    AccountView, Address, ProgramResult,
 };
 use pinocchio_system::instructions::CreateAccount;
 
 use crate::state::AddressInfo;
 
 pub fn create_address_info(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let [target_account, payer, _] = accounts else {
@@ -19,7 +17,7 @@ pub fn create_address_info(
     };
 
     let account_span = AddressInfo::LEN;
-    let lamports_required = (Rent::get()?).minimum_balance(account_span);
+    let lamports_required = (Rent::get()?).try_minimum_balance(account_span)?;
 
     CreateAccount {
         from: payer,
@@ -30,7 +28,7 @@ pub fn create_address_info(
     }
     .invoke()?;
 
-    let mut data = target_account.try_borrow_mut_data()?;
+    let mut data = target_account.try_borrow_mut()?;
     data.copy_from_slice(instruction_data);
 
     Ok(())

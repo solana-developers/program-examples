@@ -1,25 +1,26 @@
-use pinocchio::{
-    account_info::AccountInfo,
-    program_error::ProgramError,
-    pubkey::{find_program_address, Pubkey},
-    ProgramResult,
-};
+use pinocchio::{error::ProgramError, AccountView, Address, ProgramResult};
 use pinocchio_log::log;
+use pinocchio_pubkey::derive_address;
 
-pub fn get_pda(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+pub fn get_pda(program_id: &Address, accounts: &[AccountView], data: &[u8]) -> ProgramResult {
     let [user, favorite_account] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
     // deriving the favorite pda
-    let (favorite_pda, _) = find_program_address(&[b"favorite", user.key().as_ref()], program_id);
+    let bump = data[0];
+    let favorite_pda = derive_address(
+        &[b"favorite", user.address().as_ref()],
+        Some(bump),
+        program_id.as_array(),
+    );
 
     // Checking if the favorite account is same as the derived favorite pda
-    if favorite_account.key() != &favorite_pda {
+    if favorite_account.address().as_array() != &favorite_pda {
         return Err(ProgramError::IncorrectProgramId);
     };
 
-    let favorites = favorite_account.try_borrow_data()?;
+    let favorites = favorite_account.try_borrow()?;
 
     let number = u64::from_le_bytes(
         favorites[0..8]
@@ -44,7 +45,7 @@ pub fn get_pda(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
     log!(
         300,
         "User {}'s favorite number is {}, favorite color is: {}, and their hobbies are {} {} {} {}",
-        user.key(),
+        user.address().as_array(),
         number,
         color,
         hobby1,

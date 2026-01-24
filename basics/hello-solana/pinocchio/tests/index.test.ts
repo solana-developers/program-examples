@@ -31,7 +31,7 @@ describe('hello-solana', () => {
 
     assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
     assert(transaction.logMessages[1] === 'Program log: Hello, Solana!');
-    assert(transaction.logMessages[2] === `Program log: ${PROGRAM_ID}`);
+    assert(transaction.logMessages[2] === `Program log: [${Array.from(PROGRAM_ID.toBytes()).join(', ')}]`);
     assert(transaction.logMessages[3].startsWith(`Program ${PROGRAM_ID} consumed`));
     assert(transaction.logMessages[4] === `Program ${PROGRAM_ID} success`);
     assert(transaction.logMessages.length === 5);

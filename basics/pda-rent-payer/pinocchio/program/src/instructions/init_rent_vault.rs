@@ -1,11 +1,10 @@
 use pinocchio::{
-    account_info::AccountInfo,
-    instruction::{Seed, Signer},
-    program_error::ProgramError,
-    pubkey::{find_program_address, Pubkey},
+    cpi::{Seed, Signer},
+    error::ProgramError,
     sysvars::{rent::Rent, Sysvar},
-    ProgramResult,
+    AccountView, Address, ProgramResult,
 };
+use pinocchio_pubkey::derive_address;
 use pinocchio_system::instructions::CreateAccount;
 
 use crate::state::RentVault;
@@ -15,28 +14,34 @@ pub struct InitRentVaultArgs {
 }
 
 pub fn init_rent_vault(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    program_id: &Address,
+    accounts: &[AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let [rent_vault, payer, _] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    let (rent_vault_pda, rent_vault_bump) =
-        find_program_address(&[RentVault::SEED_PREFIX.as_bytes()], program_id);
-    assert!(rent_vault.key().eq(&rent_vault_pda));
+    let bump = instruction_data[0];
+
+    let rent_vault_pda = derive_address(
+        &[RentVault::SEED_PREFIX.as_bytes()],
+        Some(bump),
+        program_id.as_array(),
+    );
+
+    assert!(rent_vault.address().as_array().eq(&rent_vault_pda));
 
     // Lamports for rent on the vault, plus the desired additional funding
     //
     let fund_lamports = u64::from_le_bytes(
-        instruction_data[0..8]
+        instruction_data[1..9]
             .try_into()
             .map_err(|_| ProgramError::InvalidInstructionData)?,
     );
-    let lamports_required = (Rent::get()?).minimum_balance(0) + fund_lamports;
+    let lamports_required = (Rent::get()?).try_minimum_balance(0)? + fund_lamports;
 
-    let bump_bytes = rent_vault_bump.to_le_bytes();
+    let bump_bytes = bump.to_le_bytes();
 
     let seeds = [
         Seed::from(RentVault::SEED_PREFIX.as_bytes()),

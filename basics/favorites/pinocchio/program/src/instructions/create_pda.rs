@@ -1,43 +1,46 @@
 use crate::state::Favorites;
 
 use pinocchio::{
-    account_info::AccountInfo,
-    instruction::{Seed, Signer},
-    program_error::ProgramError,
-    pubkey::{find_program_address, Pubkey},
+    cpi::{Seed, Signer},
+    error::ProgramError,
     sysvars::{rent::Rent, Sysvar},
-    ProgramResult,
+    AccountView, Address, ProgramResult,
 };
+use pinocchio_pubkey::derive_address;
 
 use pinocchio_system::instructions::CreateAccount;
 
-pub fn create_pda(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
+pub fn create_pda(program_id: &Address, accounts: &[AccountView], data: &[u8]) -> ProgramResult {
     let [user, favorite_account, _] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
     // deriving the favorite pda
-    let (favorite_pda, favorite_bump) =
-        find_program_address(&[b"favorite", user.key().as_ref()], program_id);
+    let bump = data[0];
+    let favorite_pda = derive_address(
+        &[b"favorite", user.address().as_ref()],
+        Some(bump),
+        program_id.as_array(),
+    );
 
     // Checking if the favorite account is same as the derived favorite pda
-    if favorite_account.key() != &favorite_pda {
+    if favorite_account.address().as_array() != &favorite_pda {
         return Err(ProgramError::IncorrectProgramId);
     }
 
     // Checking if the pda is already initialized
-    if favorite_account.try_borrow_data()?.is_empty() {
+    if favorite_account.try_borrow()?.is_empty() {
         let rent = Rent::get()?;
 
         // Initialize the favorite account if it's not initialized
         let space = size_of::<Favorites>();
-        let lamports = rent.minimum_balance(space);
+        let lamports = rent.try_minimum_balance(space)?;
 
-        let bump_bytes = favorite_bump.to_le_bytes();
+        let bump_bytes = bump.to_le_bytes();
 
         let seeds = [
             Seed::from(b"favorite"),
-            Seed::from(user.key()),
+            Seed::from(user.address().as_ref()),
             Seed::from(&bump_bytes),
         ];
 
@@ -53,8 +56,8 @@ pub fn create_pda(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) ->
         .invoke_signed(&signers)?;
 
         // Serialize and store the data
-        let mut favrite_account_data = favorite_account.try_borrow_mut_data()?;
-        favrite_account_data.copy_from_slice(data);
+        let mut favrite_account_data = favorite_account.try_borrow_mut()?;
+        favrite_account_data.copy_from_slice(&data[1..]);
     } else {
         return Err(ProgramError::AccountAlreadyInitialized);
     }

@@ -1,8 +1,7 @@
 #![no_std]
 
 use pinocchio::{
-    account_info::AccountInfo, entrypoint, nostd_panic_handler, program_error::ProgramError,
-    pubkey::Pubkey, ProgramResult,
+    entrypoint, error::ProgramError, nostd_panic_handler, AccountView, Address, ProgramResult,
 };
 use pinocchio_log::log;
 
@@ -14,8 +13,8 @@ nostd_panic_handler!();
 const LAMPORTS_PER_SOL: u64 = 1_000_000_000;
 
 fn process_instruction(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Address,
+    accounts: &[AccountView],
     _instruction_data: &[u8],
 ) -> ProgramResult {
     let [payer, new_account, _system_program] = accounts else {
@@ -24,7 +23,7 @@ fn process_instruction(
 
     log!("Program invoked. Creating a system account...");
     log!("  New public key will be:");
-    pinocchio::pubkey::log(new_account.key());
+    log!("{}", new_account.address().as_array());
 
     CreateAccount {
         from: payer,
