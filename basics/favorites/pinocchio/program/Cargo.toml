@@ -21,7 +21,7 @@ custom-panic = []
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
 
 [dev-dependencies]
-litesvm = "0.8.1"
+litesvm = "0.8.2"
 solana-instruction = "3.0.0"
 solana-keypair = "3.0.1"
 solana-native-token = "3.0.0"
