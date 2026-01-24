@@ -74,7 +74,7 @@ spl-associated-token-account = { version = "7.0.0", features = [ "no-entrypoint"
 solana-system-interface = {version = "2.0.0", features = ["bincode"]}
 spl-token-interface = "2.0.0"
 spl-associated-token-account-interface = "2.0.0"
-spl-token-2022-interface = "2.0.0"
+spl-token-2022-interface = "2.1.0"
 
 # pinocchio
 pinocchio = { version = "0.10.1", features = ["cpi"] }
