@@ -20,7 +20,7 @@ dependencies = [
  "solana-message 3.0.1",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-signer",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -37,7 +37,7 @@ dependencies = [
  "solana-keypair",
  "solana-message 3.0.1",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-signer",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -868,7 +868,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-sdk",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -884,7 +884,7 @@ dependencies = [
  "pinocchio-system",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-sdk",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -920,7 +920,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -938,7 +938,7 @@ dependencies = [
  "solana-keypair",
  "solana-message 3.0.1",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-signer",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -1016,7 +1016,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -1033,7 +1033,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -1067,7 +1067,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1081,7 +1081,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1408,7 +1408,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1425,7 +1425,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1638,7 +1638,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-transaction",
 ]
 
@@ -2202,7 +2202,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2218,7 +2218,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2379,7 +2379,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-transaction",
 ]
 
@@ -2394,7 +2394,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-transaction",
 ]
 
@@ -2409,7 +2409,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -2426,7 +2426,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -2442,7 +2442,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -2572,7 +2572,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2588,7 +2588,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2649,7 +2649,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-rent 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
@@ -2666,7 +2666,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 2.3.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-transaction",
 ]
 
@@ -3027,10 +3027,14 @@ version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e37320fd2945c5d654b2c6210624a52d66c3f1f73b653ed211ab91a703b35bdd"
 dependencies = [
+ "borsh 1.5.7",
  "five8 1.0.0",
  "five8_const 1.0.0",
+ "serde",
+ "solana-atomic-u64 3.0.0",
  "solana-define-syscall 4.0.1",
  "solana-program-error 3.0.0",
+ "solana-sanitize 3.0.1",
 ]
 
 [[package]]
@@ -4497,6 +4501,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-pubkey"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6f7104d456b58e1418c21a8581e89810278d1190f70f27ece7fc0b2c9282a57"
+dependencies = [
+ "solana-address 2.0.0",
+]
+
+[[package]]
 name = "solana-rent"
 version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5861,7 +5874,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -5877,7 +5890,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
- "solana-pubkey 3.0.0",
+ "solana-pubkey 4.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
