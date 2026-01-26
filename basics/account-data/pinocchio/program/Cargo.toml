@@ -15,7 +15,7 @@ solana-message = "3.0.1"
 solana-native-token = "3.0.0"
 solana-pubkey = "3.0.0"
 solana-signer = "3.0.0"
-solana-transaction = "3.0.1"
+solana-transaction = "3.0.2"
 solana-system-interface.workspace = true
 
 [lib]
