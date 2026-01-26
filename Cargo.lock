@@ -1017,7 +1017,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1034,7 +1034,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1892,7 +1892,7 @@ dependencies = [
  "solana-program-error 3.0.0",
  "solana-program-runtime",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-sha256-hasher 3.0.0",
  "solana-signature",
@@ -2410,7 +2410,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2427,7 +2427,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2443,7 +2443,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2650,7 +2650,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -3673,7 +3673,7 @@ dependencies = [
  "solana-keypair",
  "solana-poh-config",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-sha256-hasher 3.0.0",
  "solana-shred-version",
@@ -4305,7 +4305,7 @@ dependencies = [
  "solana-program-option 3.0.0",
  "solana-program-pack 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-secp256k1-recover 3.0.0",
  "solana-serde-varint 3.0.0",
@@ -4442,7 +4442,7 @@ dependencies = [
  "solana-last-restart-slot 3.0.0",
  "solana-program-entrypoint 3.1.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sbpf",
  "solana-sdk-ids 3.0.0",
  "solana-slot-hashes 3.0.0",
@@ -4511,9 +4511,9 @@ dependencies = [
 
 [[package]]
 name = "solana-rent"
-version = "3.0.0"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b702d8c43711e3c8a9284a4f1bbc6a3de2553deb25b0c8142f9a44ef0ce5ddc1"
+checksum = "e860d5499a705369778647e97d760f7670adfb6fc8419dd3d568deccd46d5487"
 dependencies = [
  "serde",
  "serde_derive",
@@ -4956,7 +4956,7 @@ dependencies = [
  "solana-packet",
  "solana-program-runtime",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-stake-interface 2.0.1",
  "solana-svm-log-collector",
@@ -5154,7 +5154,7 @@ dependencies = [
  "solana-program-error 3.0.0",
  "solana-program-memory 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-sdk-macro 3.0.0",
  "solana-slot-hashes 3.0.0",
@@ -5223,7 +5223,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-instructions-sysvar 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sbpf",
  "solana-sdk-ids 3.0.0",
 ]
@@ -5292,7 +5292,7 @@ dependencies = [
  "solana-instruction 3.0.0",
  "solana-instruction-error",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-serde-varint 3.0.0",
  "solana-serialize-utils 3.1.0",
@@ -5323,7 +5323,7 @@ dependencies = [
  "solana-packet",
  "solana-program-runtime",
  "solana-pubkey 3.0.0",
- "solana-rent 3.0.0",
+ "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
  "solana-signer",
  "solana-slot-hashes 3.0.0",
