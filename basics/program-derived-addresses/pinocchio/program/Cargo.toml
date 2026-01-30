@@ -25,5 +25,5 @@ solana-keypair = "3.0.1"
 solana-pubkey = "3.0.0"
 solana-transaction = "3.0.1"
 solana-native-token = "3.0.0"
-solana-rent = "3.0.0"
+solana-rent = "3.1.0"
 solana-system-interface.workspace = true
