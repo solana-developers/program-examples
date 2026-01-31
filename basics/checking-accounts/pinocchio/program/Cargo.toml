@@ -9,7 +9,7 @@ pinocchio-system.workspace = true
 pinocchio-log.workspace = true
 
 [dev-dependencies]
-litesvm = "0.8.1"
+litesvm.workspace = true
 solana-keypair = "3.0.1"
 solana-native-token = "3.0.0"
 solana-pubkey = "3.0.0"

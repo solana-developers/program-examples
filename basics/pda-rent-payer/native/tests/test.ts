@@ -5,19 +5,17 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+  TransactionInstruction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
 import * as borsh from "borsh";
-import { start } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 
 describe("PDA Rent-Payer", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "pda_rent_payer_program", programId: PROGRAM_ID }],
-    [],
-  );
-  const client = context.banksClient;
-  const payer = context.payer;
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/pda_rent_payer_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
   class Assignable {
     constructor(properties) {
@@ -75,7 +73,7 @@ describe("PDA Rent-Payer", async () => {
   }
 
   test("Initialize the Rent Vault", async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     const [rentVaultPda, _] = deriveRentVaultPda();
     const ix = new TransactionInstruction({
       keys: [
@@ -94,11 +92,11 @@ describe("PDA Rent-Payer", async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 
   test("Create a new account using the Rent Vault", async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     const newAccount = Keypair.generate();
     const [rentVaultPda, _] = deriveRentVaultPda();
     const ix = new TransactionInstruction({
@@ -118,6 +116,6 @@ describe("PDA Rent-Payer", async () => {
     tx.add(ix).sign(payer, newAccount); // Add instruction and Sign the transaction
 
     // Now we process the transaction
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 });

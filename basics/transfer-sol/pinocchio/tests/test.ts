@@ -6,7 +6,7 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
-import { start } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 
 describe("transfer-sol", async () => {
   console.log("transfer-sol");

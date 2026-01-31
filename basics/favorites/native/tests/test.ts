@@ -1,16 +1,16 @@
 import {
-  Blockhash,
   Keypair,
   PublicKey,
   SystemProgram,
   Transaction,
   TransactionInstruction,
+  LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
 import { BN } from "bn.js";
 import * as borsh from "borsh";
 import { assert, expect } from "chai";
-import { describe, test } from "mocha";
-import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
+import { before, beforeEach, describe, test } from 'node:test';
+import { LiteSVM } from 'litesvm';
 
 // This is a helper class to assign properties to the class
 class Assignable {
@@ -28,7 +28,7 @@ const MyInstruction = {
 
 class CreateFav extends Assignable {
   number: number;
-  instruction: MyInstruction;
+  instruction: number;
   color: string;
   hobbies: string[];
 
@@ -78,23 +78,21 @@ const GetFavSchema = {
 };
 
 describe("Favorites Solana Native", () => {
-  // Randomly generate the program keypair and load the program to solana-bankrun
   const programId = PublicKey.unique();
 
-  let context: ProgramTestContext;
-  let client: BanksClient;
+  let svm: LiteSVM;
   let payer: Keypair;
-  let blockhash: Blockhash;
+  let blockhash: string;
 
-  beforeEach(async () => {
-    context = await start([{ name: "favorites_native", programId }], []);
-    client = context.banksClient;
-    // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
-    payer = context.payer;
-    blockhash = context.lastBlockhash;
+  beforeEach(() => {
+    svm = new LiteSVM();
+    svm.addProgramFromFile(programId, 'tests/fixtures/favorites_native.so');
+    payer = Keypair.generate();
+    svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
+    blockhash = svm.latestBlockhash();
   });
 
-  test("Set the favorite pda and cross-check the updated data", async () => {
+  test("Set the favorite pda and cross-check the updated data", () => {
     const favoritesPda = PublicKey.findProgramAddressSync(
       [Buffer.from("favorite"), payer.publicKey.toBuffer()],
       programId,
@@ -123,15 +121,16 @@ describe("Favorites Solana Native", () => {
     tx.recentBlockhash = blockhash;
     tx.sign(payer);
     tx.recentBlockhash = blockhash;
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
 
-    const account = await client.getAccount(favoritesPda);
+    const account = svm.getAccount(favoritesPda);
     const data = Buffer.from(account.data);
 
     const favoritesData = CreateFav.fromBuffer(data);
 
     console.log("Deserialized data:", favoritesData);
 
+    // biome-ignore lint/suspicious/noExplicitAny: borsh deserialization returns dynamic types
     expect(new BN(favoritesData.number as any, "le").toNumber()).to.equal(
       favData.number,
     );
@@ -139,8 +138,7 @@ describe("Favorites Solana Native", () => {
     expect(favoritesData.hobbies).to.deep.equal(favData.hobbies);
   });
 
-  test("Check if the test fails if the pda seeds aren't same", async () => {
-    // We put the wrong seeds knowingly to see if the test fails because of checks
+  test("Check if the test fails if the pda seeds aren't same", () => {
     const favoritesPda = PublicKey.findProgramAddressSync(
       [Buffer.from("favorite"), payer.publicKey.toBuffer()],
       programId,
@@ -170,15 +168,14 @@ describe("Favorites Solana Native", () => {
     tx.sign(payer);
     tx.recentBlockhash = blockhash;
     try {
-      await client.processTransaction(tx);
+      svm.sendTransaction(tx);
       console.error("Expected the test to fail");
     } catch (_err) {
       assert(true);
     }
   });
 
-  test("Get the favorite pda and cross-check the data", async () => {
-    // Creating a new account with payer's pubkey
+  test("Get the favorite pda and cross-check the data", () => {
     const favoritesPda = PublicKey.findProgramAddressSync(
       [Buffer.from("favorite"), payer.publicKey.toBuffer()],
       programId,
@@ -207,7 +204,7 @@ describe("Favorites Solana Native", () => {
     tx1.recentBlockhash = blockhash;
     tx1.sign(payer);
     tx1.recentBlockhash = blockhash;
-    await client.processTransaction(tx1);
+    svm.sendTransaction(tx1);
 
     // Getting the user's data through the get_pda instruction
     const getfavData = { instruction: MyInstruction.GetFav };
@@ -228,6 +225,6 @@ describe("Favorites Solana Native", () => {
     tx.recentBlockhash = blockhash;
     tx.sign(payer);
     tx.recentBlockhash = blockhash;
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 });

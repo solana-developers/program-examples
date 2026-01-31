@@ -1,15 +1,17 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction, LAMPORTS_PER_SOL} from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 describe('PDAs', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program_derived_addresses_native_program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
-  const rent = await client.getRent();
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/program_derived_addresses_native_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
+  const rent = svm.getRent();
 
   class Assignable {
     constructor(properties) {
@@ -20,6 +22,8 @@ describe('PDAs', async () => {
   }
 
   class PageVisits extends Assignable {
+    page_visits!: number;
+    bump!: number;
     toBuffer() {
       return Buffer.from(borsh.serialize(PageVisitsSchema, this));
     }
@@ -68,11 +72,11 @@ describe('PDAs', async () => {
     });
 
     const tx = new Transaction();
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, testUser); // Add instruction and Sign the transaction
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
     console.log(`Local Wallet: ${payer.publicKey}`);
     console.log(`Created User: ${testUser.publicKey}`);
   });
@@ -94,11 +98,11 @@ describe('PDAs', async () => {
       data: new PageVisits({ page_visits: 0, bump: pageVisitsBump }).toBuffer(),
     });
     const tx = new Transaction();
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 
   test('Visit the page!', async () => {
@@ -112,11 +116,11 @@ describe('PDAs', async () => {
       data: new IncrementPageVisits({}).toBuffer(),
     });
     const tx = new Transaction();
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 
   test('Visit the page!', async () => {
@@ -130,16 +134,16 @@ describe('PDAs', async () => {
       data: new IncrementPageVisits({}).toBuffer(),
     });
     const tx = new Transaction();
-    const [blockhash, _block_height] = await client.getLatestBlockhash();
-    tx.recentBlockhash = blockhash;
+    svm.expireBlockhash();
+    tx.recentBlockhash = svm.latestBlockhash();
     tx.add(ix).sign(payer);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 
   test('Read page visits', async () => {
     const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
-    const accountInfo = await client.getAccount(pageVisitsPda);
+    const accountInfo = svm.getAccount(pageVisitsPda);
     const readPageVisits = PageVisits.fromBuffer(Buffer.from(accountInfo.data));
     console.log(`Number of page visits: ${readPageVisits.page_visits}`);
   });

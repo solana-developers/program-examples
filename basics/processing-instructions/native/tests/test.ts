@@ -1,14 +1,16 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, Keypair} from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 describe('custom-instruction-data', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'processing_instructions_program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/processing_instructions_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
   class Assignable {
     constructor(properties) {
@@ -38,7 +40,7 @@ describe('custom-instruction-data', async () => {
   ]);
 
   test('Go to the park!', async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
 
     const jimmy = new InstructionData({
       name: 'Jimmy',
@@ -65,6 +67,6 @@ describe('custom-instruction-data', async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix1).add(ix2).sign(payer);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 });

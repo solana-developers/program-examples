@@ -30,8 +30,8 @@
 	"dependencies": {
 		"@coral-xyz/anchor": "^0.32.1",
 		"@solana/web3.js": "^1.95.2",
-		"anchor-bankrun": "^0.4.0",
+		"anchor-litesvm": "^0.2.1",
 		"chai": "^5.1.1",
-		"solana-bankrun": "^0.3.0"
+		"litesvm": "^0.5.0"
 	}
 }

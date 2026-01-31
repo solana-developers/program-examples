@@ -1,20 +1,18 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { describe, it } from 'node:test';
+import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, Keypair } from '@solana/web3.js';
 import { assert } from 'chai';
-import { ProgramTestContext, start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 describe('hello-solana', () => {
   const PROGRAM_ID = PublicKey.unique();
 
-  // load program in solana-bankrun
-  let context: ProgramTestContext;
-  before(async () => {
-    context = await start([{ name: 'hello_solana_program_pinocchio', programId: PROGRAM_ID }], []);
-  });
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/hello_solana_program_pinocchio.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
-  it('Say hello!', async () => {
-    const client = context.banksClient;
-    const payer = context.payer;
-    const blockhash = context.lastBlockhash;
+  it('Say hello!', () => {
+    const blockhash = svm.latestBlockhash();
     // We set up our instruction first.
     const ix = new TransactionInstruction({
       keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
@@ -27,13 +25,13 @@ describe('hello-solana', () => {
     tx.add(ix).sign(payer);
 
     // Now we process the transaction
-    const transaction = await client.processTransaction(tx);
+    const transaction = svm.sendTransaction(tx);
 
-    assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
-    assert(transaction.logMessages[1] === 'Program log: Hello, Solana!');
-    assert(transaction.logMessages[2] === `Program log: [${Array.from(PROGRAM_ID.toBytes()).join(', ')}]`);
-    assert(transaction.logMessages[3].startsWith(`Program ${PROGRAM_ID} consumed`));
-    assert(transaction.logMessages[4] === `Program ${PROGRAM_ID} success`);
-    assert(transaction.logMessages.length === 5);
+    assert(transaction.logs()[0].startsWith(`Program ${PROGRAM_ID}`));
+    assert(transaction.logs()[1] === 'Program log: Hello, Solana!');
+    assert(transaction.logs()[2] === `Program log: [${Array.from(PROGRAM_ID.toBytes()).join(', ')}]`);
+    assert(transaction.logs()[3].startsWith(`Program ${PROGRAM_ID} consumed`));
+    assert(transaction.logs()[4] === `Program ${PROGRAM_ID} success`);
+    assert(transaction.logs().length === 5);
   });
 });

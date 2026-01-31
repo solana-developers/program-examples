@@ -1,24 +1,22 @@
 import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
+import { PublicKey, LAMPORTS_PER_SOL, Keypair} from "@solana/web3.js";
+import { LiteSVMProvider } from 'anchor-litesvm';
 import BN from "bn.js";
-import { startAnchor } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 import type { Anchor } from "../target/types/anchor";
 
-import IDL from "../target/idl/anchor.json" with { type: "json" };
+import IDL from "../target/idl/anchor.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("anchor", async () => {
-	const context = await startAnchor(
-		"",
-		[{ name: "anchor", programId: PROGRAM_ID }],
-		[],
-	);
-	const provider = new BankrunProvider(context);
+	const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/anchor.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+	const provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
 	anchor.setProvider(provider);
 	const program = new anchor.Program<Anchor>(IDL, provider);
-	const client = context.banksClient;
 	const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
 		"TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
 	);
@@ -60,7 +58,8 @@ describe("anchor", async () => {
 		// await connection.requestAirdrop(receiver.publicKey, 1000000000);
 		// await connection.requestAirdrop(wallet.publicKey, 1000000000);
 		const tx = new anchor.web3.Transaction();
-		const [blockhash, _height] = await client.getLatestBlockhash();
+		svm.expireBlockhash();
+		const blockhash = svm.latestBlockhash();
 
 		const ix = await program.methods
 			.createToken(tokenName)
@@ -73,13 +72,14 @@ describe("anchor", async () => {
 		tx.recentBlockhash = blockhash;
 		tx.add(ix);
 		tx.sign(wallet.payer);
-		const sig = await client.processTransaction(tx);
+		const sig = svm.sendTransaction(tx);
 		console.log("Your transaction signature", sig);
 	});
 
 	it("Initialize payer ATA", async () => {
 		const tx = new anchor.web3.Transaction();
-		const [blockhash, _height] = await client.getLatestBlockhash();
+		svm.expireBlockhash();
+		const blockhash = svm.latestBlockhash();
 
 		const ix = await program.methods
 			.createAssociatedTokenAccount()
@@ -94,7 +94,7 @@ describe("anchor", async () => {
 		tx.recentBlockhash = blockhash;
 		tx.add(ix);
 		tx.sign(wallet.payer);
-		const sig = await client.processTransaction(tx);
+		const sig = svm.sendTransaction(tx);
 		console.log("Your transaction signature", sig);
 	});
 
@@ -125,7 +125,8 @@ describe("anchor", async () => {
 
 	it("Mint Token to payer", async () => {
 		const tx = new anchor.web3.Transaction();
-		const [blockhash, _height] = await client.getLatestBlockhash();
+		svm.expireBlockhash();
+		const blockhash = svm.latestBlockhash();
 
 		const ix = await program.methods
 			.mintToken(new BN(200000000))
@@ -140,14 +141,15 @@ describe("anchor", async () => {
 		tx.recentBlockhash = blockhash;
 		tx.add(ix);
 		tx.sign(wallet.payer);
-		const sig = await client.processTransaction(tx);
+		const sig = svm.sendTransaction(tx);
 		console.log("Your transaction signature", sig);
 	});
 
 	// Using init in the transfer instruction, as init if needed is bot working with Token 2022 yet.
 	it("Transfer Token", async () => {
 		const tx = new anchor.web3.Transaction();
-		const [blockhash, _height] = await client.getLatestBlockhash();
+		svm.expireBlockhash();
+		const blockhash = svm.latestBlockhash();
 
 		const ix = await program.methods
 			.transferToken(new BN(100))
@@ -164,7 +166,7 @@ describe("anchor", async () => {
 		tx.recentBlockhash = blockhash;
 		tx.add(ix);
 		tx.sign(wallet.payer);
-		const sig = await client.processTransaction(tx);
+		const sig = svm.sendTransaction(tx);
 		console.log("Your transaction signature", sig);
 	});
 });

@@ -1,14 +1,20 @@
 import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { after, describe, test } from 'node:test';
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction, LAMPORTS_PER_SOL} from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 describe('Create a system account', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
+
+  after(() => {
+    process.exit(0);
+  });
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
   class Assignable {
     constructor(properties) {
@@ -61,10 +67,10 @@ describe('Create a system account', async () => {
     });
 
     const tx = new Transaction();
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, newKeypair);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 });

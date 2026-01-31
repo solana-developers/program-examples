@@ -1,29 +1,26 @@
 import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
-import { startAnchor } from "solana-bankrun";
+import { Keypair, PublicKey, LAMPORTS_PER_SOL} from "@solana/web3.js";
+import { LiteSVMProvider } from 'anchor-litesvm';
+import { LiteSVM } from 'litesvm';
 import type { NftMinter } from "../target/types/nft_minter";
 
-import IDL from "../target/idl/nft_minter.json" with { type: "json" };
+import IDL from "../target/idl/nft_minter.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 const METADATA_PROGRAM_ID = new PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
 );
 
-describe("NFT bankrun Minter", async () => {
-  const context = await startAnchor(
-    "",
-    [
-      { name: "nft_minter", programId: PROGRAM_ID },
-      { name: "token_metadata", programId: METADATA_PROGRAM_ID },
-    ],
-    [],
-  );
-  const provider = new BankrunProvider(context);
+describe("NFT litesvm Minter", async () => {
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/nft_minter.so');
+  svm.addProgramFromFile(METADATA_PROGRAM_ID, 'target/deploy/token_metadata.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+  const provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
   anchor.setProvider(provider);
-  const payer = provider.wallet as anchor.Wallet;
+  const wallet = provider.wallet as anchor.Wallet;
   const program = new anchor.Program<NftMinter>(IDL, provider);
 
   // The metadata for our NFT

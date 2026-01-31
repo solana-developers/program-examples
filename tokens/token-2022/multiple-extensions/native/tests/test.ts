@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
 import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
-import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction, LAMPORTS_PER_SOL} from '@solana/web3.js';
 import * as borsh from 'borsh';
 import { assert } from 'chai';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 class Assignable {
   constructor(properties) {
@@ -31,12 +31,14 @@ const CreateTokenArgsSchema = new Map([
 
 describe('Create Token', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'token_2022_multiple_extensions_program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/token_2022_multiple_extensions_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
   test('Create a Token-22 SPL-Token !', async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     const mintKeypair: Keypair = Keypair.generate();
 
     const instructionData = new CreateTokenArgs({
@@ -61,9 +63,9 @@ describe('Create Token', async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, mintKeypair);
 
-    const transaction = await client.processTransaction(tx);
+    const transaction = svm.sendTransaction(tx);
 
-    assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
+    assert(transaction.logs()[0].startsWith(`Program ${PROGRAM_ID}`));
     console.log('Token Mint Address: ', mintKeypair.publicKey.toBase58());
   });
 });

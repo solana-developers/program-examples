@@ -3,10 +3,9 @@ import { describe, test } from "node:test";
 import {
   PublicKey,
   Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+  TransactionInstruction,  LAMPORTS_PER_SOL, Keypair} from "@solana/web3.js";
 import * as borsh from "borsh";
-import { start } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 
 describe("custom-instruction-data", async () => {
   console.log("custom-instruction-data");

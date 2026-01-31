@@ -1,14 +1,16 @@
 import { Buffer } from 'node:buffer';
 import { describe, test } from 'node:test';
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, Keypair} from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 
 describe('Carnival', async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'repository_layout_program', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
-  const payer = context.payer;
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/repository_layout_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
   class Assignable {
     constructor(properties) {
@@ -43,7 +45,7 @@ describe('Carnival', async () => {
   async function sendCarnivalInstructions(instructionsList: CarnivalInstruction[]) {
     const tx = new Transaction();
     for (const ix of instructionsList) {
-      tx.recentBlockhash = context.lastBlockhash;
+      tx.recentBlockhash = svm.latestBlockhash();
       tx.add(
         new TransactionInstruction({
           keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
@@ -52,7 +54,7 @@ describe('Carnival', async () => {
         }),
       ).sign(payer);
     }
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   }
 
   test('Go on some rides!', async () => {
