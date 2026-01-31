@@ -50,6 +50,9 @@ members = [
     "tokens/token-2022/default-account-state/native/program",
     "tokens/token-2022/transfer-fee/native/program",
     "tokens/token-2022/multiple-extensions/native/program",
+
+    # oracles
+    "oracles/chainlink/native/program"
 ]
 resolver = "2"
 
