@@ -29,7 +29,7 @@ This is just an example implementation. Use at your own discretion
 **This only works on anchor 0.26.0 for now due to mpl-bubblegum dependencies** 
 
 ## Further resources
-A video about the creation of this code which also contains further explanations has been publised on Burger Bob's YouTube channel: COMING SOON
+A video about the creation of this code which also contains further explanations has been published on Burger Bob's YouTube channel: COMING SOON
 
 ## How-to
 1. Configure RPC path in _utils/readAPI.ts_. Personal preference: Helius RPCs.
