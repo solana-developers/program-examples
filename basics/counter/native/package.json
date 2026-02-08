@@ -8,7 +8,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "test": "pnpm ts-mocha -p ./tests/tsconfig.test.json -t 1000000 ./tests/counter.test.ts",
+    "test": "node --import tsx --test ./tests/counter.test.ts",
     "build-and-test": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./tests/fixtures && pnpm test",
     "build": "cargo build-sbf --manifest-path=./program/Cargo.toml --sbf-out-dir=./program/target/so",
     "deploy": "solana program deploy ./program/target/so/program.so"
@@ -21,7 +21,8 @@
     "mocha": "^9.0.3",
     "solana-bankrun": "^0.3.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "tsx": "^4.19.2"
   },
   "dependencies": {
     "@solana/web3.js": "^1.91.4"
