@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import type { Carnival } from "../target/types/carnival.ts";
+import type { Carnival } from "../target/types/carnival";
 
 describe("Carnival", () => {
 	const provider = anchor.AnchorProvider.env();

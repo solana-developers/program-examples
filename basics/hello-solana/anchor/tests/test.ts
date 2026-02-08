@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import type { HelloSolana } from "../target/types/hello_solana.ts";
+import type { HelloSolana } from "../target/types/hello_solana";
 
 describe("Anchor: hello-solana", () => {
 	// Configure the Anchor provider & load the program IDL

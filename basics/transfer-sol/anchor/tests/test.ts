@@ -9,7 +9,7 @@ import {
 } from "@solana/web3.js";
 import { BN } from "bn.js";
 import { assert } from "chai";
-import type { TransferSol } from "../target/types/transfer_sol.ts";
+import type { TransferSol } from "../target/types/transfer_sol";
 
 describe("Anchor: Transfer SOL", () => {
 	const provider = anchor.AnchorProvider.env();

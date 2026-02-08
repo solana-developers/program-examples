@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { assert } from "chai";
-import type { ProgramDerivedAddressesProgram } from "../target/types/program_derived_addresses_program.ts";
+import type { ProgramDerivedAddressesProgram } from "../target/types/program_derived_addresses_program";
 
 describe("Anchor: PDAs", () => {
 	const provider = anchor.AnchorProvider.env();

@@ -2,7 +2,7 @@ import type { Program } from "@coral-xyz/anchor";
 import * as anchor from "@coral-xyz/anchor";
 import { Keypair } from "@solana/web3.js";
 import { assert } from "chai";
-import type { CounterAnchor } from "../target/types/counter_anchor.ts";
+import type { CounterAnchor } from "../target/types/counter_anchor";
 
 describe("Anchor: Counter", () => {
 	// Configure the client to use the local cluster.

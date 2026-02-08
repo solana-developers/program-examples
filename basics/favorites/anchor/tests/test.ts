@@ -2,7 +2,7 @@ import type { Program } from "@coral-xyz/anchor";
 import * as anchor from "@coral-xyz/anchor";
 import { BN } from "bn.js";
 import { assert } from "chai";
-import type { Favorites } from "../target/types/favorites.ts";
+import type { Favorites } from "../target/types/favorites";
 
 describe("Anchor: Favorites", () => {
 	// Use the cluster and the keypair from Anchor.toml

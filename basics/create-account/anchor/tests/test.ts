@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Keypair } from "@solana/web3.js";
 import { assert } from "chai";
-import type { CreateSystemAccount } from "../target/types/create_system_account.ts";
+import type { CreateSystemAccount } from "../target/types/create_system_account";
 
 describe("Anchor: Create a system account", () => {
 	const provider = anchor.AnchorProvider.env();
