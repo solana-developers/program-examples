@@ -31,7 +31,7 @@ name = "account-data-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-keypair",
@@ -879,7 +879,7 @@ name = "checking-accounts-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-keypair",
@@ -930,7 +930,7 @@ name = "close-account-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1027,7 +1027,7 @@ name = "counter-solana-pinocchio"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "solana-instruction 3.0.0",
@@ -1060,7 +1060,7 @@ name = "create-account-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1418,7 +1418,7 @@ name = "favorites-pinocchio"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1646,7 +1646,7 @@ dependencies = [
 name = "hello-solana-program-pinocchio"
 version = "0.1.0"
 dependencies = [
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
 ]
 
@@ -2195,7 +2195,7 @@ name = "pda-rent-payer-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -2246,9 +2246,9 @@ checksum = "5b971851087bc3699b001954ad02389d50c41405ece3548cbcafc88b3e20017a"
 
 [[package]]
 name = "pinocchio"
-version = "0.10.1"
+version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfad955b2fe8f736e1ea276ebb31820d778ee69c1161146054e9b31be2e73326"
+checksum = "c06810dac15a4ef83d3dabdb4f2f22fb39c9adff669cd2781da4f716510a647c"
 dependencies = [
  "solana-account-view",
  "solana-address 2.0.0",
@@ -2294,7 +2294,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24044a0815753862b558e179e78f03f7344cb755de48617a09d7d23b50883b6c"
 dependencies = [
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "solana-address 2.0.0",
 ]
 
@@ -2374,7 +2374,7 @@ name = "processing-instructions-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "solana-instruction 3.0.0",
  "solana-keypair",
@@ -2437,7 +2437,7 @@ name = "program-derived-addresses-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-system",
  "solana-instruction 3.0.0",
  "solana-keypair",
@@ -2566,7 +2566,7 @@ name = "realloc-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-instruction 3.0.0",
@@ -2643,7 +2643,7 @@ name = "rent_pinocchio_program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-instruction 3.0.0",
@@ -5868,7 +5868,7 @@ name = "transfer-sol-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-system",
  "solana-instruction 3.0.0",
  "solana-keypair",
