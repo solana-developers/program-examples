@@ -3,9 +3,9 @@ import { AccountLayout } from '@solana/spl-token';
 import { Transaction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
-import { OfferAccount } from './account';
-import { buildMakeOffer, buildTakeOffer } from './instruction';
-import { createValues, mintingTokens } from './utils';
+import { OfferAccount } from './account.js';
+import { buildMakeOffer, buildTakeOffer } from './instruction.js';
+import { createValues, mintingTokens } from './utils.js';
 
 describe('Escrow!', async () => {
   const values = createValues();
