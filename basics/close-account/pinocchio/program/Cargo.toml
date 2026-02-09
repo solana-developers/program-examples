@@ -11,7 +11,7 @@ pinocchio-system.workspace = true
 
 [dev-dependencies]
 litesvm = "0.8.1"
-solana-keypair = "3.0.1"
+solana-keypair = "3.1.0"
 solana-message = "3.0.1"
 solana-native-token = "3.0.0"
 solana-pubkey = "3.0.0"

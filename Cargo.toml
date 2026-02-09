@@ -85,7 +85,7 @@ pinocchio-pubkey = "0.3.0"
 # testing
 litesvm = "0.8.1"
 solana-instruction = "3.0.0"
-solana-keypair = "3.0.1"
+solana-keypair = "3.1.0"
 solana-pubkey = "3.0.0"
 solana-transaction = "3.0.1"
 solana-native-token = "3.0.0"
