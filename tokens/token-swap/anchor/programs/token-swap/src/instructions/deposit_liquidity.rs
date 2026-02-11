@@ -31,16 +31,16 @@ pub fn deposit_liquidity(
     // Making sure they are provided in the same proportion as existing liquidity
     let pool_a = &ctx.accounts.pool_account_a;
     let pool_b = &ctx.accounts.pool_account_b;
-    // Defining pool creation like this allows attackers to frontrun pool creation with bad ratios
     let pool_creation = pool_a.amount == 0 && pool_b.amount == 0;
     (amount_a, amount_b) = if pool_creation {
         // Add as is if there is no liquidity
         (amount_a, amount_b)
     } else {
-        let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
-            .unwrap();
+        // FIX: Use proper ratio (division) instead of product (multiplication)
         if pool_a.amount > pool_b.amount {
+            let ratio = I64F64::from_num(pool_a.amount)
+                .checked_div(I64F64::from_num(pool_b.amount))
+                .unwrap();
             (
                 I64F64::from_num(amount_b)
                     .checked_mul(ratio)
@@ -49,10 +49,13 @@ pub fn deposit_liquidity(
                 amount_b,
             )
         } else {
+            let ratio = I64F64::from_num(pool_b.amount)
+                .checked_div(I64F64::from_num(pool_a.amount))
+                .unwrap();
             (
                 amount_a,
                 I64F64::from_num(amount_a)
-                    .checked_div(ratio)
+                    .checked_mul(ratio)
                     .unwrap()
                     .to_num::<u64>(),
             )

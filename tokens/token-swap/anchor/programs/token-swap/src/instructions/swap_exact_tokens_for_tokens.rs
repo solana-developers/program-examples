@@ -73,6 +73,7 @@ pub fn swap_exact_tokens_for_tokens(
     ];
     let signer_seeds = &[&authority_seeds[..]];
     if swap_a {
+        // Swap A → B: Trader sends A to pool, pool sends B to trader
         token::transfer(
             CpiContext::new(
                 ctx.accounts.token_program.to_account_info(),
@@ -97,6 +98,18 @@ pub fn swap_exact_tokens_for_tokens(
             output,
         )?;
     } else {
+        // FIX: Swap B → A: Trader sends B (input) to pool, pool sends A (output) to trader
+        token::transfer(
+            CpiContext::new(
+                ctx.accounts.token_program.to_account_info(),
+                Transfer {
+                    from: ctx.accounts.trader_account_b.to_account_info(),
+                    to: ctx.accounts.pool_account_b.to_account_info(),
+                    authority: ctx.accounts.trader.to_account_info(),
+                },
+            ),
+            input, // FIX: Trader sends INPUT amount of B to pool
+        )?;
         token::transfer(
             CpiContext::new_with_signer(
                 ctx.accounts.token_program.to_account_info(),
@@ -107,18 +120,7 @@ pub fn swap_exact_tokens_for_tokens(
                 },
                 signer_seeds,
             ),
-            input,
-        )?;
-        token::transfer(
-            CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
-                Transfer {
-                    from: ctx.accounts.trader_account_b.to_account_info(),
-                    to: ctx.accounts.pool_account_b.to_account_info(),
-                    authority: ctx.accounts.trader.to_account_info(),
-                },
-            ),
-            output,
+            output, // FIX: Pool sends OUTPUT amount of A to trader
         )?;
     }
 
@@ -134,7 +136,8 @@ pub fn swap_exact_tokens_for_tokens(
     // We tolerate if the new invariant is higher because it means a rounding error for LPs
     ctx.accounts.pool_account_a.reload()?;
     ctx.accounts.pool_account_b.reload()?;
-    if invariant > ctx.accounts.pool_account_a.amount * ctx.accounts.pool_account_a.amount {
+    // FIX: Use pool_account_b instead of pool_account_a (was a copy-paste bug)
+    if invariant > ctx.accounts.pool_account_a.amount * ctx.accounts.pool_account_b.amount {
         return err!(TutorialError::InvariantViolated);
     }
 
