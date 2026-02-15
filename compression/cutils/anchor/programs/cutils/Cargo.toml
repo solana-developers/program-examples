@@ -9,25 +9,22 @@ crate-type = ["cdylib", "lib"]
 name = "cutils"
 
 [features]
+default = []
+cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-cpi = ["no-entrypoint"]
-default = []
+idl-build = ["anchor-lang/idl-build"]
 anchor-debug = []
 custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = "0.26.0"
-solana-program = "1.14.18"
-spl-account-compression = { version="0.1.8", features = ["cpi"] }
-mpl-bubblegum = { version = "0.7.0", features = ["no-entrypoint", "cpi"] }
-
-# Added due to anchor and solana-cli wonkyness as of late
-getrandom = { version = "0.2.10", features = ["custom"] }
-winnow = "=0.4.1"
-toml_datetime = "=0.6.1"
+anchor-lang = "0.32.1"
+mpl-bubblegum = "2.1.1"
+spl-account-compression = { version = "1.0.0", features = ["no-entrypoint", "cpi"] }
+sha2 = "0.10"
+ahash = "=0.8.7"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -12,70 +12,43 @@ import { assert, expect } from "chai";
 import { describe, test } from "mocha";
 import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
 
-// This is a helper class to assign properties to the class
-class Assignable {
-  constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
-  }
-}
-
 const MyInstruction = {
   CreateFav: 0,
   GetFav: 1,
 } as const;
 
-class CreateFav extends Assignable {
-  number: number;
-  instruction: MyInstruction;
-  color: string;
-  hobbies: string[];
-
-  toBuffer() {
-    return Buffer.from(borsh.serialize(CreateNewAccountSchema, this));
-  }
-
-  static fromBuffer(buffer: Buffer): CreateFav {
-    return borsh.deserialize(
-      {
-        struct: {
-          number: "u64",
-          color: "string",
-          hobbies: {
-            array: {
-              type: "string",
-            },
-          },
-        },
-      },
-      buffer,
-    ) as CreateFav;
-  }
-}
-const CreateNewAccountSchema = {
+const CreateFavSchema = {
   struct: {
     instruction: "u8",
     number: "u64",
     color: "string",
-    hobbies: {
-      array: {
-        type: "string",
-      },
-    },
+    hobbies: { array: { type: "string" } },
   },
 };
 
-class GetFav extends Assignable {
-  toBuffer() {
-    return Buffer.from(borsh.serialize(GetFavSchema, this));
-  }
-}
+const FavoritesDataSchema = {
+  struct: {
+    number: "u64",
+    color: "string",
+    hobbies: { array: { type: "string" } },
+  },
+};
+
 const GetFavSchema = {
   struct: {
     instruction: "u8",
   },
 };
+
+type FavoritesData = {
+  number: number | bigint;
+  color: string;
+  hobbies: string[];
+};
+
+function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+  return Buffer.from(borsh.serialize(schema, data));
+}
 
 describe("Favorites Solana Native", () => {
   // Randomly generate the program keypair and load the program to solana-bankrun
@@ -105,7 +78,6 @@ describe("Favorites Solana Native", () => {
       color: "blue",
       hobbies: ["coding", "reading", "traveling"],
     };
-    const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({
       keys: [
@@ -114,11 +86,10 @@ describe("Favorites Solana Native", () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId,
-      data: favorites.toBuffer(),
+      data: borshSerialize(CreateFavSchema, favData),
     });
 
     const tx = new Transaction().add(ix);
-
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash;
     tx.sign(payer);
@@ -128,7 +99,7 @@ describe("Favorites Solana Native", () => {
     const account = await client.getAccount(favoritesPda);
     const data = Buffer.from(account.data);
 
-    const favoritesData = CreateFav.fromBuffer(data);
+    const favoritesData = borsh.deserialize(FavoritesDataSchema, data) as FavoritesData;
 
     console.log("Deserialized data:", favoritesData);
 
@@ -151,7 +122,6 @@ describe("Favorites Solana Native", () => {
       color: "blue",
       hobbies: ["coding", "reading", "traveling"],
     };
-    const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({
       keys: [
@@ -160,11 +130,10 @@ describe("Favorites Solana Native", () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId,
-      data: favorites.toBuffer(),
+      data: borshSerialize(CreateFavSchema, favData),
     });
 
     const tx = new Transaction().add(ix);
-
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash;
     tx.sign(payer);
@@ -189,7 +158,6 @@ describe("Favorites Solana Native", () => {
       color: "hazel",
       hobbies: ["singing", "dancing", "skydiving"],
     };
-    const favorites = new CreateFav(favData);
 
     const ix = new TransactionInstruction({
       keys: [
@@ -198,11 +166,10 @@ describe("Favorites Solana Native", () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId,
-      data: favorites.toBuffer(),
+      data: borshSerialize(CreateFavSchema, favData),
     });
 
     const tx1 = new Transaction().add(ix);
-
     tx1.feePayer = payer.publicKey;
     tx1.recentBlockhash = blockhash;
     tx1.sign(payer);
@@ -210,20 +177,16 @@ describe("Favorites Solana Native", () => {
     await client.processTransaction(tx1);
 
     // Getting the user's data through the get_pda instruction
-    const getfavData = { instruction: MyInstruction.GetFav };
-    const getfavorites = new GetFav(getfavData);
-
     const ix2 = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
         { pubkey: favoritesPda, isSigner: false, isWritable: false },
       ],
       programId,
-      data: getfavorites.toBuffer(),
+      data: borshSerialize(GetFavSchema, { instruction: MyInstruction.GetFav }),
     });
 
     const tx = new Transaction().add(ix2);
-
     tx.feePayer = payer.publicKey;
     tx.recentBlockhash = blockhash;
     tx.sign(payer);

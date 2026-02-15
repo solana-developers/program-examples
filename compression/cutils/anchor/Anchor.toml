@@ -1,8 +1,12 @@
+[toolchain]
+solana_version = "3.1.8"
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
+
 [programs.devnet]
-cutils = "burZc1SfqbrAP35XG63YZZ82C9Zd22QUwhCXoEUZWNF"
+cutils = "BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ"
 
 [registry]
 url = "https://api.apr.dev"

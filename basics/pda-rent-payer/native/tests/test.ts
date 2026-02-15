@@ -19,51 +19,27 @@ describe("PDA Rent-Payer", async () => {
   const client = context.banksClient;
   const payer = context.payer;
 
-  class Assignable {
-    constructor(properties) {
-      for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
-      }
-    }
-  }
-
   const MyInstruction = {
     InitRentVault: 0,
     CreateNewAccount: 1,
   } as const;
 
-  class InitRentVault extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(InitRentVaultSchema, this));
-    }
-  }
-  const InitRentVaultSchema = new Map([
-    [
-      InitRentVault,
-      {
-        kind: "struct",
-        fields: [
-          ["instruction", "u8"],
-          ["fund_lamports", "u64"],
-        ],
-      },
-    ],
-  ]);
+  const InitRentVaultSchema = {
+    struct: {
+      instruction: "u8",
+      fund_lamports: "u64",
+    },
+  };
 
-  class CreateNewAccount extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(CreateNewAccountSchema, this));
-    }
+  const CreateNewAccountSchema = {
+    struct: {
+      instruction: "u8",
+    },
+  };
+
+  function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+    return Buffer.from(borsh.serialize(schema, data));
   }
-  const CreateNewAccountSchema = new Map([
-    [
-      CreateNewAccount,
-      {
-        kind: "struct",
-        fields: [["instruction", "u8"]],
-      },
-    ],
-  ]);
 
   function deriveRentVaultPda() {
     const pda = PublicKey.findProgramAddressSync(
@@ -84,10 +60,10 @@ describe("PDA Rent-Payer", async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: new InitRentVault({
+      data: borshSerialize(InitRentVaultSchema, {
         instruction: MyInstruction.InitRentVault,
         fund_lamports: 1000000000,
-      }).toBuffer(),
+      }),
     });
 
     const tx = new Transaction();
@@ -108,9 +84,9 @@ describe("PDA Rent-Payer", async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: new CreateNewAccount({
+      data: borshSerialize(CreateNewAccountSchema, {
         instruction: MyInstruction.CreateNewAccount,
-      }).toBuffer(),
+      }),
     });
 
     const tx = new Transaction();

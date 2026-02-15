@@ -28,24 +28,11 @@ anchor-spl = { version = "0.32.1", features = [
 ] }
 
 
-spl-tlv-account-resolution = "0.8.1"
-spl-transfer-hook-interface = { version = "0.8.2" }
-spl-discriminator = "0.3"
+spl-tlv-account-resolution = "0.11.1"
+spl-transfer-hook-interface = { version = "2.1.0" }
+spl-discriminator = "0.5.1"
 
 [dev-dependencies]
-litesvm = "0.6.1"
-
-
-solana-instruction = "2.2.1"
-solana-keypair = "2.2.1"
-solana-native-token = "2.2.1"
-solana-pubkey = "2.2.1"
-solana-signer = "2.2.1"
-solana-system-interface = "1.0.0"
-solana-transaction = "2.2.1"
-solana-message = "2.2.1"
-solana-sdk-ids = "2.2.1"
-spl-token-2022 = { version = "8.0.1", features = ["no-entrypoint"]}
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

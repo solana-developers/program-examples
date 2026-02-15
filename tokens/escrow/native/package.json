@@ -6,15 +6,16 @@
     "deploy": "solana program deploy ./program/target/so/program.so"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.4.9",
     "@solana/web3.js": "^1.95.4",
-    "@solana/spl-token": "^0.4.9"
+    "bn.js": "^5.2.2"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^10.0.9",
     "@types/node": "^22.8.6",
-    "borsh": "0.7.0",
+    "borsh": "^2.0.0",
     "chai": "^4.3.4",
     "mocha": "^10.8.2",
     "solana-bankrun": "^0.4.0",

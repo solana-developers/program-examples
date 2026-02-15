@@ -1,34 +1,25 @@
-import { readFileSync } from 'node:fs';
 import { describe, test } from 'node:test';
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { LiteSVM } from 'litesvm';
+import {
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from '@solana/web3.js';
+import { start } from 'solana-bankrun';
 
-describe('Create a system account', () => {
-  // Load the program keypair
-  const programKeypairPath = new URL(
-    './fixtures/create_account_program-keypair.json',
-    // @ts-ignore
-    import.meta.url,
-  ).pathname;
-  const programKeypairData = JSON.parse(readFileSync(programKeypairPath, 'utf-8'));
-  const programKeypair = Keypair.fromSecretKey(new Uint8Array(programKeypairData));
-  const PROGRAM_ID = programKeypair.publicKey;
+describe('Create a system account', async () => {
+  const PROGRAM_ID = PublicKey.unique();
 
-  const litesvm = new LiteSVM();
-  const payer = Keypair.generate();
+  const context = await start(
+    [{ name: 'create_account_program', programId: PROGRAM_ID }],
+    [],
+  );
+  const client = context.banksClient;
+  const payer = context.payer;
 
-  // Load the program
-  const programPath = new URL(
-    './fixtures/create_account_program.so',
-    // @ts-ignore
-    import.meta.url,
-  ).pathname;
-  litesvm.addProgramFromFile(PROGRAM_ID, programPath);
-
-  // Fund the payer account
-  litesvm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
-
-  test('Create the account via a cross program invocation', () => {
+  test('Create the account via a cross program invocation', async () => {
     const newKeypair = Keypair.generate();
 
     const ix = new TransactionInstruction({
@@ -41,19 +32,19 @@ describe('Create a system account', () => {
       data: Buffer.alloc(0),
     });
 
-    const tx = new Transaction().add(ix);
-    tx.feePayer = payer.publicKey;
-    tx.recentBlockhash = litesvm.latestBlockhash();
+    const tx = new Transaction();
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.add(ix);
     tx.sign(payer, newKeypair);
 
-    litesvm.sendTransaction(tx);
+    await client.processTransaction(tx);
 
     // Verify the account was created
-    const accountInfo = litesvm.getAccount(newKeypair.publicKey);
+    const accountInfo = await client.getAccount(newKeypair.publicKey);
     console.log(`Account with public key ${newKeypair.publicKey} successfully created via CPI`);
   });
 
-  test('Create the account via direct call to system program', () => {
+  test('Create the account via direct call to system program', async () => {
     const newKeypair = Keypair.generate();
 
     const ix = SystemProgram.createAccount({
@@ -64,15 +55,15 @@ describe('Create a system account', () => {
       programId: SystemProgram.programId,
     });
 
-    const tx = new Transaction().add(ix);
-    tx.feePayer = payer.publicKey;
-    tx.recentBlockhash = litesvm.latestBlockhash();
+    const tx = new Transaction();
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.add(ix);
     tx.sign(payer, newKeypair);
 
-    litesvm.sendTransaction(tx);
+    await client.processTransaction(tx);
 
     // Verify the account was created
-    const accountInfo = litesvm.getAccount(newKeypair.publicKey);
+    const accountInfo = await client.getAccount(newKeypair.publicKey);
     console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
   });
 });

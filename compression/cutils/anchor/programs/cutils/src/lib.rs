@@ -5,19 +5,17 @@ pub mod state;
 pub use state::*;
 
 use anchor_lang::prelude::*;
-use solana_program::pubkey::Pubkey;
-use spl_account_compression::{program::SplAccountCompression, Noop};
 
 #[derive(Clone)]
-pub struct MplBubblegum;
+pub struct SPLCompression;
 
-impl anchor_lang::Id for MplBubblegum {
+impl anchor_lang::Id for SPLCompression {
     fn id() -> Pubkey {
-        mpl_bubblegum::id()
+        spl_account_compression::id()
     }
 }
 
-declare_id!("burZc1SfqbrAP35XG63YZZ82C9Zd22QUwhCXoEUZWNF");
+declare_id!("BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ");
 
 #[program]
 pub mod cutils {

@@ -3,7 +3,8 @@ import { AccountLayout } from '@solana/spl-token';
 import { Transaction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
-import { OfferAccount } from './account';
+import * as borsh from 'borsh';
+import { OfferSchema, type OfferRaw } from './account';
 import { buildMakeOffer, buildTakeOffer } from './instruction';
 import { createValues, mintingTokens } from './utils';
 
@@ -57,7 +58,7 @@ describe('Escrow!', async () => {
     await client.processTransaction(tx);
 
     const offerInfo = await client.getAccount(values.offer);
-    const offer = OfferAccount.fromBuffer(offerInfo.data).toData();
+    const offer = borsh.deserialize(OfferSchema, Buffer.from(offerInfo.data)) as OfferRaw;
 
     const vaultInfo = await client.getAccount(values.vault);
     const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
