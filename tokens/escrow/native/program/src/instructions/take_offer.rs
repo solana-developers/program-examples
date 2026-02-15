@@ -191,7 +191,7 @@ impl TakeOffer {
         );
         assert_eq!(
             maker_amount_b,
-            taker_amount_a_before_transfer + offer.token_b_wanted_amount
+            maker_amount_b_before_transfer + offer.token_b_wanted_amount
         );
 
         let taker_amount_b = TokenAccount::unpack(&taker_token_account_b.data.borrow())?.amount;
@@ -216,11 +216,13 @@ impl TakeOffer {
             &[offer_signer_seeds],
         )?;
 
-        // Send the rent back to the payer
+        // Refund the offer account rent to the maker (the account's logical owner).
         //
+        // NOTE: `payer` is a free parameter for `TakeOffer` (used for ATA creation fees)
+        // and must not be allowed to receive the offer PDA's rent.
         let lamports = offer_info.lamports();
         **offer_info.lamports.borrow_mut() -= lamports;
-        **payer.lamports.borrow_mut() += lamports;
+        **maker.lamports.borrow_mut() += lamports;
 
         // Realloc the account to zero
         //

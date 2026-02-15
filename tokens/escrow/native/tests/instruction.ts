@@ -184,7 +184,7 @@ export function buildTakeOffer(props: {
       {
         pubkey: props.maker,
         isSigner: false,
-        isWritable: false,
+        isWritable: true,
       },
       {
         pubkey: props.taker,
