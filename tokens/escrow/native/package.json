@@ -6,8 +6,9 @@
     "deploy": "solana program deploy ./program/target/so/program.so"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.4.9",
     "@solana/web3.js": "^1.95.4",
-    "@solana/spl-token": "^0.4.9"
+    "bn.js": "^5.2.2"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
@@ -19,7 +20,7 @@
     "mocha": "^10.8.2",
     "solana-bankrun": "^0.4.0",
     "ts-mocha": "^10.0.0",
-    "typescript": "^5",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5"
   }
 }
