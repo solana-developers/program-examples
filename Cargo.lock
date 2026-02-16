@@ -31,7 +31,7 @@ name = "account-data-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-keypair",
@@ -893,7 +893,7 @@ name = "checking-accounts-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-keypair",
@@ -944,7 +944,7 @@ name = "close-account-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1041,7 +1041,7 @@ name = "counter-solana-pinocchio"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "solana-instruction 3.0.0",
@@ -1074,7 +1074,7 @@ name = "create-account-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1432,7 +1432,7 @@ name = "favorites-pinocchio"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -1660,7 +1660,7 @@ dependencies = [
 name = "hello-solana-program-pinocchio"
 version = "0.1.0"
 dependencies = [
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
 ]
 
@@ -2209,7 +2209,7 @@ name = "pda-rent-payer-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-pubkey",
  "pinocchio-system",
@@ -2260,9 +2260,9 @@ checksum = "5b971851087bc3699b001954ad02389d50c41405ece3548cbcafc88b3e20017a"
 
 [[package]]
 name = "pinocchio"
-version = "0.10.1"
+version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfad955b2fe8f736e1ea276ebb31820d778ee69c1161146054e9b31be2e73326"
+checksum = "c06810dac15a4ef83d3dabdb4f2f22fb39c9adff669cd2781da4f716510a647c"
 dependencies = [
  "solana-account-view",
  "solana-address 2.1.0",
@@ -2308,8 +2308,8 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24044a0815753862b558e179e78f03f7344cb755de48617a09d7d23b50883b6c"
 dependencies = [
- "pinocchio 0.10.1",
- "solana-address 2.1.0",
+ "pinocchio 0.10.2",
+ "solana-address 2.0.0",
 ]
 
 [[package]]
@@ -2388,7 +2388,7 @@ name = "processing-instructions-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "solana-instruction 3.0.0",
  "solana-keypair",
@@ -2451,7 +2451,7 @@ name = "program-derived-addresses-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-system",
  "solana-instruction 3.0.0",
  "solana-keypair",
@@ -2580,7 +2580,7 @@ name = "realloc-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-instruction 3.0.0",
@@ -2657,7 +2657,7 @@ name = "rent_pinocchio_program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-log",
  "pinocchio-system",
  "solana-instruction 3.0.0",
@@ -2880,18 +2880,18 @@ dependencies = [
 
 [[package]]
 name = "shank"
-version = "0.4.6"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae936f51a1ab23dd7f8a81b0b13ab4af3fc71f1c56438a07cb54a0f7eb5436fd"
+checksum = "2a1dc1d3af4ba5f02190110598b2abac0d13ce9dc58408aba4549e1c0f91a24c"
 dependencies = [
  "shank_macro",
 ]
 
 [[package]]
 name = "shank_macro"
-version = "0.4.6"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db4463f65133e69fe6c69d5c30e9cc6d2bde50e0fac61db1c2fb6a43fc499b67"
+checksum = "63dbf105335507ad339dccacf3b1ea20e4c0b70d992b4de7cc11d5c0b91b0747"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2902,9 +2902,9 @@ dependencies = [
 
 [[package]]
 name = "shank_macro_impl"
-version = "0.4.6"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7c08958b4ba24f8289481c0d8b377c63a8205fc037b59fc80643c491ec1f487"
+checksum = "346563412da6d1a53bc53c81f9d8b102f177952b95fd8de00e5d2203a4685635"
 dependencies = [
  "anyhow",
  "proc-macro2",
@@ -2915,9 +2915,9 @@ dependencies = [
 
 [[package]]
 name = "shank_render"
-version = "0.4.6"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ed873b8e62792442e944dc94c4ebbfab63e5c46eac09b7dcf3a2e274dde1524"
+checksum = "8358067ec1787814d2577e76d9ddcc980559ad821e6bd04584f4847f4d1d955c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5888,7 +5888,7 @@ name = "transfer-sol-pinocchio-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "pinocchio 0.10.1",
+ "pinocchio 0.10.2",
  "pinocchio-system",
  "solana-instruction 3.0.0",
  "solana-keypair",
