@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
-    "build-and-test": "sbpf build && pnpm test",
+    "build-and-test": "sbpf build --deploy-dir ./tests/fixtures  && pnpm test",
     "build": "sbpf build",
     "deploy": "solana program deploy ./program/target/so/program.so"
   },
