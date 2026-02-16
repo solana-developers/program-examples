@@ -2309,7 +2309,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24044a0815753862b558e179e78f03f7344cb755de48617a09d7d23b50883b6c"
 dependencies = [
  "pinocchio 0.10.2",
- "solana-address 2.0.0",
+ "solana-address 2.1.0",
 ]
 
 [[package]]
