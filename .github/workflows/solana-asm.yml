@@ -171,6 +171,9 @@ jobs:
 
           # Install pnpm
           npm install --global pnpm
+
+          # Install sbpf assembler
+          cargo install --git https://github.com/blueshift-gg/sbpf.git
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v2.02
         with:
