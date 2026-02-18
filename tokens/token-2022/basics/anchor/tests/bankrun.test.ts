@@ -1,4 +1,3 @@
-import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { BankrunProvider } from "anchor-bankrun";
