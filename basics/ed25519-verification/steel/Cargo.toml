@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "api",
+    "program"
+]
+resolver = "2"
+
+[workspace.dependencies]
+solana-program = "1.16"
+steel = "0.3.0" 
