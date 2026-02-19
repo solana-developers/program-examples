@@ -4,19 +4,17 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
-import { start } from "solana-bankrun";
+  TransactionInstruction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
+import { LiteSVM } from 'litesvm';
 
 describe("Checking accounts", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "checking_accounts_pinocchio_program", programId: PROGRAM_ID }],
-    [],
-  );
-  const client = context.banksClient;
-  const payer = context.payer;
-  const rent = await client.getRent();
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/checking_accounts_pinocchio_program.so');
+  
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
+  const rent = svm.getRent();
 
   // We'll create this ahead of time.
   // Our program will try to modify it.
@@ -25,7 +23,7 @@ describe("Checking accounts", async () => {
   const accountToCreate = Keypair.generate();
 
   test("Create an account owned by our program", async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     const ix = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       newAccountPubkey: accountToChange.publicKey,
@@ -38,11 +36,11 @@ describe("Checking accounts", async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, accountToChange);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 
   test("Check accounts", async () => {
-    const blockhash = context.lastBlockhash;
+    const blockhash = svm.latestBlockhash();
     const ix = new TransactionInstruction({
       keys: [
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
@@ -58,6 +56,6 @@ describe("Checking accounts", async () => {
     tx.recentBlockhash = blockhash;
     tx.add(ix).sign(payer, accountToChange, accountToCreate);
 
-    await client.processTransaction(tx);
+    svm.sendTransaction(tx);
   });
 });

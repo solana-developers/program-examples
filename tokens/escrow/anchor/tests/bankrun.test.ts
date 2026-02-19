@@ -14,6 +14,7 @@ import {
   type TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import {
+  Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
@@ -21,14 +22,14 @@ import {
   type TransactionInstruction,
 } from '@solana/web3.js';
 import { makeKeypairs } from '@solana-developers/helpers';
-import { BankrunProvider } from 'anchor-bankrun';
+import { LiteSVMProvider } from 'anchor-litesvm';
 import { assert } from 'chai';
-import { ProgramTestContext, startAnchor } from 'solana-bankrun';
+import { LiteSVM } from 'litesvm';
 import type { Escrow } from '../target/types/escrow';
 
 const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
   TOKEN_2022_PROGRAM_ID;
-import IDL from '../target/idl/escrow.json' with { type: 'json' };
+import IDL from '../target/idl/escrow.json';
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 const getRandomBigNumber = (size = 8) => {
@@ -36,8 +37,8 @@ const getRandomBigNumber = (size = 8) => {
 };
 
 describe('Escrow Bankrun example', () => {
-  let context: ProgramTestContext;
-  let provider: BankrunProvider;
+  const svm = new LiteSVM();
+  let provider: LiteSVMProvider;
   let connection: anchor.web3.Connection;
   let program: anchor.Program<Escrow>;
 
@@ -51,12 +52,10 @@ describe('Escrow Bankrun example', () => {
   before(
     'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
     async () => {
-      context = await startAnchor(
-        '',
-        [{ name: 'escrow', programId: PROGRAM_ID }],
-        [],
-      );
-      provider = new BankrunProvider(context);
+      svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/escrow.so');
+      const svmPayer = Keypair.generate();
+      svm.airdrop(svmPayer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+      provider = new LiteSVMProvider(svm, new anchor.Wallet(svmPayer));
       connection = provider.connection;
       program = new anchor.Program<Escrow>(IDL, provider);
 

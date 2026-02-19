@@ -4,10 +4,9 @@ import {
 	Keypair,
 	PublicKey,
 	SystemProgram,
-	Transaction,
-} from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
-import { startAnchor } from "solana-bankrun";
+	Transaction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
+import { LiteSVMProvider } from 'anchor-litesvm';
+import { LiteSVM } from 'litesvm';
 import type { CheckingAccountProgram } from "../target/types/checking_account_program";
 
 import IDL from "../target/idl/checking_account_program.json" with {
@@ -16,16 +15,14 @@ import IDL from "../target/idl/checking_account_program.json" with {
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("Bankrun example", async () => {
-	const context = await startAnchor(
-		"",
-		[{ name: "checking_account_program", programId: PROGRAM_ID }],
-		[],
-	);
-	const provider = new BankrunProvider(context);
+	const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/checking_account_program.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+	const provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
 
 	const wallet = provider.wallet as anchor.Wallet;
 	const program = new anchor.Program<CheckingAccountProgram>(IDL, provider);
-	const client = context.banksClient;
 
 	// We'll create this ahead of time.
 	// Our program will try to modify it.
@@ -43,11 +40,11 @@ describe("Bankrun example", async () => {
 		});
 
 		const transaction = new Transaction();
-		const blockhash = context.lastBlockhash;
+		const blockhash = svm.latestBlockhash();
 
 		transaction.recentBlockhash = blockhash;
 		transaction.add(instruction).sign(wallet.payer, accountToChange);
-		await client.processTransaction(transaction);
+		svm.sendTransaction(transaction);
 	});
 
 	it("Check accounts", async () => {

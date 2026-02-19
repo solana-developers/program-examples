@@ -1,84 +1,43 @@
-import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
-import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
-import { expect } from 'chai';
-import { start } from 'solana-bankrun';
+import { Keypair, PublicKey, SystemProgram, LAMPORTS_PER_SOL, Transaction, TransactionInstruction } from '@solana/web3.js';
+import * as anchor from '@coral-xyz/anchor';
+import { assert } from 'chai';
+import { LiteSVM } from 'litesvm';
+import { LiteSVMProvider } from 'anchor-litesvm';
+import { describe, it, before } from 'node:test';
+import type { ExternalDelegateTokenMaster } from '../target/types/external_delegate_token_master';
 
-jest.setTimeout(30000); // Set timeout to 30 seconds
+import IDL from '../target/idl/external_delegate_token_master.json' with { type: 'json' };
 
-const ACCOUNT_SIZE = 8 + 32 + 20; // Define your account size here
-
-async function retryWithBackoff(fn: () => Promise<any>, retries = 5, delay = 500): Promise<any> {
-  try {
-    return await fn();
-  } catch (err) {
-    if (retries === 0) throw err;
-    await new Promise((resolve) => setTimeout(resolve, delay));
-    return retryWithBackoff(fn, retries - 1, delay * 2);
-  }
-}
+const PROGRAM_ID = new PublicKey(IDL.address);
+const ACCOUNT_SIZE = 8 + 32 + 20; // discriminator + authority pubkey + ethereum address
 
 describe('External Delegate Token Master Tests', () => {
-  let context: any;
-  let _program: any;
+  let svm: LiteSVM;
+  let provider: LiteSVMProvider;
+  let program: anchor.Program<ExternalDelegateTokenMaster>;
   let authority: Keypair;
+  let payer: Keypair;
   let userAccount: Keypair;
-  let mint: PublicKey;
-  let userTokenAccount: PublicKey;
-  let _recipientTokenAccount: PublicKey;
-  let _userPda: PublicKey;
-  let _bumpSeed: number;
 
-  beforeEach(async () => {
+  before(() => {
     authority = Keypair.generate();
     userAccount = Keypair.generate();
+    payer = Keypair.generate();
 
-    const programs = [
-      {
-        name: 'external_delegate_token_master',
-        programId: new PublicKey('FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD'),
-        program: 'target/deploy/external_delegate_token_master.so',
-      },
-    ];
+    svm = new LiteSVM();
+    svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/external_delegate_token_master.so');
 
-    context = await retryWithBackoff(async () => await start(programs, []));
+    svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+    svm.airdrop(authority.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
 
-    const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
-    context.connection = connection;
-
-    // Airdrop SOL to authority with retry logic
-    await retryWithBackoff(async () => {
-      await connection.requestAirdrop(authority.publicKey, 1000000000);
-    });
-
-    // Create mint with retry logic
-    mint = await retryWithBackoff(async () => await createMint(connection, authority, authority.publicKey, null, 6));
-
-    const userTokenAccountInfo = await retryWithBackoff(
-      async () => await getOrCreateAssociatedTokenAccount(connection, authority, mint, authority.publicKey),
-    );
-    userTokenAccount = userTokenAccountInfo.address;
-
-    const recipientTokenAccountInfo = await retryWithBackoff(
-      async () => await getOrCreateAssociatedTokenAccount(connection, authority, mint, Keypair.generate().publicKey),
-    );
-    _recipientTokenAccount = recipientTokenAccountInfo.address;
-
-    // Mint tokens to the user's account
-    await retryWithBackoff(async () => await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000));
-
-    // Find program-derived address (PDA)
-    [_userPda, _bumpSeed] = await retryWithBackoff(
-      async () => await PublicKey.findProgramAddress([userAccount.publicKey.toBuffer()], context.program.programId),
-    );
+    provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
+    program = new anchor.Program<ExternalDelegateTokenMaster>(IDL, provider);
   });
 
   it('should initialize user account', async () => {
-    const space = ACCOUNT_SIZE;
-    const rentExempt = await retryWithBackoff(async () => {
-      return await context.connection.getMinimumBalanceForRentExemption(space);
-    });
+    const rentExempt = Number(svm.minimumBalanceForRentExemption(BigInt(ACCOUNT_SIZE)));
 
-    await context.program.methods
+    await program.methods
       .initialize()
       .accounts({
         userAccount: userAccount.publicKey,
@@ -90,22 +49,22 @@ describe('External Delegate Token Master Tests', () => {
           fromPubkey: authority.publicKey,
           newAccountPubkey: userAccount.publicKey,
           lamports: rentExempt,
-          space: space,
-          programId: context.program.programId,
+          space: ACCOUNT_SIZE,
+          programId: PROGRAM_ID,
         }),
       ])
       .signers([authority, userAccount])
       .rpc();
 
-    const account = await context.program.account.userAccount.fetch(userAccount.publicKey);
-    expect(account.authority.toString()).to.equal(authority.publicKey.toString());
-    expect(account.ethereumAddress).to.deep.equal(new Array(20).fill(0));
+    const account = await program.account.userAccount.fetch(userAccount.publicKey);
+    assert.equal(account.authority.toString(), authority.publicKey.toString());
+    assert.deepEqual(account.ethereumAddress, new Array(20).fill(0));
   });
 
   it('should set ethereum address', async () => {
-    const ethereumAddress = Buffer.from('1C8cd0c38F8DE35d6056c7C7aBFa7e65D260E816', 'hex');
+    const ethereumAddress = Array.from(Buffer.from('1C8cd0c38F8DE35d6056c7C7aBFa7e65D260E816', 'hex'));
 
-    await context.program.methods
+    await program.methods
       .setEthereumAddress(ethereumAddress)
       .accounts({
         userAccount: userAccount.publicKey,
@@ -114,14 +73,14 @@ describe('External Delegate Token Master Tests', () => {
       .signers([authority])
       .rpc();
 
-    const account = await context.program.account.userAccount.fetch(userAccount.publicKey);
-    expect(account.ethereumAddress).to.deep.equal(Array.from(ethereumAddress));
+    const account = await program.account.userAccount.fetch(userAccount.publicKey);
+    assert.deepEqual(account.ethereumAddress, ethereumAddress);
   });
 
   it('should perform authority transfer', async () => {
     const newAuthority = Keypair.generate();
 
-    await context.program.methods
+    await program.methods
       .transferAuthority(newAuthority.publicKey)
       .accounts({
         userAccount: userAccount.publicKey,
@@ -130,13 +89,7 @@ describe('External Delegate Token Master Tests', () => {
       .signers([authority])
       .rpc();
 
-    const account = await context.program.account.userAccount.fetch(userAccount.publicKey);
-    expect(account.authority.toString()).to.equal(newAuthority.publicKey.toString());
-  });
-
-  afterEach(async () => {
-    if (context && typeof context.terminate === 'function') {
-      await context.terminate();
-    }
+    const account = await program.account.userAccount.fetch(userAccount.publicKey);
+    assert.equal(account.authority.toString(), newAuthority.publicKey.toString());
   });
 });

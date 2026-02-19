@@ -3,10 +3,9 @@ import {
   Keypair,
   SystemProgram,
   Transaction,
-  type TransactionInstruction,
-} from "@solana/web3.js";
+  type TransactionInstruction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
 import { assert } from "chai";
-import { start } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 
 describe("Counter Solana Pinocchio", async () => {
   console.log("Counter Solana Pinocchio");

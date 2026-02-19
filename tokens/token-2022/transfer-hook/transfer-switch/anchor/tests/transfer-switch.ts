@@ -18,11 +18,10 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
+  TransactionInstruction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
+import { LiteSVMProvider } from 'anchor-litesvm';
 import { assert } from "chai";
-import { startAnchor } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 import type { TransferSwitch } from "../target/types/transfer_switch";
 
 import IDL from "../target/idl/transfer_switch.json";
@@ -38,19 +37,17 @@ const expectRevert = async (promise: Promise<any>) => {
 };
 
 describe("Transfer switch", async () => {
-  const context = await startAnchor(
-    "",
-    [{ name: "transfer_switch", programId: PROGRAM_ID }],
-    [],
-  );
-  const provider = new BankrunProvider(context);
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/transfer_switch.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+  const provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
 
   const _wallet = provider.wallet as anchor.Wallet;
   const program = new anchor.Program<TransferSwitch>(IDL, provider);
   const connection = provider.connection;
 
-  const payer = provider.context.payer;
-  const client = provider.context.banksClient;
+  // payer is already defined above as the Keypair used in the wallet
 
   // Generate keypair to use as address for the transfer-hook enabled mint
   const mint = Keypair.generate();
@@ -118,10 +115,10 @@ describe("Transfer switch", async () => {
       ),
     );
 
-    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.recentBlockhash = svm.latestBlockhash();
     transaction.sign(payer, mint);
 
-    await client.processTransaction(transaction);
+    svm.sendTransaction(transaction);
   });
 
   // Create the two token accounts for the transfer-hook enabled mint
@@ -142,10 +139,10 @@ describe("Transfer switch", async () => {
       ),
     );
 
-    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.recentBlockhash = svm.latestBlockhash();
     transaction.sign(payer);
 
-    await client.processTransaction(transaction);
+    svm.sendTransaction(transaction);
   });
 
   // Account to store extra accounts required by the transfer hook instruction
@@ -218,10 +215,10 @@ describe("Transfer switch", async () => {
       recipientTokenAccountCreateIx, // create recipient token account
     );
 
-    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.recentBlockhash = svm.latestBlockhash();
     transaction.sign(payer, recipient);
 
-    client.processTransaction(transaction);
+    svm.sendTransaction(transaction);
 
     // Standard token transfer instruction
     const transferInstruction =
@@ -242,15 +239,15 @@ describe("Transfer switch", async () => {
       transferInstruction, // transfer instruction
     );
 
-    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.recentBlockhash = svm.latestBlockhash();
     transaction.sign(payer, sender);
 
     // expect the transaction to fail
     //
-    expectRevert(client.processTransaction(transaction));
+    expectRevert(svm.sendTransaction(transaction));
 
     const recipientTokenAccountData = (
-      await client.getAccount(recipientTokenAccount)
+      svm.getAccount(recipientTokenAccount)
     ).data;
     const recipientBalance = AccountLayout.decode(
       recipientTokenAccountData,
@@ -309,13 +306,13 @@ describe("Transfer switch", async () => {
       transferInstruction,
     );
 
-    transaction.recentBlockhash = context.lastBlockhash;
+    transaction.recentBlockhash = svm.latestBlockhash();
     transaction.sign(payer, sender);
 
-    await client.processTransaction(transaction);
+    svm.sendTransaction(transaction);
 
     const recipientTokenAccountData = (
-      await client.getAccount(recipientTokenAccount)
+      svm.getAccount(recipientTokenAccount)
     ).data;
 
     const recipientBalance = AccountLayout.decode(

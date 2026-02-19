@@ -16,7 +16,7 @@
     "codama": "^1.2.11",
     "litesvm": "^0.2.0",
     "mocha": "^11.1.0",
-    "solana-bankrun": "^0.4.0",
+    "litesvm": "^0.5.0",
     "tsx": "^4.19.3"
   },
   "devDependencies": {

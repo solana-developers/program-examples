@@ -1,10 +1,10 @@
 import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { BankrunProvider } from "anchor-bankrun";
+import { Keypair, PublicKey, LAMPORTS_PER_SOL} from "@solana/web3.js";
+import { LiteSVMProvider } from 'anchor-litesvm';
 import BN from "bn.js";
-import { startAnchor } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 import IDL from "../target/idl/transfer_tokens.json";
 import type { TransferTokens } from "../target/types/transfer_tokens";
 
@@ -14,17 +14,14 @@ const METADATA_PROGRAM_ID = new PublicKey(
 );
 
 describe("Transfer Tokens Bankrun", async () => {
-  const context = await startAnchor(
-    "",
-    [
-      { name: "transfer_tokens", programId: PROGRAM_ID },
-      { name: "token_metadata", programId: METADATA_PROGRAM_ID },
-    ],
-    [],
-  );
-  const provider = new BankrunProvider(context);
+  const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'target/deploy/transfer_tokens.so');
+  svm.addProgramFromFile(METADATA_PROGRAM_ID, 'target/deploy/token_metadata.so');
+  const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(100 * LAMPORTS_PER_SOL));
+  const provider = new LiteSVMProvider(svm, new anchor.Wallet(payer));
   anchor.setProvider(provider);
-  const payer = provider.wallet as anchor.Wallet;
+  const wallet = provider.wallet as anchor.Wallet;
   const program = new anchor.Program<TransferTokens>(IDL, provider);
 
   const metadata = {

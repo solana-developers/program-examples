@@ -5,10 +5,9 @@ import {
 	PublicKey,
 	SystemProgram,
 	Transaction,
-	TransactionInstruction,
-} from "@solana/web3.js";
+	TransactionInstruction,  LAMPORTS_PER_SOL} from "@solana/web3.js";
 import * as borsh from "borsh";
-import { start } from "solana-bankrun";
+import { LiteSVM } from 'litesvm';
 
 class Assignable {
 	constructor(properties) {
@@ -49,14 +48,13 @@ const AddressInfoSchema = new Map([
 describe("Account Data!", async () => {
 	const addressInfoAccount = Keypair.generate();
 	const PROGRAM_ID = PublicKey.unique();
-	const context = await start(
-		[{ name: "account_data_native_program", programId: PROGRAM_ID }],
-		[],
-	);
-	const client = context.banksClient;
+	const svm = new LiteSVM();
+  svm.addProgramFromFile(PROGRAM_ID, 'tests/fixtures/account_data_native_program.so');
+	
 
 	test("Create the address info account", async () => {
-		const payer = context.payer;
+		const payer = Keypair.generate();
+  svm.airdrop(payer.publicKey, BigInt(10 * LAMPORTS_PER_SOL));
 
 		console.log(`Program Address      : ${PROGRAM_ID}`);
 		console.log(`Payer Address      : ${payer.publicKey}`);
@@ -81,16 +79,16 @@ describe("Account Data!", async () => {
 			}).toBuffer(),
 		});
 
-		const blockhash = context.lastBlockhash;
+		const blockhash = svm.latestBlockhash();
 
 		const tx = new Transaction();
 		tx.recentBlockhash = blockhash;
 		tx.add(ix).sign(payer, addressInfoAccount);
-		await client.processTransaction(tx);
+		svm.sendTransaction(tx);
 	});
 
 	test("Read the new account's data", async () => {
-		const accountInfo = await client.getAccount(addressInfoAccount.publicKey);
+		const accountInfo = svm.getAccount(addressInfoAccount.publicKey);
 
 		const readAddressInfo = AddressInfo.fromBuffer(
 			Buffer.from(accountInfo.data),

@@ -1,13 +1,13 @@
 import { Buffer } from 'node:buffer';
 import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { MyInstruction } from '.';
+import { MyInstruction, type MyInstructionType } from '.';
 
 export class Close {
-  instruction: MyInstruction;
+  instruction: MyInstructionType;
 
   constructor(props: {
-    instruction: MyInstruction;
+    instruction: MyInstructionType;
   }) {
     this.instruction = props.instruction;
   }
