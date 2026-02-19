@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import { AccountLayout } from '@solana/spl-token';
-import { Transaction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 import * as borsh from 'borsh';
@@ -64,9 +64,9 @@ describe('Escrow!', async () => {
     const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
 
     assert(offer.id.toString() === values.id.toString(), 'wrong id');
-    assert(offer.maker.toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
-    assert(offer.token_mint_a.toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
-    assert(offer.token_mint_b.toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
+    assert(new PublicKey(offer.maker).toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
+    assert(new PublicKey(offer.token_mint_a).toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
+    assert(new PublicKey(offer.token_mint_b).toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
     assert(offer.token_b_wanted_amount.toString() === values.amountB.toString(), 'unexpected amount B');
     assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), 'unexpected amount A');
   });
