@@ -15,6 +15,9 @@ url = "https://api.apr.dev"
 cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
+# Tests use the real local validator (not bankrun) because transfer-hook
+# tests need the actual validator runtime. startup_wait is 120s because the
+# validator clones programs from devnet which is slow in CI.
 [test]
 startup_wait = 120000
 
