@@ -64,6 +64,7 @@ describe('Escrow!', async () => {
     const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
 
     assert(offer.id.toString() === values.id.toString(), 'wrong id');
+    // borsh deserializes pubkeys as raw byte arrays, wrap in PublicKey for comparison
     assert(new PublicKey(offer.maker).toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
     assert(new PublicKey(offer.token_mint_a).toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
     assert(new PublicKey(offer.token_mint_b).toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');

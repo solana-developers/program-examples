@@ -18,6 +18,9 @@ wallet = "~/.config/solana/id.json"
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
+# Tests use the real local validator (not bankrun) because transfer-hook
+# tests need the actual validator runtime. startup_wait is 120s because the
+# validator clones programs from devnet which is slow in CI.
 [test]
 startup_wait = 120000
 shutdown_wait = 2000

@@ -18,6 +18,10 @@ url = "https://api.apr.dev"
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
+# Tests use solana-bankrun (in-process simulation), not the local validator.
+# No [test.validator] section needed — adding one (e.g. to clone programs from
+# mainnet) would slow down validator startup without benefit, since bankrun
+# loads programs directly from the local build.
 [test]
 startup_wait = 25000
 
