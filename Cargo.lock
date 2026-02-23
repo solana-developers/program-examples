@@ -706,7 +706,7 @@ dependencies = [
  "proc-macro-crate 3.3.0",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -795,7 +795,7 @@ checksum = "f9abbd1bc6865053c427f7198e6af43bfdedc55ab791faed4fbd361d789575ff"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -850,7 +850,7 @@ checksum = "45565fc9416b9896014f5732ac776f810ee53a66730c17e4020c3ec064a8f88f"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -1017,7 +1017,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1034,7 +1034,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -1180,7 +1180,7 @@ checksum = "f46882e17999c6cc590af592290432be3bce0428cb0d5f8b6715e4dc7b383eb3"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -1204,7 +1204,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "strsim",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -1215,7 +1215,7 @@ checksum = "d38308df82d1080de0afee5d069fa14b0326a88c14f15c5ccda35b4a6c414c81"
 dependencies = [
  "darling_core",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -1388,7 +1388,7 @@ checksum = "685adfa4d6f3d765a26bc5dbc936577de9abf756c1feeb3089b01dd395034842"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -2019,7 +2019,7 @@ checksum = "ed3955f1a9c7c0c15e092f9c887db08b1fc683305fdf6eb6684f22555355e202"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -2082,7 +2082,7 @@ dependencies = [
  "proc-macro-crate 3.3.0",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -2120,7 +2120,7 @@ checksum = "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -2355,9 +2355,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.95"
+version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
+checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
 ]
@@ -2410,7 +2410,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2427,7 +2427,7 @@ dependencies = [
  "solana-native-token 3.0.0",
  "solana-program 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2443,7 +2443,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2472,14 +2472,14 @@ checksum = "9e2e25ee72f5b24d773cae88422baddefff7714f97aab68d96fe2b6fc4a28fb2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.40"
+version = "1.0.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
+checksum = "21b2ebcf727b7760c461f091f9f0f539b77b8e87f2fd88131e7f1b433b3cece4"
 dependencies = [
  "proc-macro2",
 ]
@@ -2650,7 +2650,7 @@ dependencies = [
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
- "solana-rent 4.0.0",
+ "solana-rent 4.1.0",
  "solana-system-interface 2.0.0",
  "solana-transaction",
 ]
@@ -2778,7 +2778,7 @@ checksum = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -2821,7 +2821,7 @@ dependencies = [
  "darling",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -3290,7 +3290,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-sysvar-id 3.0.0",
 ]
 
@@ -3511,7 +3511,7 @@ dependencies = [
  "serde_derive",
  "solana-hash 3.0.0",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-sysvar-id 3.0.0",
 ]
 
@@ -3548,7 +3548,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-sysvar-id 3.0.0",
 ]
 
@@ -3911,7 +3911,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-sysvar-id 3.0.0",
 ]
 
@@ -4530,17 +4530,17 @@ dependencies = [
  "serde",
  "serde_derive",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-sysvar-id 3.0.0",
 ]
 
 [[package]]
 name = "solana-rent"
-version = "4.0.0"
+version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "763fe5c88a76ce18235db595b21d38b7aebf6db56b324cdf9fc96059f4410823"
+checksum = "a1771d726d4854f1818c750e14aff40b19d84720d0b1b6d53e50e8f16cb6bd62"
 dependencies = [
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
 ]
 
 [[package]]
@@ -4595,7 +4595,7 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-sanitize 3.0.1",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-seed-derivable",
  "solana-seed-phrase",
  "solana-serde",
@@ -4637,19 +4637,19 @@ dependencies = [
  "bs58",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
 name = "solana-sdk-macro"
-version = "3.0.0"
+version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6430000e97083460b71d9fbadc52a2ab2f88f53b3a4c5e58c5ae3640a0e8c00"
+checksum = "8765316242300c48242d84a41614cb3388229ec353ba464f6fe62a733e41806f"
 dependencies = [
  "bs58",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -5177,7 +5177,7 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-rent 3.1.0",
  "solana-sdk-ids 3.0.0",
- "solana-sdk-macro 3.0.0",
+ "solana-sdk-macro 3.0.1",
  "solana-slot-hashes 3.0.0",
  "solana-slot-history 3.0.0",
  "solana-sysvar-id 3.0.0",
@@ -5500,7 +5500,7 @@ checksum = "d9e8418ea6269dcfb01c712f0444d2c75542c04448b480e87de59d2865edc750"
 dependencies = [
  "quote",
  "spl-discriminator-syn",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -5512,7 +5512,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "sha2 0.10.9",
- "syn 2.0.101",
+ "syn 2.0.117",
  "thiserror 1.0.69",
 ]
 
@@ -5694,9 +5694,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.101"
+version = "2.0.117"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ce2b7fc941b3a24138a0a7cf8e858bfc6a992e7978a068a5c760deb0ed43caf"
+checksum = "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5729,7 +5729,7 @@ checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -5740,7 +5740,7 @@ checksum = "3ff15c8ecd7de3849db632e14d18d2571fa09dfc5ed93479bc4485c7a517c913"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -6012,7 +6012,7 @@ dependencies = [
  "log",
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
  "wasm-bindgen-shared",
 ]
 
@@ -6034,7 +6034,7 @@ checksum = "9f07d2f20d4da7b26400c9f4a0511e6e0345b040694e8a75bd41d578fa4421d7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -6176,7 +6176,7 @@ checksum = "88d2b8d9c68ad2b9e4340d7832716a4d21a22a1154777ad56ea55c51a9cf3831"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
 
 [[package]]
@@ -6196,5 +6196,5 @@ checksum = "ce36e65b0d2999d2aafac989fb249189a141aee1f53c612c1f37d72631959f69"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.101",
+ "syn 2.0.117",
 ]
