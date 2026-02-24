@@ -21,6 +21,7 @@ members = [
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
     "basics/hello-solana/pinocchio/program",
+    "basics/hello-solana/asm",
     "basics/pda-rent-payer/native/program",
     "basics/pda-rent-payer/pinocchio/program",
     "basics/pda-rent-payer/anchor/programs/*",
@@ -89,3 +90,4 @@ solana-keypair = "3.0.1"
 solana-pubkey = "3.0.0"
 solana-transaction = "3.0.1"
 solana-native-token = "3.0.0"
+solana-address = "2.1.0"
