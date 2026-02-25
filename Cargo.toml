@@ -43,6 +43,7 @@ members = [
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/pinocchio/program",
     "basics/transfer-sol/anchor/programs/*",
+    "basics/transfer-sol/asm",
 
     # tokens
     "tokens/token-2022/mint-close-authority/native/program",
@@ -89,3 +90,4 @@ solana-keypair = "3.0.1"
 solana-pubkey = "3.0.0"
 solana-transaction = "3.0.1"
 solana-native-token = "3.0.0"
+solana-address = "2.1.0"
