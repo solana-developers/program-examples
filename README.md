@@ -91,7 +91,7 @@ Close an account and get the Lamports back.
 
 [anchor](./basics/processing-instructions/anchor) [native](./basics/processing-instructions/native)
 
-### Storing date in program derived addresses
+### Storing data in program derived addresses
 
 Store and retrieve state in Solana.
 
@@ -175,7 +175,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
-Create token mints, mint tokens, and transferr tokens using Token Extensions.
+Create token mints, mint tokens, and transfer tokens using Token Extensions.
 
 [anchor](./tokens/token-2022/basics/anchor)
 
@@ -221,13 +221,13 @@ Create tokens that store their onchain metadata inside the token mint, without n
 
 [anchor](./tokens/token-2022/metadata/anchor)
 
-### Allow a designedated account to close a mint
+### Allow a designated account to close a mint
 
 Allow a designated account to close a Mint.
 
 [anchor](./tokens/token-2022/mint-close-authority/anchor) [native](./tokens/token-2022/mint-close-authority/native)
 
-### Usng multiple token extensions
+### Using multiple token extensions
 
 Use multiple Token Extensions at once.
 

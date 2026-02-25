@@ -4,7 +4,7 @@ This repo contains example code of how you can work with Metaplex compressed NFT
 
 The basic idea is to allow for transfering cNFTs that are owned by a PDA account. So our program will have a vault (this PDA) that you can send cNFTs to manually and then withdraw them using the program instructions.
 
-There are two instructions: one simple transfer that can withdraw one cNFT, and one instructions that can withdraw two cNFTs at the same time.
+There are two instructions: one simple transfer that can withdraw one cNFT, and one instruction that can withdraw two cNFTs at the same time.
 
 This program can be used as an inspiration on how to work with cNFTs in Solana programs.
 
@@ -19,10 +19,10 @@ You can deploy it yourself by changing the respective values in lib.rs and Ancho
 
 ## Limitations
 
-This is just an example implementation. It is missing all logic wheter a transfer should be performed or not (everyone can withdraw any cNFT in the vault). 
-Furthermore it is not optimized for using lowest possible compute. It is intended as a proof of concept and reference implemention only. 
+This is just an example implementation. It is missing all logic whether a transfer should be performed or not (everyone can withdraw any cNFT in the vault).
+Furthermore it is not optimized for using lowest possible compute. It is intended as a proof of concept and reference implementation only. 
 
 ## Further resources
 
-A video about the creation of this code which also contains further explanations has been publised on Solandy's YouTube channel:
+A video about the creation of this code which also contains further explanations has been published on Solandy's YouTube channel:
 https://youtu.be/qzr-q_E7H0M
