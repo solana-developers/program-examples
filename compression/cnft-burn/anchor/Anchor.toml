@@ -1,17 +1,18 @@
 [toolchain]
+solana_version = "3.1.8"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.devnet]
-cnft_burn = "FcLCJkSvwQQTDfCde5LdC4DSZAqSyb2AWM9US3wF5Fp7"
+cnft_burn = "C6qxH8n6mZxrrbtMtYWYSp8JR8vkQ55X1o4EBg7twnMv"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

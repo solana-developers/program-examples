@@ -1,8 +1,8 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor :crab: Native Rust, and [TS] TypeScript.
+## Onchain program examples for :anchor: Anchor and :crab: Native Rust.
 
-[![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml)
+[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
@@ -175,7 +175,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
-Create token mints, mint tokens, and transferr tokens using Token Extensions.
+Create token mints, mint tokens, and transfer tokens using Token Extensions.
 
 [anchor](./tokens/token-2022/basics/anchor)
 
@@ -221,13 +221,13 @@ Create tokens that store their onchain metadata inside the token mint, without n
 
 [anchor](./tokens/token-2022/metadata/anchor)
 
-### Allow a designedated account to close a mint
+### Allow a designated account to close a mint
 
 Allow a designated account to close a Mint.
 
 [anchor](./tokens/token-2022/mint-close-authority/anchor) [native](./tokens/token-2022/mint-close-authority/native)
 
-### Usng multiple token extensions
+### Using multiple token extensions
 
 Use multiple Token Extensions at once.
 

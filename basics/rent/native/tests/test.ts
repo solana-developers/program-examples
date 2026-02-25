@@ -10,44 +10,28 @@ describe('Create a system account', async () => {
   const client = context.banksClient;
   const payer = context.payer;
 
-  class Assignable {
-    constructor(properties) {
-      for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
-      }
-    }
-  }
+  const AddressDataSchema = {
+    struct: {
+      name: 'string',
+      address: 'string',
+    },
+  };
 
-  class AddressData extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(AddressDataSchema, this));
-    }
+  function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+    return Buffer.from(borsh.serialize(schema, data));
   }
-
-  const AddressDataSchema = new Map([
-    [
-      AddressData,
-      {
-        kind: 'struct',
-        fields: [
-          ['name', 'string'],
-          ['address', 'string'],
-        ],
-      },
-    ],
-  ]);
 
   test('Create the account', async () => {
     const newKeypair = Keypair.generate();
 
-    const addressData = new AddressData({
+    const addressData = {
       name: 'Marcus',
       address: '123 Main St. San Francisco, CA',
-    });
+    };
 
     // We're just going to serialize our object here so we can check
     // the size on the client side against the program logs
-    const addressDataBuffer = addressData.toBuffer();
+    const addressDataBuffer = borshSerialize(AddressDataSchema, addressData);
     console.log(`Address data buffer length: ${addressDataBuffer.length}`);
 
     const ix = new TransactionInstruction({

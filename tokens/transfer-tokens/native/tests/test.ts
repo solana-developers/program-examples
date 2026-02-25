@@ -12,10 +12,10 @@ import {
   TransactionInstruction,
 } from '@solana/web3.js';
 import { BN } from 'bn.js';
-import { CreateTokenArgs, MintNftArgs, MintSplArgs, MyInstruction, TransferTokensArgs } from './instructions';
+import { borshSerialize, CreateTokenArgsSchema, MintNftArgsSchema, MintSplArgsSchema, TransferTokensArgsSchema, MyInstruction } from './instructions';
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
 }
 
 describe('Transferring Tokens', async () => {
@@ -35,7 +35,7 @@ describe('Transferring Tokens', async () => {
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       instruction: MyInstruction.Create,
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
@@ -63,7 +63,7 @@ describe('Transferring Tokens', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, tokenMintKeypair]);
@@ -79,7 +79,7 @@ describe('Transferring Tokens', async () => {
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       instruction: MyInstruction.Create,
       token_title: 'Homer NFT',
       token_symbol: 'HOMR',
@@ -103,7 +103,7 @@ describe('Transferring Tokens', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, nftMintKeypair]);
@@ -116,7 +116,7 @@ describe('Transferring Tokens', async () => {
   it('Mint some tokens to your wallet!', async () => {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(tokenMintKeypair.publicKey, payer.publicKey);
 
-    const instructionData = new MintSplArgs({
+    const instructionData = borshSerialize(MintSplArgsSchema, {
       instruction: MyInstruction.MintSpl,
       quantity: new BN(150),
     });
@@ -144,7 +144,7 @@ describe('Transferring Tokens', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
@@ -167,7 +167,7 @@ describe('Transferring Tokens', async () => {
 
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(nftMintKeypair.publicKey, payer.publicKey);
 
-    const instructionData = new MintNftArgs({
+    const instructionData = borshSerialize(MintNftArgsSchema, {
       instruction: MyInstruction.MintNft,
     });
 
@@ -198,7 +198,7 @@ describe('Transferring Tokens', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
@@ -221,7 +221,7 @@ describe('Transferring Tokens', async () => {
     const toAssociatedTokenAddress = await getAssociatedTokenAddress(tokenMintKeypair.publicKey, recipientWallet.publicKey);
     console.log(`Recipient Token Address: ${toAssociatedTokenAddress}`);
 
-    const transferToInstructionData = new TransferTokensArgs({
+    const transferToInstructionData = borshSerialize(TransferTokensArgsSchema, {
       instruction: MyInstruction.TransferTokens,
       quantity: new BN(15),
     });
@@ -251,7 +251,7 @@ describe('Transferring Tokens', async () => {
         }, // Associated token program
       ],
       programId: program.publicKey,
-      data: transferToInstructionData.toBuffer(),
+      data: transferToInstructionData,
     });
 
     await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, recipientWallet], { skipPreflight: true });
@@ -263,7 +263,7 @@ describe('Transferring Tokens', async () => {
     const toAssociatedTokenAddress = await getAssociatedTokenAddress(nftMintKeypair.publicKey, recipientWallet.publicKey);
     console.log(`Recipient Token Address: ${toAssociatedTokenAddress}`);
 
-    const transferToInstructionData = new TransferTokensArgs({
+    const transferToInstructionData = borshSerialize(TransferTokensArgsSchema, {
       instruction: MyInstruction.TransferTokens,
       quantity: new BN(1),
     });
@@ -289,7 +289,7 @@ describe('Transferring Tokens', async () => {
         }, // Associated token program
       ],
       programId: program.publicKey,
-      data: transferToInstructionData.toBuffer(),
+      data: transferToInstructionData,
     });
 
     await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, recipientWallet], { skipPreflight: true });

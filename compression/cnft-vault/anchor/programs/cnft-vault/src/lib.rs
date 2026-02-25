@@ -1,25 +1,18 @@
 use anchor_lang::prelude::*;
-use mpl_bubblegum::state::TreeConfig;
-use solana_program::pubkey::Pubkey;
-use spl_account_compression::{program::SplAccountCompression, Noop};
 
-declare_id!("CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk");
+declare_id!("Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D");
 
 #[derive(Clone)]
-pub struct MplBubblegum;
+pub struct SPLCompression;
 
-impl anchor_lang::Id for MplBubblegum {
+impl anchor_lang::Id for SPLCompression {
     fn id() -> Pubkey {
-        mpl_bubblegum::id()
+        spl_account_compression::id()
     }
 }
 
-// first 8 bytes of SHA256("global:transfer")
-const TRANSFER_DISCRIMINATOR: &[u8; 8] = &[163, 52, 200, 231, 140, 3, 69, 186];
-
 #[program]
 pub mod cnft_vault {
-
     use super::*;
 
     pub fn withdraw_cnft<'info>(
@@ -36,53 +29,45 @@ pub mod cnft_vault {
             ctx.accounts.merkle_tree.key()
         );
 
-        let mut accounts: Vec<solana_program::instruction::AccountMeta> = vec![
-            AccountMeta::new_readonly(ctx.accounts.tree_authority.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), true),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.new_leaf_owner.key(), false),
-            AccountMeta::new(ctx.accounts.merkle_tree.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.log_wrapper.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.compression_program.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
-        ];
+        let tree_config = ctx.accounts.tree_authority.to_account_info();
+        let leaf_owner = ctx.accounts.leaf_owner.to_account_info();
+        let new_leaf_owner = ctx.accounts.new_leaf_owner.to_account_info();
+        let merkle_tree = ctx.accounts.merkle_tree.to_account_info();
+        let log_wrapper = ctx.accounts.log_wrapper.to_account_info();
+        let compression_program = ctx.accounts.compression_program.to_account_info();
+        let system_program = ctx.accounts.system_program.to_account_info();
 
-        let mut data: Vec<u8> = vec![];
-        data.extend(TRANSFER_DISCRIMINATOR);
-        data.extend(root);
-        data.extend(data_hash);
-        data.extend(creator_hash);
-        data.extend(nonce.to_le_bytes());
-        data.extend(index.to_le_bytes());
-
-        let mut account_infos: Vec<AccountInfo> = vec![
-            ctx.accounts.tree_authority.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner.to_account_info(),
-            ctx.accounts.merkle_tree.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ];
-
-        // add "accounts" (hashes) that make up the merkle proof
-        for acc in ctx.remaining_accounts.iter() {
-            accounts.push(AccountMeta::new_readonly(acc.key(), false));
-            account_infos.push(acc.to_account_info());
-        }
-
-        msg!("manual cpi call");
-        solana_program::program::invoke_signed(
-            &solana_program::instruction::Instruction {
-                program_id: ctx.accounts.bubblegum_program.key(),
-                accounts,
-                data,
+        let transfer_cpi = mpl_bubblegum::instructions::TransferCpi::new(
+            &ctx.accounts.bubblegum_program,
+            mpl_bubblegum::instructions::TransferCpiAccounts {
+                tree_config: &tree_config,
+                leaf_owner: (&leaf_owner, true),
+                leaf_delegate: (&leaf_owner, false),
+                new_leaf_owner: &new_leaf_owner,
+                merkle_tree: &merkle_tree,
+                log_wrapper: &log_wrapper,
+                compression_program: &compression_program,
+                system_program: &system_program,
             },
-            &account_infos[..],
-            &[&[b"cNFT-vault", &[*ctx.bumps.get("leaf_owner").unwrap()]]],
-        )
-        .map_err(Into::into)
+            mpl_bubblegum::instructions::TransferInstructionArgs {
+                root,
+                data_hash,
+                creator_hash,
+                nonce,
+                index,
+            },
+        );
+
+        transfer_cpi.invoke_signed_with_remaining_accounts(
+            &[&[b"cNFT-vault", &[ctx.bumps.leaf_owner]]],
+            ctx.remaining_accounts
+                .iter()
+                .map(|account| (account, false, false))
+                .collect::<Vec<_>>()
+                .as_slice(),
+        )?;
+
+        Ok(())
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -99,7 +84,7 @@ pub mod cnft_vault {
         creator_hash2: [u8; 32],
         nonce2: u64,
         index2: u32,
-        _proof_2_length: u8, // we don't actually need this (proof_2_length = remaining_accounts_len - proof_1_length)
+        _proof_2_length: u8,
     ) -> Result<()> {
         let merkle_tree1 = ctx.accounts.merkle_tree1.key();
         let merkle_tree2 = ctx.accounts.merkle_tree2.key();
@@ -112,94 +97,83 @@ pub mod cnft_vault {
         // Note: in this example anyone can withdraw any NFT from the vault
         // in productions you should check if nft transfers are valid (correct NFT, correct authority)
 
-        let mut accounts1: Vec<solana_program::instruction::AccountMeta> = vec![
-            AccountMeta::new_readonly(ctx.accounts.tree_authority1.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), true),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.new_leaf_owner1.key(), false),
-            AccountMeta::new(ctx.accounts.merkle_tree1.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.log_wrapper.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.compression_program.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
-        ];
+        let tree_config1 = ctx.accounts.tree_authority1.to_account_info();
+        let tree_config2 = ctx.accounts.tree_authority2.to_account_info();
+        let leaf_owner = ctx.accounts.leaf_owner.to_account_info();
+        let new_leaf_owner1 = ctx.accounts.new_leaf_owner1.to_account_info();
+        let new_leaf_owner2 = ctx.accounts.new_leaf_owner2.to_account_info();
+        let merkle_tree1_info = ctx.accounts.merkle_tree1.to_account_info();
+        let merkle_tree2_info = ctx.accounts.merkle_tree2.to_account_info();
+        let log_wrapper = ctx.accounts.log_wrapper.to_account_info();
+        let compression_program = ctx.accounts.compression_program.to_account_info();
+        let system_program = ctx.accounts.system_program.to_account_info();
 
-        let mut accounts2: Vec<solana_program::instruction::AccountMeta> = vec![
-            AccountMeta::new_readonly(ctx.accounts.tree_authority2.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), true),
-            AccountMeta::new_readonly(ctx.accounts.leaf_owner.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.new_leaf_owner2.key(), false),
-            AccountMeta::new(ctx.accounts.merkle_tree2.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.log_wrapper.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.compression_program.key(), false),
-            AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
-        ];
+        let signer_seeds: &[&[u8]] = &[b"cNFT-vault", &[ctx.bumps.leaf_owner]];
 
-        let mut data1: Vec<u8> = vec![];
-        data1.extend(TRANSFER_DISCRIMINATOR);
-        data1.extend(root1);
-        data1.extend(data_hash1);
-        data1.extend(creator_hash1);
-        data1.extend(nonce1.to_le_bytes());
-        data1.extend(index1.to_le_bytes());
-        let mut data2: Vec<u8> = vec![];
-        data2.extend(TRANSFER_DISCRIMINATOR);
-        data2.extend(root2);
-        data2.extend(data_hash2);
-        data2.extend(creator_hash2);
-        data2.extend(nonce2.to_le_bytes());
-        data2.extend(index2.to_le_bytes());
-
-        let mut account_infos1: Vec<AccountInfo> = vec![
-            ctx.accounts.tree_authority1.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner1.to_account_info(),
-            ctx.accounts.merkle_tree1.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ];
-        let mut account_infos2: Vec<AccountInfo> = vec![
-            ctx.accounts.tree_authority2.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner2.to_account_info(),
-            ctx.accounts.merkle_tree2.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ];
-
-        for (i, acc) in ctx.remaining_accounts.iter().enumerate() {
-            if i < proof_1_length as usize {
-                accounts1.push(AccountMeta::new_readonly(acc.key(), false));
-                account_infos1.push(acc.to_account_info());
-            } else {
-                accounts2.push(AccountMeta::new_readonly(acc.key(), false));
-                account_infos2.push(acc.to_account_info());
-            }
-        }
+        // Split remaining accounts into proof1 and proof2
+        let (proof1_accounts, proof2_accounts) =
+            ctx.remaining_accounts.split_at(proof_1_length as usize);
 
         msg!("withdrawing cNFT#1");
-        solana_program::program::invoke_signed(
-            &solana_program::instruction::Instruction {
-                program_id: ctx.accounts.bubblegum_program.key(),
-                accounts: accounts1,
-                data: data1,
+        let transfer_cpi1 = mpl_bubblegum::instructions::TransferCpi::new(
+            &ctx.accounts.bubblegum_program,
+            mpl_bubblegum::instructions::TransferCpiAccounts {
+                tree_config: &tree_config1,
+                leaf_owner: (&leaf_owner, true),
+                leaf_delegate: (&leaf_owner, false),
+                new_leaf_owner: &new_leaf_owner1,
+                merkle_tree: &merkle_tree1_info,
+                log_wrapper: &log_wrapper,
+                compression_program: &compression_program,
+                system_program: &system_program,
             },
-            &account_infos1[..],
-            &[&[b"cNFT-vault", &[*ctx.bumps.get("leaf_owner").unwrap()]]],
+            mpl_bubblegum::instructions::TransferInstructionArgs {
+                root: root1,
+                data_hash: data_hash1,
+                creator_hash: creator_hash1,
+                nonce: nonce1,
+                index: index1,
+            },
+        );
+
+        transfer_cpi1.invoke_signed_with_remaining_accounts(
+            &[signer_seeds],
+            proof1_accounts
+                .iter()
+                .map(|account| (account, false, false))
+                .collect::<Vec<_>>()
+                .as_slice(),
         )?;
 
         msg!("withdrawing cNFT#2");
-        solana_program::program::invoke_signed(
-            &solana_program::instruction::Instruction {
-                program_id: ctx.accounts.bubblegum_program.key(),
-                accounts: accounts2,
-                data: data2,
+        let transfer_cpi2 = mpl_bubblegum::instructions::TransferCpi::new(
+            &ctx.accounts.bubblegum_program,
+            mpl_bubblegum::instructions::TransferCpiAccounts {
+                tree_config: &tree_config2,
+                leaf_owner: (&leaf_owner, true),
+                leaf_delegate: (&leaf_owner, false),
+                new_leaf_owner: &new_leaf_owner2,
+                merkle_tree: &merkle_tree2_info,
+                log_wrapper: &log_wrapper,
+                compression_program: &compression_program,
+                system_program: &system_program,
             },
-            &account_infos2[..],
-            &[&[b"cNFT-vault", &[*ctx.bumps.get("leaf_owner").unwrap()]]],
+            mpl_bubblegum::instructions::TransferInstructionArgs {
+                root: root2,
+                data_hash: data_hash2,
+                creator_hash: creator_hash2,
+                nonce: nonce2,
+                index: index2,
+            },
+        );
+
+        transfer_cpi2.invoke_signed_with_remaining_accounts(
+            &[signer_seeds],
+            proof2_accounts
+                .iter()
+                .map(|account| (account, false, false))
+                .collect::<Vec<_>>()
+                .as_slice(),
         )?;
 
         msg!("successfully sent cNFTs");
@@ -209,67 +183,73 @@ pub mod cnft_vault {
 
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
+    #[account(mut)]
     #[account(
         seeds = [merkle_tree.key().as_ref()],
         bump,
         seeds::program = bubblegum_program.key()
     )]
-    /// CHECK: This account is neither written to nor read from.
-    pub tree_authority: Account<'info, TreeConfig>,
-
+    /// CHECK: This account is modified in the downstream program
+    pub tree_authority: UncheckedAccount<'info>,
     #[account(
         seeds = [b"cNFT-vault"],
         bump,
     )]
     /// CHECK: This account doesnt even exist (it is just the pda to sign)
-    pub leaf_owner: UncheckedAccount<'info>, // sender (the vault in our case)
+    pub leaf_owner: UncheckedAccount<'info>,
     /// CHECK: This account is neither written to nor read from.
-    pub new_leaf_owner: UncheckedAccount<'info>, // receiver
+    pub new_leaf_owner: UncheckedAccount<'info>,
     #[account(mut)]
     /// CHECK: This account is modified in the downstream program
     pub merkle_tree: UncheckedAccount<'info>,
-    pub log_wrapper: Program<'info, Noop>,
-    pub compression_program: Program<'info, SplAccountCompression>,
-    pub bubblegum_program: Program<'info, MplBubblegum>,
+    /// CHECK: This account is neither written to nor read from.
+    pub log_wrapper: UncheckedAccount<'info>,
+    pub compression_program: Program<'info, SPLCompression>,
+    /// CHECK: This account is neither written to nor read from.
+    pub bubblegum_program: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct WithdrawTwo<'info> {
+    #[account(mut)]
     #[account(
         seeds = [merkle_tree1.key().as_ref()],
         bump,
         seeds::program = bubblegum_program.key()
     )]
-    /// CHECK: This account is neither written to nor read from.
-    pub tree_authority1: Account<'info, TreeConfig>,
+    /// CHECK: This account is modified in the downstream program
+    pub tree_authority1: UncheckedAccount<'info>,
     #[account(
         seeds = [b"cNFT-vault"],
         bump,
     )]
     /// CHECK: This account doesnt even exist (it is just the pda to sign)
-    pub leaf_owner: UncheckedAccount<'info>, // you might need two accounts if the nfts are owned by two different PDAs
+    pub leaf_owner: UncheckedAccount<'info>,
     /// CHECK: This account is neither written to nor read from.
-    pub new_leaf_owner1: UncheckedAccount<'info>, // receiver
+    pub new_leaf_owner1: UncheckedAccount<'info>,
     #[account(mut)]
     /// CHECK: This account is modified in the downstream program
     pub merkle_tree1: UncheckedAccount<'info>,
 
+    #[account(mut)]
     #[account(
         seeds = [merkle_tree2.key().as_ref()],
         bump,
         seeds::program = bubblegum_program.key()
     )]
+    /// CHECK: This account is modified in the downstream program
+    pub tree_authority2: UncheckedAccount<'info>,
     /// CHECK: This account is neither written to nor read from.
-    pub tree_authority2: Account<'info, TreeConfig>,
-    /// CHECK: This account is neither written to nor read from.
-    pub new_leaf_owner2: UncheckedAccount<'info>, // receiver
+    pub new_leaf_owner2: UncheckedAccount<'info>,
     #[account(mut)]
     /// CHECK: This account is modified in the downstream program
     pub merkle_tree2: UncheckedAccount<'info>,
 
-    pub log_wrapper: Program<'info, Noop>,
-    pub compression_program: Program<'info, SplAccountCompression>,
-    pub bubblegum_program: Program<'info, MplBubblegum>,
+    /// CHECK: This account is neither written to nor read from.
+    pub log_wrapper: UncheckedAccount<'info>,
+    pub compression_program: Program<'info, SPLCompression>,
+    /// CHECK: This account is neither written to nor read from.
+    pub bubblegum_program: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
 }

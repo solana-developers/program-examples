@@ -1,14 +1,18 @@
+[toolchain]
+solana_version = "3.1.8"
+
 [features]
-seeds = false
+resolution = true
 skip-lint = false
+
 [programs.devnet]
-cnft_vault = "CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk"
+cnft_vault = "Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
