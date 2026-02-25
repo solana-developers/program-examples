@@ -1,0 +1,30 @@
+name: Test Tokens Create Token Anchor
+
+on:
+  push:
+    paths:
+      - 'tokens/create-token/anchor/**'
+  pull_request:
+    paths:
+      - 'tokens/create-token/anchor/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install Rust and Anchor
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSfL https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+          avm install latest
+          avm use latest
+      - name: Build and Test
+        run: |
+          cd tokens/create-token/anchor
+          anchor build
+          pnpm install
+          pnpm test
