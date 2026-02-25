@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import { AccountLayout } from '@solana/spl-token';
-import { Transaction } from '@solana/web3.js';
+import { Keypair, SystemProgram, Transaction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 import { OfferAccount } from './account';
@@ -14,6 +14,11 @@ describe('Escrow!', async () => {
 
   const client = context.banksClient;
   const payer = context.payer;
+
+  // Used to reproduce the "rent refund to arbitrary payer" bug: provide a
+  // different signer as `payer` for TakeOffer.
+  const attacker = Keypair.generate();
+  let offerRentLamports = 0n;
 
   console.log(`Program Address    : ${values.programId}`);
   console.log(`Payer Address      : ${payer.publicKey}`);
@@ -57,6 +62,7 @@ describe('Escrow!', async () => {
     await client.processTransaction(tx);
 
     const offerInfo = await client.getAccount(values.offer);
+    offerRentLamports = BigInt(offerInfo.lamports);
     const offer = OfferAccount.fromBuffer(offerInfo.data).toData();
 
     const vaultInfo = await client.getAccount(values.vault);
@@ -70,7 +76,34 @@ describe('Escrow!', async () => {
     assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), 'unexpected amount A');
   });
 
-  test('Take Offer', async () => {
+  test('Take Offer (rent refunded to maker, not arbitrary payer)', async () => {
+    // Ensure system accounts exist with known starting balances.
+    // (Bankrun doesn't materialize system accounts until they hold lamports.)
+    const fundTx = new Transaction();
+    fundTx.recentBlockhash = context.lastBlockhash;
+    fundTx.feePayer = payer.publicKey;
+    fundTx
+      .add(
+        SystemProgram.transfer({
+          fromPubkey: payer.publicKey,
+          toPubkey: attacker.publicKey,
+          lamports: 5_000_000,
+        }),
+      )
+      .add(
+        SystemProgram.transfer({
+          fromPubkey: payer.publicKey,
+          toPubkey: values.maker.publicKey,
+          lamports: 5_000_000,
+        }),
+      )
+      .sign(payer);
+    await client.processTransaction(fundTx);
+
+    const makerBefore = BigInt((await client.getAccount(values.maker.publicKey)).lamports);
+    const attackerBefore = BigInt((await client.getAccount(attacker.publicKey)).lamports);
+
+    // Build TakeOffer with an arbitrary attacker-controlled payer.
     const ix = buildTakeOffer({
       maker: values.maker.publicKey,
       offer: values.offer,
@@ -81,16 +114,22 @@ describe('Escrow!', async () => {
       taker: values.taker.publicKey,
       taker_token_a: values.takerAccountA,
       taker_token_b: values.takerAccountB,
-      payer: payer.publicKey,
+      payer: attacker.publicKey,
       programId: values.programId,
     });
 
-    const blockhash = context.lastBlockhash;
-
     const tx = new Transaction();
-    tx.recentBlockhash = blockhash;
-    tx.add(ix).sign(payer, values.taker);
+    tx.recentBlockhash = context.lastBlockhash;
+    tx.feePayer = payer.publicKey; // keep fees deterministic and away from attacker
+    tx.add(ix).sign(payer, attacker, values.taker);
     await client.processTransaction(tx);
+
+    const makerAfter = BigInt((await client.getAccount(values.maker.publicKey)).lamports);
+    const attackerAfter = BigInt((await client.getAccount(attacker.publicKey)).lamports);
+
+    // Security property: offer account rent must not be transferable to an arbitrary `payer`.
+    assert(makerAfter - makerBefore === offerRentLamports, 'maker did not receive offer rent');
+    assert(attackerAfter <= attackerBefore, 'attacker unexpectedly received offer rent');
 
     const offerInfo = await client.getAccount(values.offer);
     assert(offerInfo === null, 'offer account not closed');
