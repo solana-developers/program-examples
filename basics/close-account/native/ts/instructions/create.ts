@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
 import * as borsh from 'borsh';
-import { MyInstruction } from '.';
+import { MyInstruction } from './index.ts';
 
 export class Create {
   instruction: MyInstruction;
