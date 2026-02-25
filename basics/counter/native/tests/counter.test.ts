@@ -1,19 +1,37 @@
+import { readFileSync } from 'node:fs';
 import { describe, test } from 'node:test';
-import { Keypair, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
 import { assert } from 'chai';
-import { start } from 'solana-bankrun';
-import { COUNTER_ACCOUNT_SIZE, createIncrementInstruction, deserializeCounterAccount, PROGRAM_ID } from '../ts';
+import { LiteSVM } from 'litesvm';
+import { COUNTER_ACCOUNT_SIZE, createIncrementInstruction, deserializeCounterAccount } from '../ts/index.ts';
 
-describe('Counter Solana Native', async () => {
-  // Randomly generate the program keypair and load the program to solana-bankrun
-  const context = await start([{ name: 'counter_solana_native', programId: PROGRAM_ID }], []);
-  const client = context.banksClient;
+describe('Counter Solana Native', () => {
+  // Load the program keypair
+  const programKeypairPath = new URL(
+    './fixtures/counter_solana_native-keypair.json',
+    // @ts-ignore
+    import.meta.url,
+  ).pathname;
+  const programKeypairData = JSON.parse(readFileSync(programKeypairPath, 'utf-8'));
+  const programKeypair = Keypair.fromSecretKey(new Uint8Array(programKeypairData));
+  const PROGRAM_ID = programKeypair.publicKey;
+
+  const litesvm = new LiteSVM();
   // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
-  const payer = context.payer;
-  // Get the rent object to calculate rent for the accounts
-  const rent = await client.getRent();
+  const payer = Keypair.generate();
 
-  test('Test allocate counter + increment tx', async () => {
+  // Load the program
+  const programPath = new URL(
+    './fixtures/counter_solana_native.so',
+    // @ts-ignore
+    import.meta.url,
+  ).pathname;
+  litesvm.addProgramFromFile(PROGRAM_ID, programPath);
+
+  // Fund the payer account
+  litesvm.airdrop(payer.publicKey, BigInt(100000000000));
+
+  test('Test allocate counter + increment tx', () => {
     // Randomly generate the account key
     // to sign for setting up the Counter state
     const counterKeypair = Keypair.generate();
@@ -23,28 +41,27 @@ describe('Counter Solana Native', async () => {
     const allocIx: TransactionInstruction = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       newAccountPubkey: counter,
-      lamports: Number(rent.minimumBalance(BigInt(COUNTER_ACCOUNT_SIZE))),
+      lamports: Number(litesvm.minimumBalanceForRentExemption(BigInt(COUNTER_ACCOUNT_SIZE))),
       space: COUNTER_ACCOUNT_SIZE,
       programId: PROGRAM_ID,
     });
-    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, {});
+    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, PROGRAM_ID);
     const tx = new Transaction().add(allocIx).add(incrementIx);
 
     // Explicitly set the feePayer to be our wallet (this is set to first signer by default)
     tx.feePayer = payer.publicKey;
 
     // Fetch a "timestamp" so validators know this is a recent transaction
-    const blockhash = context.lastBlockhash;
-    tx.recentBlockhash = blockhash;
+    tx.recentBlockhash = litesvm.latestBlockhash();
 
     // Sign the transaction with the payer's keypair
     tx.sign(payer, counterKeypair);
 
-    // Send transaction to bankrun
-    await client.processTransaction(tx);
+    // Send transaction to litesvm
+    litesvm.sendTransaction(tx);
 
     // Get the counter account info from network
-    const counterAccountInfo = await client.getAccount(counter);
+    const counterAccountInfo = litesvm.getAccount(counter);
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
     // Deserialize the counter & check count has been incremented
@@ -53,7 +70,7 @@ describe('Counter Solana Native', async () => {
     console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
   });
 
-  test('Test allocate tx and increment tx', async () => {
+  test('Test allocate tx and increment tx', () => {
     const counterKeypair = Keypair.generate();
     const counter = counterKeypair.publicKey;
 
@@ -61,19 +78,18 @@ describe('Counter Solana Native', async () => {
     const allocIx: TransactionInstruction = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       newAccountPubkey: counter,
-      lamports: Number(rent.minimumBalance(BigInt(COUNTER_ACCOUNT_SIZE))),
+      lamports: Number(litesvm.minimumBalanceForRentExemption(BigInt(COUNTER_ACCOUNT_SIZE))),
       space: COUNTER_ACCOUNT_SIZE,
       programId: PROGRAM_ID,
     });
     let tx = new Transaction().add(allocIx);
-    const blockhash = context.lastBlockhash;
     tx.feePayer = payer.publicKey;
-    tx.recentBlockhash = blockhash;
+    tx.recentBlockhash = litesvm.latestBlockhash();
     tx.sign(payer, counterKeypair);
 
-    await client.processTransaction(tx);
+    litesvm.sendTransaction(tx);
 
-    let counterAccountInfo = await client.getAccount(counter);
+    let counterAccountInfo = litesvm.getAccount(counter);
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
     let counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
@@ -81,15 +97,15 @@ describe('Counter Solana Native', async () => {
     console.log(`[allocate] count is: ${counterAccount.count.toNumber()}`);
 
     // Check increment tx
-    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, {});
+    const incrementIx: TransactionInstruction = createIncrementInstruction({ counter }, PROGRAM_ID);
     tx = new Transaction().add(incrementIx);
     tx.feePayer = payer.publicKey;
-    tx.recentBlockhash = blockhash;
+    tx.recentBlockhash = litesvm.latestBlockhash();
     tx.sign(payer);
 
-    await client.processTransaction(tx);
+    litesvm.sendTransaction(tx);
 
-    counterAccountInfo = await client.getAccount(counter);
+    counterAccountInfo = litesvm.getAccount(counter);
     assert(counterAccountInfo, 'Expected counter account to have been created');
 
     counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
