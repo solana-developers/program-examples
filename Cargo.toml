@@ -4,6 +4,7 @@ members = [
     "basics/account-data/native/program",
     "basics/account-data/pinocchio/program",
     "basics/account-data/anchor/programs/anchor-program-example",
+    "basics/account-data/zig/program-test",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/pinocchio/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",

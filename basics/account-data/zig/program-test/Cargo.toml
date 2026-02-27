@@ -1,0 +1,12 @@
+[package]
+name = "program-test"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+borsh = { version = "1.5.7", features = ["derive"] }
+
+[dev-dependencies]
+mollusk-svm = "0.5.1"
+solana-sdk = "2.2.2"
