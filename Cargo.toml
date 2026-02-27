@@ -38,6 +38,7 @@ members = [
     "basics/rent/anchor/programs/*",
     "basics/favorites/native/program",
     "basics/favorites/pinocchio/program",
+    "basics/favorites/zig/program-test",
     "basics/repository-layout/native/program",
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
