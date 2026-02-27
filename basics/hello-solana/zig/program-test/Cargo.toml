@@ -1,0 +1,14 @@
+[package]
+name = "program-test"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+litesvm = "0.6.0"
+solana-instruction = "2.2.1"
+solana-keypair = "2.2.1"
+solana-native-token = "2.2.1"
+solana-pubkey = "2.2.1"
+solana-signer = "2.2.1"
+solana-transaction = "2.2.1"
+solana-message = "2.2.1"

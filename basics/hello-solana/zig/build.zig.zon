@@ -1,0 +1,21 @@
+.{
+    .name = .hello_world,
+    .version = "0.0.0",
+    .fingerprint = 0xf73eae910a007609,
+    .minimum_zig_version = "0.15.1",
+    .dependencies = .{
+        .solana_program_sdk = .{
+            .url = "https://github.com/joncinque/solana-program-sdk-zig/archive/refs/tags/v0.17.1.tar.gz",
+            .hash = "solana_program_sdk-0.17.1-wGj9UBrlAADAagTi3MSX1vSpGg-DePWB_5znbUgMlH1U",
+        },
+        .base58 = .{
+            .url = "https://github.com/joncinque/base58-zig/archive/refs/tags/v0.15.0.tar.gz",
+            .hash = "base58-0.15.0-6-CZmwVpAAAxqof6REya9G_XyHL1fTqUsAcsZ-J1IHMF",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}

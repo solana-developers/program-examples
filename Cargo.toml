@@ -21,6 +21,7 @@ members = [
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
     "basics/hello-solana/pinocchio/program",
+    "basics/hello-solana/zig/program-test",
     "basics/pda-rent-payer/native/program",
     "basics/pda-rent-payer/pinocchio/program",
     "basics/pda-rent-payer/anchor/programs/*",
