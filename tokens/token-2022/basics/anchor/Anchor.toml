@@ -14,10 +14,9 @@ url = "https://api.apr.dev"
 cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
-# Tests use solana-bankrun (in-process simulation), not the local validator.
-# No [test.validator] section needed — adding one (e.g. to clone programs from
-# mainnet) would slow down validator startup without benefit, since bankrun
-# loads programs directly from the local build.
+# This project has both bankrun and validator tests. No [test.validator]
+# section needed because Token-2022 is built into the local validator
+# and doesn't require cloning from mainnet.
 [test]
 startup_wait = 25000
 
