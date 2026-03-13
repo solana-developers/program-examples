@@ -16,21 +16,7 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
-
-# This project has BOTH bankrun tests (bankrun.test.ts) AND validator tests
-# (test.ts). The validator tests need Metaplex Token Metadata cloned from
-# mainnet. startup_wait is high because cloning from mainnet is slow in CI.
-[test]
-startup_wait = 300000
-shutdown_wait = 2000
-upgradeable = false
-
-[test.validator]
-bind_address = "0.0.0.0"
-url = "https://api.mainnet-beta.solana.com"
-ledger = ".anchor/test-ledger"
-rpc_port = 8899
-
-[[test.validator.clone]]
-address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+# Only run bankrun tests — the validator tests (test.ts) need Metaplex Token
+# Metadata cloned from mainnet which is too slow/unreliable in CI.
+# bankrun.test.ts uses a local fixture (tests/fixtures/token_metadata.so).
+test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/bankrun.test.ts"

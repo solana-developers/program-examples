@@ -15,18 +15,10 @@ url = "https://api.apr.dev"
 cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
-# Tests use the real local validator (not bankrun) because transfer-hook
-# tests need the actual validator runtime. startup_wait is 300s (5 min) because the
-# validator clones programs from devnet which can be very slow in CI
-# (shorter timeouts hit the limit in CI).
-[test]
-startup_wait = 300000
-
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
-[test.validator]
-url = "https://api.devnet.solana.com"
-
-[[test.validator.clone]]
-address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+# Transfer-hook tests use the real local validator (not bankrun).
+# No external program clones needed — this project doesn't use Metaplex.
+# The previous [[test.validator.clone]] of metaplex was unnecessary and
+# caused 5-minute timeouts in CI trying to fetch from devnet.
