@@ -12,10 +12,10 @@ import {
   TransactionInstruction,
 } from '@solana/web3.js';
 import { BN } from 'bn.js';
-import { CreateTokenArgs, MintToArgs, SplMinterInstruction } from './instructions';
+import { borshSerialize, CreateTokenArgsSchema, MintToArgsSchema, SplMinterInstruction } from './instructions';
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
 }
 
 describe('SPL Token Minter', async () => {
@@ -32,7 +32,7 @@ describe('SPL Token Minter', async () => {
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       instruction: SplMinterInstruction.Create,
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
@@ -55,7 +55,7 @@ describe('SPL Token Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair]);
@@ -68,7 +68,7 @@ describe('SPL Token Minter', async () => {
   it('Mint some tokens to your wallet!', async () => {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(mintKeypair.publicKey, payer.publicKey);
 
-    const instructionData = new MintToArgs({
+    const instructionData = borshSerialize(MintToArgsSchema, {
       instruction: SplMinterInstruction.Mint,
       quantity: new BN(150),
     });
@@ -92,7 +92,7 @@ describe('SPL Token Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);

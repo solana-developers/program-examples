@@ -1,9 +1,10 @@
 import { describe, test } from 'node:test';
 import { AccountLayout } from '@solana/spl-token';
-import { Transaction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
-import { OfferAccount } from './account';
+import * as borsh from 'borsh';
+import { OfferSchema, type OfferRaw } from './account';
 import { buildMakeOffer, buildTakeOffer } from './instruction';
 import { createValues, mintingTokens } from './utils';
 
@@ -57,15 +58,16 @@ describe('Escrow!', async () => {
     await client.processTransaction(tx);
 
     const offerInfo = await client.getAccount(values.offer);
-    const offer = OfferAccount.fromBuffer(offerInfo.data).toData();
+    const offer = borsh.deserialize(OfferSchema, Buffer.from(offerInfo.data)) as OfferRaw;
 
     const vaultInfo = await client.getAccount(values.vault);
     const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
 
     assert(offer.id.toString() === values.id.toString(), 'wrong id');
-    assert(offer.maker.toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
-    assert(offer.token_mint_a.toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
-    assert(offer.token_mint_b.toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
+    // borsh deserializes pubkeys as raw byte arrays, wrap in PublicKey for comparison
+    assert(new PublicKey(offer.maker).toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
+    assert(new PublicKey(offer.token_mint_a).toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
+    assert(new PublicKey(offer.token_mint_b).toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
     assert(offer.token_b_wanted_amount.toString() === values.amountB.toString(), 'unexpected amount B');
     assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), 'unexpected amount A');
   });

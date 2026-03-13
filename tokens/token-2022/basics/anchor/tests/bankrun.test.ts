@@ -1,4 +1,3 @@
-import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { BankrunProvider } from "anchor-bankrun";
@@ -6,7 +5,9 @@ import BN from "bn.js";
 import { startAnchor } from "solana-bankrun";
 import type { Anchor } from "../target/types/anchor";
 
-import IDL from "../target/idl/anchor.json" with { type: "json" };
+// Use require() for JSON import — the 'import ... with { type: "json" }' syntax
+// requires TypeScript 5.3+, but this project uses typescript ^4.3.5 with ts-mocha.
+const IDL = require("../target/idl/anchor.json");
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("anchor", async () => {

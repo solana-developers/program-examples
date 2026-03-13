@@ -7,7 +7,7 @@
     "deploy": "solana program deploy ./program/target/so/program.so"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.47.3",
+    "@solana/web3.js": "^1.98.4",
     "buffer-layout": "^1.2.2",
     "fs": "^0.0.1-security"
   },

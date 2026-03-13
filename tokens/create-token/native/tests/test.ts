@@ -14,36 +14,21 @@ import {
 import * as borsh from 'borsh';
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
 }
 
-class Assignable {
-  constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
-  }
-}
+const CreateTokenArgsSchema = {
+  struct: {
+    token_title: 'string',
+    token_symbol: 'string',
+    token_uri: 'string',
+    token_decimals: 'u8',
+  },
+};
 
-class CreateTokenArgs extends Assignable {
-  toBuffer() {
-    return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
-  }
+function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+  return Buffer.from(borsh.serialize(schema, data));
 }
-const CreateTokenArgsSchema = new Map([
-  [
-    CreateTokenArgs,
-    {
-      kind: 'struct',
-      fields: [
-        ['token_title', 'string'],
-        ['token_symbol', 'string'],
-        ['token_uri', 'string'],
-        ['token_decimals', 'u8'],
-      ],
-    },
-  ],
-]);
 
 describe('Create Tokens!', async () => {
   // const connection = new Connection(`http://localhost:8899`, 'confirmed');
@@ -61,7 +46,7 @@ describe('Create Tokens!', async () => {
 
     // SPL Token default = 9 decimals
     //
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       token_title: 'Solana Gold',
       token_symbol: 'GOLDSOL',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/spl-token.json',
@@ -84,7 +69,7 @@ describe('Create Tokens!', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair]);
@@ -104,7 +89,7 @@ describe('Create Tokens!', async () => {
 
     // NFT default = 0 decimals
     //
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       token_title: 'Homer NFT',
       token_symbol: 'HOMR',
       token_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
@@ -127,7 +112,7 @@ describe('Create Tokens!', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair]);

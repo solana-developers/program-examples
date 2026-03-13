@@ -21,8 +21,8 @@ custom-panic = []
 
 [dependencies]
 anchor-lang = "0.32.1"
-mpl-bubblegum = "1.3.0"
-spl-account-compression = { version="0.3.0",features = ["no-entrypoint","cpi"] }
+mpl-bubblegum = "2.1.1"
+spl-account-compression = { version = "1.0.0", features = ["no-entrypoint", "cpi"] }
 ahash = "=0.8.7"
 
 [lints.rust]

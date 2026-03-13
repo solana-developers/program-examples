@@ -10,41 +10,25 @@ import {
 import * as borsh from "borsh";
 import { start } from "solana-bankrun";
 
-class Assignable {
-	constructor(properties) {
-		for (const [key, value] of Object.entries(properties)) {
-			this[key] = value;
-		}
-	}
-}
+const AddressInfoSchema = {
+	struct: {
+		name: "string",
+		house_number: "u8",
+		street: "string",
+		city: "string",
+	},
+};
 
-class AddressInfo extends Assignable {
-	street: string;
-	city: string;
+type AddressInfo = {
 	name: string;
 	house_number: number;
-	toBuffer() {
-		return Buffer.from(borsh.serialize(AddressInfoSchema, this));
-	}
+	street: string;
+	city: string;
+};
 
-	static fromBuffer(buffer: Buffer) {
-		return borsh.deserialize(AddressInfoSchema, AddressInfo, buffer);
-	}
+function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+	return Buffer.from(borsh.serialize(schema, data));
 }
-const AddressInfoSchema = new Map([
-	[
-		AddressInfo,
-		{
-			kind: "struct",
-			fields: [
-				["name", "string"],
-				["house_number", "u8"],
-				["street", "string"],
-				["city", "string"],
-			],
-		},
-	],
-]);
 
 describe("Account Data!", async () => {
 	const addressInfoAccount = Keypair.generate();
@@ -73,12 +57,12 @@ describe("Account Data!", async () => {
 				{ pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
 			],
 			programId: PROGRAM_ID,
-			data: new AddressInfo({
+			data: borshSerialize(AddressInfoSchema, {
 				name: "Joe C",
 				house_number: 136,
 				street: "Mile High Dr.",
 				city: "Solana Beach",
-			}).toBuffer(),
+			}),
 		});
 
 		const blockhash = context.lastBlockhash;
@@ -92,13 +76,13 @@ describe("Account Data!", async () => {
 	test("Read the new account's data", async () => {
 		const accountInfo = await client.getAccount(addressInfoAccount.publicKey);
 
-		const readAddressInfo = AddressInfo.fromBuffer(
+		const readAddressInfo = borsh.deserialize(
+			AddressInfoSchema,
 			Buffer.from(accountInfo.data),
-		);
+		) as AddressInfo;
 		console.log(`Name     : ${readAddressInfo.name}`);
 		console.log(`House Num: ${readAddressInfo.house_number}`);
 		console.log(`Street   : ${readAddressInfo.street}`);
 		console.log(`City     : ${readAddressInfo.city}`);
 	});
 });
-
