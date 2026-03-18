@@ -15,6 +15,10 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
+  # Force all JavaScript-based actions to use Node.js 24 runtime.
+  # Node.js 20 actions are deprecated and will stop working June 2026.
+  # This catches composite actions whose internal dependencies still reference @v4.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   changes:
@@ -26,8 +30,8 @@ jobs:
       total_projects: ${{ steps.analyze.outputs.total_projects }}
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v4
         id: changes
         if: github.event_name == 'pull_request'
         with:
@@ -102,9 +106,9 @@ jobs:
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "lts/*"
           check-latest: true
@@ -191,7 +195,7 @@ jobs:
           # Install pnpm
           npm install --global pnpm
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v2.02
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -205,7 +209,7 @@ jobs:
       # with heyAyushh/setup-solana — beta setup clears the stable install first.
       - name: Setup Solana Beta
         continue-on-error: true
-        uses: heyAyushh/setup-solana@v2.02
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
@@ -232,7 +236,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Create job summary
         run: |
           echo "## Pinocchio Workflow Summary" >> $GITHUB_STEP_SUMMARY
