@@ -1,0 +1,11 @@
+build/**/*
+deploy/**/*
+node_modules
+.sbpf
+.DS_Store
+.vscode
+keypair.json
+package-lock.json
+test-ledger
+yarn.lock
+target

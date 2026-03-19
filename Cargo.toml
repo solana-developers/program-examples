@@ -7,6 +7,7 @@ members = [
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/pinocchio/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
+    "basics/checking-accounts/asm",
     "basics/close-account/native/program",
     "basics/close-account/pinocchio/program",
     "basics/close-account/anchor/programs/close-account",
