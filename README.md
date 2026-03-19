@@ -1,8 +1,8 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor and :crab: Native Rust.
+## Onchain program examples for :anchor: Anchor, :crab: Native Rust, and :boy: Pinocchio.
 
-[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
+[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml)
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
@@ -23,6 +23,10 @@ Each folder includes examples for one or more of the following:
   Build and test commands are defined via pnpm scripts and use `litesvm` for testing.
   Run `pnpm test` to execute tests.
 
+- `pinocchio` - Written using [Pinocchio](https://github.com/febo/pinocchio), a zero-copy, zero-allocation library for Solana programs.
+  Build and test commands are the same as native examples.
+  Run `pnpm test` to execute tests.
+
 
 **If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
 
@@ -35,43 +39,43 @@ Each folder includes examples for one or more of the following:
 
 [Hello World on Solana! A minimal program that logs a greeting.](./basics/hello-solana/README.md)
 
-[anchor](./basics/hello-solana/anchor) [native](./basics/hello-solana/native)
+[anchor](./basics/hello-solana/anchor) [native](./basics/hello-solana/native) [pinocchio](./basics/hello-solana/pinocchio)
 
 ### Account-data
 
 Store and retrieve data using Solana accounts.
 
-[anchor](./basics/account-data/anchor) [native](./basics/account-data/native)
+[anchor](./basics/account-data/anchor) [native](./basics/account-data/native) [pinocchio](./basics/account-data/pinocchio)
 
 ### Storing global state - Counter
 
 [Use a PDA to store global state, making a counter that increments when called.](./basics/counter/README.md)
 
-[anchor](./basics/counter/anchor) [native](./basics/counter/native)
+[anchor](./basics/counter/anchor) [native](./basics/counter/native) [pinocchio](./basics/counter/pinocchio)
 
 ### Saving per-user state - Favorites
 
 Save and update per-user state on the blockchain, ensuring users can only update their own information.
 
-[anchor](./basics/favorites/anchor) [native](./basics/favorites/native)
+[anchor](./basics/favorites/anchor) [native](./basics/favorites/native) [pinocchio](./basics/favorites/pinocchio)
 
 ### Checking Instruction Accounts
 
 [Check that the accounts provided in incoming instructions meet particular criteria.](./basics/checking-accounts/README.md)
 
-[anchor](./basics/checking-accounts/anchor) [native](./basics/checking-accounts/native)
+[anchor](./basics/checking-accounts/anchor) [native](./basics/checking-accounts/native) [pinocchio](./basics/checking-accounts/pinocchio)
 
 ### Closing Accounts
 
 Close an account and get the Lamports back.
 
-[anchor](./basics/close-account/anchor) [native](./basics/close-account/native)
+[anchor](./basics/close-account/anchor) [native](./basics/close-account/native) [pinocchio](./basics/close-account/pinocchio)
 
 ### Creating Accounts
 
 [Make new accounts on the blockchain.](./basics/create-account/README.md)
 
-[anchor](./basics/create-account/anchor) [native](./basics/create-account/native)
+[anchor](./basics/create-account/anchor) [native](./basics/create-account/native) [pinocchio](./basics/create-account/pinocchio)
 
 ### Cross program invocations
 
@@ -83,31 +87,31 @@ Close an account and get the Lamports back.
 
 [Use a PDA to pay the rent for the creation of a new account.](./basics/pda-rent-payer/README.md)
 
-[anchor](./basics/pda-rent-payer/anchor) [native](./basics/pda-rent-payer/native)
+[anchor](./basics/pda-rent-payer/anchor) [native](./basics/pda-rent-payer/native) [pinocchio](./basics/pda-rent-payer/pinocchio)
 
 ### Processing instructions
 
 [Add parameters to an instruction handler and use them.](./basics/processing-instructions/README.md)
 
-[anchor](./basics/processing-instructions/anchor) [native](./basics/processing-instructions/native)
+[anchor](./basics/processing-instructions/anchor) [native](./basics/processing-instructions/native) [pinocchio](./basics/processing-instructions/pinocchio)
 
 ### Storing date in program derived addresses
 
 Store and retrieve state in Solana.
 
-[anchor](./basics/program-derived-addresses/anchor) [native](./basics/program-derived-addresses/native)
+[anchor](./basics/program-derived-addresses/anchor) [native](./basics/program-derived-addresses/native) [pinocchio](./basics/program-derived-addresses/pinocchio)
 
 ### Handling accounts that expand in size
 
 How to store state that changes size in Solana.
 
-[anchor](./basics/realloc/anchor) [native](./basics/realloc/native)
+[anchor](./basics/realloc/anchor) [native](./basics/realloc/native) [pinocchio](./basics/realloc/pinocchio)
 
 ### Calculating account size to determine rent
 
 [Determine the necessary minimum rent by calculating an account's size.](./basics/rent/README.md)
 
-[anchor](./basics/rent/anchor) [native](./basics/rent/native)
+[anchor](./basics/rent/anchor) [native](./basics/rent/native) [pinocchio](./basics/rent/pinocchio)
 
 ### Laying out larger programs
 
@@ -119,7 +123,7 @@ How to store state that changes size in Solana.
 
 [Send SOL between two accounts.](./basics/transfer-sol/README.md)
 
-[anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native)
+[anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native) [pinocchio](./basics/transfer-sol/pinocchio)
 
 </details>
 <details>
