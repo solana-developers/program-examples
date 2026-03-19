@@ -11,10 +11,10 @@ import {
   Transaction,
   TransactionInstruction,
 } from '@solana/web3.js';
-import { CreateTokenArgs, InitArgs, MintToArgs, NftMinterInstruction } from './instructions';
+import { borshSerialize, InitArgsSchema, CreateTokenArgsSchema, MintToArgsSchema, NftMinterInstruction } from './instructions';
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
 }
 
 describe('NFT Minter', async () => {
@@ -28,7 +28,7 @@ describe('NFT Minter', async () => {
   const mintKeypair: Keypair = Keypair.generate();
 
   it('Init Mint Authority PDA', async () => {
-    const instructionData = new InitArgs({
+    const instructionData = borshSerialize(InitArgsSchema, {
       instruction: NftMinterInstruction.Init,
     });
 
@@ -39,7 +39,7 @@ describe('NFT Minter', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer], { skipPreflight: true });
@@ -55,7 +55,7 @@ describe('NFT Minter', async () => {
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       instruction: NftMinterInstruction.Create,
       nft_title: 'Homer NFT',
       nft_symbol: 'HOMR',
@@ -78,7 +78,7 @@ describe('NFT Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair], { skipPreflight: true });
@@ -101,7 +101,7 @@ describe('NFT Minter', async () => {
 
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(mintKeypair.publicKey, payer.publicKey);
 
-    const instructionData = new MintToArgs({
+    const instructionData = borshSerialize(MintToArgsSchema, {
       instruction: NftMinterInstruction.Mint,
     });
 
@@ -132,7 +132,7 @@ describe('NFT Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);

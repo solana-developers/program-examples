@@ -1,4 +1,3 @@
-import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { Keypair, PublicKey } from "@solana/web3.js";
@@ -6,7 +5,8 @@ import { BankrunProvider } from "anchor-bankrun";
 import { startAnchor } from "solana-bankrun";
 import type { NftMinter } from "../target/types/nft_minter";
 
-import IDL from "../target/idl/nft_minter.json" with { type: "json" };
+// Use require() for JSON import — "import ... with { type: "json" }" needs TS 5.3+
+const IDL = require("../target/idl/nft_minter.json");
 const PROGRAM_ID = new PublicKey(IDL.address);
 const METADATA_PROGRAM_ID = new PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",

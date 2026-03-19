@@ -14,6 +14,12 @@ on:
     branches:
       - main
 
+env:
+  # Force all JavaScript-based actions to use Node.js 24 runtime.
+  # Node.js 20 actions are deprecated and will stop working June 2026.
+  # This catches composite actions whose internal dependencies still reference @v4.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 # A workflow run is made up of one or more jobs, which run in parallel by default
 # Each job runs in a runner environment specified by runs-on
 jobs:
@@ -22,7 +28,7 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           # Specific to dtolnay/rust-toolchain: Comma-separated string of additional components to install
@@ -35,7 +41,7 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy

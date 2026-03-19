@@ -10,35 +10,27 @@ describe('Carnival', async () => {
   const client = context.banksClient;
   const payer = context.payer;
 
-  class Assignable {
-    constructor(properties) {
-      for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
-      }
-    }
-  }
+  const CarnivalInstructionSchema = {
+    struct: {
+      name: 'string',
+      height: 'u32',
+      ticket_count: 'u32',
+      attraction: 'string',
+      attraction_name: 'string',
+    },
+  };
 
-  class CarnivalInstruction extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(CarnivalInstructionSchema, this));
-    }
-  }
+  type CarnivalInstruction = {
+    name: string;
+    height: number;
+    ticket_count: number;
+    attraction: string;
+    attraction_name: string;
+  };
 
-  const CarnivalInstructionSchema = new Map([
-    [
-      CarnivalInstruction,
-      {
-        kind: 'struct',
-        fields: [
-          ['name', 'string'],
-          ['height', 'u32'],
-          ['ticket_count', 'u32'],
-          ['attraction', 'string'],
-          ['attraction_name', 'string'],
-        ],
-      },
-    ],
-  ]);
+  function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+    return Buffer.from(borsh.serialize(schema, data));
+  }
 
   async function sendCarnivalInstructions(instructionsList: CarnivalInstruction[]) {
     const tx = new Transaction();
@@ -48,7 +40,7 @@ describe('Carnival', async () => {
         new TransactionInstruction({
           keys: [{ pubkey: payer.publicKey, isSigner: true, isWritable: true }],
           programId: PROGRAM_ID,
-          data: ix.toBuffer(),
+          data: borshSerialize(CarnivalInstructionSchema, ix),
         }),
       ).sign(payer);
     }
@@ -57,100 +49,28 @@ describe('Carnival', async () => {
 
   test('Go on some rides!', async () => {
     await sendCarnivalInstructions([
-      new CarnivalInstruction({
-        name: 'Jimmy',
-        height: 36,
-        ticket_count: 15,
-        attraction: 'ride',
-        attraction_name: 'Scrambler',
-      }),
-      new CarnivalInstruction({
-        name: 'Mary',
-        height: 52,
-        ticket_count: 1,
-        attraction: 'ride',
-        attraction_name: 'Ferris Wheel',
-      }),
-      new CarnivalInstruction({
-        name: 'Alice',
-        height: 56,
-        ticket_count: 15,
-        attraction: 'ride',
-        attraction_name: 'Scrambler',
-      }),
-      new CarnivalInstruction({
-        name: 'Bob',
-        height: 49,
-        ticket_count: 6,
-        attraction: 'ride',
-        attraction_name: 'Tilt-a-Whirl',
-      }),
+      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'ride', attraction_name: 'Scrambler' },
+      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'ride', attraction_name: 'Ferris Wheel' },
+      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'ride', attraction_name: 'Scrambler' },
+      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'ride', attraction_name: 'Tilt-a-Whirl' },
     ]);
   });
 
   test('Play some games!', async () => {
     await sendCarnivalInstructions([
-      new CarnivalInstruction({
-        name: 'Jimmy',
-        height: 36,
-        ticket_count: 15,
-        attraction: 'game',
-        attraction_name: 'I Got It!',
-      }),
-      new CarnivalInstruction({
-        name: 'Mary',
-        height: 52,
-        ticket_count: 1,
-        attraction: 'game',
-        attraction_name: 'Ring Toss',
-      }),
-      new CarnivalInstruction({
-        name: 'Alice',
-        height: 56,
-        ticket_count: 15,
-        attraction: 'game',
-        attraction_name: 'Ladder Climb',
-      }),
-      new CarnivalInstruction({
-        name: 'Bob',
-        height: 49,
-        ticket_count: 6,
-        attraction: 'game',
-        attraction_name: 'Ring Toss',
-      }),
+      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'game', attraction_name: 'I Got It!' },
+      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'game', attraction_name: 'Ring Toss' },
+      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'game', attraction_name: 'Ladder Climb' },
+      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'game', attraction_name: 'Ring Toss' },
     ]);
   });
 
   test('Eat some food!', async () => {
     await sendCarnivalInstructions([
-      new CarnivalInstruction({
-        name: 'Jimmy',
-        height: 36,
-        ticket_count: 15,
-        attraction: 'food',
-        attraction_name: 'Taco Shack',
-      }),
-      new CarnivalInstruction({
-        name: 'Mary',
-        height: 52,
-        ticket_count: 1,
-        attraction: 'food',
-        attraction_name: "Larry's Pizza",
-      }),
-      new CarnivalInstruction({
-        name: 'Alice',
-        height: 56,
-        ticket_count: 15,
-        attraction: 'food',
-        attraction_name: "Dough Boy's",
-      }),
-      new CarnivalInstruction({
-        name: 'Bob',
-        height: 49,
-        ticket_count: 6,
-        attraction: 'food',
-        attraction_name: "Dough Boy's",
-      }),
+      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'food', attraction_name: 'Taco Shack' },
+      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'food', attraction_name: "Larry's Pizza" },
+      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'food', attraction_name: "Dough Boy's" },
+      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'food', attraction_name: "Dough Boy's" },
     ]);
   });
 });

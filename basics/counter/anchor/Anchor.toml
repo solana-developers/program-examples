@@ -1,3 +1,6 @@
+[toolchain]
+solana_version = "3.1.8"
+
 [features]
 seeds = false
 skip-lint = false

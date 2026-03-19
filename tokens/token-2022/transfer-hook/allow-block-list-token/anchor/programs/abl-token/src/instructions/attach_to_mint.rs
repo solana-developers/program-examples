@@ -51,7 +51,8 @@ impl AttachToMint<'_> {
         let extra_metas_account = &self.extra_metas_account;
         let metas = get_extra_account_metas()?;
         let mut data = extra_metas_account.try_borrow_mut_data()?;
-        ExtraAccountMetaList::init::<ExecuteInstruction>(&mut data, &metas)?;
+        ExtraAccountMetaList::init::<ExecuteInstruction>(&mut data, &metas)
+            .map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }

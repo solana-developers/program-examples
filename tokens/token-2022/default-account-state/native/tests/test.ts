@@ -6,28 +6,12 @@ import * as borsh from 'borsh';
 import { assert } from 'chai';
 import { start } from 'solana-bankrun';
 
-class Assignable {
-  constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
-  }
-}
 
-class CreateTokenArgs extends Assignable {
-  toBuffer() {
-    return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
-  }
+const CreateTokenArgsSchema = { struct: { token_decimals: 'u8' } };
+
+function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+  return Buffer.from(borsh.serialize(schema, data));
 }
-const CreateTokenArgsSchema = new Map([
-  [
-    CreateTokenArgs,
-    {
-      kind: 'struct',
-      fields: [['token_decimals', 'u8']],
-    },
-  ],
-]);
 
 describe('Create Token', async () => {
   const PROGRAM_ID = PublicKey.unique();
@@ -48,7 +32,7 @@ describe('Create Token', async () => {
 
     const mintKeypair: Keypair = Keypair.generate();
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       token_decimals: 9,
     });
 
@@ -62,7 +46,7 @@ describe('Create Token', async () => {
         { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false }, // Token program
       ],
       programId: PROGRAM_ID,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const tx = new Transaction();

@@ -1,4 +1,3 @@
-import { describe, it } from "node:test";
 import * as anchor from "@coral-xyz/anchor";
 import { ASSOCIATED_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import {
