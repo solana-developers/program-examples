@@ -854,6 +854,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "chainlink_solana"
+version = "2.0.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4d7593d95e79bd77af1bf2634e7ae8de1567027c0ca8d396a555b84036298dd4"
+dependencies = [
+ "borsh 0.10.4",
+ "bytemuck",
+ "solana-program 2.3.0",
+]
+
+[[package]]
 name = "checking-accounts-anchor-program-example"
 version = "0.1.0"
 dependencies = [
@@ -1964,6 +1975,14 @@ dependencies = [
  "keccak",
  "rand_core 0.6.4",
  "zeroize",
+]
+
+[[package]]
+name = "native-chainlink_example"
+version = "0.1.0"
+dependencies = [
+ "chainlink_solana",
+ "solana-program 3.0.0",
 ]
 
 [[package]]
