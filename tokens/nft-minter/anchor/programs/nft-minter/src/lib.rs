@@ -28,7 +28,7 @@ pub mod nft_minter {
         // Invoking the mint_to instruction on the token program
         mint_to(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 MintTo {
                     mint: ctx.accounts.mint_account.to_account_info(),
                     to: ctx.accounts.associated_token_account.to_account_info(),
@@ -43,7 +43,7 @@ pub mod nft_minter {
         // Invoking the create_metadata_account_v3 instruction on the token metadata program
         create_metadata_accounts_v3(
             CpiContext::new(
-                ctx.accounts.token_metadata_program.to_account_info(),
+                ctx.accounts.token_metadata_program.key(),
                 CreateMetadataAccountsV3 {
                     metadata: ctx.accounts.metadata_account.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),
@@ -73,7 +73,7 @@ pub mod nft_minter {
         // Invoking the create_master_edition_v3 instruction on the token metadata program
         create_master_edition_v3(
             CpiContext::new(
-                ctx.accounts.token_metadata_program.to_account_info(),
+                ctx.accounts.token_metadata_program.key(),
                 CreateMasterEditionV3 {
                     edition: ctx.accounts.edition_account.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),

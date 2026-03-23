@@ -14,7 +14,6 @@ use {
 };
 
 #[derive(Accounts)]
-#[instruction(decimals: u8)]
 pub struct TransferHook<'info> {
     /// CHECK: Sender token account
     #[account()]
@@ -58,8 +57,12 @@ impl<'info> TransferHook<'info> {
     pub fn assert_is_transferring(&self) -> Result<()> {
         let source_token_info = self.source_token_account.to_account_info();
         let mut account_data_ref = source_token_info.try_borrow_mut_data()?;
-        let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)?;
-        let account_extension = account.get_extension_mut::<TransferHookAccount>()?;
+        // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
+        let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)
+            .map_err(|_| ProgramError::InvalidAccountData)?;
+        let account_extension = account.get_extension_mut::<TransferHookAccount>()
+            .map_err(|_| ProgramError::InvalidAccountData)?;
 
         if !bool::from(account_extension.transferring) {
             return err!(TransferError::IsNotCurrentlyTransferring);

@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import { burnChecked, createAccount, getAccount, mintTo, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { PermanentDelegate } from '../target/types/permanent_delegate';
 

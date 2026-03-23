@@ -27,7 +27,7 @@ pub mod rent_example {
 
         system_program::create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 system_program::CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.new_account.to_account_info(),

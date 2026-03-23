@@ -1,5 +1,5 @@
-import type { Program } from "@coral-xyz/anchor";
-import * as anchor from "@coral-xyz/anchor";
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
 import { assert } from "chai";
 import type { Hand } from "../target/types/hand.ts";
 import type { Lever } from "../target/types/lever.ts";

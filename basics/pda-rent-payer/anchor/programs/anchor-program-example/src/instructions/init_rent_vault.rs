@@ -22,7 +22,7 @@ pub struct InitRentVault<'info> {
 pub fn init_rent_vault(ctx: Context<InitRentVault>, fund_lamports: u64) -> Result<()> {
     transfer(
         CpiContext::new(
-            ctx.accounts.system_program.to_account_info(),
+            ctx.accounts.system_program.key(),
             Transfer {
                 from: ctx.accounts.payer.to_account_info(),
                 to: ctx.accounts.rent_vault.to_account_info(),

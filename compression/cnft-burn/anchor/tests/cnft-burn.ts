@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
 import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
 import type { CnftBurn } from '../target/types/cnft_burn';

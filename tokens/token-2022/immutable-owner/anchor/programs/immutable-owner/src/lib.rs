@@ -29,7 +29,7 @@ pub mod immutable_owner {
         // Invoke System Program to create new account with space for token account and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.token_account.to_account_info(),
@@ -42,7 +42,7 @@ pub mod immutable_owner {
 
         // Initialize the token account with the immutable owner extension
         immutable_owner_initialize(CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             ImmutableOwnerInitialize {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 token_account: ctx.accounts.token_account.to_account_info(),
@@ -51,7 +51,7 @@ pub mod immutable_owner {
 
         // Initialize the standard token account data
         initialize_account3(CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             InitializeAccount3 {
                 account: ctx.accounts.token_account.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),

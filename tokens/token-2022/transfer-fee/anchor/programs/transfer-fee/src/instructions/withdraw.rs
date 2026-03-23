@@ -19,7 +19,7 @@ pub struct Withdraw<'info> {
 // this transfers fees on the mint account to the specified token account
 pub fn process_withdraw(ctx: Context<Withdraw>) -> Result<()> {
     withdraw_withheld_tokens_from_mint(CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
+        ctx.accounts.token_program.key(),
         WithdrawWithheldTokensFromMint {
             token_program_id: ctx.accounts.token_program.to_account_info(),
             mint: ctx.accounts.mint_account.to_account_info(),

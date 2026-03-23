@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import { assert } from "chai";
 import Idl from "../target/idl/rent_example.json" with { type: "json" };
 import type { RentExample } from "../target/types/rent_example.ts";

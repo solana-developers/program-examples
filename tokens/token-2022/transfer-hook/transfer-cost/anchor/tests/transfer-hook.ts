@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createApproveInstruction,

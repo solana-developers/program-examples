@@ -8,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 token_minter = "3LFrPHqwk5jMrmiz48BFj6NV2k4NjobgTe1jChzx3JGD"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

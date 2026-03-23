@@ -14,13 +14,22 @@ use anchor_spl::{
 use spl_tlv_account_resolution::{
     account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
-use spl_transfer_hook_interface::instruction::ExecuteInstruction;
+use spl_discriminator::SplDiscriminate;
+use spl_transfer_hook_interface::instruction::{
+    ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
+};
 use std::{cell::RefMut, str::FromStr};
 
 // transfer-hook program that charges a SOL fee on token transfer
 // use a delegate and wrapped SOL because signers from initial transfer are not accessible
 
 declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
+
+/// Convert anchor-lang's Pubkey (solana-pubkey 3.x) to the spl crate's Pubkey (solana-pubkey 2.x).
+/// Both are #[repr(transparent)] over [u8; 32], so byte-level conversion is safe.
+fn transmute_pubkey(key: &Pubkey) -> spl_tlv_account_resolution::solana_pubkey::Pubkey {
+    spl_tlv_account_resolution::solana_pubkey::Pubkey::from(key.to_bytes())
+}
 
 #[error_code]
 pub enum TransferError {
@@ -34,22 +43,24 @@ pub enum TransferError {
 pub mod transfer_hook {
     use super::*;
 
-    #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
+    #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
-        )?;
+        ).map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }
 
-    #[interface(spl_transfer_hook_interface::execute)]
+    #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&ctx)?;
@@ -86,7 +97,7 @@ pub mod transfer_hook {
         // transfer lamports amount equal to token transfer amount
         transfer_checked(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 TransferChecked {
                     from: ctx.accounts.sender_wsol_token_account.to_account_info(),
                     mint: ctx.accounts.wsol_mint.to_account_info(),
@@ -105,8 +116,12 @@ pub mod transfer_hook {
 fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
     let source_token_info = ctx.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
-    let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)?;
-    let account_extension = account.get_extension_mut::<TransferHookAccount>()?;
+    // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
+    // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
+    let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    let account_extension = account.get_extension_mut::<TransferHookAccount>()
+        .map_err(|_| ProgramError::InvalidAccountData)?;
 
     if !bool::from(account_extension.transferring) {
         return err!(TransferError::IsNotCurrentlyTransferring);
@@ -125,12 +140,13 @@ pub struct InitializeExtraAccountMetaList<'info> {
         init,
         seeds = [b"extra-account-metas", mint.key().as_ref()],
         bump,
+        // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas()?.len()
-        )?,
+            InitializeExtraAccountMetaList::extra_account_metas_count()
+        ).unwrap(),
         payer = payer
     )]
-    pub extra_account_meta_list: AccountInfo<'info>,
+    pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(init, seeds = [b"counter"], bump, payer = payer, space = 9)]
     pub counter_account: Account<'info, CounterAccount>,
@@ -145,17 +161,27 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
 
         // index 0-3 are the accounts required for token transfer (source, mint, destination, owner)
         // index 4 is address of ExtraAccountMetaList account
+
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types.
+        // Pubkey types also differ (solana-pubkey 2.x vs 3.x), so we convert via bytes using
+        // transmute_pubkey() — both are #[repr(transparent)] over [u8; 32].
+        let wsol_mint = transmute_pubkey(
+            &Pubkey::from_str("So11111111111111111111111111111111111111112").unwrap()
+        );
+        let token_program_id = transmute_pubkey(&Token::id());
+        let ata_program_id = transmute_pubkey(&AssociatedToken::id());
+
         Ok(vec![
             // index 5, wrapped SOL mint
-            ExtraAccountMeta::new_with_pubkey(
-                &Pubkey::from_str("So11111111111111111111111111111111111111112").unwrap(),
-                false,
-                false,
-            )?,
+            ExtraAccountMeta::new_with_pubkey(&wsol_mint, false, false)
+                .map_err(|_| ProgramError::InvalidArgument)?,
             // index 6, token program (for wsol token transfer)
-            ExtraAccountMeta::new_with_pubkey(&Token::id(), false, false)?,
+            ExtraAccountMeta::new_with_pubkey(&token_program_id, false, false)
+                .map_err(|_| ProgramError::InvalidArgument)?,
             // index 7, associated token program
-            ExtraAccountMeta::new_with_pubkey(&AssociatedToken::id(), false, false)?,
+            ExtraAccountMeta::new_with_pubkey(&ata_program_id, false, false)
+                .map_err(|_| ProgramError::InvalidArgument)?,
             // index 8, delegate PDA
             ExtraAccountMeta::new_with_seeds(
                 &[Seed::Literal {
@@ -163,7 +189,7 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 }],
                 false, // is_signer
                 true,  // is_writable
-            )?,
+            ).map_err(|_| ProgramError::InvalidArgument)?,
             // index 9, delegate wrapped SOL token account
             ExtraAccountMeta::new_external_pda_with_seeds(
                 7, // associated token program index
@@ -174,7 +200,7 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 ],
                 false, // is_signer
                 true,  // is_writable
-            )?,
+            ).map_err(|_| ProgramError::InvalidArgument)?,
             // index 10, sender wrapped SOL token account
             ExtraAccountMeta::new_external_pda_with_seeds(
                 7, // associated token program index
@@ -185,15 +211,20 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 ],
                 false, // is_signer
                 true,  // is_writable
-            )?,
+            ).map_err(|_| ProgramError::InvalidArgument)?,
             ExtraAccountMeta::new_with_seeds(
                 &[Seed::Literal {
                     bytes: b"counter".to_vec(),
                 }],
                 false, // is_signer
                 true,  // is_writable
-            )?,
+            ).map_err(|_| ProgramError::InvalidArgument)?,
         ])
+    }
+
+    /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
+    pub fn extra_account_metas_count() -> usize {
+        7 // wsol_mint, token_program, ata_program, delegate, delegate_wsol, sender_wsol, counter
     }
 }
 

@@ -8,8 +8,7 @@ skip-lint = false
 [programs.devnet]
 cnft_burn = "C6qxH8n6mZxrrbtMtYWYSp8JR8vkQ55X1o4EBg7twnMv"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "devnet"

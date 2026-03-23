@@ -1,4 +1,4 @@
-import anchor from "@coral-xyz/anchor";
+import anchor from "@anchor-lang/core";
 import {
 	Keypair,
 	PublicKey,

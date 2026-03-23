@@ -1,5 +1,5 @@
-import type { Program } from "@coral-xyz/anchor";
-import * as anchor from "@coral-xyz/anchor";
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
 import { sendAndConfirmTransaction } from "@solana/web3.js";
 import BN from "bn.js";
 import type { Anchor } from "../target/types/anchor";

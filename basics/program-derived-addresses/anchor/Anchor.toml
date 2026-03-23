@@ -6,8 +6,7 @@ seeds = false
 [programs.localnet]
 program_derived_addresses_program = "oCCQRZyAbVxujyd8m57MPmDzZDmy2FoKW4ULS7KofCE"
 
-[registry]
-url = "https://anchor.projectserum.com"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

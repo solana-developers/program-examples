@@ -20,10 +20,15 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = "0.32.1"
-mpl-bubblegum = "2.1.1"
-spl-account-compression = { version = "1.0.0", features = ["no-entrypoint", "cpi"] }
+# Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = "1.0.0-rc.5"
+# mpl-bubblegum and spl-account-compression removed: they depend on solana-program 2.x
+# which is incompatible with Anchor 1.0's solana 3.x types. CPI calls are built manually
+# using raw invoke() with hardcoded program IDs and discriminators. Bubblegum types
+# (MetadataArgs, LeafSchema, etc.) are re-implemented in bubblegum_types.rs.
+borsh = "1"
 sha2 = "0.10"
+sha3 = "0.10"
 ahash = "=0.8.7"
 
 [lints.rust]

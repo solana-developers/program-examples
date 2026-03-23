@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import type { Carnival } from "../target/types/carnival.ts";
 
 describe("Carnival", () => {

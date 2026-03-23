@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import { PublicKey } from "@solana/web3.js";
 import { assert } from "chai";
 import type { ProgramDerivedAddressesProgram } from "../target/types/program_derived_addresses_program.ts";

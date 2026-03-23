@@ -14,7 +14,10 @@ use anchor_spl::{
 use spl_tlv_account_resolution::{
     account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
-use spl_transfer_hook_interface::instruction::ExecuteInstruction;
+use spl_discriminator::SplDiscriminate;
+use spl_transfer_hook_interface::instruction::{
+    ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
+};
 
 declare_id!("DrWbQtYJGtsoRwzKqAbHKHKsCJJfpysudF39GBVFSxub");
 
@@ -28,7 +31,7 @@ pub enum TransferError {
 pub mod transfer_hook {
     use super::*;
 
-    #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
+    #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
@@ -38,14 +41,16 @@ pub mod transfer_hook {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
-        )?;
+        ).map_err(|_| ProgramError::InvalidAccountData)?;
         Ok(())
     }
 
-    #[interface(spl_transfer_hook_interface::execute)]
+    #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn transfer_hook(ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&ctx)?;
@@ -89,8 +94,12 @@ pub mod transfer_hook {
 fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
     let source_token_info = ctx.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
-    let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)?;
-    let account_extension = account.get_extension_mut::<TransferHookAccount>()?;
+    // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
+    // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
+    let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)
+        .map_err(|_| ProgramError::InvalidAccountData)?;
+    let account_extension = account.get_extension_mut::<TransferHookAccount>()
+        .map_err(|_| ProgramError::InvalidAccountData)?;
 
     if !bool::from(account_extension.transferring) {
         return err!(TransferError::IsNotCurrentlyTransferring);
@@ -109,12 +118,13 @@ pub struct InitializeExtraAccountMetaList<'info> {
         init,
         seeds = [b"extra-account-metas", mint.key().as_ref()],
         bump,
+        // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas()?.len()
-        )?,
+            InitializeExtraAccountMetaList::extra_account_metas_count()
+        ).unwrap(),
         payer = payer
     )]
-    pub extra_account_meta_list: AccountInfo<'info>,
+    pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
     pub system_program: Program<'info, System>,
     #[account(init_if_needed, seeds = [b"white_list"], bump, payer = payer, space = 400)]
@@ -124,13 +134,20 @@ pub struct InitializeExtraAccountMetaList<'info> {
 // Define extra account metas to store on extra_account_meta_list account
 impl<'info> InitializeExtraAccountMetaList<'info> {
     pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         Ok(vec![ExtraAccountMeta::new_with_seeds(
             &[Seed::Literal {
                 bytes: "white_list".as_bytes().to_vec(),
             }],
             false, // is_signer
             true,  // is_writable
-        )?])
+        ).map_err(|_| ProgramError::InvalidArgument)?])
+    }
+
+    /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
+    pub fn extra_account_metas_count() -> usize {
+        1 // one extra account: the whitelist PDA
     }
 }
 
@@ -158,7 +175,7 @@ pub struct TransferHook<'info> {
 pub struct AddToWhiteList<'info> {
     /// CHECK: New account to add to white list
     #[account()]
-    pub new_account: AccountInfo<'info>,
+    pub new_account: UncheckedAccount<'info>,
     #[account(
         mut,
         seeds = [b"white_list"],
