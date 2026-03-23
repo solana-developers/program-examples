@@ -11,10 +11,10 @@ use anchor_spl::{
     },
     token_interface::{transfer_checked, Mint, TokenAccount, TransferChecked},
 };
+use spl_discriminator::SplDiscriminate;
 use spl_tlv_account_resolution::{
     account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
-use spl_discriminator::SplDiscriminate;
 use spl_transfer_hook_interface::instruction::{
     ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
 };
@@ -24,12 +24,6 @@ use std::{cell::RefMut, str::FromStr};
 // use a delegate and wrapped SOL because signers from initial transfer are not accessible
 
 declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
-
-/// Convert anchor-lang's Pubkey (solana-pubkey 3.x) to the spl crate's Pubkey (solana-pubkey 2.x).
-/// Both are #[repr(transparent)] over [u8; 32], so byte-level conversion is safe.
-fn transmute_pubkey(key: &Pubkey) -> spl_tlv_account_resolution::solana_pubkey::Pubkey {
-    spl_tlv_account_resolution::solana_pubkey::Pubkey::from(key.to_bytes())
-}
 
 #[error_code]
 pub enum TransferError {
@@ -50,12 +44,11 @@ pub mod transfer_hook {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
-        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
-        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
-        ).map_err(|_| ProgramError::InvalidAccountData)?;
+        )
+        .map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }
@@ -67,7 +60,6 @@ pub mod transfer_hook {
 
         if amount > 50 {
             msg!("The amount is too big {0}", amount);
-            //return err!(TransferError::AmountTooBig);
         }
 
         ctx.accounts.counter_account.counter += 1;
@@ -77,7 +69,6 @@ pub mod transfer_hook {
             ctx.accounts.counter_account.counter
         );
 
-        // All accounts are non writable so you can not burn any of them for example here
         msg!(
             "Is writable mint {0}",
             ctx.accounts.mint.to_account_info().is_writable
@@ -116,11 +107,10 @@ pub mod transfer_hook {
 fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
     let source_token_info = ctx.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
-    // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
-    // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
     let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)
         .map_err(|_| ProgramError::InvalidAccountData)?;
-    let account_extension = account.get_extension_mut::<TransferHookAccount>()
+    let account_extension = account
+        .get_extension_mut::<TransferHookAccount>()
         .map_err(|_| ProgramError::InvalidAccountData)?;
 
     if !bool::from(account_extension.transferring) {
@@ -162,15 +152,9 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
         // index 0-3 are the accounts required for token transfer (source, mint, destination, owner)
         // index 4 is address of ExtraAccountMetaList account
 
-        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
-        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types.
-        // Pubkey types also differ (solana-pubkey 2.x vs 3.x), so we convert via bytes using
-        // transmute_pubkey() — both are #[repr(transparent)] over [u8; 32].
-        let wsol_mint = transmute_pubkey(
-            &Pubkey::from_str("So11111111111111111111111111111111111111112").unwrap()
-        );
-        let token_program_id = transmute_pubkey(&Token::id());
-        let ata_program_id = transmute_pubkey(&AssociatedToken::id());
+        let wsol_mint = Pubkey::from_str("So11111111111111111111111111111111111111112").unwrap();
+        let token_program_id = Token::id();
+        let ata_program_id = AssociatedToken::id();
 
         Ok(vec![
             // index 5, wrapped SOL mint
@@ -189,7 +173,8 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 }],
                 false, // is_signer
                 true,  // is_writable
-            ).map_err(|_| ProgramError::InvalidArgument)?,
+            )
+            .map_err(|_| ProgramError::InvalidArgument)?,
             // index 9, delegate wrapped SOL token account
             ExtraAccountMeta::new_external_pda_with_seeds(
                 7, // associated token program index
@@ -200,7 +185,8 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 ],
                 false, // is_signer
                 true,  // is_writable
-            ).map_err(|_| ProgramError::InvalidArgument)?,
+            )
+            .map_err(|_| ProgramError::InvalidArgument)?,
             // index 10, sender wrapped SOL token account
             ExtraAccountMeta::new_external_pda_with_seeds(
                 7, // associated token program index
@@ -211,14 +197,16 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
                 ],
                 false, // is_signer
                 true,  // is_writable
-            ).map_err(|_| ProgramError::InvalidArgument)?,
+            )
+            .map_err(|_| ProgramError::InvalidArgument)?,
             ExtraAccountMeta::new_with_seeds(
                 &[Seed::Literal {
                     bytes: b"counter".to_vec(),
                 }],
                 false, // is_signer
                 true,  // is_writable
-            ).map_err(|_| ProgramError::InvalidArgument)?,
+            )
+            .map_err(|_| ProgramError::InvalidArgument)?,
         ])
     }
 
@@ -232,19 +220,24 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
 // The first 4 accounts are the accounts required for token transfer (source, mint, destination, owner)
 // Remaining accounts are the extra accounts required from the ExtraAccountMetaList account
 // These accounts are provided via CPI to this program from the token2022 program
+//
+// Box<InterfaceAccount> used for source_token, destination_token, wsol_mint,
+// delegate_wsol_token_account, and sender_wsol_token_account to avoid exceeding
+// the 4096-byte BPF stack frame limit in try_accounts deserialization.
+// This struct has 12 accounts — without Box, the generated code uses ~4160 bytes of stack.
 #[derive(Accounts)]
 pub struct TransferHook<'info> {
     #[account(token::mint = mint, token::authority = owner)]
-    pub source_token: InterfaceAccount<'info, TokenAccount>,
-    pub mint: InterfaceAccount<'info, Mint>,
+    pub source_token: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(token::mint = mint)]
-    pub destination_token: InterfaceAccount<'info, TokenAccount>,
+    pub destination_token: Box<InterfaceAccount<'info, TokenAccount>>,
     /// CHECK: source token account owner, can be SystemAccount or PDA owned by another program
     pub owner: UncheckedAccount<'info>,
     /// CHECK: ExtraAccountMetaList Account,
     #[account(seeds = [b"extra-account-metas", mint.key().as_ref()], bump)]
     pub extra_account_meta_list: UncheckedAccount<'info>,
-    pub wsol_mint: InterfaceAccount<'info, Mint>,
+    pub wsol_mint: Box<InterfaceAccount<'info, Mint>>,
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     #[account(
@@ -258,13 +251,13 @@ pub struct TransferHook<'info> {
         token::mint = wsol_mint,
         token::authority = delegate,
     )]
-    pub delegate_wsol_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub delegate_wsol_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         mut,
         token::mint = wsol_mint,
         token::authority = owner,
     )]
-    pub sender_wsol_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub sender_wsol_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(seeds = [b"counter"], bump)]
     pub counter_account: Account<'info, CounterAccount>,
 }
