@@ -1,4 +1,4 @@
-import * as anchor from '@coral-xyz/anchor';
+import * as anchor from '@anchor-lang/core';
 import { createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 import { type Connection, Keypair, PublicKey, type Signer } from '@solana/web3.js';
 import { BN } from 'bn.js';

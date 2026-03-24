@@ -3,7 +3,7 @@
 import { PublicKey } from '@solana/web3.js'
 import { useAblTokenProgram } from './abl-token-data-access'
 import { Button } from '@/components/ui/button'
-import { BN } from '@coral-xyz/anchor'
+import { BN } from '@anchor-lang/core'
 import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 

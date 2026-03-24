@@ -9,7 +9,7 @@ import { useCluster } from '../cluster/cluster-data-access'
 import { useAnchorProvider } from '../solana/solana-provider'
 import { useTransactionToast } from '../use-transaction-toast'
 import { toast } from 'sonner'
-import { BN } from '@coral-xyz/anchor'
+import { BN } from '@anchor-lang/core'
 import { createAssociatedTokenAccountIdempotentInstruction, createMintToCheckedInstruction, getAssociatedTokenAddressSync, getMint, getPermanentDelegate, getTokenMetadata, getTransferHook, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 
 export function useHasTransferHookEnabled(mint: PublicKey) {

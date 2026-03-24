@@ -6,7 +6,7 @@
 		"postinstall": "zx prepare.mjs"
 	},
 	"dependencies": {
-		"@coral-xyz/anchor": "0.32.1",
+		"@anchor-lang/core": "1.0.0-rc.5",
 		"@metaplex-foundation/mpl-token-metadata": "^3.1.2",
 		"@metaplex-foundation/umi": "^0.9.0",
 		"@solana/spl-token": "^0.4.6",
@@ -23,7 +23,7 @@
 		"prettier": "^2.6.2",
 		"solana-bankrun": "^0.3.0",
 		"ts-mocha": "^10.0.0",
-		"typescript": "^4.3.5",
+		"typescript": "^5.3.3",
 		"zx": "^8.1.4"
 	}
 }

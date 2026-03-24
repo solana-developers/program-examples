@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import { closeAccount, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { MintCloseAuthority } from '../target/types/mint_close_authority';
 

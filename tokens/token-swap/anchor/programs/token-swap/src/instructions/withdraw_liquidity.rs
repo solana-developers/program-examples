@@ -33,7 +33,7 @@ pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Resul
         .to_num::<u64>();
     token::transfer(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Transfer {
                 from: ctx.accounts.pool_account_a.to_account_info(),
                 to: ctx.accounts.depositor_account_a.to_account_info(),
@@ -55,7 +55,7 @@ pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Resul
         .to_num::<u64>();
     token::transfer(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Transfer {
                 from: ctx.accounts.pool_account_b.to_account_info(),
                 to: ctx.accounts.depositor_account_b.to_account_info(),
@@ -70,7 +70,7 @@ pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Resul
     // It will fail if the amount is invalid
     token::burn(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Burn {
                 mint: ctx.accounts.mint_liquidity.to_account_info(),
                 from: ctx.accounts.depositor_account_liquidity.to_account_info(),

@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import anchor from '@coral-xyz/anchor';
+import anchor from '@anchor-lang/core';
 const BN = anchor.BN;
 import {
   createAssociatedTokenAccountIdempotentInstruction,

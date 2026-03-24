@@ -8,8 +8,7 @@ skip-lint = false
 [programs.devnet]
 cnft_vault = "Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "devnet"

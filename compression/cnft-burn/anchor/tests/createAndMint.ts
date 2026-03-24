@@ -12,7 +12,7 @@
   less console logging and explanation of what is occurring
 */
 
-import * as anchor from '@coral-xyz/anchor';
+import * as anchor from '@anchor-lang/core';
 import { type MetadataArgs, TokenProgramVersion, TokenStandard } from '@metaplex-foundation/mpl-bubblegum';
 import type { CreateMetadataAccountArgsV3 } from '@metaplex-foundation/mpl-token-metadata';
 import type { ValidDepthSizePair } from '@solana/spl-account-compression';

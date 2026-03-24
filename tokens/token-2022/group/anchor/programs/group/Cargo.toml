@@ -20,8 +20,8 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = "0.32.1"
-anchor-spl = "0.32.1"
+anchor-lang = "1.0.0-rc.5"  # Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-spl = "1.0.0-rc.5"  # Anchor 1.0.0-rc.5 — pin to RC until stable release
 spl-token-group-interface = "0.2.5"
 
 [lints.rust]

@@ -28,7 +28,7 @@ pub mod non_transferable {
         // Invoke System Program to create new account with space for mint and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.mint_account.to_account_info(),
@@ -42,7 +42,7 @@ pub mod non_transferable {
         // Initialize the NonTransferable extension
         // This instruction must come before the instruction to initialize the mint data
         non_transferable_mint_initialize(CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             NonTransferableMintInitialize {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),
@@ -52,7 +52,7 @@ pub mod non_transferable {
         // Initialize the standard mint account data
         initialize_mint2(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 InitializeMint2 {
                     mint: ctx.accounts.mint_account.to_account_info(),
                 },

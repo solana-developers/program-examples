@@ -27,7 +27,7 @@ pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
     // Create the new account, transferring lamports from the rent vault to the new account
     create_account(
         CpiContext::new(
-            ctx.accounts.system_program.to_account_info(),
+            ctx.accounts.system_program.key(),
             CreateAccount {
                 from: ctx.accounts.rent_vault.to_account_info(), // From pubkey
                 to: ctx.accounts.new_account.to_account_info(),  // To pubkey

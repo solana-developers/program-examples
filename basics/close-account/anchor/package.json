@@ -4,7 +4,7 @@
 		"lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
 	},
 	"dependencies": {
-		"@coral-xyz/anchor": "0.32.1",
+		"@anchor-lang/core": "1.0.0-rc.5",
 		"@solana/web3.js": "^1.98.4",
 		"litesvm": "^0.4.0"
 	},
@@ -17,7 +17,7 @@
 		"mocha": "^9.0.3",
 		"solana-bankrun": "^0.3.0",
 		"ts-mocha": "^10.0.0",
-		"typescript": "^4.3.5"
+		"typescript": "^5.3.3"
 	},
 	"type": "module"
 }

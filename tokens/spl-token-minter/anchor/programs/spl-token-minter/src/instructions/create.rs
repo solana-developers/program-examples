@@ -50,7 +50,7 @@ pub fn create_token(
     // Invoking the create_metadata_account_v3 instruction on the token metadata program
     create_metadata_accounts_v3(
         CpiContext::new(
-            ctx.accounts.token_metadata_program.to_account_info(),
+            ctx.accounts.token_metadata_program.key(),
             CreateMetadataAccountsV3 {
                 metadata: ctx.accounts.metadata_account.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),

@@ -4,6 +4,10 @@ mod state;
 
 use anchor_lang::prelude::*;
 use instructions::*;
+use spl_discriminator::SplDiscriminate;
+use spl_transfer_hook_interface::instruction::{
+    ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
+};
 
 declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
 
@@ -16,7 +20,7 @@ pub mod transfer_switch {
         ctx.accounts.configure_admin()
     }
 
-    #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
+    #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_metas_list(
         ctx: Context<InitializeExtraAccountMetas>,
     ) -> Result<()> {
@@ -27,8 +31,8 @@ pub mod transfer_switch {
         ctx.accounts.switch(on)
     }
 
-    #[interface(spl_transfer_hook_interface::execute)]
-    pub fn transfer_hook(ctx: Context<TransferHook>) -> Result<()> {
+    #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
+    pub fn transfer_hook(ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
         ctx.accounts.assert_is_transferring()?;
         ctx.accounts.assert_switch_is_on()
     }

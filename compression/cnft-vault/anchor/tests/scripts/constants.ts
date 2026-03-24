@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import type { CnftVault } from "../../target/types/cnft_vault";
 import IDL from "../../target/types/cnft_vault";
 import { loadWalletKey } from "../utils";

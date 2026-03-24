@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import { expect } from 'chai';
 import type { SwapExample } from '../target/types/swap_example';
 import { createValues, expectRevert, type TestValues } from './utils';

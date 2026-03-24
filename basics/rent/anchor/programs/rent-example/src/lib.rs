@@ -19,7 +19,8 @@ pub mod rent_example {
 
         // Determine the necessary minimum rent by calculating the account's size
         //
-        let account_span = (address_data.try_to_vec()?).len();
+        // borsh 1.x: try_to_vec() removed, use borsh::to_vec() instead
+        let account_span = anchor_lang::prelude::borsh::to_vec(&address_data)?.len();
         let lamports_required = (Rent::get()?).minimum_balance(account_span);
 
         msg!("Account span: {}", &account_span);
@@ -27,7 +28,7 @@ pub mod rent_example {
 
         system_program::create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 system_program::CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.new_account.to_account_info(),

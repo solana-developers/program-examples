@@ -20,10 +20,13 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = {version = "0.32.1", features = ["interface-instructions"]}
-anchor-spl = "0.32.1"
-spl-tlv-account-resolution = "0.9.0"
-spl-transfer-hook-interface = "0.9.0"
+# Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = "1.0.0-rc.5"
+anchor-spl = "1.0.0-rc.5"
+# SPL crates v3.x-compatible — uses solana-program-error 3.x matching anchor-lang 1.0
+spl-discriminator = "0.5.2"
+spl-tlv-account-resolution = "0.11.1"
+spl-transfer-hook-interface = "2.1.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -1,14 +1,83 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::{
+    instruction::{AccountMeta, Instruction},
+    program::invoke_signed,
+};
+use borsh::BorshSerialize;
 
 declare_id!("Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D");
+
+/// mpl-bubblegum program ID (BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY)
+const MPL_BUBBLEGUM_ID: Pubkey = Pubkey::new_from_array([
+    0x98, 0x8b, 0x80, 0xeb, 0x79, 0x35, 0x28, 0x69, 0xb2, 0x24, 0x74, 0x5f, 0x59, 0xdd, 0xbf,
+    0x8a, 0x26, 0x58, 0xca, 0x13, 0xdc, 0x68, 0x81, 0x21, 0x26, 0x35, 0x1c, 0xae, 0x07, 0xc1,
+    0xa5, 0xa5,
+]);
+
+/// SPL Account Compression program ID (cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK)
+const SPL_ACCOUNT_COMPRESSION_ID: Pubkey = Pubkey::new_from_array([
+    0x09, 0x2a, 0x13, 0xee, 0x95, 0xc4, 0x1c, 0xba, 0x08, 0xa6, 0x7f, 0x5a, 0xc6, 0x7e, 0x8d,
+    0xf7, 0xe1, 0xda, 0x11, 0x62, 0x5e, 0x1d, 0x64, 0x13, 0x7f, 0x8f, 0x4f, 0x23, 0x83, 0x03,
+    0x7f, 0x14,
+]);
+
+/// Transfer instruction discriminator from mpl-bubblegum
+const TRANSFER_DISCRIMINATOR: [u8; 8] = [163, 52, 200, 231, 140, 3, 69, 186];
+
+/// Instruction arguments for mpl-bubblegum Transfer, serialized with borsh
+#[derive(BorshSerialize)]
+struct TransferArgs {
+    root: [u8; 32],
+    data_hash: [u8; 32],
+    creator_hash: [u8; 32],
+    nonce: u64,
+    index: u32,
+}
 
 #[derive(Clone)]
 pub struct SPLCompression;
 
 impl anchor_lang::Id for SPLCompression {
     fn id() -> Pubkey {
-        spl_account_compression::id()
+        SPL_ACCOUNT_COMPRESSION_ID
     }
+}
+
+/// Build a mpl-bubblegum Transfer instruction from pubkeys and args.
+/// This avoids using mpl-bubblegum's CPI wrapper which requires solana-program 2.x AccountInfo.
+fn build_transfer_instruction(
+    tree_config: Pubkey,
+    leaf_owner: Pubkey,
+    leaf_delegate: Pubkey,
+    new_leaf_owner: Pubkey,
+    merkle_tree: Pubkey,
+    log_wrapper: Pubkey,
+    compression_program: Pubkey,
+    system_program: Pubkey,
+    remaining_accounts: &[AccountMeta],
+    args: TransferArgs,
+) -> Result<Instruction> {
+    let mut accounts = Vec::with_capacity(8 + remaining_accounts.len());
+    accounts.push(AccountMeta::new_readonly(tree_config, false));
+    // leaf_owner is a signer (PDA signs via invoke_signed)
+    accounts.push(AccountMeta::new_readonly(leaf_owner, true));
+    // leaf_delegate = leaf_owner, not an additional signer
+    accounts.push(AccountMeta::new_readonly(leaf_delegate, false));
+    accounts.push(AccountMeta::new_readonly(new_leaf_owner, false));
+    accounts.push(AccountMeta::new(merkle_tree, false));
+    accounts.push(AccountMeta::new_readonly(log_wrapper, false));
+    accounts.push(AccountMeta::new_readonly(compression_program, false));
+    accounts.push(AccountMeta::new_readonly(system_program, false));
+    accounts.extend_from_slice(remaining_accounts);
+
+    let mut data = TRANSFER_DISCRIMINATOR.to_vec();
+    args.serialize(&mut data)?;
+
+    Ok(Instruction {
+        program_id: MPL_BUBBLEGUM_ID,
+        accounts,
+        data,
+    })
 }
 
 #[program]
@@ -16,7 +85,7 @@ pub mod cnft_vault {
     use super::*;
 
     pub fn withdraw_cnft<'info>(
-        ctx: Context<'_, '_, '_, 'info, Withdraw<'info>>,
+        ctx: Context<'info, Withdraw<'info>>,
         root: [u8; 32],
         data_hash: [u8; 32],
         creator_hash: [u8; 32],
@@ -29,42 +98,50 @@ pub mod cnft_vault {
             ctx.accounts.merkle_tree.key()
         );
 
-        let tree_config = ctx.accounts.tree_authority.to_account_info();
-        let leaf_owner = ctx.accounts.leaf_owner.to_account_info();
-        let new_leaf_owner = ctx.accounts.new_leaf_owner.to_account_info();
-        let merkle_tree = ctx.accounts.merkle_tree.to_account_info();
-        let log_wrapper = ctx.accounts.log_wrapper.to_account_info();
-        let compression_program = ctx.accounts.compression_program.to_account_info();
-        let system_program = ctx.accounts.system_program.to_account_info();
+        let proof_metas: Vec<AccountMeta> = ctx
+            .remaining_accounts
+            .iter()
+            .map(|acc| AccountMeta::new_readonly(acc.key(), false))
+            .collect();
 
-        let transfer_cpi = mpl_bubblegum::instructions::TransferCpi::new(
-            &ctx.accounts.bubblegum_program,
-            mpl_bubblegum::instructions::TransferCpiAccounts {
-                tree_config: &tree_config,
-                leaf_owner: (&leaf_owner, true),
-                leaf_delegate: (&leaf_owner, false),
-                new_leaf_owner: &new_leaf_owner,
-                merkle_tree: &merkle_tree,
-                log_wrapper: &log_wrapper,
-                compression_program: &compression_program,
-                system_program: &system_program,
-            },
-            mpl_bubblegum::instructions::TransferInstructionArgs {
+        let instruction = build_transfer_instruction(
+            ctx.accounts.tree_authority.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.new_leaf_owner.key(),
+            ctx.accounts.merkle_tree.key(),
+            ctx.accounts.log_wrapper.key(),
+            ctx.accounts.compression_program.key(),
+            ctx.accounts.system_program.key(),
+            &proof_metas,
+            TransferArgs {
                 root,
                 data_hash,
                 creator_hash,
                 nonce,
                 index,
             },
-        );
+        )?;
 
-        transfer_cpi.invoke_signed_with_remaining_accounts(
+        // Gather all account infos for the CPI
+        let mut account_infos = vec![
+            ctx.accounts.bubblegum_program.to_account_info(),
+            ctx.accounts.tree_authority.to_account_info(),
+            ctx.accounts.leaf_owner.to_account_info(),
+            ctx.accounts.new_leaf_owner.to_account_info(),
+            ctx.accounts.merkle_tree.to_account_info(),
+            ctx.accounts.log_wrapper.to_account_info(),
+            ctx.accounts.compression_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        ];
+        for acc in ctx.remaining_accounts.iter() {
+            account_infos.push(acc.to_account_info());
+        }
+
+        invoke_signed(
+            &instruction,
+            &account_infos,
             &[&[b"cNFT-vault", &[ctx.bumps.leaf_owner]]],
-            ctx.remaining_accounts
-                .iter()
-                .map(|account| (account, false, false))
-                .collect::<Vec<_>>()
-                .as_slice(),
         )?;
 
         Ok(())
@@ -72,7 +149,7 @@ pub mod cnft_vault {
 
     #[allow(clippy::too_many_arguments)]
     pub fn withdraw_two_cnfts<'info>(
-        ctx: Context<'_, '_, '_, 'info, WithdrawTwo<'info>>,
+        ctx: Context<'info, WithdrawTwo<'info>>,
         root1: [u8; 32],
         data_hash1: [u8; 32],
         creator_hash1: [u8; 32],
@@ -94,87 +171,95 @@ pub mod cnft_vault {
             merkle_tree2
         );
 
-        // Note: in this example anyone can withdraw any NFT from the vault
-        // in productions you should check if nft transfers are valid (correct NFT, correct authority)
-
-        let tree_config1 = ctx.accounts.tree_authority1.to_account_info();
-        let tree_config2 = ctx.accounts.tree_authority2.to_account_info();
-        let leaf_owner = ctx.accounts.leaf_owner.to_account_info();
-        let new_leaf_owner1 = ctx.accounts.new_leaf_owner1.to_account_info();
-        let new_leaf_owner2 = ctx.accounts.new_leaf_owner2.to_account_info();
-        let merkle_tree1_info = ctx.accounts.merkle_tree1.to_account_info();
-        let merkle_tree2_info = ctx.accounts.merkle_tree2.to_account_info();
-        let log_wrapper = ctx.accounts.log_wrapper.to_account_info();
-        let compression_program = ctx.accounts.compression_program.to_account_info();
-        let system_program = ctx.accounts.system_program.to_account_info();
-
         let signer_seeds: &[&[u8]] = &[b"cNFT-vault", &[ctx.bumps.leaf_owner]];
 
         // Split remaining accounts into proof1 and proof2
         let (proof1_accounts, proof2_accounts) =
             ctx.remaining_accounts.split_at(proof_1_length as usize);
 
+        let proof1_metas: Vec<AccountMeta> = proof1_accounts
+            .iter()
+            .map(|acc| AccountMeta::new_readonly(acc.key(), false))
+            .collect();
+
+        let proof2_metas: Vec<AccountMeta> = proof2_accounts
+            .iter()
+            .map(|acc| AccountMeta::new_readonly(acc.key(), false))
+            .collect();
+
+        // Withdraw cNFT#1
         msg!("withdrawing cNFT#1");
-        let transfer_cpi1 = mpl_bubblegum::instructions::TransferCpi::new(
-            &ctx.accounts.bubblegum_program,
-            mpl_bubblegum::instructions::TransferCpiAccounts {
-                tree_config: &tree_config1,
-                leaf_owner: (&leaf_owner, true),
-                leaf_delegate: (&leaf_owner, false),
-                new_leaf_owner: &new_leaf_owner1,
-                merkle_tree: &merkle_tree1_info,
-                log_wrapper: &log_wrapper,
-                compression_program: &compression_program,
-                system_program: &system_program,
-            },
-            mpl_bubblegum::instructions::TransferInstructionArgs {
+        let instruction1 = build_transfer_instruction(
+            ctx.accounts.tree_authority1.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.new_leaf_owner1.key(),
+            ctx.accounts.merkle_tree1.key(),
+            ctx.accounts.log_wrapper.key(),
+            ctx.accounts.compression_program.key(),
+            ctx.accounts.system_program.key(),
+            &proof1_metas,
+            TransferArgs {
                 root: root1,
                 data_hash: data_hash1,
                 creator_hash: creator_hash1,
                 nonce: nonce1,
                 index: index1,
             },
-        );
-
-        transfer_cpi1.invoke_signed_with_remaining_accounts(
-            &[signer_seeds],
-            proof1_accounts
-                .iter()
-                .map(|account| (account, false, false))
-                .collect::<Vec<_>>()
-                .as_slice(),
         )?;
 
+        let mut account_infos1 = vec![
+            ctx.accounts.bubblegum_program.to_account_info(),
+            ctx.accounts.tree_authority1.to_account_info(),
+            ctx.accounts.leaf_owner.to_account_info(),
+            ctx.accounts.new_leaf_owner1.to_account_info(),
+            ctx.accounts.merkle_tree1.to_account_info(),
+            ctx.accounts.log_wrapper.to_account_info(),
+            ctx.accounts.compression_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        ];
+        for acc in proof1_accounts.iter() {
+            account_infos1.push(acc.to_account_info());
+        }
+
+        invoke_signed(&instruction1, &account_infos1, &[signer_seeds])?;
+
+        // Withdraw cNFT#2
         msg!("withdrawing cNFT#2");
-        let transfer_cpi2 = mpl_bubblegum::instructions::TransferCpi::new(
-            &ctx.accounts.bubblegum_program,
-            mpl_bubblegum::instructions::TransferCpiAccounts {
-                tree_config: &tree_config2,
-                leaf_owner: (&leaf_owner, true),
-                leaf_delegate: (&leaf_owner, false),
-                new_leaf_owner: &new_leaf_owner2,
-                merkle_tree: &merkle_tree2_info,
-                log_wrapper: &log_wrapper,
-                compression_program: &compression_program,
-                system_program: &system_program,
-            },
-            mpl_bubblegum::instructions::TransferInstructionArgs {
+        let instruction2 = build_transfer_instruction(
+            ctx.accounts.tree_authority2.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.leaf_owner.key(),
+            ctx.accounts.new_leaf_owner2.key(),
+            ctx.accounts.merkle_tree2.key(),
+            ctx.accounts.log_wrapper.key(),
+            ctx.accounts.compression_program.key(),
+            ctx.accounts.system_program.key(),
+            &proof2_metas,
+            TransferArgs {
                 root: root2,
                 data_hash: data_hash2,
                 creator_hash: creator_hash2,
                 nonce: nonce2,
                 index: index2,
             },
-        );
-
-        transfer_cpi2.invoke_signed_with_remaining_accounts(
-            &[signer_seeds],
-            proof2_accounts
-                .iter()
-                .map(|account| (account, false, false))
-                .collect::<Vec<_>>()
-                .as_slice(),
         )?;
+
+        let mut account_infos2 = vec![
+            ctx.accounts.bubblegum_program.to_account_info(),
+            ctx.accounts.tree_authority2.to_account_info(),
+            ctx.accounts.leaf_owner.to_account_info(),
+            ctx.accounts.new_leaf_owner2.to_account_info(),
+            ctx.accounts.merkle_tree2.to_account_info(),
+            ctx.accounts.log_wrapper.to_account_info(),
+            ctx.accounts.compression_program.to_account_info(),
+            ctx.accounts.system_program.to_account_info(),
+        ];
+        for acc in proof2_accounts.iter() {
+            account_infos2.push(acc.to_account_info());
+        }
+
+        invoke_signed(&instruction2, &account_infos2, &[signer_seeds])?;
 
         msg!("successfully sent cNFTs");
         Ok(())

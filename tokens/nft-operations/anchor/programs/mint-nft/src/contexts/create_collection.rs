@@ -81,13 +81,12 @@ impl<'info> CreateCollection<'info> {
         ];
         let signer_seeds = &[&seeds[..]];
 
-        let cpi_program = self.token_program.to_account_info();
         let cpi_accounts = MintTo {
             mint: self.mint.to_account_info(),
             to: self.destination.to_account_info(),
             authority: self.mint_authority.to_account_info(),
         };
-        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
+        let cpi_ctx = CpiContext::new_with_signer(self.token_program.key(), cpi_accounts, signer_seeds);
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
