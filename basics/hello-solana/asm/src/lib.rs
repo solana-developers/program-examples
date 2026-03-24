@@ -34,5 +34,10 @@ mod tests {
 
         let res = svm.send_transaction(tx);
         assert!(res.is_ok());
+
+        let logs = &res.unwrap().logs;
+
+        assert!(logs[0].starts_with("Program 11157t3sqMV725NVRLrVQbAu98Jjfk1uCKehJnXXQs"));
+        assert_eq!(logs[1], "Program log: Hello, Solana!");
     }
 }
