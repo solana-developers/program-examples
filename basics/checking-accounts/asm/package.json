@@ -3,8 +3,8 @@
   "scripts": {
     "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
     "build-and-test": "sbpf build --deploy-dir ./tests/fixtures && pnpm test",
-    "build": "sbpf build",
-    "deploy": "solana program deploy ./program/target/so/program.so"
+    "build": "sbpf build --deploy-dir ./tests/fixtures",
+    "deploy": "solana program deploy ./tests/fixtures/checking-account-asm-program.so"
   },
   "dependencies": {
     "@solana/web3.js": "^1.47.3"
