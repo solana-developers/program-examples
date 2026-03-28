@@ -36,11 +36,6 @@
 .equ SYSTEM_PROGRAM_DATA,       0x7980
 .equ SYSTEM_PROGRAM_RENT_EPOCH, 0xa180
 
-# instruction data
-.equ INSTRUCTION_DATA_LEN,      0xa188
-.equ INSTRUCTION_DATA,          0xa190
-.equ PROGRAM_ID,                0xa198
-
 .globl entrypoint
 
 entrypoint:
