@@ -8,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 transfer_tokens = "nHi9DdNjuupjQ3c8AJU9sChB5gLbZvTLsJQouY4hU67"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

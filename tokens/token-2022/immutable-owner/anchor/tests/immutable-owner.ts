@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
 import { AuthorityType, createMint, setAuthority, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { ImmutableOwner } from '../target/types/immutable_owner';
 

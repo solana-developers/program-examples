@@ -1,4 +1,4 @@
-import { BorshCoder } from "@coral-xyz/anchor";
+import { BorshCoder } from "@anchor-lang/core";
 import {
 	Keypair,
 	PublicKey,

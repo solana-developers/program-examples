@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import type { HelloSolana } from "../target/types/hello_solana.ts";
 
 describe("Anchor: hello-solana", () => {

@@ -9,8 +9,7 @@ seeds = true
 [programs.localnet]
 nft_minter = "52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

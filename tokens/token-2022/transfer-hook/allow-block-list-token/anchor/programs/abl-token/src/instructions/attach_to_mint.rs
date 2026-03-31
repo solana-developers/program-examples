@@ -43,7 +43,7 @@ impl AttachToMint<'_> {
             authority: self.payer.to_account_info(),
         };
 
-        let ctx = CpiContext::new(self.token_program.to_account_info(), tx_hook_accs);
+        let ctx = CpiContext::new(self.token_program.key(), tx_hook_accs);
 
         transfer_hook_update(ctx, Some(crate::ID_CONST))?;
 

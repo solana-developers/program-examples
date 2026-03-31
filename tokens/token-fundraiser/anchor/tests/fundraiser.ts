@@ -1,6 +1,6 @@
-import type { Program } from "@coral-xyz/anchor";
-import * as anchor from "@coral-xyz/anchor";
-import type NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import type NodeWallet from "@anchor-lang/core/dist/cjs/nodewallet";
 import {
 	ASSOCIATED_TOKEN_PROGRAM_ID,
 	TOKEN_PROGRAM_ID,

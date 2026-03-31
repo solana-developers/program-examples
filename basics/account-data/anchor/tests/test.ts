@@ -1,4 +1,4 @@
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import { Keypair } from "@solana/web3.js";
 import type { AccountDataAnchorProgram } from "../target/types/account_data_anchor_program";
 

@@ -10,7 +10,7 @@ pub mod transfer_sol {
     pub fn transfer_sol_with_cpi(ctx: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
         system_program::transfer(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 system_program::Transfer {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.recipient.to_account_info(),

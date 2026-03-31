@@ -1,4 +1,4 @@
-import * as anchor from '@coral-xyz/anchor';
+import * as anchor from '@anchor-lang/core';
 import { Keypair } from '@solana/web3.js';
 import type { CreateToken } from '../target/types/create_token';
 

@@ -44,7 +44,7 @@ impl ChangeMode<'_> {
             update_authority: self.authority.to_account_info(),
             program_id: self.token_program.to_account_info(),
         };
-        let cpi_program = self.token_program.to_account_info();
+        let cpi_program = self.token_program.key();
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
         token_metadata_update_field(cpi_ctx, Field::Key("AB".to_string()), args.mode.to_string())?;
@@ -61,7 +61,7 @@ impl ChangeMode<'_> {
                 update_authority: self.authority.to_account_info(),
                 program_id: self.token_program.to_account_info(),
             };
-            let cpi_program = self.token_program.to_account_info();
+            let cpi_program = self.token_program.key();
             let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
             token_metadata_update_field(

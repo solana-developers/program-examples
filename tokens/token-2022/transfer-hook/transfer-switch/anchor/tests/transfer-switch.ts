@@ -1,5 +1,5 @@
 import { describe, it } from "node:test";
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import {
   AccountLayout,
   ASSOCIATED_TOKEN_PROGRAM_ID,

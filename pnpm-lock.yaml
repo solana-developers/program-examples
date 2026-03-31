@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@coral-xyz/anchor':
-        specifier: ^0.32.1
-        version: 0.32.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@anchor-lang/core':
+        specifier: 1.0.0-rc.5
+        version: 1.0.0-rc.5(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@solana/web3.js':
         specifier: ^1.98.4
         version: 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -44,6 +44,20 @@ importers:
         version: 5.4.5
 
 packages:
+
+  '@anchor-lang/borsh@1.0.0-rc.5':
+    resolution: {integrity: sha512-17a+xOmvrn7zSIqlbsjqgz4f64vQEvAmZ7qyQuETCHSskC23LTtjRI0DqAl/r/vC6kosPJGWyOr9ddVIqUVtww==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@solana/web3.js': ^1.69.0
+
+  '@anchor-lang/core@1.0.0-rc.5':
+    resolution: {integrity: sha512-4iPy4RiEFn6obzYY7zx8IaGAXz2fvJ0uCTF6agAcUBjGNZeypfEb4ZZh6TfLnJy78Lh06JeB7XGqKsaBCMEmQA==}
+    engines: {node: '>=17'}
+
+  '@anchor-lang/errors@1.0.0-rc.5':
+    resolution: {integrity: sha512-kLx7oLGVCRhtWeS9PQWGkzZTDpNrGkiJQBrx1rAhEiFemL4YumhUuEbXaaEVuLBt7qZcT1eBPN4LQxYGj3QWyw==}
+    engines: {node: '>=10'}
 
   '@babel/runtime@7.25.0':
     resolution: {integrity: sha512-7dRy4DwXwtzBrPbZflqxnvfxLF8kdZXPkhymtDeFoFqE6ldzjQFgYTtYIFARcLEYDrqfBfYcZt1WqFxRoyC9Rw==}
@@ -519,6 +533,35 @@ packages:
     engines: {node: '>=6'}
 
 snapshots:
+
+  '@anchor-lang/borsh@1.0.0-rc.5(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      bn.js: 5.2.2
+      buffer-layout: 1.2.2
+
+  '@anchor-lang/core@1.0.0-rc.5(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@anchor-lang/borsh': 1.0.0-rc.5(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+      '@anchor-lang/errors': 1.0.0-rc.5
+      '@noble/hashes': 1.8.0
+      '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      bn.js: 5.2.2
+      bs58: 4.0.1
+      buffer-layout: 1.2.2
+      camelcase: 6.3.0
+      cross-fetch: 3.2.0
+      eventemitter3: 4.0.7
+      pako: 2.1.0
+      superstruct: 0.15.5
+      toml: 3.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+
+  '@anchor-lang/errors@1.0.0-rc.5': {}
 
   '@babel/runtime@7.25.0':
     dependencies:

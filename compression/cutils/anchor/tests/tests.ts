@@ -1,4 +1,4 @@
-import * as anchor from '@coral-xyz/anchor';
+import * as anchor from '@anchor-lang/core';
 import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum/dist/src/generated';
 import type { Cutils } from '../target/types/cutils';
 import { loadOrGenerateKeypair, loadPublicKeysFromFile } from './utils/helpers';

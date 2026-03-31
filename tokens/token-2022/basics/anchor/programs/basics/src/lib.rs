@@ -32,7 +32,7 @@ pub mod anchor {
             to: ctx.accounts.to_ata.to_account_info().clone(),
             authority: ctx.accounts.signer.to_account_info(),
         };
-        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_program = ctx.accounts.token_program.key();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
         token_interface::transfer_checked(cpi_context, amount, ctx.accounts.mint.decimals)?;
         msg!("Transfer Token");
@@ -44,7 +44,7 @@ pub mod anchor {
             to: ctx.accounts.receiver.to_account_info().clone(),
             authority: ctx.accounts.signer.to_account_info(),
         };
-        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_program = ctx.accounts.token_program.key();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
         token_interface::mint_to(cpi_context, amount)?;
         msg!("Mint Token");

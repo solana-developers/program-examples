@@ -1,12 +1,14 @@
 [toolchain]
-anchor_version = "0.32.1"
 solana_version = "3.1.8"
+
+[features]
+resolution = true
+skip-lint = false
 
 [programs.localnet]
 transfer_hook = "1qahDxKHeCLZhbBU2NyMU6vQCQmEUmdeSEBrG5drffK"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "Localnet"

@@ -1,6 +1,6 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
-import { ASSOCIATED_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
+import type { Program } from '@anchor-lang/core';
+import * as anchor from '@anchor-lang/core';
+import { ASSOCIATED_PROGRAM_ID } from '@anchor-lang/core/dist/cjs/utils/token';
 import { getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import type { TransferFee } from '../target/types/transfer_fee';
 

@@ -8,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 permanent_delegate = "A9rxKS84ZoJVyeTfQbCEfxME2vvAM4uwSMjkmhR5XWb1"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "Localnet"

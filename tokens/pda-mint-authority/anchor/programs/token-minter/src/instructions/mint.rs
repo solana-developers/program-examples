@@ -48,7 +48,7 @@ pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
     // Invoke the mint_to instruction on the token program
     mint_to(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             MintTo {
                 mint: ctx.accounts.mint_account.to_account_info(),
                 to: ctx.accounts.associated_token_account.to_account_info(),

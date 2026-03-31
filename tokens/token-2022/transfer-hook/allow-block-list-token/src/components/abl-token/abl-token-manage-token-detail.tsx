@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation'
 import React from 'react'
 import { useAblTokenProgram, useGetToken } from './abl-token-data-access'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@coral-xyz/anchor'
+import { BN } from '@anchor-lang/core'
 import { Button } from '@/components/ui/button'
 
 interface TokenInfo {

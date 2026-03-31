@@ -59,7 +59,7 @@ impl InitMint<'_> {
             mint_authority: self.payer.to_account_info(),
             update_authority: self.payer.to_account_info(),
         };
-        let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
+        let cpi_ctx = CpiContext::new(self.token_program.key(), cpi_accounts);
         token_metadata_initialize(cpi_ctx, args.name, args.symbol, args.uri)?;
 
         let cpi_accounts = TokenMetadataUpdateField {
@@ -68,7 +68,7 @@ impl InitMint<'_> {
             program_id: self.token_program.to_account_info(),
         };
 
-        let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
+        let cpi_ctx = CpiContext::new(self.token_program.key(), cpi_accounts);
 
         token_metadata_update_field(cpi_ctx, Field::Key("AB".to_string()), args.mode.to_string())?;
 
@@ -78,7 +78,7 @@ impl InitMint<'_> {
                 update_authority: self.payer.to_account_info(),
                 program_id: self.token_program.to_account_info(),
             };
-            let cpi_ctx = CpiContext::new(self.token_program.to_account_info(), cpi_accounts);
+            let cpi_ctx = CpiContext::new(self.token_program.key(), cpi_accounts);
 
             token_metadata_update_field(
                 cpi_ctx,

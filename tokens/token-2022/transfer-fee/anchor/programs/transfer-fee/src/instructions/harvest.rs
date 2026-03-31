@@ -12,7 +12,7 @@ pub struct Harvest<'info> {
 
 // transfer fees are stored directly on the recipient token account and must be "harvested"
 // "harvesting" transfers fees accumulated on token accounts to the mint account
-pub fn process_harvest<'info>(ctx: Context<'_, '_, 'info, 'info, Harvest<'info>>) -> Result<()> {
+pub fn process_harvest<'info>(ctx: Context<'info, Harvest<'info>>) -> Result<()> {
     // Using remaining accounts to allow for passing in an unknown number of token accounts to harvest from
     // Check that remaining accounts are token accounts for the mint to harvest to
     let sources = ctx
@@ -28,7 +28,7 @@ pub fn process_harvest<'info>(ctx: Context<'_, '_, 'info, 'info, Harvest<'info>>
 
     harvest_withheld_tokens_to_mint(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             HarvestWithheldTokensToMint {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),

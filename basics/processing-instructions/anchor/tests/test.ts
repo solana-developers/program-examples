@@ -1,4 +1,4 @@
-import * as anchor from '@coral-xyz/anchor';
+import * as anchor from '@anchor-lang/core';
 import type { ProcessingInstructions } from '../target/types/processing_instructions';
 
 describe('custom-instruction-data', () => {

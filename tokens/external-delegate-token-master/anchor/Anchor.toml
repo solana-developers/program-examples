@@ -8,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 external_delegate_token_master = "FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"
