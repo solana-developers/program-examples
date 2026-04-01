@@ -8,9 +8,7 @@ import type { NftMinter } from "../target/types/nft_minter";
 // Use require() for JSON import — "import ... with { type: "json" }" needs TS 5.3+
 const IDL = require("../target/idl/nft_minter.json");
 const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-);
+const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 
 describe("NFT bankrun Minter", async () => {
   const context = await startAnchor(
@@ -38,10 +36,7 @@ describe("NFT bankrun Minter", async () => {
     const mintKeypair = new Keypair();
 
     // Derive the associated token address account for the mint and payer.
-    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
-      mintKeypair.publicKey,
-      payer.publicKey,
-    );
+    const associatedTokenAccountAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
     const transactionSignature = await program.methods
       .mintNft(metadata.name, metadata.symbol, metadata.uri)

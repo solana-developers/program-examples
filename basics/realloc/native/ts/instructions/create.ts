@@ -1,7 +1,7 @@
-import { Buffer } from 'node:buffer';
-import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { ReallocInstruction } from './instruction';
+import { Buffer } from "node:buffer";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { ReallocInstruction } from "./instruction";
 
 export class Create {
   instruction: ReallocInstruction;
@@ -37,13 +37,13 @@ export const CreateSchema = new Map([
   [
     Create,
     {
-      kind: 'struct',
+      kind: "struct",
       fields: [
-        ['instruction', 'u8'],
-        ['name', 'string'],
-        ['house_number', 'u8'],
-        ['street', 'string'],
-        ['city', 'string'],
+        ["instruction", "u8"],
+        ["name", "string"],
+        ["house_number", "u8"],
+        ["street", "string"],
+        ["city", "string"],
       ],
     },
   ],

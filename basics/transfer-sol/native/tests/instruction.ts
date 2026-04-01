@@ -1,6 +1,6 @@
-import { Buffer } from 'node:buffer';
-import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
+import { Buffer } from "node:buffer";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
 
 export enum InstructionType {
   CpiTransfer = 0,
@@ -9,8 +9,8 @@ export enum InstructionType {
 
 const TransferInstructionSchema = {
   struct: {
-    instruction: 'u8',
-    amount: 'u64',
+    instruction: "u8",
+    amount: "u64",
   },
 };
 

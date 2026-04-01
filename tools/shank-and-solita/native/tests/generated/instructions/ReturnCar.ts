@@ -5,8 +5,8 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as web3 from '@solana/web3.js';
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
 
 /**
  * @category Instructions
@@ -15,7 +15,7 @@ import * as web3 from '@solana/web3.js';
  */
 export const ReturnCarStruct = new beet.BeetArgsStruct<{
   instructionDiscriminator: number;
-}>([['instructionDiscriminator', beet.u8]], 'ReturnCarInstructionArgs');
+}>([["instructionDiscriminator", beet.u8]], "ReturnCarInstructionArgs");
 /**
  * Accounts required by the _ReturnCar_ instruction
  *
@@ -44,7 +44,7 @@ export const returnCarInstructionDiscriminator = 3;
  */
 export function createReturnCarInstruction(
   accounts: ReturnCarInstructionAccounts,
-  programId = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'),
+  programId = new web3.PublicKey("8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ"),
 ) {
   const [data] = ReturnCarStruct.serialize({
     instructionDiscriminator: returnCarInstructionDiscriminator,

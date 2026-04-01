@@ -1,30 +1,26 @@
-import Image from "next/image"
-import { useCallback, useState } from "react"
-import { Button, HStack, VStack } from "@chakra-ui/react"
-import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { useGameState } from "@/contexts/GameStateProvider"
-import { program } from "@/utils/anchor"
-import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js"
-import { web3 } from "@coral-xyz/anchor"
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import { web3 } from "@coral-xyz/anchor";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import Image from "next/image";
+import { useCallback, useState } from "react";
+import { useGameState } from "@/contexts/GameStateProvider";
+import { program } from "@/utils/anchor";
 
 const MintNftButton = () => {
-  const { publicKey, sendTransaction, wallet } = useWallet()
-  const { connection } = useConnection()
-  const { gameState, playerDataPDA } = useGameState()
-  const [isLoadingMainWallet, showSpinner] = useState(false)
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+  const { gameState, playerDataPDA } = useGameState();
+  const [isLoadingMainWallet, showSpinner] = useState(false);
 
   const onMintNftClick = useCallback(async () => {
-    if (!publicKey || !playerDataPDA) return
+    if (!publicKey || !playerDataPDA) return;
 
-    showSpinner(true)
+    showSpinner(true);
 
     try {
-
-      const nftAuthority = await PublicKey.findProgramAddress(
-        [Buffer.from("nft_authority")],
-        program.programId
-      );
+      const nftAuthority = await PublicKey.findProgramAddress([Buffer.from("nft_authority")], program.programId);
 
       const mint = new Keypair();
 
@@ -52,19 +48,18 @@ const MintNftButton = () => {
 
       console.log("transaction", transaction);
 
-      const txSig = await sendTransaction(transaction, connection,{
+      const txSig = await sendTransaction(transaction, connection, {
         signers: [mint],
-        skipPreflight: true
-      } );
+        skipPreflight: true,
+      });
 
-      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`)
-      
-    } catch (error: any) {
-      console.log("error", `Minting failed! ${error?.message} ${error?.stack}`)
+      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
+    } catch (error) {
+      console.log("error", `Minting failed! ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      showSpinner(false)
+      showSpinner(false);
     }
-  }, [publicKey, playerDataPDA, connection])
+  }, [publicKey, playerDataPDA, connection, sendTransaction]);
 
   return (
     <>
@@ -72,18 +67,14 @@ const MintNftButton = () => {
         <VStack>
           <Image src="/Beaver.png" alt="Energy Icon" width={64} height={64} />
           <HStack>
-            <Button
-              isLoading={isLoadingMainWallet}
-              onClick={onMintNftClick}
-              width="175px"
-            >
+            <Button isLoading={isLoadingMainWallet} onClick={onMintNftClick} width="175px">
               Mint Nft
             </Button>
           </HStack>
         </VStack>
       )}
     </>
-  )
-}
+  );
+};
 
-export default MintNftButton
+export default MintNftButton;

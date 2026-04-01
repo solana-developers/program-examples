@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - fix-biome-errors
   pull_request:
     types: [opened, synchronize, reopened]
     branches:

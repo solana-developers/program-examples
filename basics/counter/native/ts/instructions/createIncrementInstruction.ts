@@ -1,5 +1,5 @@
-import { type PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { PROGRAM_ID } from '../';
+import { type PublicKey, TransactionInstruction } from "@solana/web3.js";
+import { PROGRAM_ID } from "../";
 
 export type IncrementInstructionAccounts = {
   counter: PublicKey;

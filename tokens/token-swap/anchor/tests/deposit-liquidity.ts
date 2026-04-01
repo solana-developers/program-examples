@@ -1,10 +1,10 @@
-import type { Program } from '@anchor-lang/core';
-import * as anchor from '@anchor-lang/core';
-import { expect } from 'chai';
-import type { SwapExample } from '../target/types/swap_example';
-import { createValues, mintingTokens, type TestValues } from './utils';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { expect } from "chai";
+import type { SwapExample } from "../target/types/swap_example";
+import { createValues, mintingTokens, type TestValues } from "./utils";
 
-describe('Deposit liquidity', () => {
+describe("Deposit liquidity", () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   anchor.setProvider(provider);
@@ -16,7 +16,10 @@ describe('Deposit liquidity', () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
+    await program.methods
+      .createAmm(values.id, values.fee)
+      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .rpc();
 
     await mintingTokens({
       connection,
@@ -40,7 +43,7 @@ describe('Deposit liquidity', () => {
       .rpc();
   });
 
-  it('Deposit equal amounts', async () => {
+  it("Deposit equal amounts", async () => {
     await program.methods
       .depositLiquidity(values.depositAmountA, values.depositAmountA)
       .accounts({
@@ -60,7 +63,9 @@ describe('Deposit liquidity', () => {
       .rpc({ skipPreflight: true });
 
     const depositTokenAccountLiquditiy = await connection.getTokenAccountBalance(values.liquidityAccount);
-    expect(depositTokenAccountLiquditiy.value.amount).to.equal(values.depositAmountA.sub(values.minimumLiquidity).toString());
+    expect(depositTokenAccountLiquditiy.value.amount).to.equal(
+      values.depositAmountA.sub(values.minimumLiquidity).toString(),
+    );
     const depositTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
     expect(depositTokenAccountA.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountA).toString());
     const depositTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);

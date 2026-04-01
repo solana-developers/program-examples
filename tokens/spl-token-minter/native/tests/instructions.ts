@@ -1,4 +1,4 @@
-import * as borsh from 'borsh';
+import * as borsh from "borsh";
 
 export enum SplMinterInstruction {
   Create = 0,
@@ -7,17 +7,17 @@ export enum SplMinterInstruction {
 
 export const CreateTokenArgsSchema = {
   struct: {
-    instruction: 'u8',
-    token_title: 'string',
-    token_symbol: 'string',
-    token_uri: 'string',
+    instruction: "u8",
+    token_title: "string",
+    token_symbol: "string",
+    token_uri: "string",
   },
 };
 
 export const MintToArgsSchema = {
   struct: {
-    instruction: 'u8',
-    quantity: 'u64',
+    instruction: "u8",
+    quantity: "u64",
   },
 };
 

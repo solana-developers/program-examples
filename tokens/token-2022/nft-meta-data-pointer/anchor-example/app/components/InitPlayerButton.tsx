@@ -1,21 +1,21 @@
-import { useCallback, useState } from "react"
-import { Button } from "@chakra-ui/react"
-import { SystemProgram } from "@solana/web3.js"
-import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { useGameState } from "@/contexts/GameStateProvider"
-import { GAME_DATA_SEED, gameDataPDA, program } from "@/utils/anchor"
+import { Button } from "@chakra-ui/react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { SystemProgram } from "@solana/web3.js";
+import { useCallback, useState } from "react";
+import { useGameState } from "@/contexts/GameStateProvider";
+import { GAME_DATA_SEED, gameDataPDA, program } from "@/utils/anchor";
 
 const InitPlayerButton = () => {
-  const { publicKey, sendTransaction } = useWallet()
-  const { connection } = useConnection()
-  const [isLoading, setIsLoading] = useState(false)
-  const { gameState, playerDataPDA } = useGameState()
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+  const [isLoading, setIsLoading] = useState(false);
+  const { gameState, playerDataPDA } = useGameState();
 
   // Init player button click handler
   const handleClick = useCallback(async () => {
-    if (!publicKey || !playerDataPDA) return
+    if (!publicKey || !playerDataPDA) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const transaction = await program.methods
@@ -26,19 +26,19 @@ const InitPlayerButton = () => {
           signer: publicKey,
           systemProgram: SystemProgram.programId,
         })
-        .transaction()
+        .transaction();
 
       const txSig = await sendTransaction(transaction, connection, {
         skipPreflight: true,
-      })
+      });
 
-      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`)
+      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
-      setIsLoading(false) // set loading state back to false
+      setIsLoading(false); // set loading state back to false
     }
-  }, [publicKey, playerDataPDA, connection])
+  }, [publicKey, playerDataPDA, connection, sendTransaction]);
 
   return (
     <>
@@ -48,7 +48,7 @@ const InitPlayerButton = () => {
         </Button>
       )}
     </>
-  )
-}
+  );
+};
 
-export default InitPlayerButton
+export default InitPlayerButton;

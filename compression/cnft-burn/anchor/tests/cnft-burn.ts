@@ -1,17 +1,17 @@
-import type { Program } from '@anchor-lang/core';
-import * as anchor from '@anchor-lang/core';
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
-import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
-import type { CnftBurn } from '../target/types/cnft_burn';
-import { createAndMint } from './createAndMint';
-import { getcNFTsFromCollection } from './fetchNFTsByCollection';
-import { getAsset, getAssetProof } from './readApi';
-import { decode, mapProof } from './utils';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
+import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from "@solana/spl-account-compression";
+import type { CnftBurn } from "../target/types/cnft_burn";
+import { createAndMint } from "./createAndMint";
+import { getcNFTsFromCollection } from "./fetchNFTsByCollection";
+import { getAsset, getAssetProof } from "./readApi";
+import { decode, mapProof } from "./utils";
 
 // Replace this with your custom RPC endpoint that supports cNFT indexing
-const _RPC_PATH = 'https://api.devnet.solana.com';
+const _RPC_PATH = "https://api.devnet.solana.com";
 
-describe('cnft-burn', () => {
+describe("cnft-burn", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
@@ -23,20 +23,20 @@ describe('cnft-burn', () => {
   const MPL_BUBBLEGUM_PROGRAM_ID_KEY = new anchor.web3.PublicKey(BUBBLEGUM_PROGRAM_ID);
 
   // this is the assetId of the cNft you want to burn
-  let assetId = '';
+  let assetId = "";
 
-  it('Should create the tree and mint a cnft', async () => {
+  it("Should create the tree and mint a cnft", async () => {
     const { tree, collection } = await createAndMint();
     if (!tree.treeAddress) {
-      throw new Error('Tree address not found');
+      throw new Error("Tree address not found");
     }
     treeAddress = tree.treeAddress;
 
     const fetchcNFTs = await getcNFTsFromCollection(collection.mint, payerWallet.publicKey.toString());
-    console.log('fetchcNFTs', fetchcNFTs);
+    console.log("fetchcNFTs", fetchcNFTs);
     assetId = fetchcNFTs[0];
   });
-  it('Burn cNft!', async () => {
+  it("Burn cNft!", async () => {
     const asset = await getAsset(assetId);
 
     const proof = await getAssetProof(assetId);
@@ -46,7 +46,10 @@ describe('cnft-burn', () => {
     const creatorHash = decode(asset.compression.creator_hash);
     const nonce = new anchor.BN(asset.compression.leaf_id);
     const index = asset.compression.leaf_id;
-    const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync([treeAddress.toBuffer()], MPL_BUBBLEGUM_PROGRAM_ID_KEY);
+    const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [treeAddress.toBuffer()],
+      MPL_BUBBLEGUM_PROGRAM_ID_KEY,
+    );
     const tx = await program.methods
       .burnCnft(root, dataHash, creatorHash, nonce, index)
       .accounts({
@@ -62,7 +65,7 @@ describe('cnft-burn', () => {
       .rpc({
         skipPreflight: true,
       });
-    console.log('Your transaction signature', tx);
+    console.log("Your transaction signature", tx);
     // here is a sample transaction signature on devnet
     // https://explorer.solana.com/tx/2MpeHi64pbWNY7BKBuhAp4yND5HdfQqNqkd8pu6F6meoSNUYRvxQgV5TC4w8BM8hUihB8G8TwBAaPRqS7pnN8Nu1?cluster=devnet
   });

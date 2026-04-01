@@ -1,19 +1,19 @@
-import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { Buffer } from "node:buffer";
+import { describe, test } from "node:test";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { start } from "solana-bankrun";
 
-describe('Create a system account', async () => {
+describe("Create a system account", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
   const AddressDataSchema = {
     struct: {
-      name: 'string',
-      address: 'string',
+      name: "string",
+      address: "string",
     },
   };
 
@@ -21,12 +21,12 @@ describe('Create a system account', async () => {
     return Buffer.from(borsh.serialize(schema, data));
   }
 
-  test('Create the account', async () => {
+  test("Create the account", async () => {
     const newKeypair = Keypair.generate();
 
     const addressData = {
-      name: 'Marcus',
-      address: '123 Main St. San Francisco, CA',
+      name: "Marcus",
+      address: "123 Main St. San Francisco, CA",
     };
 
     // We're just going to serialize our object here so we can check

@@ -1,13 +1,13 @@
-import * as borsh from 'borsh';
+import * as borsh from "borsh";
 
 export const OfferSchema = {
   struct: {
-    id: 'u64',
-    maker: { array: { type: 'u8', len: 32 } },
-    token_mint_a: { array: { type: 'u8', len: 32 } },
-    token_mint_b: { array: { type: 'u8', len: 32 } },
-    token_b_wanted_amount: 'u64',
-    bump: 'u8',
+    id: "u64",
+    maker: { array: { type: "u8", len: 32 } },
+    token_mint_a: { array: { type: "u8", len: 32 } },
+    token_mint_b: { array: { type: "u8", len: 32 } },
+    token_b_wanted_amount: "u64",
+    bump: "u8",
   },
 };
 
