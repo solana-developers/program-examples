@@ -1,11 +1,11 @@
-import { describe, test } from 'node:test';
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import { start } from 'solana-bankrun';
-import { createTransferInstruction, InstructionType } from './instruction';
+import { describe, test } from "node:test";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { start } from "solana-bankrun";
+import { createTransferInstruction, InstructionType } from "./instruction";
 
-describe('transfer-sol', async () => {
+describe("transfer-sol", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'transfer_sol_program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "transfer_sol_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -14,10 +14,16 @@ describe('transfer-sol', async () => {
   const test2Recipient1 = Keypair.generate();
   const test2Recipient2 = Keypair.generate();
 
-  test('Transfer between accounts using the system program', async () => {
-    await getBalances(payer.publicKey, test1Recipient.publicKey, 'Beginning');
+  test("Transfer between accounts using the system program", async () => {
+    await getBalances(payer.publicKey, test1Recipient.publicKey, "Beginning");
 
-    const ix = createTransferInstruction(payer.publicKey, test1Recipient.publicKey, PROGRAM_ID, InstructionType.CpiTransfer, transferAmount);
+    const ix = createTransferInstruction(
+      payer.publicKey,
+      test1Recipient.publicKey,
+      PROGRAM_ID,
+      InstructionType.CpiTransfer,
+      transferAmount,
+    );
 
     const tx = new Transaction();
     const [blockhash, _] = await client.getLatestBlockhash();
@@ -26,10 +32,10 @@ describe('transfer-sol', async () => {
 
     await client.processTransaction(tx);
 
-    await getBalances(payer.publicKey, test1Recipient.publicKey, 'Resulting');
+    await getBalances(payer.publicKey, test1Recipient.publicKey, "Resulting");
   });
 
-  test('Create two accounts for the following test', async () => {
+  test("Create two accounts for the following test", async () => {
     const ix = (pubkey: PublicKey) => {
       return SystemProgram.createAccount({
         fromPubkey: payer.publicKey,
@@ -43,13 +49,15 @@ describe('transfer-sol', async () => {
     const tx = new Transaction();
     const [blockhash, _] = await client.getLatestBlockhash();
     tx.recentBlockhash = blockhash;
-    tx.add(ix(test2Recipient1.publicKey)).add(ix(test2Recipient2.publicKey)).sign(payer, test2Recipient1, test2Recipient2);
+    tx.add(ix(test2Recipient1.publicKey))
+      .add(ix(test2Recipient2.publicKey))
+      .sign(payer, test2Recipient1, test2Recipient2);
 
     await client.processTransaction(tx);
   });
 
-  test('Transfer between accounts using our program', async () => {
-    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Beginning');
+  test("Transfer between accounts using our program", async () => {
+    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, "Beginning");
 
     const ix = createTransferInstruction(
       test2Recipient1.publicKey,
@@ -66,7 +74,7 @@ describe('transfer-sol', async () => {
 
     await client.processTransaction(tx);
 
-    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, 'Resulting');
+    await getBalances(test2Recipient1.publicKey, test2Recipient2.publicKey, "Resulting");
   });
 
   async function getBalances(payerPubkey: PublicKey, recipientPubkey: PublicKey, timeframe: string) {

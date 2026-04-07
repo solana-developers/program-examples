@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-interest_bearing = "DMQdkzRJz8uQSN8Kx2QYmQJn6xLKhsu3LcPYxs314MgC"
-
-# [registry] section removed — no longer used in Anchor 1.0
+interest_bearing = "2tinFpSK55kJu1wjcwW1PZBDF3HrP7PaYJjDCAFJMDD8"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

@@ -6,10 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pythexample = "GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2"
-
-# [registry] section removed — no longer used in Anchor 1.0
+pythexample = "AWYkDL963P4NXrb9kvik9JTRH7igkhJ4Xyd8t5YRv8ZN"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]

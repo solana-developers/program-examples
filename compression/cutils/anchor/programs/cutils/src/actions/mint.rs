@@ -67,7 +67,7 @@ pub struct Mint<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct MintParams {
-    uri: String,
+    pub uri: String,
 }
 
 impl Mint<'_> {

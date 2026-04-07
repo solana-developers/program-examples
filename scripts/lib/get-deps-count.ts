@@ -1,11 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync } from "node:fs";
 
 export function getDepsCount(files: string[] = []): Record<string, Record<string, string[]>> {
   const map: Record<string, JSON> = {};
   const depsCounter: Record<string, Record<string, string[]>> = {};
 
   for (const file of files) {
-    const content = JSON.parse(readFileSync(file).toString('utf-8'));
+    const content = JSON.parse(readFileSync(file).toString("utf-8"));
     map[file] = content;
 
     const deps = content.dependencies ?? {};

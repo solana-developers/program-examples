@@ -15,7 +15,8 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+# LiteSVM Rust tests — replaced TS tests
+test = "cargo test"
 
 [test]
 startup_wait = 5000

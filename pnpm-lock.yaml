@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@anchor-lang/core':
-        specifier: 1.0.0-rc.5
-        version: 1.0.0-rc.5(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+        specifier: 1.0.0
+        version: 1.0.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@solana/web3.js':
         specifier: ^1.98.4
         version: 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -25,8 +25,8 @@ importers:
         version: 0.3.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
     devDependencies:
       '@biomejs/biome':
-        specifier: 1.8.1
-        version: 1.8.1
+        specifier: 2.4.10
+        version: 2.4.10
       '@types/node':
         specifier: ^20.9.0
         version: 20.14.2
@@ -45,77 +45,73 @@ importers:
 
 packages:
 
-  '@anchor-lang/borsh@1.0.0-rc.5':
-    resolution: {integrity: sha512-17a+xOmvrn7zSIqlbsjqgz4f64vQEvAmZ7qyQuETCHSskC23LTtjRI0DqAl/r/vC6kosPJGWyOr9ddVIqUVtww==}
+  '@anchor-lang/borsh@1.0.0':
+    resolution: {integrity: sha512-kiUd4S/iGKZ4aZvHtX07vNiNnHa/mI/IHmw+0y0sWlvGpPsAWsLXXMrohII5vNCdgZrw+5vVXH9kt836yP9YmQ==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.69.0
 
-  '@anchor-lang/core@1.0.0-rc.5':
-    resolution: {integrity: sha512-4iPy4RiEFn6obzYY7zx8IaGAXz2fvJ0uCTF6agAcUBjGNZeypfEb4ZZh6TfLnJy78Lh06JeB7XGqKsaBCMEmQA==}
+  '@anchor-lang/core@1.0.0':
+    resolution: {integrity: sha512-YHJQCJNQwF1M1M5VNNOj1DuR7B9v7f/6I9NkFYty7HAbpb3+1HpuDD7nOqI+X3CafXzteWGWZE2kn+Ts7PBKNQ==}
     engines: {node: '>=17'}
 
-  '@anchor-lang/errors@1.0.0-rc.5':
-    resolution: {integrity: sha512-kLx7oLGVCRhtWeS9PQWGkzZTDpNrGkiJQBrx1rAhEiFemL4YumhUuEbXaaEVuLBt7qZcT1eBPN4LQxYGj3QWyw==}
+  '@anchor-lang/errors@1.0.0':
+    resolution: {integrity: sha512-j3ymePewd9Bi6OcXATViRS0IPdPBT8qW4LVM3/hNePH/rZdgi8qDkToiDGuR1fFccfn7t+BrNGudHvcs6JWCFQ==}
     engines: {node: '>=10'}
 
   '@babel/runtime@7.25.0':
     resolution: {integrity: sha512-7dRy4DwXwtzBrPbZflqxnvfxLF8kdZXPkhymtDeFoFqE6ldzjQFgYTtYIFARcLEYDrqfBfYcZt1WqFxRoyC9Rw==}
     engines: {node: '>=6.9.0'}
 
-  '@biomejs/biome@1.8.1':
-    resolution: {integrity: sha512-fQXGfvq6DIXem12dGQCM2tNF+vsNHH1qs3C7WeOu75Pd0trduoTmoO7G4ntLJ2qDs5wuw981H+cxQhi1uHnAtA==}
+  '@biomejs/biome@2.4.10':
+    resolution: {integrity: sha512-xxA3AphFQ1geij4JTHXv4EeSTda1IFn22ye9LdyVPoJU19fNVl0uzfEuhsfQ4Yue/0FaLs2/ccVi4UDiE7R30w==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@1.8.1':
-    resolution: {integrity: sha512-XLiB7Uu6GALIOBWzQ2aMD0ru4Ly5/qSeQF7kk3AabzJ/kwsEWSe33iVySBP/SS2qv25cgqNiLksjGcw2bHT3mw==}
+  '@biomejs/cli-darwin-arm64@2.4.10':
+    resolution: {integrity: sha512-vuzzI1cWqDVzOMIkYyHbKqp+AkQq4K7k+UCXWpkYcY/HDn1UxdsbsfgtVpa40shem8Kax4TLDLlx8kMAecgqiw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@1.8.1':
-    resolution: {integrity: sha512-uMTSxVLMfqkBVqyc25hSn83jBbp+wtWjzM/pHFlKXt3htJuw7FErVGW0nmQ9Sxa9vJ7GcqoltLMl28VQRIMYzg==}
+  '@biomejs/cli-darwin-x64@2.4.10':
+    resolution: {integrity: sha512-14fzASRo+BPotwp7nWULy2W5xeUyFnTaq1V13Etrrxkrih+ez/2QfgFm5Ehtf5vSjtgx/IJycMMpn5kPd5ZNaA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@1.8.1':
-    resolution: {integrity: sha512-UQ8Wc01J0wQL+5AYOc7qkJn20B4PZmQL1KrmDZh7ot0DvD6aX4+8mmfd/dG5b6Zjo/44QvCKcvkFGCMRYuhWZA==}
+  '@biomejs/cli-linux-arm64-musl@2.4.10':
+    resolution: {integrity: sha512-WrJY6UuiSD/Dh+nwK2qOTu8kdMDlLV3dLMmychIghHPAysWFq1/DGC1pVZx8POE3ZkzKR3PUUnVrtZfMfaJjyQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
-  '@biomejs/cli-linux-arm64@1.8.1':
-    resolution: {integrity: sha512-3SzZRuC/9Oi2P2IBNPsEj0KXxSXUEYRR2kfRF/Ve8QAfGgrt4qnwuWd6QQKKN5R+oYH691qjm+cXBKEcrP1v/Q==}
+  '@biomejs/cli-linux-arm64@2.4.10':
+    resolution: {integrity: sha512-7MH1CMW5uuxQ/s7FLST63qF8B3Hgu2HRdZ7tA1X1+mk+St4JOuIrqdhIBnnyqeyWJNI+Bww7Es5QZ0wIc1Cmkw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
-  '@biomejs/cli-linux-x64-musl@1.8.1':
-    resolution: {integrity: sha512-fYbP/kNu/rtZ4kKzWVocIdqZOtBSUEg9qUhZaao3dy3CRzafR6u6KDtBeSCnt47O+iLnks1eOR1TUxzr5+QuqA==}
+  '@biomejs/cli-linux-x64-musl@2.4.10':
+    resolution: {integrity: sha512-kDTi3pI6PBN6CiczsWYOyP2zk0IJI08EWEQyDMQWW221rPaaEz6FvjLhnU07KMzLv8q3qSuoB93ua6inSQ55Tw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
-  '@biomejs/cli-linux-x64@1.8.1':
-    resolution: {integrity: sha512-AeBycVdNrTzsyYKEOtR2R0Ph0hCD0sCshcp2aOnfGP0hCZbtFg09D0SdKLbyzKntisY41HxKVrydYiaApp+2uw==}
+  '@biomejs/cli-linux-x64@2.4.10':
+    resolution: {integrity: sha512-tZLvEEi2u9Xu1zAqRjTcpIDGVtldigVvzug2fTuPG0ME/g8/mXpRPcNgLB22bGn6FvLJpHHnqLnwliOu8xjYrg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
-  '@biomejs/cli-win32-arm64@1.8.1':
-    resolution: {integrity: sha512-6tEd1H/iFKpgpE3OIB7oNgW5XkjiVMzMRPL8zYoZ036YfuJ5nMYm9eB9H/y81+8Z76vL48fiYzMPotJwukGPqQ==}
+  '@biomejs/cli-win32-arm64@2.4.10':
+    resolution: {integrity: sha512-umwQU6qPzH+ISTf/eHyJ/QoQnJs3V9Vpjz2OjZXe9MVBZ7prgGafMy7yYeRGnlmDAn87AKTF3Q6weLoMGpeqdQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@1.8.1':
-    resolution: {integrity: sha512-g2H31jJzYmS4jkvl6TiyEjEX+Nv79a5km/xn+5DARTp5MBFzC9gwceusSSB2AkJKqZzY131AiACAWjKrVt5Ijw==}
+  '@biomejs/cli-win32-x64@2.4.10':
+    resolution: {integrity: sha512-aW/JU5GuyH4uxMrNYpoC2kjaHlyJGLgIa3XkhPEZI0uKhZhJZU8BuEyJmvgzSPQNGozBwWjC972RaNdcJ9KyJg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -430,14 +426,12 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   solana-bankrun-linux-x64-musl@0.3.0:
     resolution: {integrity: sha512-xsS2CS2xb1Sw4ivNXM0gPz/qpW9BX0neSvt/pnok5L330Nu9xlTnKAY8FhzzqOP9P9sJlGRM787Y6d0yYwt6xQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   solana-bankrun@0.3.0:
     resolution: {integrity: sha512-YkH7sa8TB/AoRPzG17CXJtYsRIQHEkEqGLz1Vwc13taXhDBkjO7z6NI5JYw7n0ybRymDHwMYTc7sd+5J40TyVQ==}
@@ -534,16 +528,16 @@ packages:
 
 snapshots:
 
-  '@anchor-lang/borsh@1.0.0-rc.5(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+  '@anchor-lang/borsh@1.0.0(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
     dependencies:
       '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       bn.js: 5.2.2
       buffer-layout: 1.2.2
 
-  '@anchor-lang/core@1.0.0-rc.5(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@anchor-lang/core@1.0.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
-      '@anchor-lang/borsh': 1.0.0-rc.5(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
-      '@anchor-lang/errors': 1.0.0-rc.5
+      '@anchor-lang/borsh': 1.0.0(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+      '@anchor-lang/errors': 1.0.0
       '@noble/hashes': 1.8.0
       '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       bn.js: 5.2.2
@@ -561,45 +555,45 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@anchor-lang/errors@1.0.0-rc.5': {}
+  '@anchor-lang/errors@1.0.0': {}
 
   '@babel/runtime@7.25.0':
     dependencies:
       regenerator-runtime: 0.14.1
 
-  '@biomejs/biome@1.8.1':
+  '@biomejs/biome@2.4.10':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 1.8.1
-      '@biomejs/cli-darwin-x64': 1.8.1
-      '@biomejs/cli-linux-arm64': 1.8.1
-      '@biomejs/cli-linux-arm64-musl': 1.8.1
-      '@biomejs/cli-linux-x64': 1.8.1
-      '@biomejs/cli-linux-x64-musl': 1.8.1
-      '@biomejs/cli-win32-arm64': 1.8.1
-      '@biomejs/cli-win32-x64': 1.8.1
+      '@biomejs/cli-darwin-arm64': 2.4.10
+      '@biomejs/cli-darwin-x64': 2.4.10
+      '@biomejs/cli-linux-arm64': 2.4.10
+      '@biomejs/cli-linux-arm64-musl': 2.4.10
+      '@biomejs/cli-linux-x64': 2.4.10
+      '@biomejs/cli-linux-x64-musl': 2.4.10
+      '@biomejs/cli-win32-arm64': 2.4.10
+      '@biomejs/cli-win32-x64': 2.4.10
 
-  '@biomejs/cli-darwin-arm64@1.8.1':
+  '@biomejs/cli-darwin-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-darwin-x64@1.8.1':
+  '@biomejs/cli-darwin-x64@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@1.8.1':
+  '@biomejs/cli-linux-arm64-musl@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-arm64@1.8.1':
+  '@biomejs/cli-linux-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@1.8.1':
+  '@biomejs/cli-linux-x64-musl@2.4.10':
     optional: true
 
-  '@biomejs/cli-linux-x64@1.8.1':
+  '@biomejs/cli-linux-x64@2.4.10':
     optional: true
 
-  '@biomejs/cli-win32-arm64@1.8.1':
+  '@biomejs/cli-win32-arm64@2.4.10':
     optional: true
 
-  '@biomejs/cli-win32-x64@1.8.1':
+  '@biomejs/cli-win32-x64@2.4.10':
     optional: true
 
   '@coral-xyz/anchor-errors@0.31.1': {}

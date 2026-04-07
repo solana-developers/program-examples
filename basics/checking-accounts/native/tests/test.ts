@@ -1,10 +1,10 @@
-import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { start } from 'solana-bankrun';
+import { describe, test } from "node:test";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { start } from "solana-bankrun";
 
-describe('Checking accounts', async () => {
+describe("Checking accounts", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'checking_accounts_native_program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "checking_accounts_native_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
   const rent = await client.getRent();
@@ -15,7 +15,7 @@ describe('Checking accounts', async () => {
   // Our program will create this.
   const accountToCreate = Keypair.generate();
 
-  test('Create an account owned by our program', async () => {
+  test("Create an account owned by our program", async () => {
     const blockhash = context.lastBlockhash;
     const ix = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
@@ -32,7 +32,7 @@ describe('Checking accounts', async () => {
     await client.processTransaction(tx);
   });
 
-  test('Check accounts', async () => {
+  test("Check accounts", async () => {
     const blockhash = context.lastBlockhash;
     const ix = new TransactionInstruction({
       keys: [

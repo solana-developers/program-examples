@@ -5,14 +5,14 @@ solana_version = "3.1.8"
 resolution = true
 skip-lint = false
 
-[programs.devnet]
+[programs.localnet]
 cutils = "BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ"
 
 # [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
-cluster = "devnet"
-wallet = "~/.config/solana/test.json"
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

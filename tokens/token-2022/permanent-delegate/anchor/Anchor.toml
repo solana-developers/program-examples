@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-permanent_delegate = "A9rxKS84ZoJVyeTfQbCEfxME2vvAM4uwSMjkmhR5XWb1"
-
-# [registry] section removed — no longer used in Anchor 1.0
+permanent_delegate = "g63s55bPYTvuuXFRMCzDaKTjCnXhDPNmwjafnQUNexa"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

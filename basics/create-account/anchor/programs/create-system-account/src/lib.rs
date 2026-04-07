@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program::{create_account, CreateAccount};
 
-declare_id!("ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi");
+declare_id!("ALfCAvL1Vbm15QabQJ72NUi7LK7fB5YP2tDKEvvh7wS8");
 
 #[program]
 pub mod create_system_account {

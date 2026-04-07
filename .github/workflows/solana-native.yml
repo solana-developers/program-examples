@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+      - anchor-1.0-final
+      - fix-biome-errors
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
@@ -107,6 +109,7 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - name: Use Node.js
         uses: actions/setup-node@v5
         with:
@@ -192,8 +195,7 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-          # Install pnpm
-          npm install --global pnpm
+          # pnpm is already installed via pnpm/action-setup
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v5.9
         with:

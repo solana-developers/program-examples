@@ -9,7 +9,7 @@ use anchor_spl::{
     token_interface::{non_transferable_mint_initialize, NonTransferableMintInitialize, Token2022},
 };
 
-declare_id!("8Bz4wpHaUckiC169Rg5ZfaBHFemp5S8RwTSDTKzhJ9W");
+declare_id!("9GpYDDJUM7CCrruDsg9v1aff5BouEzGfXifu8Woyhnbn");
 
 #[program]
 pub mod non_transferable {

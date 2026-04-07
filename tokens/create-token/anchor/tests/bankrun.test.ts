@@ -8,9 +8,7 @@ import type { CreateToken } from "../target/types/create_token";
 // requires TypeScript 5.3+, but this project uses typescript ^4.3.5 with ts-mocha.
 const IDL = require("../target/idl/create_token.json");
 const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-);
+const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 
 describe("Bankrun example", async () => {
   const context = await startAnchor(

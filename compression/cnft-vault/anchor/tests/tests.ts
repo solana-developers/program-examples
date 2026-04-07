@@ -1,31 +1,37 @@
-import * as anchor from '@anchor-lang/core';
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum';
-import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
-import type { AccountMeta } from '@solana/web3.js';
-import { type CnftVault } from '../target/types/cnft_vault';
-import { getAsset, getAssetProof } from './readAPI';
-import { decode, mapProof } from './utils';
+import * as anchor from "@anchor-lang/core";
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum";
+import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from "@solana/spl-account-compression";
+import type { AccountMeta } from "@solana/web3.js";
+import type { CnftVault } from "../target/types/cnft_vault";
+import { getAsset, getAssetProof } from "./readAPI";
+import { decode, mapProof } from "./utils";
 
-describe('cNFT Vault', () => {
+describe("cNFT Vault", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
   const payer = provider.wallet as anchor.Wallet;
   const program = anchor.workspace.CnftVault as anchor.Program<CnftVault>;
 
-  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('cNFT-vault', 'utf8')], program.programId);
+  const [vaultPDA, _bump] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("cNFT-vault", "utf8")],
+    program.programId,
+  );
   console.log(`Vault address: ${vaultPDA.toBase58()}`);
 
-  it('Withdraw a cNFT!', async () => {
+  it("Withdraw a cNFT!", async () => {
     // we expect the cNFT to already be in the vault
     // you can send it there (to vaultPDA) using any regular wallet
     // the cNFT has the following asset id
-    const assetId = 'DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd'; // TODO
+    const assetId = "DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd"; // TODO
     // and is compressed in the following tree
-    const tree = new anchor.web3.PublicKey('trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B'); // TODO
+    const tree = new anchor.web3.PublicKey("trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B"); // TODO
 
     const receiver = payer.publicKey; // you can define any pubkey as the receiver here
 
-    const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync([tree.toBuffer()], BUBBLEGUM_PROGRAM_ID);
+    const [treeAuthority, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [tree.toBuffer()],
+      BUBBLEGUM_PROGRAM_ID,
+    );
 
     const asset = await getAsset(assetId);
 
@@ -53,24 +59,30 @@ describe('cNFT Vault', () => {
       .remainingAccounts(proofPathAsAccounts)
       .rpc();
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Tx Signature: ${sx}`);
   });
 
-  it('Withdraw two cNFTs!', async () => {
+  it("Withdraw two cNFTs!", async () => {
     // TODO change all of these to your values
-    const assetId1 = 'DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd';
-    const assetId2 = '14JojSTdBZvP7f77rCxB3oQK78skTVD6DiXrXUL4objg';
+    const assetId1 = "DGWU3mHenDerCvjkeDsKYEbsvXbWvqdo1bVoXy3dkeTd";
+    const assetId2 = "14JojSTdBZvP7f77rCxB3oQK78skTVD6DiXrXUL4objg";
 
-    const tree1 = new anchor.web3.PublicKey('trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B');
-    const tree2 = new anchor.web3.PublicKey('Feywkti8LLBLfxhSGmYgzUBqpq89qehfB1SMTYV1zCu');
+    const tree1 = new anchor.web3.PublicKey("trezdkTFPKyj4gE9LAJYPpxn8AYVCvM7Mc4JkTb9X5B");
+    const tree2 = new anchor.web3.PublicKey("Feywkti8LLBLfxhSGmYgzUBqpq89qehfB1SMTYV1zCu");
 
-    const receiver1 = new anchor.web3.PublicKey('Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM');
-    const receiver2 = new anchor.web3.PublicKey('Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM');
+    const receiver1 = new anchor.web3.PublicKey("Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM");
+    const receiver2 = new anchor.web3.PublicKey("Andys9wuoMdUeRiZLgRS5aJwYNFv4Ut6qQi8PNDTAPEM");
     // ---
 
-    const [treeAuthority1, _bump2] = anchor.web3.PublicKey.findProgramAddressSync([tree1.toBuffer()], BUBBLEGUM_PROGRAM_ID);
-    const [treeAuthority2, _bump3] = anchor.web3.PublicKey.findProgramAddressSync([tree2.toBuffer()], BUBBLEGUM_PROGRAM_ID);
+    const [treeAuthority1, _bump2] = anchor.web3.PublicKey.findProgramAddressSync(
+      [tree1.toBuffer()],
+      BUBBLEGUM_PROGRAM_ID,
+    );
+    const [treeAuthority2, _bump3] = anchor.web3.PublicKey.findProgramAddressSync(
+      [tree2.toBuffer()],
+      BUBBLEGUM_PROGRAM_ID,
+    );
 
     const asset1 = await getAsset(assetId1);
     const asset2 = await getAsset(assetId2);
@@ -102,11 +114,12 @@ describe('cNFT Vault', () => {
       })
       .remainingAccounts(remainingAccounts)
       .rpc();
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Tx Signature: ${sx}`);
   });
 });
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
 function getInstructionData(asset: any, proof: any): [number[], number[], number[], anchor.BN, number, number] {
   const root = decode(proof.root);
   const dataHash = decode(asset.compression.data_hash);

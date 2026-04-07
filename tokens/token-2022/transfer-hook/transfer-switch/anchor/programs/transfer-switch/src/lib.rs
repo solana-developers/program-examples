@@ -9,7 +9,7 @@ use spl_transfer_hook_interface::instruction::{
     ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
 };
 
-declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
+declare_id!("H4LiorjbDr33X1KkTkWX9Eqy345uQH5HGNsxcPoXfGCg");
 
 #[program]
 pub mod transfer_switch {

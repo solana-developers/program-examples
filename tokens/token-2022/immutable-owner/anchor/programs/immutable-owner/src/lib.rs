@@ -9,7 +9,7 @@ use anchor_spl::{
     token_interface::{immutable_owner_initialize, ImmutableOwnerInitialize, Mint, Token2022},
 };
 
-declare_id!("6g5URpqqurW8RbKjuGeRCVZBKky3J4kYcLeotQ6vj6UT");
+declare_id!("FwsJpDYJ1UkYHq6rGYD7sXY1fStiBTfLpApazzj9khS7");
 
 #[program]
 pub mod immutable_owner {

@@ -1,10 +1,10 @@
-import type { Program } from '@anchor-lang/core';
-import * as anchor from '@anchor-lang/core';
-import { expect } from 'chai';
-import type { SwapExample } from '../target/types/swap_example';
-import { createValues, expectRevert, type TestValues } from './utils';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { expect } from "chai";
+import type { SwapExample } from "../target/types/swap_example";
+import { createValues, expectRevert, type TestValues } from "./utils";
 
-describe('Create AMM', () => {
+describe("Create AMM", () => {
   const provider = anchor.AnchorProvider.env();
   const _connection = provider.connection;
   anchor.setProvider(provider);
@@ -17,8 +17,11 @@ describe('Create AMM', () => {
     values = createValues();
   });
 
-  it('Creation', async () => {
-    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
+  it("Creation", async () => {
+    await program.methods
+      .createAmm(values.id, values.fee)
+      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .rpc();
 
     const ammAccount = await program.account.amm.fetch(values.ammKey);
     expect(ammAccount.id.toString()).to.equal(values.id.toString());
@@ -26,9 +29,14 @@ describe('Create AMM', () => {
     expect(ammAccount.fee.toString()).to.equal(values.fee.toString());
   });
 
-  it('Invalid fee', async () => {
+  it("Invalid fee", async () => {
     values.fee = 10000;
 
-    await expectRevert(program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc());
+    await expectRevert(
+      program.methods
+        .createAmm(values.id, values.fee)
+        .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+        .rpc(),
+    );
   });
 });

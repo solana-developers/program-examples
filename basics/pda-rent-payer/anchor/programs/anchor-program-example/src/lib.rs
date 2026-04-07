@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use instructions::*;
 pub mod instructions;
 
-declare_id!("7Hm9nsYVuBZ9rf8z9AMUHreZRv8Q4vLhqwdVTCawRZtA");
+declare_id!("EC9R1o4AsK3hoeh61yNyr2xiDoorgyS4ZBmhYujNUsyN");
 
 #[program]
 pub mod pda_rent_payer {

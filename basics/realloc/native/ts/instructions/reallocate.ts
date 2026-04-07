@@ -1,7 +1,7 @@
-import { Buffer } from 'node:buffer';
-import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { ReallocInstruction } from './instruction';
+import { Buffer } from "node:buffer";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { ReallocInstruction } from "./instruction";
 
 export class ReallocateWithoutZeroInit {
   instruction: ReallocInstruction;
@@ -31,11 +31,11 @@ export const ReallocateWithoutZeroInitSchema = new Map([
   [
     ReallocateWithoutZeroInit,
     {
-      kind: 'struct',
+      kind: "struct",
       fields: [
-        ['instruction', 'u8'],
-        ['state', 'string'],
-        ['zip', 'u32'],
+        ["instruction", "u8"],
+        ["state", "string"],
+        ["zip", "u32"],
       ],
     },
   ],
@@ -101,13 +101,13 @@ export const ReallocateZeroInitSchema = new Map([
   [
     ReallocateZeroInit,
     {
-      kind: 'struct',
+      kind: "struct",
       fields: [
-        ['instruction', 'u8'],
-        ['name', 'string'],
-        ['position', 'string'],
-        ['company', 'string'],
-        ['years_employed', 'u8'],
+        ["instruction", "u8"],
+        ["name", "string"],
+        ["position", "string"],
+        ["company", "string"],
+        ["years_employed", "u8"],
       ],
     },
   ],

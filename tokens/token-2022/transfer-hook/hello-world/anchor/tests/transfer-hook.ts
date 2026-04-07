@@ -1,5 +1,5 @@
-import type { Program } from '@anchor-lang/core';
-import * as anchor from '@anchor-lang/core';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
@@ -7,16 +7,16 @@ import {
   createTransferCheckedWithTransferHookInstruction,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
-} from '@solana/spl-token';
-import { Keypair, SendTransactionError, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
-import { BN } from 'bn.js';
-import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import type { TransferHook } from '../target/types/transfer_hook';
+} from "@solana/spl-token";
+import { Keypair, SendTransactionError, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
+import { BN } from "bn.js";
+import chai, { expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+import type { TransferHook } from "../target/types/transfer_hook";
 
 chai.use(chaiAsPromised);
 
-describe('transfer-hook', () => {
+describe("transfer-hook", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -48,18 +48,18 @@ describe('transfer-hook', () => {
     ASSOCIATED_TOKEN_PROGRAM_ID,
   );
 
-  it('Create Mint with Transfer Hook Extension', async () => {
+  it("Create Mint with Transfer Hook Extension", async () => {
     const transactionSignature = await program.methods
       .initialize(decimals)
       .accounts({ mintAccount: mint.publicKey })
       .signers([mint])
       .rpc({ skipPreflight: true });
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 
   // Create the two token accounts for the transfer-hook enabled mint
   // Fund the sender token account with 100 tokens
-  it('Create Token Accounts and Mint Tokens', async () => {
+  it("Create Token Accounts and Mint Tokens", async () => {
     // 100 tokens
     const amount = 100 * 10 ** decimals;
 
@@ -89,7 +89,7 @@ describe('transfer-hook', () => {
   });
 
   // Account to store extra accounts required by the transfer hook instruction
-  it('Create ExtraAccountMetaList Account', async () => {
+  it("Create ExtraAccountMetaList Account", async () => {
     const initializeExtraAccountMetaListInstruction = await program.methods
       .initializeExtraAccountMetaList()
       .accounts({
@@ -99,11 +99,14 @@ describe('transfer-hook', () => {
 
     const transaction = new Transaction().add(initializeExtraAccountMetaListInstruction);
 
-    const txSig = await sendAndConfirmTransaction(provider.connection, transaction, [wallet.payer], { skipPreflight: true, commitment: 'confirmed' });
-    console.log('Transaction Signature:', txSig);
+    const txSig = await sendAndConfirmTransaction(provider.connection, transaction, [wallet.payer], {
+      skipPreflight: true,
+      commitment: "confirmed",
+    });
+    console.log("Transaction Signature:", txSig);
   });
 
-  it('Transfer Hook with Extra Account Meta', async () => {
+  it("Transfer Hook with Extra Account Meta", async () => {
     // 1 tokens
     const amount = 1 * 10 ** decimals;
     const bigIntAmount = BigInt(amount);
@@ -118,17 +121,17 @@ describe('transfer-hook', () => {
       bigIntAmount,
       decimals,
       [],
-      'confirmed',
+      "confirmed",
       TOKEN_2022_PROGRAM_ID,
     );
 
     const transaction = new Transaction().add(transferInstruction);
 
     const txSig = await sendAndConfirmTransaction(connection, transaction, [wallet.payer], { skipPreflight: true });
-    console.log('Transfer Signature:', txSig);
+    console.log("Transfer Signature:", txSig);
   });
 
-  it('Try call transfer hook without transfer', async () => {
+  it("Try call transfer hook without transfer", async () => {
     const transferHookIx = await program.methods
       .transferHook(new BN(1))
       .accounts({

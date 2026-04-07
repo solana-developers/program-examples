@@ -1,9 +1,9 @@
 use anchor_lang::prelude::*;
 
 use instructions::*;
-mod instructions;
+pub mod instructions;
 
-declare_id!("BJHEDXSQfD9kBFvhw8ZCGmPFRihzvbMoxoHUKpXdpn4D");
+declare_id!("DY2T6zhjngLvpkCMReQFzMHc6g4d4bqQWznntroEVDhG");
 
 #[program]
 pub mod metadata {

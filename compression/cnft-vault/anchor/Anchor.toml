@@ -5,13 +5,13 @@ solana_version = "3.1.8"
 resolution = true
 skip-lint = false
 
-[programs.devnet]
+[programs.localnet]
 cnft_vault = "Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D"
 
 # [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

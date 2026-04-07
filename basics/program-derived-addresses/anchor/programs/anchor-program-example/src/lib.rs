@@ -5,7 +5,7 @@ use instructions::*;
 pub mod instructions;
 pub mod state;
 
-declare_id!("oCCQRZyAbVxujyd8m57MPmDzZDmy2FoKW4ULS7KofCE");
+declare_id!("GHC7zYxZ3mDfb9EunrPwbVd2FG8QpYbnVH3TEp9wBCCU");
 
 #[program]
 pub mod program_derived_addresses_program {

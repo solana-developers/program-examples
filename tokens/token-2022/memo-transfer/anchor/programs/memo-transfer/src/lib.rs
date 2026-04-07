@@ -12,7 +12,7 @@ use anchor_spl::{
     },
 };
 
-declare_id!("5BQyC7y2Pc283woThq11uZRqsgcRbBRLKz4yQ8BJadi2");
+declare_id!("C3zvHFYvrYgydPXv6vPZkcZvx24YE6pTUTZmtQJnAZQs");
 
 #[program]
 pub mod memo_transfer {

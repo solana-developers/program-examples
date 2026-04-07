@@ -1,4 +1,4 @@
-import { describe, test } from 'node:test';
+import { describe, test } from "node:test";
 import {
   Keypair,
   LAMPORTS_PER_SOL,
@@ -6,20 +6,17 @@ import {
   SystemProgram,
   Transaction,
   TransactionInstruction,
-} from '@solana/web3.js';
-import { start } from 'solana-bankrun';
+} from "@solana/web3.js";
+import { start } from "solana-bankrun";
 
-describe('Create a system account', async () => {
+describe("Create a system account", async () => {
   const PROGRAM_ID = PublicKey.unique();
 
-  const context = await start(
-    [{ name: 'create_account_program', programId: PROGRAM_ID }],
-    [],
-  );
+  const context = await start([{ name: "create_account_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
-  test('Create the account via a cross program invocation', async () => {
+  test("Create the account via a cross program invocation", async () => {
     const newKeypair = Keypair.generate();
 
     const ix = new TransactionInstruction({
@@ -40,11 +37,11 @@ describe('Create a system account', async () => {
     await client.processTransaction(tx);
 
     // Verify the account was created
-    const accountInfo = await client.getAccount(newKeypair.publicKey);
+    const _accountInfo = await client.getAccount(newKeypair.publicKey);
     console.log(`Account with public key ${newKeypair.publicKey} successfully created via CPI`);
   });
 
-  test('Create the account via direct call to system program', async () => {
+  test("Create the account via direct call to system program", async () => {
     const newKeypair = Keypair.generate();
 
     const ix = SystemProgram.createAccount({
@@ -63,7 +60,7 @@ describe('Create a system account', async () => {
     await client.processTransaction(tx);
 
     // Verify the account was created
-    const accountInfo = await client.getAccount(newKeypair.publicKey);
+    const _accountInfo = await client.getAccount(newKeypair.publicKey);
     console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
   });
 });

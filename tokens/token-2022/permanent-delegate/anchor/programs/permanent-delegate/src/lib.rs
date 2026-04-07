@@ -11,7 +11,7 @@ use anchor_spl::{
     },
 };
 
-declare_id!("A9rxKS84ZoJVyeTfQbCEfxME2vvAM4uwSMjkmhR5XWb1");
+declare_id!("g63s55bPYTvuuXFRMCzDaKTjCnXhDPNmwjafnQUNexa");
 
 #[program]
 pub mod permanent_delegate {

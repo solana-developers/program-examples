@@ -5,17 +5,17 @@ solana_version = "3.1.8"
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-fundraiser = "Eoiuq1dXvHxh6dLx3wh9gj8kSAUpga11krTrbfF5XYsC"
-
 [programs.devnet]
 fundraiser = "Eoiuq1dXvHxh6dLx3wh9gj8kSAUpga11krTrbfF5XYsC"
 
-# [registry] section removed — no longer used in Anchor 1.0
+[programs.localnet]
+fundraiser = "EuqudshRf8VRskatC6U3txgivHmtCkY5d1qsK5B3VAio"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

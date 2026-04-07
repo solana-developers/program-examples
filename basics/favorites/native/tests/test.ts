@@ -1,6 +1,6 @@
 import {
-  Blockhash,
-  Keypair,
+  type Blockhash,
+  type Keypair,
   PublicKey,
   SystemProgram,
   Transaction,
@@ -10,7 +10,7 @@ import { BN } from "bn.js";
 import * as borsh from "borsh";
 import { assert, expect } from "chai";
 import { describe, test } from "mocha";
-import { BanksClient, ProgramTestContext, start } from "solana-bankrun";
+import { type BanksClient, type ProgramTestContext, start } from "solana-bankrun";
 
 const MyInstruction = {
   CreateFav: 0,
@@ -103,9 +103,7 @@ describe("Favorites Solana Native", () => {
 
     console.log("Deserialized data:", favoritesData);
 
-    expect(new BN(favoritesData.number as any, "le").toNumber()).to.equal(
-      favData.number,
-    );
+    expect(new BN(favoritesData.number as Buffer, "le").toNumber()).to.equal(favData.number);
     expect(favoritesData.color).to.equal(favData.color);
     expect(favoritesData.hobbies).to.deep.equal(favData.hobbies);
   });

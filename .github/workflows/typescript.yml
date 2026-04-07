@@ -1,0 +1,31 @@
+name: TypeScript
+
+on:
+  push:
+    branches:
+      - main
+      - anchor-1.0-final
+      - fix-biome-errors
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  biome:
+    name: Biome check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      # --frozen-lockfile: fail if pnpm-lock.yaml is out of date
+      # --ignore-workspace: only install root deps, not all 94 subprojects
+      - run: pnpm install --frozen-lockfile --ignore-workspace
+      - run: pnpm run check

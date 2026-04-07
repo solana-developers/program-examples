@@ -28,7 +28,7 @@ use spl_transfer_hook_interface::instruction::{
     ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
 };
 
-declare_id!("jY5DfVksJT8Le38LCaQhz5USeiGu4rUeVSS8QRAMoba");
+declare_id!("2CnfERh8AAgu7hY5Pz6nNSjU5UihtfH8YrHAbXBoCwKg");
 
 #[error_code]
 pub enum TransferError {

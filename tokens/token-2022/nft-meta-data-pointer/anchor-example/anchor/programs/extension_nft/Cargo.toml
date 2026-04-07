@@ -21,10 +21,10 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-# Anchor 1.0.0-rc.5 — pin to RC until stable release
-anchor-lang = { version = "1.0.0-rc.5", features = ["init-if-needed"] }
-anchor-spl = { version = "1.0.0-rc.5" }
-# session-keys pinned to 2.0.3 — check compatibility with Anchor 1.0/Solana 3.x
+anchor-lang = { version = "1.0.0", features = ["init-if-needed"] }
+anchor-spl = { version = "1.0.0" }
+# session-keys pinned to 2.0.3 — NOT compatible with Anchor 1.0/Solana 3.x
+# Program cannot build until session-keys releases an Anchor 1.0-compatible version
 session-keys = { version = "2.0.3", features = ["no-entrypoint"] }
 # Removed solana-program pin (=2.1.15) — Anchor 1.0 requires Solana 3.x deps
 spl-token-2022 = { version="6", features = [ "no-entrypoint" ] }

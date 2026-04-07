@@ -1,19 +1,19 @@
-'use client'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
-import { ThemeSelect } from '@/components/theme-select'
-import { ClusterUiSelect } from './cluster/cluster-ui'
-import { WalletButton } from '@/components/solana/solana-provider'
+"use client";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { WalletButton } from "@/components/solana/solana-provider";
+import { ThemeSelect } from "@/components/theme-select";
+import { Button } from "@/components/ui/button";
+import { ClusterUiSelect } from "./cluster/cluster-ui";
 
 export function AppHeader({ links = [] }: { links: { label: string; path: string }[] }) {
-  const pathname = usePathname()
-  const [showMenu, setShowMenu] = useState(false)
+  const pathname = usePathname();
+  const [showMenu, setShowMenu] = useState(false);
 
   function isActive(path: string) {
-    return path === '/' ? pathname === '/' : pathname.startsWith(path)
+    return path === "/" ? pathname === "/" : pathname.startsWith(path);
   }
 
   return (
@@ -28,7 +28,7 @@ export function AppHeader({ links = [] }: { links: { label: string; path: string
               {links.map(({ label, path }) => (
                 <li key={path}>
                   <Link
-                    className={`hover:text-neutral-500 dark:hover:text-white ${isActive(path) ? 'text-neutral-500 dark:text-white' : ''}`}
+                    className={`hover:text-neutral-500 dark:hover:text-white ${isActive(path) ? "text-neutral-500 dark:text-white" : ""}`}
                     href={path}
                   >
                     {label}
@@ -56,7 +56,7 @@ export function AppHeader({ links = [] }: { links: { label: string; path: string
                 {links.map(({ label, path }) => (
                   <li key={path}>
                     <Link
-                      className={`hover:text-neutral-500 dark:hover:text-white block text-lg py-2  ${isActive(path) ? 'text-neutral-500 dark:text-white' : ''} `}
+                      className={`hover:text-neutral-500 dark:hover:text-white block text-lg py-2  ${isActive(path) ? "text-neutral-500 dark:text-white" : ""} `}
                       href={path}
                       onClick={() => setShowMenu(false)}
                     >
@@ -75,5 +75,5 @@ export function AppHeader({ links = [] }: { links: { label: string; path: string
         )}
       </div>
     </header>
-  )
+  );
 }

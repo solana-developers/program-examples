@@ -2,17 +2,17 @@
 solana_version = "3.1.8"
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-counter_anchor = "BmDHboaj1kBUoinJKKSRqKfMeRKJqQqEbUj1VgzeQe4A"
-
-# [registry] section removed — no longer used in Anchor 1.0
+counter_anchor = "9nG25nFpLsycMERePF627oKHm5cHvNyv2TbfiFck32EP"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

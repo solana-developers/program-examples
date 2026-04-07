@@ -1,7 +1,12 @@
-import * as anchor from '@anchor-lang/core';
-import { createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
-import { type Connection, Keypair, PublicKey, type Signer } from '@solana/web3.js';
-import { BN } from 'bn.js';
+import * as anchor from "@anchor-lang/core";
+import {
+  createMint,
+  getAssociatedTokenAddressSync,
+  getOrCreateAssociatedTokenAccount,
+  mintTo,
+} from "@solana/spl-token";
+import { type Connection, Keypair, PublicKey, type Signer } from "@solana/web3.js";
+import { BN } from "bn.js";
 
 export async function sleep(seconds: number) {
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
@@ -11,10 +16,11 @@ export const generateSeededKeypair = (seed: string) => {
   return Keypair.fromSeed(anchor.utils.bytes.utf8.encode(anchor.utils.sha256.hash(seed)).slice(0, 32));
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
 export const expectRevert = async (promise: Promise<any>) => {
   try {
     await promise;
-    throw new Error('Expected a revert');
+    throw new Error("Expected a revert");
   } catch {
     return;
   }
@@ -98,11 +104,11 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
   }
 
   const poolAuthority = PublicKey.findProgramAddressSync(
-    [ammKey.toBuffer(), mintAKeypair.publicKey.toBuffer(), mintBKeypair.publicKey.toBuffer(), Buffer.from('authority')],
+    [ammKey.toBuffer(), mintAKeypair.publicKey.toBuffer(), mintBKeypair.publicKey.toBuffer(), Buffer.from("authority")],
     anchor.workspace.SwapExample.programId,
   )[0];
   const mintLiquidity = PublicKey.findProgramAddressSync(
-    [ammKey.toBuffer(), mintAKeypair.publicKey.toBuffer(), mintBKeypair.publicKey.toBuffer(), Buffer.from('liquidity')],
+    [ammKey.toBuffer(), mintAKeypair.publicKey.toBuffer(), mintBKeypair.publicKey.toBuffer(), Buffer.from("liquidity")],
     anchor.workspace.SwapExample.programId,
   )[0];
   const poolKey = PublicKey.findProgramAddressSync(

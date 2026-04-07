@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::rent::{
-    DEFAULT_EXEMPTION_THRESHOLD, DEFAULT_LAMPORTS_PER_BYTE_YEAR,
-};
+// DEFAULT_EXEMPTION_THRESHOLD=2.0 years, DEFAULT_LAMPORTS_PER_BYTE_YEAR=3480
+// These constants were removed from public API in newer Solana versions
+const DEFAULT_LAMPORTS_PER_BYTE_YEAR: u64 = 3480;
+const DEFAULT_EXEMPTION_THRESHOLD: f64 = 2.0;
 use anchor_lang::system_program::{transfer, Transfer};
 use anchor_spl::token_interface::{
     token_metadata_initialize, Mint, Token2022, TokenMetadataInitialize,
@@ -62,7 +63,7 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
         CpiContext::new(
             ctx.accounts.token_program.key(),
             TokenMetadataInitialize {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
+                program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),
                 metadata: ctx.accounts.mint_account.to_account_info(),
                 mint_authority: ctx.accounts.payer.to_account_info(),

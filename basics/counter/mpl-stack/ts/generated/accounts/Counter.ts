@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as beetSolana from '@metaplex-foundation/beet-solana';
-import * as web3 from '@solana/web3.js';
+import * as beet from "@metaplex-foundation/beet";
+import * as beetSolana from "@metaplex-foundation/beet-solana";
+import * as web3 from "@solana/web3.js";
 
 /**
  * Arguments used to create {@link Counter}
@@ -50,7 +50,7 @@ export class Counter implements CounterArgs {
    */
   static async fromAccountAddress(connection: web3.Connection, address: web3.PublicKey): Promise<Counter> {
     const accountInfo = await connection.getAccountInfo(address, {
-      commitment: 'confirmed',
+      commitment: "confirmed",
     });
     if (accountInfo == null) {
       throw new Error(`Unable to find Counter account at ${address}`);
@@ -64,7 +64,7 @@ export class Counter implements CounterArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS')) {
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS")) {
     return beetSolana.GpaBuilder.fromStruct(programId, counterBeet);
   }
 
@@ -98,7 +98,10 @@ export class Counter implements CounterArgs {
    *
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+  static async getMinimumBalanceForRentExemption(
+    connection: web3.Connection,
+    commitment?: web3.Commitment,
+  ): Promise<number> {
     return connection.getMinimumBalanceForRentExemption(Counter.byteSize, commitment);
   }
 
@@ -118,7 +121,7 @@ export class Counter implements CounterArgs {
     return {
       count: (() => {
         const x = <{ toNumber: () => number }>this.count;
-        if (typeof x.toNumber === 'function') {
+        if (typeof x.toNumber === "function") {
           try {
             return x.toNumber();
           } catch (_) {
@@ -135,4 +138,8 @@ export class Counter implements CounterArgs {
  * @category Accounts
  * @category generated
  */
-export const counterBeet = new beet.BeetStruct<Counter, CounterArgs>([['count', beet.u64]], Counter.fromArgs, 'Counter');
+export const counterBeet = new beet.BeetStruct<Counter, CounterArgs>(
+  [["count", beet.u64]],
+  Counter.fromArgs,
+  "Counter",
+);

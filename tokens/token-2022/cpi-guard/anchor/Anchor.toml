@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-cpi_guard = "6tU3MEowU6oxxeDZLSxEwzcEZsZrhBJsfUR6xECvShid"
-
-# [registry] section removed — no longer used in Anchor 1.0
+cpi_guard = "PWPfSkM5ntHyS68woBexCrrDVE23AdtdQbUoyx5q7GR"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-metadata = "BJHEDXSQfD9kBFvhw8ZCGmPFRihzvbMoxoHUKpXdpn4D"
-
-# [registry] section removed — no longer used in Anchor 1.0
+metadata = "DY2T6zhjngLvpkCMReQFzMHc6g4d4bqQWznntroEVDhG"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "cargo test"
+
+[hooks]

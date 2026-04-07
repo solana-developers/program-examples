@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as web3 from '@solana/web3.js';
-import { type BookRentalArgs, bookRentalArgsBeet } from '../types/BookRentalArgs';
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
+import { type BookRentalArgs, bookRentalArgsBeet } from "../types/BookRentalArgs";
 
 /**
  * @category Instructions
@@ -28,10 +28,10 @@ export const BookRentalStruct = new beet.FixableBeetArgsStruct<
   }
 >(
   [
-    ['instructionDiscriminator', beet.u8],
-    ['bookRentalArgs', bookRentalArgsBeet],
+    ["instructionDiscriminator", beet.u8],
+    ["bookRentalArgs", bookRentalArgsBeet],
   ],
-  'BookRentalInstructionArgs',
+  "BookRentalInstructionArgs",
 );
 /**
  * Accounts required by the _BookRental_ instruction
@@ -65,7 +65,7 @@ export const bookRentalInstructionDiscriminator = 1;
 export function createBookRentalInstruction(
   accounts: BookRentalInstructionAccounts,
   args: BookRentalInstructionArgs,
-  programId = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'),
+  programId = new web3.PublicKey("8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ"),
 ) {
   const [data] = BookRentalStruct.serialize({
     instructionDiscriminator: bookRentalInstructionDiscriminator,

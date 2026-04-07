@@ -26,10 +26,10 @@ import {
   transformEncoder,
   type WritableAccount,
   type WritableSignerAccount,
-} from '@solana/kit';
-import { findConfigPda } from '../pdas';
-import { BLOCK_LIST_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
+} from "@solana/kit";
+import { findConfigPda } from "../pdas";
+import { BLOCK_LIST_PROGRAM_ADDRESS } from "../programs";
+import { getAccountMetaFactory, type ResolvedAccount } from "../shared";
 
 export const INIT_DISCRIMINATOR = 241;
 
@@ -41,13 +41,15 @@ export type InitInstruction<
   TProgram extends string = typeof BLOCK_LIST_PROGRAM_ADDRESS,
   TAccountAuthority extends string | IAccountMeta<string> = string,
   TAccountConfig extends string | IAccountMeta<string> = string,
-  TAccountSystemProgram extends string | IAccountMeta<string> = '11111111111111111111111111111111',
+  TAccountSystemProgram extends string | IAccountMeta<string> = "11111111111111111111111111111111",
   TRemainingAccounts extends readonly IAccountMeta<string>[] = [],
 > = IInstruction<TProgram> &
   IInstructionWithData<Uint8Array> &
   IInstructionWithAccounts<
     [
-      TAccountAuthority extends string ? WritableSignerAccount<TAccountAuthority> & IAccountSignerMeta<TAccountAuthority> : TAccountAuthority,
+      TAccountAuthority extends string
+        ? WritableSignerAccount<TAccountAuthority> & IAccountSignerMeta<TAccountAuthority>
+        : TAccountAuthority,
       TAccountConfig extends string ? WritableAccount<TAccountConfig> : TAccountConfig,
       TAccountSystemProgram extends string ? ReadonlyAccount<TAccountSystemProgram> : TAccountSystemProgram,
       ...TRemainingAccounts,
@@ -56,14 +58,17 @@ export type InitInstruction<
 
 export type InitInstructionData = { discriminator: number };
 
-export type InitInstructionDataArgs = {};
+export type InitInstructionDataArgs = Record<string, never>;
 
 export function getInitInstructionDataEncoder(): Encoder<InitInstructionDataArgs> {
-  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), (value) => ({ ...value, discriminator: 241 }));
+  return transformEncoder(getStructEncoder([["discriminator", getU8Encoder()]]), (value) => ({
+    ...value,
+    discriminator: 241,
+  }));
 }
 
 export function getInitInstructionDataDecoder(): Decoder<InitInstructionData> {
-  return getStructDecoder([['discriminator', getU8Decoder()]]);
+  return getStructDecoder([["discriminator", getU8Decoder()]]);
 }
 
 export function getInitInstructionDataCodec(): Codec<InitInstructionDataArgs, InitInstructionData> {
@@ -105,12 +110,16 @@ export async function getInitInstructionAsync<
     accounts.config.value = await findConfigPda();
   }
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   const instruction = {
-    accounts: [getAccountMeta(accounts.authority), getAccountMeta(accounts.config), getAccountMeta(accounts.systemProgram)],
+    accounts: [
+      getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.config),
+      getAccountMeta(accounts.systemProgram),
+    ],
     programAddress,
     data: getInitInstructionDataEncoder().encode({}),
   } as InitInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountSystemProgram>;
@@ -150,12 +159,16 @@ export function getInitInstruction<
 
   // Resolve default values.
   if (!accounts.systemProgram.value) {
-    accounts.systemProgram.value = '11111111111111111111111111111111' as Address<'11111111111111111111111111111111'>;
+    accounts.systemProgram.value = "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
   }
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+  const getAccountMeta = getAccountMetaFactory(programAddress, "programId");
   const instruction = {
-    accounts: [getAccountMeta(accounts.authority), getAccountMeta(accounts.config), getAccountMeta(accounts.systemProgram)],
+    accounts: [
+      getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.config),
+      getAccountMeta(accounts.systemProgram),
+    ],
     programAddress,
     data: getInitInstructionDataEncoder().encode({}),
   } as InitInstruction<TProgramAddress, TAccountAuthority, TAccountConfig, TAccountSystemProgram>;
@@ -181,11 +194,11 @@ export function parseInitInstruction<TProgram extends string, TAccountMetas exte
 ): ParsedInitInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
-    throw new Error('Not enough accounts');
+    throw new Error("Not enough accounts");
   }
   let accountIndex = 0;
   const getNextAccount = () => {
-    const accountMeta = instruction.accounts?.[accountIndex]!;
+    const accountMeta = instruction.accounts[accountIndex];
     accountIndex += 1;
     return accountMeta;
   };

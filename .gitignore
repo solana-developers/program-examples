@@ -14,7 +14,9 @@ node_modules/
 **/*/.anchor
 **/*/.DS_Store
 **/*/target
-**/*/tests/fixtures
+# Ignore test fixtures by default, but allow .so program binaries needed for LiteSVM tests
+**/*/tests/fixtures/*
+!**/*/tests/fixtures/*.so
 **/*.rs.bk
 **/*/test-ledger
 **/*/yarn.lock

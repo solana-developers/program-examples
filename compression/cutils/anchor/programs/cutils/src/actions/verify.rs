@@ -18,11 +18,11 @@ pub struct Verify<'info> {
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct VerifyParams {
-    root: [u8; 32],
-    data_hash: [u8; 32],
-    creator_hash: [u8; 32],
-    nonce: u64,
-    index: u32,
+    pub root: [u8; 32],
+    pub data_hash: [u8; 32],
+    pub creator_hash: [u8; 32],
+    pub nonce: u64,
+    pub index: u32,
 }
 
 impl Verify<'_> {

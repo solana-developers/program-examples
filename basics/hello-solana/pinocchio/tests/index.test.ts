@@ -1,17 +1,17 @@
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-import { assert } from 'chai';
-import { ProgramTestContext, start } from 'solana-bankrun';
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { assert } from "chai";
+import { type ProgramTestContext, start } from "solana-bankrun";
 
-describe('hello-solana', () => {
+describe("hello-solana", () => {
   const PROGRAM_ID = PublicKey.unique();
 
   // load program in solana-bankrun
   let context: ProgramTestContext;
   before(async () => {
-    context = await start([{ name: 'hello_solana_program_pinocchio', programId: PROGRAM_ID }], []);
+    context = await start([{ name: "hello_solana_program_pinocchio", programId: PROGRAM_ID }], []);
   });
 
-  it('Say hello!', async () => {
+  it("Say hello!", async () => {
     const client = context.banksClient;
     const payer = context.payer;
     const blockhash = context.lastBlockhash;
@@ -30,8 +30,8 @@ describe('hello-solana', () => {
     const transaction = await client.processTransaction(tx);
 
     assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
-    assert(transaction.logMessages[1] === 'Program log: Hello, Solana!');
-    assert(transaction.logMessages[2] === `Program log: [${Array.from(PROGRAM_ID.toBytes()).join(', ')}]`);
+    assert(transaction.logMessages[1] === "Program log: Hello, Solana!");
+    assert(transaction.logMessages[2] === `Program log: [${Array.from(PROGRAM_ID.toBytes()).join(", ")}]`);
     assert(transaction.logMessages[3].startsWith(`Program ${PROGRAM_ID} consumed`));
     assert(transaction.logMessages[4] === `Program ${PROGRAM_ID} success`);
     assert(transaction.logMessages.length === 5);

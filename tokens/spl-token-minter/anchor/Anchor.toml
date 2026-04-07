@@ -6,16 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-spl_token_minter = "3of89Z9jwek9zrFgpCWc9jZvQvitpVMxpZNsrAD2vQUD"
-
-# [registry] section removed — no longer used in Anchor 1.0
+spl_token_minter = "37nJupU7iBErqAjq5RTRRMvRbmkzngJRGBKG4yA2CxaH"
 
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-# Only run bankrun tests — the validator tests (test.ts) need Metaplex Token
-# Metadata cloned from mainnet which is too slow/unreliable in CI.
-# bankrun.test.ts uses a local fixture (tests/fixtures/token_metadata.so).
-test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/bankrun.test.ts"
+test = "cargo test"
+
+[hooks]

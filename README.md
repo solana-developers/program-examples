@@ -1,6 +1,6 @@
 # Program Examples
 
-## Onchain program examples for :anchor: Anchor, :crab: Native Rust, and :boy: Pinocchio.
+## Onchain program examples for ⚓ Anchor, 🦀 Native Rust, and 🤥 Pinocchio.
 
 [![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml)
 

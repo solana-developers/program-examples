@@ -1,7 +1,7 @@
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import BN from 'bn.js';
-import * as borsh from 'borsh';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import type BN from "bn.js";
+import * as borsh from "borsh";
 
 enum EscrowInstruction {
   MakeOffer = 0,
@@ -10,16 +10,16 @@ enum EscrowInstruction {
 
 const MakeOfferSchema = {
   struct: {
-    instruction: 'u8',
-    id: 'u64',
-    token_a_offered_amount: 'u64',
-    token_b_wanted_amount: 'u64',
+    instruction: "u8",
+    id: "u64",
+    token_a_offered_amount: "u64",
+    token_b_wanted_amount: "u64",
   },
 };
 
 const TakeOfferSchema = {
   struct: {
-    instruction: 'u8',
+    instruction: "u8",
   },
 };
 
@@ -57,7 +57,11 @@ export function buildMakeOffer(props: {
       { pubkey: props.maker, isSigner: true, isWritable: true },
       { pubkey: props.payer, isSigner: true, isWritable: true },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-      { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      {
+        pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+        isSigner: false,
+        isWritable: false,
+      },
       { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
     ],
     programId: props.programId,
@@ -95,7 +99,11 @@ export function buildTakeOffer(props: {
       { pubkey: props.taker, isSigner: true, isWritable: true },
       { pubkey: props.payer, isSigner: true, isWritable: true },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-      { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      {
+        pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
+        isSigner: false,
+        isWritable: false,
+      },
       { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
     ],
     programId: props.programId,
