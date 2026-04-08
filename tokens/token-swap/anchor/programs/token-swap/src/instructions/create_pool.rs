@@ -31,7 +31,7 @@ pub struct CreatePool<'info> {
     #[account(
         init,
         payer = payer,
-        space = Pool::LEN,
+        space = Pool::DISCRIMINATOR.len() + Pool::INIT_SPACE,
         seeds = [
             amm.key().as_ref(),
             mint_a.key().as_ref(),

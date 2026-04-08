@@ -127,7 +127,7 @@ pub struct InitializeExtraAccountMetaList<'info> {
     pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
     pub system_program: Program<'info, System>,
-    #[account(init_if_needed, seeds = [b"white_list"], bump, payer = payer, space = 400)]
+    #[account(init_if_needed, seeds = [b"white_list"], bump, payer = payer, space = WhiteList::DISCRIMINATOR.len() + WhiteList::INIT_SPACE)]
     pub white_list: Account<'info, WhiteList>,
 }
 
@@ -187,7 +187,9 @@ pub struct AddToWhiteList<'info> {
 }
 
 #[account]
+#[derive(InitSpace)]
 pub struct WhiteList {
     pub authority: Pubkey,
+    #[max_len(11)]
     pub white_list: Vec<Pubkey>,
 }
