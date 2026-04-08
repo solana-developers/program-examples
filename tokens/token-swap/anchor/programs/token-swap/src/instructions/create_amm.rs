@@ -17,7 +17,7 @@ pub struct CreateAmm<'info> {
     #[account(
         init,
         payer = payer,
-        space = Amm::LEN,
+        space = Amm::DISCRIMINATOR.len() + Amm::INIT_SPACE,
         seeds = [
             id.as_ref()
         ],

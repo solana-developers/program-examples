@@ -27,7 +27,7 @@ pub mod lever {
 
 #[derive(Accounts)]
 pub struct InitializeLever<'info> {
-    #[account(init, payer = user, space = 8 + 8)]
+    #[account(init, payer = user, space = PowerStatus::DISCRIMINATOR.len() + PowerStatus::INIT_SPACE)]
     pub power: Account<'info, PowerStatus>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -41,6 +41,7 @@ pub struct SetPowerStatus<'info> {
 }
 
 #[account]
+#[derive(InitSpace)]
 pub struct PowerStatus {
     pub is_on: bool,
 }
