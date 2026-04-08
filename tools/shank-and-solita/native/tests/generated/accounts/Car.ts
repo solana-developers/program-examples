@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as beetSolana from '@metaplex-foundation/beet-solana';
-import * as web3 from '@solana/web3.js';
+import * as beet from "@metaplex-foundation/beet";
+import * as beetSolana from "@metaplex-foundation/beet-solana";
+import * as web3 from "@solana/web3.js";
 
 /**
  * Arguments used to create {@link Car}
@@ -72,7 +72,7 @@ export class Car implements CarArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ')) {
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey("8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ")) {
     return beetSolana.GpaBuilder.fromStruct(programId, carBeet);
   }
 
@@ -112,7 +112,11 @@ export class Car implements CarArgs {
    * depends on them
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(args: CarArgs, connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+  static async getMinimumBalanceForRentExemption(
+    args: CarArgs,
+    connection: web3.Connection,
+    commitment?: web3.Commitment,
+  ): Promise<number> {
     return connection.getMinimumBalanceForRentExemption(Car.byteSize(args), commitment);
   }
 
@@ -135,10 +139,10 @@ export class Car implements CarArgs {
  */
 export const carBeet = new beet.FixableBeetStruct<Car, CarArgs>(
   [
-    ['year', beet.u16],
-    ['make', beet.utf8String],
-    ['model', beet.utf8String],
+    ["year", beet.u16],
+    ["make", beet.utf8String],
+    ["model", beet.utf8String],
   ],
   Car.fromArgs,
-  'Car',
+  "Car",
 );

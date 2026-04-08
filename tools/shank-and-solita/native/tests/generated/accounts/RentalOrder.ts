@@ -5,10 +5,10 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as beetSolana from '@metaplex-foundation/beet-solana';
-import * as web3 from '@solana/web3.js';
-import { RentalOrderStatus, rentalOrderStatusBeet } from '../types/RentalOrderStatus';
+import * as beet from "@metaplex-foundation/beet";
+import * as beetSolana from "@metaplex-foundation/beet-solana";
+import * as web3 from "@solana/web3.js";
+import { RentalOrderStatus, rentalOrderStatusBeet } from "../types/RentalOrderStatus";
 
 /**
  * Arguments used to create {@link RentalOrder}
@@ -79,7 +79,7 @@ export class RentalOrder implements RentalOrderArgs {
    *
    * @param programId - the program that owns the accounts we are filtering
    */
-  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ')) {
+  static gpaBuilder(programId: web3.PublicKey = new web3.PublicKey("8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ")) {
     return beetSolana.GpaBuilder.fromStruct(programId, rentalOrderBeet);
   }
 
@@ -119,7 +119,11 @@ export class RentalOrder implements RentalOrderArgs {
    * depends on them
    * @param connection used to retrieve the rent exemption information
    */
-  static async getMinimumBalanceForRentExemption(args: RentalOrderArgs, connection: web3.Connection, commitment?: web3.Commitment): Promise<number> {
+  static async getMinimumBalanceForRentExemption(
+    args: RentalOrderArgs,
+    connection: web3.Connection,
+    commitment?: web3.Commitment,
+  ): Promise<number> {
     return connection.getMinimumBalanceForRentExemption(RentalOrder.byteSize(args), commitment);
   }
 
@@ -135,7 +139,7 @@ export class RentalOrder implements RentalOrderArgs {
       returnDate: this.returnDate,
       price: (() => {
         const x = <{ toNumber: () => number }>this.price;
-        if (typeof x.toNumber === 'function') {
+        if (typeof x.toNumber === "function") {
           try {
             return x.toNumber();
           } catch (_) {
@@ -155,13 +159,13 @@ export class RentalOrder implements RentalOrderArgs {
  */
 export const rentalOrderBeet = new beet.FixableBeetStruct<RentalOrder, RentalOrderArgs>(
   [
-    ['car', beetSolana.publicKey],
-    ['name', beet.utf8String],
-    ['pickUpDate', beet.utf8String],
-    ['returnDate', beet.utf8String],
-    ['price', beet.u64],
-    ['status', rentalOrderStatusBeet],
+    ["car", beetSolana.publicKey],
+    ["name", beet.utf8String],
+    ["pickUpDate", beet.utf8String],
+    ["returnDate", beet.utf8String],
+    ["price", beet.u64],
+    ["status", rentalOrderStatusBeet],
   ],
   RentalOrder.fromArgs,
-  'RentalOrder',
+  "RentalOrder",
 );

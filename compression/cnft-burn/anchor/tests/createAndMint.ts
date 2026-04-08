@@ -12,18 +12,18 @@
   less console logging and explanation of what is occurring
 */
 
-import * as anchor from '@anchor-lang/core';
-import { type MetadataArgs, TokenProgramVersion, TokenStandard } from '@metaplex-foundation/mpl-bubblegum';
-import type { CreateMetadataAccountArgsV3 } from '@metaplex-foundation/mpl-token-metadata';
-import type { ValidDepthSizePair } from '@solana/spl-account-compression';
-import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { RPC_PATH } from './cnft-burn';
+import * as anchor from "@anchor-lang/core";
+import { type MetadataArgs, TokenProgramVersion, TokenStandard } from "@metaplex-foundation/mpl-bubblegum";
+import type { CreateMetadataAccountArgsV3 } from "@metaplex-foundation/mpl-token-metadata";
+import type { ValidDepthSizePair } from "@solana/spl-account-compression";
+import { Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { RPC_PATH } from "./cnft-burn";
 // local import of the connection wrapper, to help with using the ReadApi
-import { WrapperConnection } from './ReadApi/WrapperConnection';
+import { WrapperConnection } from "./ReadApi/WrapperConnection";
 // import custom helpers to mint compressed NFTs
-import { createCollection, createTree, mintCompressedNFT } from './utils/compression';
+import { createCollection, createTree, mintCompressedNFT } from "./utils/compression";
 // import custom helpers for demos
-import { numberFormatter } from './utils/helpers';
+import { numberFormatter } from "./utils/helpers";
 
 // define some reusable balance values for tracking
 let initBalance: number;
@@ -39,7 +39,7 @@ export async function createAndMint() {
   const payerWallet = provider.wallet as anchor.Wallet;
   const payer = payerWallet.payer;
 
-  console.log('Payer address:', payer.publicKey.toBase58());
+  console.log("Payer address:", payer.publicKey.toBase58());
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ export async function createAndMint() {
   const CLUSTER_URL = RPC_PATH;
 
   // create a new rpc connection, using the ReadApi wrapper
-  const connection = new WrapperConnection(CLUSTER_URL, 'confirmed');
+  const connection = new WrapperConnection(CLUSTER_URL, "confirmed");
 
   // get the payer's starting balance (only used for demonstration purposes)
   initBalance = await connection.getBalance(payer.publicKey);
@@ -84,10 +84,10 @@ export async function createAndMint() {
   // define the metadata to be used for creating the NFT collection
   const collectionMetadataV3: CreateMetadataAccountArgsV3 = {
     data: {
-      name: 'Test Burn',
-      symbol: 'TB',
+      name: "Test Burn",
+      symbol: "TB",
       // specific json metadata for the collection
-      uri: 'https://supersweetcollection.notarealurl/collection.json',
+      uri: "https://supersweetcollection.notarealurl/collection.json",
       sellerFeeBasisPoints: 100,
       creators: [
         {
@@ -111,10 +111,10 @@ export async function createAndMint() {
   */
 
   const compressedNFTMetadata: MetadataArgs = {
-    name: 'Pratik test',
+    name: "Pratik test",
     symbol: collectionMetadataV3.data.symbol,
     // specific json metadata for each NFT
-    uri: 'https://bafkreies5r7b5eszpq5dgnw2brhjtlw7xtdtmsmoniebqehf37nv5rxajy.ipfs.nftstorage.link/',
+    uri: "https://bafkreies5r7b5eszpq5dgnw2brhjtlw7xtdtmsmoniebqehf37nv5rxajy.ipfs.nftstorage.link/",
     creators: [
       {
         address: payer.publicKey,
@@ -154,8 +154,8 @@ export async function createAndMint() {
   // fetch the payer's final balance
   balance = await connection.getBalance(payer.publicKey);
 
-  console.log('===============================');
-  console.log('Total cost:', numberFormatter((initBalance - balance) / LAMPORTS_PER_SOL, true), 'SOL\n');
+  console.log("===============================");
+  console.log("Total cost:", numberFormatter((initBalance - balance) / LAMPORTS_PER_SOL, true), "SOL\n");
 
   return { tree, collection };
 }

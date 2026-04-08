@@ -1,134 +1,134 @@
 export type ExtensionNft = {
-  version: '0.1.0';
-  name: 'extension_nft';
+  version: "0.1.0";
+  name: "extension_nft";
   instructions: [
     {
-      name: 'initPlayer';
+      name: "initPlayer";
       accounts: [
         {
-          name: 'player';
+          name: "player";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'gameData';
+          name: "gameData";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'signer';
+          name: "signer";
           isMut: true;
           isSigner: true;
         },
         {
-          name: 'systemProgram';
+          name: "systemProgram";
           isMut: false;
           isSigner: false;
         },
       ];
       args: [
         {
-          name: 'levelSeed';
-          type: 'string';
+          name: "levelSeed";
+          type: "string";
         },
       ];
     },
     {
-      name: 'chopTree';
+      name: "chopTree";
       accounts: [
         {
-          name: 'sessionToken';
+          name: "sessionToken";
           isMut: false;
           isSigner: false;
           isOptional: true;
         },
         {
-          name: 'player';
+          name: "player";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'gameData';
+          name: "gameData";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'signer';
+          name: "signer";
           isMut: true;
           isSigner: true;
         },
         {
-          name: 'systemProgram';
+          name: "systemProgram";
           isMut: false;
           isSigner: false;
         },
         {
-          name: 'mint';
+          name: "mint";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'nftAuthority';
+          name: "nftAuthority";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'tokenProgram';
+          name: "tokenProgram";
           isMut: false;
           isSigner: false;
         },
       ];
       args: [
         {
-          name: 'levelSeed';
-          type: 'string';
+          name: "levelSeed";
+          type: "string";
         },
         {
-          name: 'counter';
-          type: 'u16';
+          name: "counter";
+          type: "u16";
         },
       ];
     },
     {
-      name: 'mintNft';
+      name: "mintNft";
       accounts: [
         {
-          name: 'signer';
+          name: "signer";
           isMut: true;
           isSigner: true;
         },
         {
-          name: 'systemProgram';
+          name: "systemProgram";
           isMut: false;
           isSigner: false;
         },
         {
-          name: 'tokenProgram';
+          name: "tokenProgram";
           isMut: false;
           isSigner: false;
         },
         {
-          name: 'tokenAccount';
+          name: "tokenAccount";
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'mint';
+          name: "mint";
           isMut: true;
           isSigner: true;
         },
         {
-          name: 'rent';
+          name: "rent";
           isMut: false;
           isSigner: false;
         },
         {
-          name: 'associatedTokenProgram';
+          name: "associatedTokenProgram";
           isMut: false;
           isSigner: false;
         },
         {
-          name: 'nftAuthority';
+          name: "nftAuthority";
           isMut: true;
           isSigner: false;
         },
@@ -138,60 +138,60 @@ export type ExtensionNft = {
   ];
   accounts: [
     {
-      name: 'nftAuthority';
+      name: "nftAuthority";
       type: {
-        kind: 'struct';
+        kind: "struct";
         fields: [];
       };
     },
     {
-      name: 'gameData';
+      name: "gameData";
       type: {
-        kind: 'struct';
+        kind: "struct";
         fields: [
           {
-            name: 'totalWoodCollected';
-            type: 'u64';
+            name: "totalWoodCollected";
+            type: "u64";
           },
         ];
       };
     },
     {
-      name: 'playerData';
+      name: "playerData";
       type: {
-        kind: 'struct';
+        kind: "struct";
         fields: [
           {
-            name: 'authority';
-            type: 'publicKey';
+            name: "authority";
+            type: "publicKey";
           },
           {
-            name: 'name';
-            type: 'string';
+            name: "name";
+            type: "string";
           },
           {
-            name: 'level';
-            type: 'u8';
+            name: "level";
+            type: "u8";
           },
           {
-            name: 'xp';
-            type: 'u64';
+            name: "xp";
+            type: "u64";
           },
           {
-            name: 'wood';
-            type: 'u64';
+            name: "wood";
+            type: "u64";
           },
           {
-            name: 'energy';
-            type: 'u64';
+            name: "energy";
+            type: "u64";
           },
           {
-            name: 'lastLogin';
-            type: 'i64';
+            name: "lastLogin";
+            type: "i64";
           },
           {
-            name: 'lastId';
-            type: 'u16';
+            name: "lastId";
+            type: "u16";
           },
         ];
       };
@@ -200,148 +200,148 @@ export type ExtensionNft = {
   errors: [
     {
       code: 6000;
-      name: 'NotEnoughEnergy';
-      msg: 'Not enough energy';
+      name: "NotEnoughEnergy";
+      msg: "Not enough energy";
     },
     {
       code: 6001;
-      name: 'WrongAuthority';
-      msg: 'Wrong Authority';
+      name: "WrongAuthority";
+      msg: "Wrong Authority";
     },
   ];
 };
 
 export const IDL: ExtensionNft = {
-  version: '0.1.0',
-  name: 'extension_nft',
+  version: "0.1.0",
+  name: "extension_nft",
   instructions: [
     {
-      name: 'initPlayer',
+      name: "initPlayer",
       accounts: [
         {
-          name: 'player',
+          name: "player",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'gameData',
+          name: "gameData",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'signer',
+          name: "signer",
           isMut: true,
           isSigner: true,
         },
         {
-          name: 'systemProgram',
+          name: "systemProgram",
           isMut: false,
           isSigner: false,
         },
       ],
       args: [
         {
-          name: 'levelSeed',
-          type: 'string',
+          name: "levelSeed",
+          type: "string",
         },
       ],
     },
     {
-      name: 'chopTree',
+      name: "chopTree",
       accounts: [
         {
-          name: 'sessionToken',
+          name: "sessionToken",
           isMut: false,
           isSigner: false,
           isOptional: true,
         },
         {
-          name: 'player',
+          name: "player",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'gameData',
+          name: "gameData",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'signer',
+          name: "signer",
           isMut: true,
           isSigner: true,
         },
         {
-          name: 'systemProgram',
+          name: "systemProgram",
           isMut: false,
           isSigner: false,
         },
         {
-          name: 'mint',
+          name: "mint",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'nftAuthority',
+          name: "nftAuthority",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'tokenProgram',
+          name: "tokenProgram",
           isMut: false,
           isSigner: false,
         },
       ],
       args: [
         {
-          name: 'levelSeed',
-          type: 'string',
+          name: "levelSeed",
+          type: "string",
         },
         {
-          name: 'counter',
-          type: 'u16',
+          name: "counter",
+          type: "u16",
         },
       ],
     },
     {
-      name: 'mintNft',
+      name: "mintNft",
       accounts: [
         {
-          name: 'signer',
+          name: "signer",
           isMut: true,
           isSigner: true,
         },
         {
-          name: 'systemProgram',
+          name: "systemProgram",
           isMut: false,
           isSigner: false,
         },
         {
-          name: 'tokenProgram',
+          name: "tokenProgram",
           isMut: false,
           isSigner: false,
         },
         {
-          name: 'tokenAccount',
+          name: "tokenAccount",
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'mint',
+          name: "mint",
           isMut: true,
           isSigner: true,
         },
         {
-          name: 'rent',
+          name: "rent",
           isMut: false,
           isSigner: false,
         },
         {
-          name: 'associatedTokenProgram',
+          name: "associatedTokenProgram",
           isMut: false,
           isSigner: false,
         },
         {
-          name: 'nftAuthority',
+          name: "nftAuthority",
           isMut: true,
           isSigner: false,
         },
@@ -351,60 +351,60 @@ export const IDL: ExtensionNft = {
   ],
   accounts: [
     {
-      name: 'nftAuthority',
+      name: "nftAuthority",
       type: {
-        kind: 'struct',
+        kind: "struct",
         fields: [],
       },
     },
     {
-      name: 'gameData',
+      name: "gameData",
       type: {
-        kind: 'struct',
+        kind: "struct",
         fields: [
           {
-            name: 'totalWoodCollected',
-            type: 'u64',
+            name: "totalWoodCollected",
+            type: "u64",
           },
         ],
       },
     },
     {
-      name: 'playerData',
+      name: "playerData",
       type: {
-        kind: 'struct',
+        kind: "struct",
         fields: [
           {
-            name: 'authority',
-            type: 'publicKey',
+            name: "authority",
+            type: "publicKey",
           },
           {
-            name: 'name',
-            type: 'string',
+            name: "name",
+            type: "string",
           },
           {
-            name: 'level',
-            type: 'u8',
+            name: "level",
+            type: "u8",
           },
           {
-            name: 'xp',
-            type: 'u64',
+            name: "xp",
+            type: "u64",
           },
           {
-            name: 'wood',
-            type: 'u64',
+            name: "wood",
+            type: "u64",
           },
           {
-            name: 'energy',
-            type: 'u64',
+            name: "energy",
+            type: "u64",
           },
           {
-            name: 'lastLogin',
-            type: 'i64',
+            name: "lastLogin",
+            type: "i64",
           },
           {
-            name: 'lastId',
-            type: 'u16',
+            name: "lastId",
+            type: "u16",
           },
         ],
       },
@@ -413,13 +413,13 @@ export const IDL: ExtensionNft = {
   errors: [
     {
       code: 6000,
-      name: 'NotEnoughEnergy',
-      msg: 'Not enough energy',
+      name: "NotEnoughEnergy",
+      msg: "Not enough energy",
     },
     {
       code: 6001,
-      name: 'WrongAuthority',
-      msg: 'Wrong Authority',
+      name: "WrongAuthority",
+      msg: "Wrong Authority",
     },
   ],
 };

@@ -1,9 +1,9 @@
-import type { Program } from '@anchor-lang/core';
-import * as anchor from '@anchor-lang/core';
-import { AuthorityType, createMint, setAuthority, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
-import type { ImmutableOwner } from '../target/types/immutable_owner';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { AuthorityType, createMint, setAuthority, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import type { ImmutableOwner } from "../target/types/immutable_owner";
 
-describe('immutable-owner', () => {
+describe("immutable-owner", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -14,7 +14,7 @@ describe('immutable-owner', () => {
 
   const tokenKeypair = new anchor.web3.Keypair();
 
-  it('Create Token Account with ImmutableOwner extension', async () => {
+  it("Create Token Account with ImmutableOwner extension", async () => {
     const mint = await createMint(
       connection,
       wallet.payer, // Payer of the transaction and initialization fees
@@ -34,10 +34,10 @@ describe('immutable-owner', () => {
       })
       .signers([tokenKeypair])
       .rpc({ skipPreflight: true });
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 
-  it('Attempt to change token account owner, expect fail', async () => {
+  it("Attempt to change token account owner, expect fail", async () => {
     try {
       await setAuthority(
         connection, // Connection to use
@@ -51,7 +51,7 @@ describe('immutable-owner', () => {
         TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
       );
     } catch (error) {
-      console.log('\nExpect Error:', error.logs);
+      console.log("\nExpect Error:", error.logs);
     }
   });
 });

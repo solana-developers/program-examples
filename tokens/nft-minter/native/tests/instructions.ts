@@ -1,4 +1,4 @@
-import * as borsh from 'borsh';
+import * as borsh from "borsh";
 
 export enum NftMinterInstruction {
   Create = 0,
@@ -7,14 +7,14 @@ export enum NftMinterInstruction {
 
 export const CreateTokenArgsSchema = {
   struct: {
-    instruction: 'u8',
-    token_title: 'string',
-    token_symbol: 'string',
-    token_uri: 'string',
+    instruction: "u8",
+    token_title: "string",
+    token_symbol: "string",
+    token_uri: "string",
   },
 };
 
-export const MintToArgsSchema = { struct: { instruction: 'u8' } };
+export const MintToArgsSchema = { struct: { instruction: "u8" } };
 
 export function borshSerialize(schema: borsh.Schema, data: object): Buffer {
   return Buffer.from(borsh.serialize(schema, data));

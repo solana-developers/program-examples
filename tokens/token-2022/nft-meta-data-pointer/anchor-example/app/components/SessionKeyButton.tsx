@@ -1,65 +1,55 @@
-import { useState } from "react"
-import { Button } from "@chakra-ui/react"
-import { useWallet } from "@solana/wallet-adapter-react"
-import { useSessionWallet } from "@magicblock-labs/gum-react-sdk"
-import { useGameState } from "@/contexts/GameStateProvider"
-import { program } from "@/utils/anchor"
+import { Button } from "@chakra-ui/react";
+import { useSessionWallet } from "@magicblock-labs/gum-react-sdk";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useState } from "react";
+import { useGameState } from "@/contexts/GameStateProvider";
+import { program } from "@/utils/anchor";
 
 const SessionKeyButton = () => {
-  const { publicKey } = useWallet()
-  const { gameState } = useGameState()
-  const sessionWallet = useSessionWallet()
-  const [isLoading, setIsLoading] = useState(false)
+  const { publicKey } = useWallet();
+  const { gameState } = useGameState();
+  const sessionWallet = useSessionWallet();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreateSession = async () => {
-    setIsLoading(true)
-    const topUp = true
-    const expiryInMinutes = 600
+    setIsLoading(true);
+    const topUp = true;
+    const expiryInMinutes = 600;
 
     try {
-      const session = await sessionWallet.createSession(
-        program.programId,
-        topUp,
-        expiryInMinutes
-      )
-      console.log("Session created:", session)
+      const session = await sessionWallet.createSession(program.programId, topUp, expiryInMinutes);
+      console.log("Session created:", session);
     } catch (error) {
-      console.error("Failed to create session:", error)
+      console.error("Failed to create session:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleRevokeSession = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await sessionWallet.revokeSession()
-      console.log("Session revoked")
+      await sessionWallet.revokeSession();
+      console.log("Session revoked");
     } catch (error) {
-      console.error("Failed to revoke session:", error)
+      console.error("Failed to revoke session:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
       {publicKey && gameState && (
         <Button
           isLoading={isLoading}
-          onClick={
-            sessionWallet && sessionWallet.sessionToken == null
-              ? handleCreateSession
-              : handleRevokeSession
-          }
+          onClick={sessionWallet && sessionWallet.sessionToken == null ? handleCreateSession : handleRevokeSession}
         >
-          {sessionWallet && sessionWallet.sessionToken == null
-            ? "Create session"
-            : "Revoke Session"}
+          {sessionWallet && sessionWallet.sessionToken == null ? "Create session" : "Revoke Session"}
         </Button>
       )}
     </>
-  )
-}
+  );
+};
 
-export default SessionKeyButton
+export default SessionKeyButton;

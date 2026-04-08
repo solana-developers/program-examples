@@ -1,5 +1,5 @@
-import { Buffer } from 'node:buffer';
-import * as borsh from 'borsh';
+import { Buffer } from "node:buffer";
+import * as borsh from "borsh";
 
 export class AddressInfo {
   name: string;
@@ -36,12 +36,12 @@ export const AddressInfoSchema = new Map([
   [
     AddressInfo,
     {
-      kind: 'struct',
+      kind: "struct",
       fields: [
-        ['name', 'string'],
-        ['house_number', 'u8'],
-        ['street', 'string'],
-        ['city', 'string'],
+        ["name", "string"],
+        ["house_number", "u8"],
+        ["street", "string"],
+        ["city", "string"],
       ],
     },
   ],

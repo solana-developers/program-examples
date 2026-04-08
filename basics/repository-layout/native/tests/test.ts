@@ -1,22 +1,22 @@
-import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { Buffer } from "node:buffer";
+import { describe, test } from "node:test";
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { start } from "solana-bankrun";
 
-describe('Carnival', async () => {
+describe("Carnival", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'repository_layout_program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "repository_layout_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
   const CarnivalInstructionSchema = {
     struct: {
-      name: 'string',
-      height: 'u32',
-      ticket_count: 'u32',
-      attraction: 'string',
-      attraction_name: 'string',
+      name: "string",
+      height: "u32",
+      ticket_count: "u32",
+      attraction: "string",
+      attraction_name: "string",
     },
   };
 
@@ -47,30 +47,102 @@ describe('Carnival', async () => {
     await client.processTransaction(tx);
   }
 
-  test('Go on some rides!', async () => {
+  test("Go on some rides!", async () => {
     await sendCarnivalInstructions([
-      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'ride', attraction_name: 'Scrambler' },
-      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'ride', attraction_name: 'Ferris Wheel' },
-      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'ride', attraction_name: 'Scrambler' },
-      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'ride', attraction_name: 'Tilt-a-Whirl' },
+      {
+        name: "Jimmy",
+        height: 36,
+        ticket_count: 15,
+        attraction: "ride",
+        attraction_name: "Scrambler",
+      },
+      {
+        name: "Mary",
+        height: 52,
+        ticket_count: 1,
+        attraction: "ride",
+        attraction_name: "Ferris Wheel",
+      },
+      {
+        name: "Alice",
+        height: 56,
+        ticket_count: 15,
+        attraction: "ride",
+        attraction_name: "Scrambler",
+      },
+      {
+        name: "Bob",
+        height: 49,
+        ticket_count: 6,
+        attraction: "ride",
+        attraction_name: "Tilt-a-Whirl",
+      },
     ]);
   });
 
-  test('Play some games!', async () => {
+  test("Play some games!", async () => {
     await sendCarnivalInstructions([
-      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'game', attraction_name: 'I Got It!' },
-      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'game', attraction_name: 'Ring Toss' },
-      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'game', attraction_name: 'Ladder Climb' },
-      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'game', attraction_name: 'Ring Toss' },
+      {
+        name: "Jimmy",
+        height: 36,
+        ticket_count: 15,
+        attraction: "game",
+        attraction_name: "I Got It!",
+      },
+      {
+        name: "Mary",
+        height: 52,
+        ticket_count: 1,
+        attraction: "game",
+        attraction_name: "Ring Toss",
+      },
+      {
+        name: "Alice",
+        height: 56,
+        ticket_count: 15,
+        attraction: "game",
+        attraction_name: "Ladder Climb",
+      },
+      {
+        name: "Bob",
+        height: 49,
+        ticket_count: 6,
+        attraction: "game",
+        attraction_name: "Ring Toss",
+      },
     ]);
   });
 
-  test('Eat some food!', async () => {
+  test("Eat some food!", async () => {
     await sendCarnivalInstructions([
-      { name: 'Jimmy', height: 36, ticket_count: 15, attraction: 'food', attraction_name: 'Taco Shack' },
-      { name: 'Mary', height: 52, ticket_count: 1, attraction: 'food', attraction_name: "Larry's Pizza" },
-      { name: 'Alice', height: 56, ticket_count: 15, attraction: 'food', attraction_name: "Dough Boy's" },
-      { name: 'Bob', height: 49, ticket_count: 6, attraction: 'food', attraction_name: "Dough Boy's" },
+      {
+        name: "Jimmy",
+        height: 36,
+        ticket_count: 15,
+        attraction: "food",
+        attraction_name: "Taco Shack",
+      },
+      {
+        name: "Mary",
+        height: 52,
+        ticket_count: 1,
+        attraction: "food",
+        attraction_name: "Larry's Pizza",
+      },
+      {
+        name: "Alice",
+        height: 56,
+        ticket_count: 15,
+        attraction: "food",
+        attraction_name: "Dough Boy's",
+      },
+      {
+        name: "Bob",
+        height: 49,
+        ticket_count: 6,
+        attraction: "food",
+        attraction_name: "Dough Boy's",
+      },
     ]);
   });
 });

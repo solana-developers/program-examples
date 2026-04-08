@@ -1,16 +1,16 @@
-import { Box, Flex, Heading, Spacer, VStack, Text } from "@chakra-ui/react"
-import { useWallet } from "@solana/wallet-adapter-react"
-import WalletMultiButton from "@/components/WalletMultiButton"
-import DisplayGameState from "@/components/DisplayGameState"
-import InitPlayerButton from "@/components/InitPlayerButton"
-import SessionKeyButton from "@/components/SessionKeyButton"
-import ChopTreeButton from "@/components/ChopTreeButton"
-import RequestAirdrop from "@/components/RequestAirdrop"
-import DisplayNfts from "@/components/DisplayNfts"
-import MintNftButton from "@/components/MintNftButton"
+import { Box, Flex, Heading, Spacer, Text, VStack } from "@chakra-ui/react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import ChopTreeButton from "@/components/ChopTreeButton";
+import DisplayGameState from "@/components/DisplayGameState";
+import DisplayNfts from "@/components/DisplayNfts";
+import InitPlayerButton from "@/components/InitPlayerButton";
+import MintNftButton from "@/components/MintNftButton";
+import RequestAirdrop from "@/components/RequestAirdrop";
+import SessionKeyButton from "@/components/SessionKeyButton";
+import WalletMultiButton from "@/components/WalletMultiButton";
 
 export default function Home() {
-  const { publicKey } = useWallet()
+  const { publicKey } = useWallet();
 
   return (
     <Box>
@@ -30,5 +30,5 @@ export default function Home() {
         <DisplayNfts />
       </VStack>
     </Box>
-  )
+  );
 }

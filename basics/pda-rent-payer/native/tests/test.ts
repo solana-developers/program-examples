@@ -1,21 +1,12 @@
 import { Buffer } from "node:buffer";
 import { describe, test } from "node:test";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import * as borsh from "borsh";
 import { start } from "solana-bankrun";
 
 describe("PDA Rent-Payer", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "pda_rent_payer_program", programId: PROGRAM_ID }],
-    [],
-  );
+  const context = await start([{ name: "pda_rent_payer_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -42,10 +33,7 @@ describe("PDA Rent-Payer", async () => {
   }
 
   function deriveRentVaultPda() {
-    const pda = PublicKey.findProgramAddressSync(
-      [Buffer.from("rent_vault")],
-      PROGRAM_ID,
-    );
+    const pda = PublicKey.findProgramAddressSync([Buffer.from("rent_vault")], PROGRAM_ID);
     console.log(`PDA: ${pda[0].toBase58()}`);
     return pda;
   }
