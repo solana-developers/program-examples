@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("AWYkDL963P4NXrb9kvik9JTRH7igkhJ4Xyd8t5YRv8ZN");
+declare_id!("GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2");
 
 /// Pyth Receiver program ID (rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ)
 /// The pyth-solana-receiver-sdk crate depends on anchor-lang 0.32 which is

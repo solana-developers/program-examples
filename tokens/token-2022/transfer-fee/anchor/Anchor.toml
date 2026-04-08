@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_fee = "FRB5Ln5fbH4sA1dyJRZz9M5mXQij8Tfr4cKtnP3gNaC1"
+transfer_fee = "4evptdGtALCNT8uTxJhbWBRZpBE8w5oNtmgfSyfQu7td"
 
 [provider]
 cluster = "localnet"

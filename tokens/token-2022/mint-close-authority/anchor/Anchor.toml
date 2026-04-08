@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-mint_close_authority = "2wT6WQQqD4P35mDQJAWbWAMzFfCeLsYEELTde6jLQyKN"
+mint_close_authority = "AcfQLsYKuzprcCNH1n96pKKgAbAnZchwpbr3gbVN742n"
 
 [provider]
 cluster = "localnet"

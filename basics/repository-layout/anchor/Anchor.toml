@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-carnival = "FY78H521JC85fwffNHeV5BjKvhvRVuVtFgVrick7JEQj"
+carnival = "8t94SEJh9jVjDwV7cbiuT6BvEsHo4YHP9x9a5rYH1NpP"
 
 [provider]
 cluster = "localnet"

@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_hook = "FEu8GvcwSvmeaf8hQ2SvfzSYcSNSuB32WdfYUARTcmqp"
+transfer_hook = "1qahDxKHeCLZhbBU2NyMU6vQCQmEUmdeSEBrG5drffK"
 
 [provider]
 cluster = "localnet"

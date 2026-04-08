@@ -11,7 +11,7 @@ use {
     },
 };
 
-declare_id!("H7AFrTXDtmpPoc2kHD8hkEF1i8Pbhi17QUczbkWYYFBV");
+declare_id!("52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc");
 
 #[program]
 pub mod nft_minter {

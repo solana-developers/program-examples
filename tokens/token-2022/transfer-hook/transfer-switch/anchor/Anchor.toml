@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_switch = "H4LiorjbDr33X1KkTkWX9Eqy345uQH5HGNsxcPoXfGCg"
+transfer_switch = "FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g"
 
 [provider]
 cluster = "localnet"

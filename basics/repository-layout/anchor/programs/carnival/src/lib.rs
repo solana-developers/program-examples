@@ -8,7 +8,7 @@ use crate::instructions::{eat_food, get_on_ride, play_game};
 
 // For setting up modules & configs
 
-declare_id!("FY78H521JC85fwffNHeV5BjKvhvRVuVtFgVrick7JEQj");
+declare_id!("8t94SEJh9jVjDwV7cbiuT6BvEsHo4YHP9x9a5rYH1NpP");
 
 #[program]
 pub mod carnival {

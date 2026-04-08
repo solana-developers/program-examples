@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-interest_bearing = "2tinFpSK55kJu1wjcwW1PZBDF3HrP7PaYJjDCAFJMDD8"
+interest_bearing = "DMQdkzRJz8uQSN8Kx2QYmQJn6xLKhsu3LcPYxs314MgC"
 
 [provider]
 cluster = "localnet"

@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-checking_account_program = "B56s2CGHWSG9HzzyYS5USQNYPJsB2teiUSKgG5CKpr2o"
+checking_account_program = "ECWPhR3rJbaPfyNFgphnjxSEexbTArc7vxD8fnW6tgKw"
 
 [provider]
 cluster = "localnet"

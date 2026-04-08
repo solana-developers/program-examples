@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-memo_transfer = "C3zvHFYvrYgydPXv6vPZkcZvx24YE6pTUTZmtQJnAZQs"
+memo_transfer = "5BQyC7y2Pc283woThq11uZRqsgcRbBRLKz4yQ8BJadi2"
 
 [provider]
 cluster = "localnet"

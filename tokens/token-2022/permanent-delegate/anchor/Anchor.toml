@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-permanent_delegate = "g63s55bPYTvuuXFRMCzDaKTjCnXhDPNmwjafnQUNexa"
+permanent_delegate = "A9rxKS84ZoJVyeTfQbCEfxME2vvAM4uwSMjkmhR5XWb1"
 
 [provider]
 cluster = "localnet"

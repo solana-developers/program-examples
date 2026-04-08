@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_tokens = "FiqULQWZ9mbWaPDiGsms2vLa6H25FCnrtS3sGJHBaCWB"
+transfer_tokens = "nHi9DdNjuupjQ3c8AJU9sChB5gLbZvTLsJQouY4hU67"
 
 [provider]
 cluster = "localnet"

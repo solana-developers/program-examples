@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-cpi_guard = "PWPfSkM5ntHyS68woBexCrrDVE23AdtdQbUoyx5q7GR"
+cpi_guard = "6tU3MEowU6oxxeDZLSxEwzcEZsZrhBJsfUR6xECvShid"
 
 [provider]
 cluster = "localnet"

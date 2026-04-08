@@ -23,7 +23,7 @@ use std::{cell::RefMut, str::FromStr};
 // transfer-hook program that charges a SOL fee on token transfer
 // use a delegate and wrapped SOL because signers from initial transfer are not accessible
 
-declare_id!("HbNu4FeF8CpCHr7pMCH7fVcny1KwXSYkSmGTbw9otUdj");
+declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
 
 #[error_code]
 pub enum TransferError {

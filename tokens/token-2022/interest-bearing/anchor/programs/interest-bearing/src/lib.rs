@@ -19,7 +19,7 @@ use anchor_spl::{
         InterestBearingMintUpdateRate, Mint, Token2022,
     },
 };
-declare_id!("2tinFpSK55kJu1wjcwW1PZBDF3HrP7PaYJjDCAFJMDD8");
+declare_id!("DMQdkzRJz8uQSN8Kx2QYmQJn6xLKhsu3LcPYxs314MgC");
 
 #[program]
 pub mod interest_bearing {

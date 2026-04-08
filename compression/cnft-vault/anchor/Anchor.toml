@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-cnft_vault = "Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D"
+cnft_vault = "CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk"
 
 # [registry] section removed — no longer used in Anchor 1.0
 

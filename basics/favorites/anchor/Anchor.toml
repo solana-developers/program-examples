@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-favorites = "4wHiZQvMXQKaF1BbgN9Y9D5g1dZersK3J7mLGG5cUjEm"
+favorites = "ww9C83noARSQVBnqmCUmaVdbJjmiwcV9j2LkXYMoUCV"
 
 [provider]
 cluster = "localnet"

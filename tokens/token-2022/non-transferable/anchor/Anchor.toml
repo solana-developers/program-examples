@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-non_transferable = "9GpYDDJUM7CCrruDsg9v1aff5BouEzGfXifu8Woyhnbn"
+non_transferable = "8Bz4wpHaUckiC169Rg5ZfaBHFemp5S8RwTSDTKzhJ9W"
 
 [provider]
 cluster = "localnet"

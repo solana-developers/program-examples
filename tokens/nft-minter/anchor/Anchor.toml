@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-nft_minter = "H7AFrTXDtmpPoc2kHD8hkEF1i8Pbhi17QUczbkWYYFBV"
+nft_minter = "52quezNUzc1Ej6Jh6L4bvtxPW8j6TEFHuLVAWiFvdnsc"
 
 [provider]
 cluster = "localnet"

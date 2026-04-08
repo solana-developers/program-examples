@@ -5,7 +5,7 @@ use anchor_lang::solana_program::{
 };
 use borsh::BorshSerialize;
 
-declare_id!("HELUXAsLsF3wVoehtbcvQyUafUdMiFxbJG6MPiCRnzwm");
+declare_id!("FcLCJkSvwQQTDfCde5LdC4DSZAqSyb2AWM9US3wF5Fp7");
 
 /// mpl-bubblegum program ID (BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY)
 const MPL_BUBBLEGUM_ID: Pubkey = Pubkey::new_from_array([

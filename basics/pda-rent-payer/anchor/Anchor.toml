@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pda_rent_payer = "EC9R1o4AsK3hoeh61yNyr2xiDoorgyS4ZBmhYujNUsyN"
+pda_rent_payer = "7Hm9nsYVuBZ9rf8z9AMUHreZRv8Q4vLhqwdVTCawRZtA"
 
 [provider]
 cluster = "localnet"

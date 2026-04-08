@@ -12,7 +12,7 @@ use anchor_spl::{
     },
 };
 
-declare_id!("HVMebUevbwW8QbUxSyCtNwsJcpgWj9jVkW38g69hTHRT");
+declare_id!("5LdYbHiUsFxVG8bfqoeBkhBYMRmWZb3BoLuABgYW7coB");
 
 #[program]
 pub mod default_account_state {

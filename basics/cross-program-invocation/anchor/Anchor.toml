@@ -6,8 +6,8 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-hand = "4tvjFDZybFML3tN5uyRoHPoxUTitTwGxjD7KfKEmX7Vg"
-lever = "3aP7aVaJck5pUzbh3t6cqyCPgk6otbiyHsNsXHzeNDE5"
+hand = "Bi5N7SUQhpGknVcqPTzdFFVueQoxoUu8YTLz75J6fT8A"
+lever = "E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN"
 
 [provider]
 cluster = "localnet"

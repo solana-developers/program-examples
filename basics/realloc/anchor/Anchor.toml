@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-anchor_realloc = "4JzDy7ZPoTzSxWCFu8dmxFqEyJzLeXacYJ5xDxopt5vz"
+anchor_realloc = "Fod47xKXjdHVQDzkFPBvfdWLm8gEAV4iMSXkfUzCHiSD"
 
 [provider]
 cluster = "localnet"

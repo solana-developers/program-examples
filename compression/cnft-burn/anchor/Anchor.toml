@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-cnft_burn = "HELUXAsLsF3wVoehtbcvQyUafUdMiFxbJG6MPiCRnzwm"
+cnft_burn = "FcLCJkSvwQQTDfCde5LdC4DSZAqSyb2AWM9US3wF5Fp7"
 
 [provider]
 cluster = "localnet"

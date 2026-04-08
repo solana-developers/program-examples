@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-metadata = "DY2T6zhjngLvpkCMReQFzMHc6g4d4bqQWznntroEVDhG"
+metadata = "BJHEDXSQfD9kBFvhw8ZCGmPFRihzvbMoxoHUKpXdpn4D"
 
 [provider]
 cluster = "localnet"

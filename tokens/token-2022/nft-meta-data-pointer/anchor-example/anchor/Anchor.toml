@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-extension_nft = "EUMxHm5RdorS96YVEh1SwhacqhWyKTRoaRezUZuhBBzN"
+extension_nft = "9aZZ7TJ2fQZxY8hMtWXywp5y6BgqC4N2BPcr9FDT47sW"
 
 [provider]
 cluster = "localnet"

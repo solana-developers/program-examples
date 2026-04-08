@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-transfer_sol = "5bz3T8zeTXMGEwVhuFBKmyZk1Wqhfs1K39kfDXnLLmwG"
+transfer_sol = "4fQVnLWKKKYxtxgGn7Haw8v2g2Hzbu8K61JvWKvqAi7W"
 
 [provider]
 cluster = "localnet"

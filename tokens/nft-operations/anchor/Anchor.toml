@@ -9,7 +9,7 @@ skip-lint = false
 mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
 
 [programs.localnet]
-mint_nft = "Ezf9iNnBPVNr596tK59pTP1MdDWAS2VvNjyiK5gkbSEX"
+mint_nft = "3EMcczaGi9ivdLxvvFwRbGYeEUEHpGwabXegARw4jLxa"
 
 [provider]
 cluster = "localnet"

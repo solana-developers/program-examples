@@ -4,7 +4,7 @@ use anchor_spl::token::{Token, TokenAccount, Transfer};
 use sha3::{Digest, Keccak256};
 use solana_secp256k1_recover::secp256k1_recover;
 
-declare_id!("85ucSW6NvhoAUYMr9QBXggsGLh3h2EqdWSDuGLzPetFd");
+declare_id!("FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD");
 
 #[program]
 pub mod external_delegate_token_master {

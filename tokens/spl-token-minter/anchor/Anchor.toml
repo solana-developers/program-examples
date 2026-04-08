@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-spl_token_minter = "37nJupU7iBErqAjq5RTRRMvRbmkzngJRGBKG4yA2CxaH"
+spl_token_minter = "3of89Z9jwek9zrFgpCWc9jZvQvitpVMxpZNsrAD2vQUD"
 
 [provider]
 cluster = "localnet"

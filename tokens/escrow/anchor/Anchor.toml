@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-escrow = "4uNGr59nikomHqBMi8ckLBiuBQu6eSTRsCvcSoygXhLK"
+escrow = "qbuMdeYxYJXBjU6C6qFKjZKjXmrU83eDQomHdrch826"
 
 [provider]
 cluster = "localnet"

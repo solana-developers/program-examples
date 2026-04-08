@@ -7,7 +7,7 @@ pub mod instructions;
 pub mod state;
 use instructions::*;
 
-declare_id!("EUMxHm5RdorS96YVEh1SwhacqhWyKTRoaRezUZuhBBzN");
+declare_id!("9aZZ7TJ2fQZxY8hMtWXywp5y6BgqC4N2BPcr9FDT47sW");
 
 #[program]
 pub mod extension_nft {

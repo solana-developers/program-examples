@@ -5,7 +5,7 @@ pub mod constants;
 pub mod instructions;
 pub mod state;
 
-declare_id!("77pvTicQMoPQXrf97tCtuzgPQuS69U5oYsU99LYdqyLF");
+declare_id!("GpVcgWdgVErgLqsn8VYUch6EqDerMgNqoLSmGyKrd6MR");
 
 #[program]
 pub mod account_data_anchor_program {

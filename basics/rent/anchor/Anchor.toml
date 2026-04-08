@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-rent_example = "3efkmFTva1SZmFPt7E2nTe6SkCLUfuzayXgfjsMJr5Ac"
+rent_example = "ED6f4gweAE7hWPQPXMt4kWxzDJne8VQEm9zkb1tMpFNB"
 
 [provider]
 cluster = "localnet"

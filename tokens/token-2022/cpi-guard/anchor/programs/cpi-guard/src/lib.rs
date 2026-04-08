@@ -6,7 +6,7 @@ use anchor_spl::{
 
 // Note that you cannot initialize or update the CpiGuard extension through a CPI
 // https://github.com/solana-labs/solana-program-library/blob/6968859e2ee0a1764da572de340cdb58e2b4586f/token/program-2022/src/extension/cpi_guard/processor.rs#L44-L46
-declare_id!("PWPfSkM5ntHyS68woBexCrrDVE23AdtdQbUoyx5q7GR");
+declare_id!("6tU3MEowU6oxxeDZLSxEwzcEZsZrhBJsfUR6xECvShid");
 
 #[program]
 pub mod cpi_guard {

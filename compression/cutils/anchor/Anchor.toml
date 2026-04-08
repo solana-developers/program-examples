@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-cutils = "BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ"
+cutils = "burZc1SfqbrAP35XG63YZZ82C9Zd22QUwhCXoEUZWNF"
 
 # [registry] section removed — no longer used in Anchor 1.0
 

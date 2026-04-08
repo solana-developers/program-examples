@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 mod instructions;
 use instructions::*;
 
-declare_id!("FRB5Ln5fbH4sA1dyJRZz9M5mXQij8Tfr4cKtnP3gNaC1");
+declare_id!("4evptdGtALCNT8uTxJhbWBRZpBE8w5oNtmgfSyfQu7td");
 
 #[program]
 pub mod transfer_fee {

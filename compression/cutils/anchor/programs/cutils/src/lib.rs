@@ -31,7 +31,7 @@ impl anchor_lang::Id for SPLCompression {
     }
 }
 
-declare_id!("BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ");
+declare_id!("burZc1SfqbrAP35XG63YZZ82C9Zd22QUwhCXoEUZWNF");
 
 #[program]
 pub mod cutils {

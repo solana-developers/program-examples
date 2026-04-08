@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pythexample = "AWYkDL963P4NXrb9kvik9JTRH7igkhJ4Xyd8t5YRv8ZN"
+pythexample = "GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2"
 
 [provider]
 cluster = "localnet"

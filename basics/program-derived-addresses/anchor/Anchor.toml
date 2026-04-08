@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-program_derived_addresses_program = "GHC7zYxZ3mDfb9EunrPwbVd2FG8QpYbnVH3TEp9wBCCU"
+program_derived_addresses_program = "oCCQRZyAbVxujyd8m57MPmDzZDmy2FoKW4ULS7KofCE"
 
 [provider]
 cluster = "localnet"
