@@ -133,6 +133,12 @@ How to store state that changes size in Solana.
 
 [anchor](./tokens/nft-minter/anchor) [native](./tokens/nft-minter/native)
 
+### NFT operations
+
+Create an NFT collection, mint NFTs, and verify NFTs as part of a collection using Metaplex Token Metadata.
+
+[anchor](./tokens/nft-operations/anchor)
+
 ### Minting a token from inside a program
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/spl-token-minter/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
@@ -151,6 +157,12 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 [anchor](./tokens/escrow/anchor) [native](./tokens/escrow/native)
 
+### Fundraising with SPL Tokens
+
+Create a fundraiser account specifying a target mint and amount, allowing contributors to deposit tokens until the goal is reached.
+
+[anchor](./tokens/token-fundraiser/anchor)
+
 ### Minting a token from inside a program with a PDA as the mint authority
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/pda-mint-authority/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
@@ -162,6 +174,12 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 [Create liquidity pools to allow trading of new digital assets and allows users that provide liquidity to be rewarded by creating an Automated Market Maker.](./tokens/token-swap/README.md)
 
 [anchor](./tokens/token-swap/anchor)
+
+### External delegate token master
+
+Control token transfers using an external secp256k1 delegate signature.
+
+[anchor](./tokens/external-delegate-token-master/anchor)
 ## Token Extensions
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
@@ -211,6 +229,12 @@ Create tokens that store their onchain metadata inside the token mint, without n
 
 [anchor](./tokens/token-2022/metadata/anchor)
 
+### Storing NFT metadata using the metadata pointer extension
+
+Create an NFT using the Token Extensions metadata pointer, storing onchain metadata (including custom fields) inside the mint account itself.
+
+[anchor](./tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor)
+
 ### Allow a designated account to close a mint
 
 Allow a designated account to close a Mint.
@@ -240,6 +264,48 @@ Create tokens that remain under the control of an account, even when transferred
 Create tokens with an inbuilt transfer fee.
 
 [anchor](./tokens/token-2022/transfer-fee/anchor) [native](./tokens/token-2022/transfer-fee/native)
+
+### Transfer hook - hello world
+
+A minimal transfer hook program that executes custom logic on every token transfer.
+
+[anchor](./tokens/token-2022/transfer-hook/hello-world/anchor)
+
+### Transfer hook - counter
+
+Count how many times tokens have been transferred using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/counter/anchor)
+
+### Transfer hook - using account data as seed
+
+Use token account owner data as seeds to derive extra accounts in a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/account-data-as-seed/anchor)
+
+### Transfer hook - allow/block list
+
+Restrict or allow token transfers using an on-chain allow/block list managed by a list authority.
+
+[anchor](./tokens/token-2022/transfer-hook/allow-block-list-token/anchor)
+
+### Transfer hook - transfer cost
+
+Charge an additional cost or fee on every token transfer using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/transfer-cost/anchor)
+
+### Transfer hook - transfer switch
+
+Enable or disable token transfers with an on-chain switch using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/transfer-switch/anchor)
+
+### Transfer hook - whitelist
+
+Restrict token transfers so only whitelisted accounts can receive tokens.
+
+[anchor](./tokens/token-2022/transfer-hook/whitelist/anchor)
 ## Compression
 ### Cnft-burn
 
@@ -264,5 +330,11 @@ Work with Metaplex compressed NFTs.
 Use a data source for offchain data (called an Oracle) to perform activities onchain.
 
 [anchor](./oracles/pyth/anchor)
+## Tools
+### Shank and Solita
+
+Use Shank and Solita to generate IDLs and TypeScript clients for native Solana programs, the same way Anchor does for Anchor programs.
+
+[native](./tools/shank-and-solita/native)
 
 ---
