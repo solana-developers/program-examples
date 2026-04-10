@@ -191,7 +191,6 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-          # pnpm is already installed via pnpm/action-setup
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v5.9
         with:

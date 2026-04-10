@@ -107,8 +107,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - uses: heyAyushh/setup-anchor@v4.999
         with:
           anchor-version: 0.32.1
