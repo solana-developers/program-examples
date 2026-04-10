@@ -15,9 +15,7 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
-  # Force all JavaScript-based actions to use Node.js 24 runtime.
-  # Node.js 20 actions are deprecated and will stop working June 2026.
-  # This catches composite actions whose internal dependencies still reference @v4.
+  # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
