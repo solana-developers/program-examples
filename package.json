@@ -16,7 +16,7 @@
       "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
     ]
   },
-  "packageManager": "pnpm@9.13.2",
+  "packageManager": "pnpm@10.33.0",
   "keywords": [],
   "author": "Solana Foundation",
   "license": "MIT",
