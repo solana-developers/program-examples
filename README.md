@@ -31,10 +31,7 @@ Each folder includes examples for one or more of the following:
 **If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
 
 ## The example programs
-
-<details>
-  <summary>Basics</summary>
-
+## Basics
 ### Hello world
 
 [Hello World on Solana! A minimal program that logs a greeting.](./basics/hello-solana/README.md)
@@ -124,11 +121,7 @@ How to store state that changes size in Solana.
 [Send SOL between two accounts.](./basics/transfer-sol/README.md)
 
 [anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native) [pinocchio](./basics/transfer-sol/pinocchio)
-
-</details>
-<details>
-  <summary>Tokens</summary>
-
+## Tokens
 ### Creating tokens
 
 [Create a token on Solana with a token symbol and icon.](./tokens/create-token/README.md)
@@ -170,13 +163,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 [Create liquidity pools to allow trading of new digital assets and allows users that provide liquidity to be rewarded by creating an Automated Market Maker.](./tokens/token-swap/README.md)
 
 [anchor](./tokens/token-swap/anchor)
-
-</details>
-
-<details>
-
-  <summary>Token Extensions</summary>
-
+## Token Extensions
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
 Create token mints, mint tokens, and transfer tokens using Token Extensions.
@@ -254,12 +241,7 @@ Create tokens that remain under the control of an account, even when transferred
 Create tokens with an inbuilt transfer fee.
 
 [anchor](./tokens/token-2022/transfer-fee/anchor) [native](./tokens/token-2022/transfer-fee/native)
-
-</details>
-<details>
-
-<summary>Compression</summary>
-
+## Compression
 ### Cnft-burn
 
 Burn compressed NFTs.
@@ -277,19 +259,11 @@ Store Metaplex compressed NFTs inside a PDA.
 Work with Metaplex compressed NFTs.
 
 [anchor](./compression/cutils/anchor)
-
-</details>
-
-<details>
-
-<summary>Oracles</summary>
-
+## Oracles
 ### pyth
 
 Use a data source for offchain data (called an Oracle) to perform activities onchain.
 
 [anchor](./oracles/pyth/anchor)
-
-</details>
 
 ---
