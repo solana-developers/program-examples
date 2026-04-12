@@ -1,4 +1,4 @@
-import { Buffer } from "buffer";
+import { Buffer } from "node:buffer";
 import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
 
 export function createTransferInstruction(

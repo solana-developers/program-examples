@@ -15,12 +15,7 @@ describe("transfer-sol (asm)", async () => {
   test("Transfer SOL via CPI to the system program", async () => {
     await getBalances(payer.publicKey, recipient.publicKey, "Beginning");
 
-    const ix = createTransferInstruction(
-      payer.publicKey,
-      recipient.publicKey,
-      PROGRAM_ID,
-      transferAmount,
-    );
+    const ix = createTransferInstruction(payer.publicKey, recipient.publicKey, PROGRAM_ID, transferAmount);
 
     const tx = new Transaction();
     const [blockhash, _] = await client.getLatestBlockhash();
