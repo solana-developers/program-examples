@@ -25,5 +25,12 @@ anchor-spl = "1.0.0"
 spl-token-metadata-interface = "0.3.3"
 spl-type-length-value = "0.4.3"
 
+[dev-dependencies]
+litesvm = "0.11.0"
+solana-kite = "0.3.0"
+solana-signer = "3.0.0"
+solana-keypair = "3.0.1"
+borsh = "1.6.1"
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
