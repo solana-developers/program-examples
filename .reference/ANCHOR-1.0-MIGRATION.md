@@ -1,12 +1,12 @@
-# Anchor 1.0.0-rc.5 Migration Reference
+# Anchor 1.0.0 Migration Reference
 
 ## Proven pattern (from basics/counter/anchor)
 
 ### Cargo.toml
-- Change `anchor-lang = "0.32.1"` → `anchor-lang = "1.0.0-rc.5"`
-- Change `anchor-lang = { version = "0.32.1", ... }` → `anchor-lang = { version = "1.0.0-rc.5", ... }`
-- Same for `anchor-spl` if present — change to `1.0.0-rc.5`
-- Add comment: `# Anchor 1.0.0-rc.5 — pin to RC until stable release`
+- Change `anchor-lang = "0.32.1"` → `anchor-lang = "1.0.0"`
+- Change `anchor-lang = { version = "0.32.1", ... }` → `anchor-lang = { version = "1.0.0", ... }`
+- Same for `anchor-spl` if present — change to `1.0.0`
+- Add comment: `# Anchor 1.0.0 — pin to RC until stable release`
 - **REMOVE `interface-instructions` feature** if present (removed in Anchor 1.0). This affects transfer-hook projects.
 - Keep all other features as-is (`idl-build`, `init-if-needed`, `cpi`, etc.)
 
@@ -15,7 +15,7 @@
 - Keep everything else
 
 ### package.json
-- Replace `"@coral-xyz/anchor": "..."` with `"@anchor-lang/core": "1.0.0-rc.5"`
+- Replace `"@coral-xyz/anchor": "..."` with `"@anchor-lang/core": "1.0.0"`
 - Bump `"typescript"` to `"^5.3.3"` if it's on 4.x (required for @solana/web3.js peer dep)
 - Keep everything else
 

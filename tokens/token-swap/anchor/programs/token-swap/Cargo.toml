@@ -20,8 +20,8 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = { version = "1.0.0-rc.5", features = ["init-if-needed"] }  # Anchor 1.0.0-rc.5 — pin to RC until stable release
-anchor-spl = { version = "1.0.0-rc.5", features = ["metadata"] }  # Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = { version = "1.0.0", features = ["init-if-needed"] }
+anchor-spl = { version = "1.0.0", features = ["metadata"] }
 fixed = "1.27.0"
 
 [lints.rust]

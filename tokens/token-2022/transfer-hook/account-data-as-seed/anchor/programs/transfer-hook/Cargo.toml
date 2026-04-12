@@ -20,9 +20,8 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-# Anchor 1.0.0-rc.5 — pin to RC until stable release
-anchor-lang = "1.0.0-rc.5"
-anchor-spl = "1.0.0-rc.5"
+anchor-lang = "1.0.0"
+anchor-spl = "1.0.0"
 spl-discriminator = "0.4.1"
 spl-tlv-account-resolution = "0.9.0"
 spl-transfer-hook-interface = "0.9.0"
