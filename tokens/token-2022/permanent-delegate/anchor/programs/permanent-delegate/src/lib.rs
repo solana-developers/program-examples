@@ -17,14 +17,14 @@ declare_id!("A9rxKS84ZoJVyeTfQbCEfxME2vvAM4uwSMjkmhR5XWb1");
 pub mod permanent_delegate {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        ctx.accounts.check_mint_data()?;
+    pub fn initialize(mut context: Context<InitializeAccountConstraints>) -> Result<()> {
+        handle_check_mint_data(&mut context.accounts)?;
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct Initialize<'info> {
+pub struct InitializeAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -41,19 +41,18 @@ pub struct Initialize<'info> {
 }
 
 // helper to check mint data, and demonstrate how to read mint extension data within a program
-impl<'info> Initialize<'info> {
-    pub fn check_mint_data(&self) -> Result<()> {
-        let mint = &self.mint_account.to_account_info();
+pub fn handle_check_mint_data(accounts: &mut InitializeAccountConstraints) -> Result<()> {
+        let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
         let extension_data = mint_with_extension.get_extension::<PermanentDelegate>()?;
 
         assert_eq!(
             extension_data.delegate,
-            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
+            OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
         );
 
         msg!("{:?}", extension_data);
         Ok(())
     }
-}
+

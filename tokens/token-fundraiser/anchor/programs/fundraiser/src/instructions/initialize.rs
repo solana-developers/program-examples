@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct Initialize<'info> {
+pub struct InitializeAccountConstraints<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
     pub mint_to_raise: Account<'info, Mint>,
@@ -37,19 +37,18 @@ pub struct Initialize<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
-impl<'info> Initialize<'info> {
-    pub fn initialize(&mut self, amount: u64, duration: u16, bumps: &InitializeBumps) -> Result<()> {
+pub fn handle_initialize(accounts: &mut InitializeAccountConstraints, amount: u64, duration: u16, bumps: &InitializeAccountConstraintsBumps) -> Result<()> {
 
         // Check if the amount to raise meets the minimum amount required
         require!(
-            amount >= MIN_AMOUNT_TO_RAISE.pow(self.mint_to_raise.decimals as u32),
+            amount >= MIN_AMOUNT_TO_RAISE.pow(accounts.mint_to_raise.decimals as u32),
             FundraiserError::InvalidAmount
         );
 
         // Initialize the fundraiser account
-        self.fundraiser.set_inner(Fundraiser {
-            maker: self.maker.key(),
-            mint_to_raise: self.mint_to_raise.key(),
+        accounts.fundraiser.set_inner(Fundraiser {
+            maker: accounts.maker.key(),
+            mint_to_raise: accounts.mint_to_raise.key(),
             amount_to_raise: amount,
             current_amount: 0,
             time_started: Clock::get()?.unix_timestamp,
@@ -59,4 +58,3 @@ impl<'info> Initialize<'info> {
         
         Ok(())
     }
-}

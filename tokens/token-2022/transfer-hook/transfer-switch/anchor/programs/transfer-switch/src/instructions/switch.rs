@@ -4,7 +4,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct Switch<'info> {
+pub struct SwitchAccountConstraints<'info> {
     /// admin that controls the switch
     #[account(mut)]
     pub admin: Signer<'info>,
@@ -34,14 +34,13 @@ pub struct Switch<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Switch<'info> {
-    pub fn switch(&mut self, on: bool) -> Result<()> {
+pub fn handle_switch(accounts: &mut SwitchAccountConstraints, on: bool) -> Result<()> {
         // toggle switch on/off for the given wallet
         //
-        self.wallet_switch.set_inner(TransferSwitch {
-            wallet: self.wallet.key(),
+        accounts.wallet_switch.set_inner(TransferSwitch {
+            wallet: accounts.wallet.key(),
             on,
         });
         Ok(())
     }
-}
+

@@ -27,7 +27,7 @@ use anchor_spl::metadata::mpl_token_metadata::{
 };
 
 #[derive(Accounts)]
-pub struct MintNFT<'info> {
+pub struct MintNFTAccountConstraints<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
     #[account(
@@ -65,17 +65,16 @@ pub struct MintNFT<'info> {
     pub token_metadata_program: Program<'info, Metadata>,
 }
 
-impl<'info> MintNFT<'info> {
-    pub fn mint_nft(&mut self, bumps: &MintNFTBumps) -> Result<()> {
+pub fn handle_mint_nft(accounts: &mut MintNFTAccountConstraints, bumps: &MintNFTAccountConstraintsBumps) -> Result<()> {
 
-        let metadata = &self.metadata.to_account_info();
-        let master_edition = &self.master_edition.to_account_info();
-        let mint = &self.mint.to_account_info();
-        let authority = &self.mint_authority.to_account_info();
-        let payer = &self.owner.to_account_info();
-        let system_program = &self.system_program.to_account_info();
-        let spl_token_program = &self.token_program.to_account_info();
-        let spl_metadata_program = &self.token_metadata_program.to_account_info();
+        let metadata = &accounts.metadata.to_account_info();
+        let master_edition = &accounts.master_edition.to_account_info();
+        let mint = &accounts.mint.to_account_info();
+        let authority = &accounts.mint_authority.to_account_info();
+        let payer = &accounts.owner.to_account_info();
+        let system_program = &accounts.system_program.to_account_info();
+        let spl_token_program = &accounts.token_program.to_account_info();
+        let spl_metadata_program = &accounts.token_metadata_program.to_account_info();
 
         let seeds = &[
             &b"authority"[..], 
@@ -84,17 +83,17 @@ impl<'info> MintNFT<'info> {
         let signer_seeds = &[&seeds[..]];
 
         let cpi_accounts = MintTo {
-            mint: self.mint.to_account_info(),
-            to: self.destination.to_account_info(),
-            authority: self.mint_authority.to_account_info(),
+            mint: accounts.mint.to_account_info(),
+            to: accounts.destination.to_account_info(),
+            authority: accounts.mint_authority.to_account_info(),
         };
-        let cpi_ctx = CpiContext::new_with_signer(self.token_program.key(), cpi_accounts, signer_seeds);
+        let cpi_ctx = CpiContext::new_with_signer(accounts.token_program.key(), cpi_accounts, signer_seeds);
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
         let creator = vec![
             Creator {
-                address: self.mint_authority.key(),
+                address: accounts.mint_authority.key(),
                 verified: true,
                 share: 100,
             },
@@ -120,7 +119,7 @@ impl<'info> MintNFT<'info> {
                     creators: Some(creator),
                     collection: Some(Collection {
                         verified: false,
-                        key: self.collection_mint.key(),
+                        key: accounts.collection_mint.key(),
                     }),
                     uses: None
                 },
@@ -152,4 +151,3 @@ impl<'info> MintNFT<'info> {
         Ok(())
         
     }
-}

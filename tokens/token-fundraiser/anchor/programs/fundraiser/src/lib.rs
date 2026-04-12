@@ -15,26 +15,26 @@ use instructions::*;
 pub mod fundraiser {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, amount: u64, duration: u16) -> Result<()> {
-        ctx.accounts.initialize(amount, duration, &ctx.bumps)?;
+    pub fn initialize(mut context: Context<InitializeAccountConstraints>, amount: u64, duration: u16) -> Result<()> {
+        handle_initialize(&mut context.accounts, amount, duration, &context.bumps)?;
 
         Ok(())
     }
 
-    pub fn contribute(ctx: Context<Contribute>, amount: u64) -> Result<()> {
-        ctx.accounts.contribute(amount)?;
+    pub fn contribute(mut context: Context<ContributeAccountConstraints>, amount: u64) -> Result<()> {
+        handle_contribute(&mut context.accounts, amount)?;
 
         Ok(())
     }
 
-    pub fn check_contributions(ctx: Context<CheckContributions>) -> Result<()> {
-        ctx.accounts.check_contributions()?;
+    pub fn check_contributions(mut context: Context<CheckContributionsAccountConstraints>) -> Result<()> {
+        handle_check_contributions(&mut context.accounts)?;
 
         Ok(())
     }
 
-    pub fn refund(ctx: Context<Refund>) -> Result<()> {
-        ctx.accounts.refund()?;
+    pub fn refund(mut context: Context<RefundAccountConstraints>) -> Result<()> {
+        handle_refund(&mut context.accounts)?;
 
         Ok(())
     }

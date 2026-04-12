@@ -11,7 +11,7 @@ use borsh::BorshSerialize;
 
 #[derive(Accounts)]
 #[instruction(params: MintParams)]
-pub struct Mint<'info> {
+pub struct MintAccountConstraints<'info> {
     pub payer: Signer<'info>,
 
     #[account(
@@ -71,12 +71,12 @@ pub struct MintParams {
 }
 
 impl Mint<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &MintParams) -> Result<()> {
+    pub fn validate(&self, _context: &Context<Self>, _params: &MintParams) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate<'info>(
-        ctx: Context<'info, Mint<'info>>,
+        context: Context<'info, MintAccountConstraints<'info>>,
         params: MintParams,
     ) -> Result<()> {
         // Build MintToCollectionV1 instruction data
@@ -86,7 +86,7 @@ impl Mint<'_> {
                 symbol: "BURG".to_string(),
                 uri: params.uri,
                 creators: vec![Creator {
-                    address: ctx.accounts.collection_authority.key(),
+                    address: context.accounts.collection_authority.key(),
                     verified: false,
                     share: 100,
                 }],
@@ -97,7 +97,7 @@ impl Mint<'_> {
                 uses: None,
                 collection: Some(Collection {
                     verified: false,
-                    key: ctx.accounts.collection_mint.key(),
+                    key: context.accounts.collection_mint.key(),
                 }),
                 token_program_version: TokenProgramVersion::Original,
                 token_standard: Some(TokenStandard::NonFungible),
@@ -110,65 +110,65 @@ impl Mint<'_> {
         // Build account metas matching MintToCollectionV1 instruction layout
         let mut accounts = Vec::with_capacity(16);
         accounts.push(AccountMeta::new(
-            ctx.accounts.tree_authority.key(),
+            context.accounts.tree_authority.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.leaf_delegate.key(),
+            context.accounts.leaf_delegate.key(),
             false,
         ));
-        accounts.push(AccountMeta::new(ctx.accounts.merkle_tree.key(), false));
+        accounts.push(AccountMeta::new(context.accounts.merkle_tree.key(), false));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.payer.key(),
+            context.accounts.payer.key(),
             true,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.tree_delegate.key(),
+            context.accounts.tree_delegate.key(),
             true,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.collection_authority.key(),
+            context.accounts.collection_authority.key(),
             true,
         ));
         // collection_authority_record_pda — pass as-is
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.collection_authority_record_pda.key(),
+            context.accounts.collection_authority_record_pda.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.collection_mint.key(),
+            context.accounts.collection_mint.key(),
             false,
         ));
         accounts.push(AccountMeta::new(
-            ctx.accounts.collection_metadata.key(),
+            context.accounts.collection_metadata.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.edition_account.key(),
+            context.accounts.edition_account.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.bubblegum_signer.key(),
+            context.accounts.bubblegum_signer.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.log_wrapper.key(),
+            context.accounts.log_wrapper.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.compression_program.key(),
+            context.accounts.compression_program.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.token_metadata_program.key(),
+            context.accounts.token_metadata_program.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.system_program.key(),
+            context.accounts.system_program.key(),
             false,
         ));
 
@@ -180,23 +180,23 @@ impl Mint<'_> {
 
         // Gather all account infos for the CPI
         let account_infos = vec![
-            ctx.accounts.bubblegum_program.to_account_info(),
-            ctx.accounts.tree_authority.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.leaf_delegate.to_account_info(),
-            ctx.accounts.merkle_tree.to_account_info(),
-            ctx.accounts.payer.to_account_info(),
-            ctx.accounts.tree_delegate.to_account_info(),
-            ctx.accounts.collection_authority.to_account_info(),
-            ctx.accounts.collection_authority_record_pda.to_account_info(),
-            ctx.accounts.collection_mint.to_account_info(),
-            ctx.accounts.collection_metadata.to_account_info(),
-            ctx.accounts.edition_account.to_account_info(),
-            ctx.accounts.bubblegum_signer.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.token_metadata_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
+            context.accounts.bubblegum_program.to_account_info(),
+            context.accounts.tree_authority.to_account_info(),
+            context.accounts.leaf_owner.to_account_info(),
+            context.accounts.leaf_delegate.to_account_info(),
+            context.accounts.merkle_tree.to_account_info(),
+            context.accounts.payer.to_account_info(),
+            context.accounts.tree_delegate.to_account_info(),
+            context.accounts.collection_authority.to_account_info(),
+            context.accounts.collection_authority_record_pda.to_account_info(),
+            context.accounts.collection_mint.to_account_info(),
+            context.accounts.collection_metadata.to_account_info(),
+            context.accounts.edition_account.to_account_info(),
+            context.accounts.bubblegum_signer.to_account_info(),
+            context.accounts.log_wrapper.to_account_info(),
+            context.accounts.compression_program.to_account_info(),
+            context.accounts.token_metadata_program.to_account_info(),
+            context.accounts.system_program.to_account_info(),
         ];
 
         invoke(&instruction, &account_infos)?;

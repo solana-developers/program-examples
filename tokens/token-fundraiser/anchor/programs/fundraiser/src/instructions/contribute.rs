@@ -18,7 +18,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct Contribute<'info> {
+pub struct ContributeAccountConstraints<'info> {
     #[account(mut)]
     pub contributor: Signer<'info>,
     pub mint_to_raise: Account<'info, Mint>,
@@ -53,44 +53,43 @@ pub struct Contribute<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Contribute<'info> {
-    pub fn contribute(&mut self, amount: u64) -> Result<()> {
+pub fn handle_contribute(accounts: &mut ContributeAccountConstraints, amount: u64) -> Result<()> {
 
         // Check if the amount to contribute meets the minimum amount required
         require!(
-            amount >= 1_u64.pow(self.mint_to_raise.decimals as u32), 
+            amount >= 1_u64.pow(accounts.mint_to_raise.decimals as u32), 
             FundraiserError::ContributionTooSmall
         );
 
         // Check if the amount to contribute is less than the maximum allowed contribution
         require!(
-            amount <= (self.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER, 
+            amount <= (accounts.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER, 
             FundraiserError::ContributionTooBig
         );
 
         // Check if the fundraising duration has been reached
         let current_time = Clock::get()?.unix_timestamp;
         require!(
-            self.fundraiser.duration <= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
+            accounts.fundraiser.duration <= ((current_time - accounts.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
             crate::FundraiserError::FundraiserEnded
         );
 
         // Check if the maximum contributions per contributor have been reached
         require!(
-            (self.contributor_account.amount <= (self.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER)
-                && (self.contributor_account.amount + amount <= (self.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER),
+            (accounts.contributor_account.amount <= (accounts.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER)
+                && (accounts.contributor_account.amount + amount <= (accounts.fundraiser.amount_to_raise * MAX_CONTRIBUTION_PERCENTAGE) / PERCENTAGE_SCALER),
             FundraiserError::MaximumContributionsReached
         );
 
         // Transfer the funds to the vault
         // CPI to the token program to transfer the funds
-        let cpi_program = self.token_program.key();
+        let cpi_program = accounts.token_program.key();
 
         // Transfer the funds from the contributor to the vault
         let cpi_accounts = Transfer {
-            from: self.contributor_ata.to_account_info(),
-            to: self.vault.to_account_info(),
-            authority: self.contributor.to_account_info(),
+            from: accounts.contributor_ata.to_account_info(),
+            to: accounts.vault.to_account_info(),
+            authority: accounts.contributor.to_account_info(),
         };
 
         // Crete a CPI context
@@ -100,10 +99,9 @@ impl<'info> Contribute<'info> {
         transfer(cpi_ctx, amount)?;
 
         // Update the fundraiser and contributor accounts with the new amounts
-        self.fundraiser.current_amount += amount;
+        accounts.fundraiser.current_amount += amount;
 
-        self.contributor_account.amount += amount;
+        accounts.contributor_account.amount += amount;
 
         Ok(())
     }
-}

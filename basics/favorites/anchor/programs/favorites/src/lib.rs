@@ -13,7 +13,7 @@ pub mod favorites {
 
     // Our instruction handler! It sets the user's favorite number and color
     pub fn set_favorites(
-        context: Context<SetFavorites>,
+        context: Context<SetFavoritesAccountConstraints>,
         number: u64,
         color: String,
         hobbies: Vec<String>,
@@ -49,7 +49,7 @@ pub struct Favorites {
 }
 // When people call the set_favorites instruction, they will need to provide the accounts that will be modifed. This keeps Solana fast!
 #[derive(Accounts)]
-pub struct SetFavorites<'info> {
+pub struct SetFavoritesAccountConstraints<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 

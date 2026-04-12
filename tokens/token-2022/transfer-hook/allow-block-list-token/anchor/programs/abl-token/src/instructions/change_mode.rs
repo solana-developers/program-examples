@@ -16,7 +16,7 @@ use anchor_spl::{
 use crate::Mode;
 
 #[derive(Accounts)]
-pub struct ChangeMode<'info> {
+pub struct ChangeModeAccountConstraints<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 

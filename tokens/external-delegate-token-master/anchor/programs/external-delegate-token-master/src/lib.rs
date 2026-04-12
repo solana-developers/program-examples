@@ -10,29 +10,29 @@ declare_id!("FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD");
 pub mod external_delegate_token_master {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        let user_account = &mut ctx.accounts.user_account;
-        user_account.authority = ctx.accounts.authority.key();
+    pub fn initialize(mut context: Context<InitializeAccountConstraints>) -> Result<()> {
+        let user_account = &mut context.accounts.user_account;
+        user_account.authority = context.accounts.authority.key();
         user_account.ethereum_address = [0; 20];
         Ok(())
     }
 
     pub fn set_ethereum_address(
-        ctx: Context<SetEthereumAddress>,
+        mut context: Context<SetEthereumAddressAccountConstraints>,
         ethereum_address: [u8; 20],
     ) -> Result<()> {
-        let user_account = &mut ctx.accounts.user_account;
+        let user_account = &mut context.accounts.user_account;
         user_account.ethereum_address = ethereum_address;
         Ok(())
     }
 
     pub fn transfer_tokens(
-        ctx: Context<TransferTokens>,
+        context: Context<TransferTokensAccountConstraints>,
         amount: u64,
         signature: [u8; 65],
         message: [u8; 32],
     ) -> Result<()> {
-        let user_account = &ctx.accounts.user_account;
+        let user_account = &context.accounts.user_account;
 
         if !verify_ethereum_signature(&user_account.ethereum_address, &message, &signature) {
             return Err(ErrorCode::InvalidSignature.into());
@@ -40,16 +40,16 @@ pub mod external_delegate_token_master {
 
         // Transfer tokens
         let transfer_instruction = Transfer {
-            from: ctx.accounts.user_token_account.to_account_info(),
-            to: ctx.accounts.recipient_token_account.to_account_info(),
-            authority: ctx.accounts.user_pda.to_account_info(),
+            from: context.accounts.user_token_account.to_account_info(),
+            to: context.accounts.recipient_token_account.to_account_info(),
+            authority: context.accounts.user_pda.to_account_info(),
         };
 
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 transfer_instruction,
-                &[&[user_account.key().as_ref(), &[ctx.bumps.user_pda]]],
+                &[&[user_account.key().as_ref(), &[context.bumps.user_pda]]],
             ),
             amount,
         )?;
@@ -57,21 +57,21 @@ pub mod external_delegate_token_master {
         Ok(())
     }
 
-    pub fn authority_transfer(ctx: Context<AuthorityTransfer>, amount: u64) -> Result<()> {
+    pub fn authority_transfer(context: Context<AuthorityTransferAccountConstraints>, amount: u64) -> Result<()> {
         // Transfer tokens
         let transfer_instruction = Transfer {
-            from: ctx.accounts.user_token_account.to_account_info(),
-            to: ctx.accounts.recipient_token_account.to_account_info(),
-            authority: ctx.accounts.user_pda.to_account_info(),
+            from: context.accounts.user_token_account.to_account_info(),
+            to: context.accounts.recipient_token_account.to_account_info(),
+            authority: context.accounts.user_pda.to_account_info(),
         };
 
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 transfer_instruction,
                 &[&[
-                    ctx.accounts.user_account.key().as_ref(),
-                    &[ctx.bumps.user_pda],
+                    context.accounts.user_account.key().as_ref(),
+                    &[context.bumps.user_pda],
                 ]],
             ),
             amount,
@@ -82,7 +82,7 @@ pub mod external_delegate_token_master {
 }
 
 #[derive(Accounts)]
-pub struct Initialize<'info> {
+pub struct InitializeAccountConstraints<'info> {
     #[account(init, payer = authority, space = 8 + 32 + 20)]
     // Ensure this is only for user_account
     pub user_account: Account<'info, UserAccount>,
@@ -92,14 +92,14 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-pub struct SetEthereumAddress<'info> {
+pub struct SetEthereumAddressAccountConstraints<'info> {
     #[account(mut, has_one = authority)]
     pub user_account: Account<'info, UserAccount>,
     pub authority: Signer<'info>,
 }
 
 #[derive(Accounts)]
-pub struct TransferTokens<'info> {
+pub struct TransferTokensAccountConstraints<'info> {
     #[account(has_one = authority)]
     pub user_account: Account<'info, UserAccount>,
     pub authority: Signer<'info>,
@@ -116,7 +116,7 @@ pub struct TransferTokens<'info> {
 }
 
 #[derive(Accounts)]
-pub struct AuthorityTransfer<'info> {
+pub struct AuthorityTransferAccountConstraints<'info> {
     #[account(has_one = authority)]
     pub user_account: Account<'info, UserAccount>,
     pub authority: Signer<'info>,

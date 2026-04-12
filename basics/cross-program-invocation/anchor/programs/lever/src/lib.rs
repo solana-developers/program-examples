@@ -6,12 +6,12 @@ declare_id!("E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN");
 pub mod lever {
     use super::*;
 
-    pub fn initialize(_ctx: Context<InitializeLever>) -> Result<()> {
+    pub fn initialize(_mut context: Context<InitializeLeverAccountConstraints>) -> Result<()> {
         Ok(())
     }
 
-    pub fn switch_power(ctx: Context<SetPowerStatus>, name: String) -> Result<()> {
-        let power = &mut ctx.accounts.power;
+    pub fn switch_power(mut context: Context<SetPowerStatusAccountConstraints>, name: String) -> Result<()> {
+        let power = &mut context.accounts.power;
         power.is_on = !power.is_on;
 
         msg!("{} is pulling the power switch!", &name);
@@ -26,7 +26,7 @@ pub mod lever {
 }
 
 #[derive(Accounts)]
-pub struct InitializeLever<'info> {
+pub struct InitializeLeverAccountConstraints<'info> {
     #[account(init, payer = user, space = PowerStatus::DISCRIMINATOR.len() + PowerStatus::INIT_SPACE)]
     pub power: Account<'info, PowerStatus>,
     #[account(mut)]
@@ -35,7 +35,7 @@ pub struct InitializeLever<'info> {
 }
 
 #[derive(Accounts)]
-pub struct SetPowerStatus<'info> {
+pub struct SetPowerStatusAccountConstraints<'info> {
     #[account(mut)]
     pub power: Account<'info, PowerStatus>,
 }

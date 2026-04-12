@@ -7,8 +7,8 @@ declare_id!("GUkjQmrLPFXXNK1bFLKt8XQi6g3TjxcHVspbjDoHvMG2");
 pub mod anchor_test {
     use super::*;
 
-    pub fn read_price(ctx: Context<ReadPrice>) -> Result<()> {
-        let price_update = &ctx.accounts.price_update;
+    pub fn read_price(context: Context<ReadPriceAccountConstraints>) -> Result<()> {
+        let price_update = &context.accounts.price_update;
         msg!("Price feed id: {:?}", price_update.price_message.feed_id);
         msg!("Price: {:?}", price_update.price_message.price);
         msg!("Confidence: {:?}", price_update.price_message.conf);
@@ -19,6 +19,6 @@ pub mod anchor_test {
 }
 
 #[derive(Accounts)]
-pub struct ReadPrice<'info> {
+pub struct ReadPriceAccountConstraints<'info> {
     pub price_update: Account<'info, PriceUpdateV2>,
 }
