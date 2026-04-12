@@ -45,7 +45,6 @@ mod tests {
         );
 
         let res = svm.send_transaction(tx);
-        dbg!(&res.clone().unwrap().logs);
         assert!(res.is_ok());
 
         let payer_balance_after = svm.get_balance(&payer.pubkey()).unwrap();

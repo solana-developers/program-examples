@@ -4,5 +4,5 @@
 # It also serves as a reference for the commands used for building & deploying Solana programs.
 # Run this bad boy with "bash cicd.sh" or "./cicd.sh"
 
-cargo build-sbf --manifest-path=./program/Cargo.toml --bpf-out-dir=./program/target/so
-solana program deploy ./program/target/so/program.so
+sbpf build --deploy-dir ./tests/fixtures/
+solana program deploy ./tests/fixtures/transfer-sol-cpi.so
