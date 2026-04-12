@@ -1,0 +1,21 @@
+[project]
+name = "quasar_favorites"
+
+[toolchain]
+type = "solana"
+
+[testing]
+language = "rust"
+
+[testing.rust]
+framework = "quasar-svm"
+
+[testing.rust.test]
+program = "cargo"
+args = [
+    "test",
+    "tests::",
+]
+
+[clients]
+languages = ["rust"]
