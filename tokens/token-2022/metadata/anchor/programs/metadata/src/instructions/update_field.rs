@@ -61,7 +61,7 @@ pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) ->
         let lamport_difference = required_lamports - current_lamports;
         transfer(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 Transfer {
                     from: ctx.accounts.authority.to_account_info(),
                     to: ctx.accounts.mint_account.to_account_info(),
@@ -78,7 +78,7 @@ pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) ->
     // Update token metadata
     token_metadata_update_field(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             TokenMetadataUpdateField {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 metadata: ctx.accounts.mint_account.to_account_info(),

@@ -25,6 +25,6 @@
   "dependencies": {
     "@metaplex-foundation/beet": "^0.6.1",
     "@metaplex-foundation/solita": "^0.15.2",
-    "@solana/web3.js": "^1.56.2"
+    "@solana/web3.js": "^1.98.4"
   }
 }

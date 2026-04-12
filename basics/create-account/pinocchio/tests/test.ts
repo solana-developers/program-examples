@@ -11,10 +11,7 @@ import { start } from "solana-bankrun";
 
 describe("Create a system account", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "create_account_pinocchio_program", programId: PROGRAM_ID }],
-    [],
-  );
+  const context = await start([{ name: "create_account_pinocchio_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
@@ -56,8 +53,6 @@ describe("Create a system account", async () => {
     tx.add(ix).sign(payer, newKeypair);
 
     await client.processTransaction(tx);
-    console.log(
-      `Account with public key ${newKeypair.publicKey} successfully created`,
-    );
+    console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
   });
 });

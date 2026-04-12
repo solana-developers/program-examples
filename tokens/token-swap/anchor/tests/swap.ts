@@ -1,11 +1,11 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
-import { BN } from 'bn.js';
-import { expect } from 'chai';
-import type { SwapExample } from '../target/types/swap_example';
-import { createValues, mintingTokens, type TestValues } from './utils';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { BN } from "bn.js";
+import { expect } from "chai";
+import type { SwapExample } from "../target/types/swap_example";
+import { createValues, mintingTokens, type TestValues } from "./utils";
 
-describe('Swap', () => {
+describe("Swap", () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   anchor.setProvider(provider);
@@ -17,7 +17,10 @@ describe('Swap', () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
+    await program.methods
+      .createAmm(values.id, values.fee)
+      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .rpc();
 
     await mintingTokens({
       connection,
@@ -59,7 +62,7 @@ describe('Swap', () => {
       .rpc({ skipPreflight: true });
   });
 
-  it('Swap from A to B', async () => {
+  it("Swap from A to B", async () => {
     const input = new BN(10 ** 6);
     await program.methods
       .swapExactTokensForTokens(true, input, new BN(100))
@@ -80,8 +83,14 @@ describe('Swap', () => {
 
     const traderTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
     const traderTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
-    expect(traderTokenAccountA.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountA).sub(input).toString());
-    expect(Number(traderTokenAccountB.value.amount)).to.be.greaterThan(values.defaultSupply.sub(values.depositAmountB).toNumber());
-    expect(Number(traderTokenAccountB.value.amount)).to.be.lessThan(values.defaultSupply.sub(values.depositAmountB).add(input).toNumber());
+    expect(traderTokenAccountA.value.amount).to.equal(
+      values.defaultSupply.sub(values.depositAmountA).sub(input).toString(),
+    );
+    expect(Number(traderTokenAccountB.value.amount)).to.be.greaterThan(
+      values.defaultSupply.sub(values.depositAmountB).toNumber(),
+    );
+    expect(Number(traderTokenAccountB.value.amount)).to.be.lessThan(
+      values.defaultSupply.sub(values.depositAmountB).add(input).toNumber(),
+    );
   });
 });

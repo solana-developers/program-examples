@@ -20,7 +20,7 @@ pub fn process_update_fee(
 ) -> Result<()> {
     transfer_fee_set(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             TransferFeeSetTransferFee {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),

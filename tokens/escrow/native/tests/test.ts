@@ -1,16 +1,17 @@
-import { describe, test } from 'node:test';
-import { AccountLayout } from '@solana/spl-token';
-import { Transaction } from '@solana/web3.js';
-import { assert } from 'chai';
-import { start } from 'solana-bankrun';
-import { OfferAccount } from './account';
-import { buildMakeOffer, buildTakeOffer } from './instruction';
-import { createValues, mintingTokens } from './utils';
+import { describe, test } from "node:test";
+import { AccountLayout } from "@solana/spl-token";
+import { PublicKey, Transaction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { assert } from "chai";
+import { start } from "solana-bankrun";
+import { type OfferRaw, OfferSchema } from "./account";
+import { buildMakeOffer, buildTakeOffer } from "./instruction";
+import { createValues, mintingTokens } from "./utils";
 
-describe('Escrow!', async () => {
+describe("Escrow!", async () => {
   const values = createValues();
 
-  const context = await start([{ name: 'escrow_native_program', programId: values.programId }], []);
+  const context = await start([{ name: "escrow_native_program", programId: values.programId }], []);
 
   const client = context.banksClient;
   const payer = context.payer;
@@ -18,7 +19,7 @@ describe('Escrow!', async () => {
   console.log(`Program Address    : ${values.programId}`);
   console.log(`Payer Address      : ${payer.publicKey}`);
 
-  test('mint tokens to maker and taker', async () => {
+  test("mint tokens to maker and taker", async () => {
     // mint token a to maker account
     await mintingTokens({
       context,
@@ -34,7 +35,7 @@ describe('Escrow!', async () => {
     });
   });
 
-  test('Make Offer', async () => {
+  test("Make Offer", async () => {
     const ix = buildMakeOffer({
       id: values.id,
       maker: values.maker.publicKey,
@@ -57,20 +58,21 @@ describe('Escrow!', async () => {
     await client.processTransaction(tx);
 
     const offerInfo = await client.getAccount(values.offer);
-    const offer = OfferAccount.fromBuffer(offerInfo.data).toData();
+    const offer = borsh.deserialize(OfferSchema, Buffer.from(offerInfo.data)) as OfferRaw;
 
     const vaultInfo = await client.getAccount(values.vault);
     const vaultTokenAccount = AccountLayout.decode(vaultInfo.data);
 
-    assert(offer.id.toString() === values.id.toString(), 'wrong id');
-    assert(offer.maker.toBase58() === values.maker.publicKey.toBase58(), 'maker key does not match');
-    assert(offer.token_mint_a.toBase58() === values.mintAKeypair.publicKey.toBase58(), 'wrong mint A');
-    assert(offer.token_mint_b.toBase58() === values.mintBKeypair.publicKey.toBase58(), 'wrong mint B');
-    assert(offer.token_b_wanted_amount.toString() === values.amountB.toString(), 'unexpected amount B');
-    assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), 'unexpected amount A');
+    assert(offer.id.toString() === values.id.toString(), "wrong id");
+    // borsh deserializes pubkeys as raw byte arrays, wrap in PublicKey for comparison
+    assert(new PublicKey(offer.maker).toBase58() === values.maker.publicKey.toBase58(), "maker key does not match");
+    assert(new PublicKey(offer.token_mint_a).toBase58() === values.mintAKeypair.publicKey.toBase58(), "wrong mint A");
+    assert(new PublicKey(offer.token_mint_b).toBase58() === values.mintBKeypair.publicKey.toBase58(), "wrong mint B");
+    assert(offer.token_b_wanted_amount.toString() === values.amountB.toString(), "unexpected amount B");
+    assert(vaultTokenAccount.amount.toString() === values.amountA.toString(), "unexpected amount A");
   });
 
-  test('Take Offer', async () => {
+  test("Take Offer", async () => {
     const ix = buildTakeOffer({
       maker: values.maker.publicKey,
       offer: values.offer,
@@ -93,10 +95,10 @@ describe('Escrow!', async () => {
     await client.processTransaction(tx);
 
     const offerInfo = await client.getAccount(values.offer);
-    assert(offerInfo === null, 'offer account not closed');
+    assert(offerInfo === null, "offer account not closed");
 
     const vaultInfo = await client.getAccount(values.vault);
-    assert(vaultInfo === null, 'vault account not closed');
+    assert(vaultInfo === null, "vault account not closed");
 
     const makerTokenBInfo = await client.getAccount(values.makerAccountB);
     const makerTokenAccountB = AccountLayout.decode(makerTokenBInfo.data);
@@ -104,7 +106,7 @@ describe('Escrow!', async () => {
     const takerTokenAInfo = await client.getAccount(values.takerAccountA);
     const takerTokenAccountA = AccountLayout.decode(takerTokenAInfo.data);
 
-    assert(takerTokenAccountA.amount.toString() === values.amountA.toString(), 'unexpected amount a');
-    assert(makerTokenAccountB.amount.toString() === values.amountB.toString(), 'unexpected amount b');
+    assert(takerTokenAccountA.amount.toString() === values.amountA.toString(), "unexpected amount a");
+    assert(makerTokenAccountB.amount.toString() === values.amountB.toString(), "unexpected amount b");
   });
 });

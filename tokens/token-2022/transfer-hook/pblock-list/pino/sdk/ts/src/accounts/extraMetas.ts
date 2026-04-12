@@ -25,10 +25,10 @@ import {
   getStructEncoder,
   type MaybeAccount,
   type MaybeEncodedAccount,
-} from '@solana/kit';
-import { ExtraMetasSeeds, findExtraMetasPda } from '../pdas';
+} from "@solana/kit";
+import { type ExtraMetasSeeds, findExtraMetasPda } from "../pdas";
 
-export type ExtraMetas = {};
+export type ExtraMetas = Record<string, never>;
 
 export type ExtraMetasArgs = ExtraMetas;
 
@@ -44,8 +44,12 @@ export function getExtraMetasCodec(): Codec<ExtraMetasArgs, ExtraMetas> {
   return combineCodec(getExtraMetasEncoder(), getExtraMetasDecoder());
 }
 
-export function decodeExtraMetas<TAddress extends string = string>(encodedAccount: EncodedAccount<TAddress>): Account<ExtraMetas, TAddress>;
-export function decodeExtraMetas<TAddress extends string = string>(encodedAccount: MaybeEncodedAccount<TAddress>): MaybeAccount<ExtraMetas, TAddress>;
+export function decodeExtraMetas<TAddress extends string = string>(
+  encodedAccount: EncodedAccount<TAddress>,
+): Account<ExtraMetas, TAddress>;
+export function decodeExtraMetas<TAddress extends string = string>(
+  encodedAccount: MaybeEncodedAccount<TAddress>,
+): MaybeAccount<ExtraMetas, TAddress>;
 export function decodeExtraMetas<TAddress extends string = string>(
   encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<ExtraMetas, TAddress> | MaybeAccount<ExtraMetas, TAddress> {

@@ -1,40 +1,37 @@
-import Image from "next/image"
-import { useCallback, useState } from "react"
-import { Button, HStack, VStack } from "@chakra-ui/react"
-import { useConnection, useWallet } from "@solana/wallet-adapter-react"
-import { useSessionWallet } from "@magicblock-labs/gum-react-sdk"
-import { useGameState } from "@/contexts/GameStateProvider"
-import { GAME_DATA_SEED, gameDataPDA, program } from "@/utils/anchor"
-import { PublicKey } from "@solana/web3.js"
-import { useNftState } from "@/contexts/NftProvider"
-import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token"
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import { useSessionWallet } from "@magicblock-labs/gum-react-sdk";
+import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import Image from "next/image";
+import { useCallback, useState } from "react";
+import { useGameState } from "@/contexts/GameStateProvider";
+import { useNftState } from "@/contexts/NftProvider";
+import { GAME_DATA_SEED, gameDataPDA, program } from "@/utils/anchor";
 
 const ChopTreeButton = () => {
-  const { publicKey, sendTransaction } = useWallet()
-  const { connection } = useConnection()
-  const sessionWallet = useSessionWallet()
-  const { gameState, playerDataPDA } = useGameState()
-  const [isLoadingSession, setIsLoadingSession] = useState(false)
-  const [isLoadingMainWallet, setIsLoadingMainWallet] = useState(false)
-  const [transactionCounter, setTransactionCounter] = useState(0)
-  const { nftState: nftState } = useNftState()
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+  const sessionWallet = useSessionWallet();
+  const { gameState, playerDataPDA } = useGameState();
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const [isLoadingMainWallet, setIsLoadingMainWallet] = useState(false);
+  const [transactionCounter, setTransactionCounter] = useState(0);
+  const { nftState } = useNftState();
 
   const onChopClick = useCallback(async () => {
-    setIsLoadingSession(true)
-    if (!playerDataPDA || !sessionWallet) return
+    setIsLoadingSession(true);
+    if (!playerDataPDA || !sessionWallet?.publicKey) return;
     setTransactionCounter(transactionCounter + 1);
 
-    const nftAuthority = await PublicKey.findProgramAddress(
-      [Buffer.from("nft_authority")],
-      program.programId
-    );
+    const nftAuthority = await PublicKey.findProgramAddress([Buffer.from("nft_authority")], program.programId);
 
     let nft = null;
-    
-    for (var i = 0; i < nftState.items.length; i++) {
+
+    for (let i = 0; i < nftState.items.length; i++) {
       try {
         const nftData = nftState.items[i];
-        if (nftData.authorities[0] == nftAuthority[0].toBase58()) {
+        if (nftData.authorities[0] === nftAuthority[0].toBase58()) {
           nft = nftData;
         }
         console.log("NFT data", nftData);
@@ -56,35 +53,32 @@ const ChopTreeButton = () => {
         .accounts({
           player: playerDataPDA,
           gameData: gameDataPDA,
-          signer: sessionWallet.publicKey!,
+          signer: sessionWallet.publicKey,
           sessionToken: sessionWallet.sessionToken,
           nftAuthority: nftAuthority[0],
           mint: nft.id,
         })
-        .transaction()
+        .transaction();
 
-      const txids = await sessionWallet.signAndSendTransaction!(transaction)
+      const txids = await sessionWallet.signAndSendTransaction?.(transaction);
 
       if (txids && txids.length > 0) {
-        console.log("Transaction sent:", txids)
+        console.log("Transaction sent:", txids);
       } else {
-        console.error("Failed to send transaction")
+        console.error("Failed to send transaction");
       }
-    } catch (error: any) {
-      console.log("error", `Chopping failed! ${error?.message}`)
+    } catch (error) {
+      console.log("error", `Chopping failed! ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setIsLoadingSession(false)
+      setIsLoadingSession(false);
     }
-  }, [sessionWallet, nftState])
+  }, [sessionWallet, nftState, playerDataPDA, transactionCounter]);
 
   const onChopMainWalletClick = useCallback(async () => {
-    if (!publicKey || !playerDataPDA) return
+    if (!publicKey || !playerDataPDA) return;
 
-    setIsLoadingMainWallet(true)
-    const nftAuthority = await PublicKey.findProgramAddress(
-      [Buffer.from("nft_authority")],
-      program.programId
-    );
+    setIsLoadingMainWallet(true);
+    const nftAuthority = await PublicKey.findProgramAddress([Buffer.from("nft_authority")], program.programId);
 
     if (nftState == null) {
       window.alert("Load NFT state first");
@@ -94,11 +88,11 @@ const ChopTreeButton = () => {
 
     console.log("NFT state", nftState);
     let nft = null;
-    for (var i = 0; i < nftState.items.length; i++) {
+    for (let i = 0; i < nftState.items.length; i++) {
       try {
         const nftData = nftState.items[i];
-        console.log(nftData.authorities[0].address + " == " + nftAuthority[0].toBase58());
-        
+        console.log(`${nftData.authorities[0].address} == ${nftAuthority[0].toBase58()}`);
+
         if (nftData.authorities[0].address === nftAuthority[0].toBase58()) {
           nft = nftData;
         }
@@ -115,7 +109,6 @@ const ChopTreeButton = () => {
       return;
     }
     try {
-
       console.log("NFTid", nft.id, "NFT authority", nft.authorities[0].address);
       const transaction = await program.methods
         .chopTree(GAME_DATA_SEED, transactionCounter)
@@ -126,20 +119,20 @@ const ChopTreeButton = () => {
           sessionToken: null,
           nftAuthority: nftAuthority[0].toBase58(),
           mint: nft.id,
-          tokenProgram: TOKEN_2022_PROGRAM_ID
+          tokenProgram: TOKEN_2022_PROGRAM_ID,
         })
-        .transaction()
+        .transaction();
 
       const txSig = await sendTransaction(transaction, connection, {
         skipPreflight: true,
-      })
-      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`)
-    } catch (error: any) {
-      console.log("error", `Chopping failed! ${error?.message}`)
+      });
+      console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
+    } catch (error) {
+      console.log("error", `Chopping failed! ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setIsLoadingMainWallet(false)
+      setIsLoadingMainWallet(false);
     }
-  }, [publicKey, playerDataPDA, connection, nftState])
+  }, [publicKey, playerDataPDA, connection, nftState, transactionCounter, sendTransaction]);
 
   return (
     <>
@@ -148,26 +141,18 @@ const ChopTreeButton = () => {
           <Image src="/Beaver.png" alt="Energy Icon" width={64} height={64} />
           <HStack>
             {sessionWallet && sessionWallet.sessionToken != null && (
-              <Button
-                isLoading={isLoadingSession}
-                onClick={onChopClick}
-                width="175px"
-              >
+              <Button isLoading={isLoadingSession} onClick={onChopClick} width="175px">
                 Chop tree Session
               </Button>
             )}
-            <Button
-              isLoading={isLoadingMainWallet}
-              onClick={onChopMainWalletClick}
-              width="175px"
-            >
+            <Button isLoading={isLoadingMainWallet} onClick={onChopMainWalletClick} width="175px">
               Chop tree MainWallet
             </Button>
           </HStack>
         </VStack>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ChopTreeButton
+export default ChopTreeButton;

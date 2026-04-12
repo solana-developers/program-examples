@@ -1,6 +1,6 @@
-import { Buffer } from 'node:buffer';
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Buffer } from "node:buffer";
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
   Connection,
   Keypair,
@@ -10,25 +10,34 @@ import {
   sendAndConfirmTransaction,
   Transaction,
   TransactionInstruction,
-} from '@solana/web3.js';
-import { CreateTokenArgs, InitArgs, MintToArgs, NftMinterInstruction } from './instructions';
+} from "@solana/web3.js";
+import {
+  borshSerialize,
+  CreateTokenArgsSchema,
+  InitArgsSchema,
+  MintToArgsSchema,
+  NftMinterInstruction,
+} from "./instructions";
 
 function createKeypairFromFile(path: string): Keypair {
-  return Keypair.fromSecretKey(Buffer.from(JSON.parse(require('node:fs').readFileSync(path, 'utf-8'))));
+  return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(require("node:fs").readFileSync(path, "utf-8"))));
 }
 
-describe('NFT Minter', async () => {
+describe("NFT Minter", async () => {
   // const connection = new Connection(`http://localhost:8899`, 'confirmed');
-  const connection = new Connection('https://api.devnet.solana.com/', 'confirmed');
-  const payer = createKeypairFromFile(`${require('node:os').homedir()}/.config/solana/id.json`);
-  const program = createKeypairFromFile('./program/target/deploy/program-keypair.json');
+  const connection = new Connection("https://api.devnet.solana.com/", "confirmed");
+  const payer = createKeypairFromFile(`${require("node:os").homedir()}/.config/solana/id.json`);
+  const program = createKeypairFromFile("./program/target/deploy/program-keypair.json");
 
-  const mintAuthorityPublicKey = PublicKey.findProgramAddressSync([Buffer.from('mint_authority')], program.publicKey)[0];
+  const mintAuthorityPublicKey = PublicKey.findProgramAddressSync(
+    [Buffer.from("mint_authority")],
+    program.publicKey,
+  )[0];
 
   const mintKeypair: Keypair = Keypair.generate();
 
-  it('Init Mint Authority PDA', async () => {
-    const instructionData = new InitArgs({
+  it("Init Mint Authority PDA", async () => {
+    const instructionData = borshSerialize(InitArgsSchema, {
       instruction: NftMinterInstruction.Init,
     });
 
@@ -39,27 +48,28 @@ describe('NFT Minter', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer], { skipPreflight: true });
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Tx Signature: ${sx}`);
   });
 
-  it('Create an NFT!', async () => {
+  it("Create an NFT!", async () => {
     const metadataAddress = PublicKey.findProgramAddressSync(
-      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
+      [Buffer.from("metadata"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       instruction: NftMinterInstruction.Create,
-      nft_title: 'Homer NFT',
-      nft_symbol: 'HOMR',
-      nft_uri: 'https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json',
+      nft_title: "Homer NFT",
+      nft_symbol: "HOMR",
+      nft_uri:
+        "https://raw.githubusercontent.com/solana-developers/program-examples/new-examples/tokens/tokens/.assets/nft.json",
     });
 
     const ix = new TransactionInstruction({
@@ -78,30 +88,37 @@ describe('NFT Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
-    const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair], { skipPreflight: true });
+    const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer, mintKeypair], {
+      skipPreflight: true,
+    });
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   Mint Address: ${mintKeypair.publicKey}`);
     console.log(`   Tx Signature: ${sx}`);
   });
 
-  it('Mint the NFT to your wallet!', async () => {
+  it("Mint the NFT to your wallet!", async () => {
     const metadataAddress = PublicKey.findProgramAddressSync(
-      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
+      [Buffer.from("metadata"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
     const editionAddress = PublicKey.findProgramAddressSync(
-      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer(), Buffer.from('edition')],
+      [
+        Buffer.from("metadata"),
+        TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+        mintKeypair.publicKey.toBuffer(),
+        Buffer.from("edition"),
+      ],
       TOKEN_METADATA_PROGRAM_ID,
     )[0];
 
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(mintKeypair.publicKey, payer.publicKey);
 
-    const instructionData = new MintToArgs({
+    const instructionData = borshSerialize(MintToArgsSchema, {
       instruction: NftMinterInstruction.Mint,
     });
 
@@ -132,12 +149,12 @@ describe('NFT Minter', async () => {
         }, // Token metadata program
       ],
       programId: program.publicKey,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const sx = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [payer]);
 
-    console.log('Success!');
+    console.log("Success!");
     console.log(`   ATA Address: ${associatedTokenAccountAddress}`);
     console.log(`   Tx Signature: ${sx}`);
   });

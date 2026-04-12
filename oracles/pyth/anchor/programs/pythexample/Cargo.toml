@@ -21,7 +21,8 @@ custom-panic = []
 
 
 [dependencies]
-anchor-lang = "0.32.1"
+# Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = "1.0.0-rc.5"
 pyth-solana-receiver-sdk = "1.1.0"
 
 [lints.rust]

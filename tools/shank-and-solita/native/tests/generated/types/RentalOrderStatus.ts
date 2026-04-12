@@ -5,7 +5,7 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
+import * as beet from "@metaplex-foundation/beet";
 /**
  * @category enums
  * @category generated
@@ -20,4 +20,7 @@ export enum RentalOrderStatus {
  * @category userTypes
  * @category generated
  */
-export const rentalOrderStatusBeet = beet.fixedScalarEnum(RentalOrderStatus) as beet.FixedSizeBeet<RentalOrderStatus, RentalOrderStatus>;
+export const rentalOrderStatusBeet = beet.fixedScalarEnum(RentalOrderStatus) as beet.FixedSizeBeet<
+  RentalOrderStatus,
+  RentalOrderStatus
+>;

@@ -78,7 +78,7 @@ pub fn deposit_liquidity(
     // Transfer tokens to the pool
     token::transfer(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Transfer {
                 from: ctx.accounts.depositor_account_a.to_account_info(),
                 to: ctx.accounts.pool_account_a.to_account_info(),
@@ -89,7 +89,7 @@ pub fn deposit_liquidity(
     )?;
     token::transfer(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Transfer {
                 from: ctx.accounts.depositor_account_b.to_account_info(),
                 to: ctx.accounts.pool_account_b.to_account_info(),
@@ -111,7 +111,7 @@ pub fn deposit_liquidity(
     let signer_seeds = &[&authority_seeds[..]];
     token::mint_to(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             MintTo {
                 mint: ctx.accounts.mint_liquidity.to_account_info(),
                 to: ctx.accounts.depositor_account_liquidity.to_account_info(),

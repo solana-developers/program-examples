@@ -1,10 +1,10 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
-import { PublicKey } from '@solana/web3.js';
-import type { SwapExample } from '../target/types/swap_example';
-import { createValues, expectRevert, mintingTokens, type TestValues } from './utils';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { PublicKey } from "@solana/web3.js";
+import type { SwapExample } from "../target/types/swap_example";
+import { createValues, expectRevert, mintingTokens, type TestValues } from "./utils";
 
-describe('Create pool', () => {
+describe("Create pool", () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   anchor.setProvider(provider);
@@ -16,7 +16,10 @@ describe('Create pool', () => {
   beforeEach(async () => {
     values = createValues();
 
-    await program.methods.createAmm(values.id, values.fee).accounts({ amm: values.ammKey, admin: values.admin.publicKey }).rpc();
+    await program.methods
+      .createAmm(values.id, values.fee)
+      .accounts({ amm: values.ammKey, admin: values.admin.publicKey })
+      .rpc();
 
     await mintingTokens({
       connection,
@@ -26,7 +29,7 @@ describe('Create pool', () => {
     });
   });
 
-  it('Creation', async () => {
+  it("Creation", async () => {
     await program.methods
       .createPool()
       .accounts({
@@ -42,7 +45,7 @@ describe('Create pool', () => {
       .rpc({ skipPreflight: true });
   });
 
-  it('Invalid mints', async () => {
+  it("Invalid mints", async () => {
     values = createValues({
       mintBKeypair: values.mintAKeypair,
       poolKey: PublicKey.findProgramAddressSync(
@@ -50,7 +53,12 @@ describe('Create pool', () => {
         program.programId,
       )[0],
       poolAuthority: PublicKey.findProgramAddressSync(
-        [values.id.toBuffer(), values.mintAKeypair.publicKey.toBuffer(), values.mintBKeypair.publicKey.toBuffer(), Buffer.from('authority')],
+        [
+          values.id.toBuffer(),
+          values.mintAKeypair.publicKey.toBuffer(),
+          values.mintBKeypair.publicKey.toBuffer(),
+          Buffer.from("authority"),
+        ],
         program.programId,
       )[0],
     });

@@ -20,7 +20,8 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-anchor-lang = "0.32.1"
+# Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = "1.0.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

@@ -1,8 +1,8 @@
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum/dist/src/generated';
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata/dist/src/generated';
-import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from '@solana/spl-account-compression';
-import { type AccountMeta, PublicKey, SystemProgram } from '@solana/web3.js';
-import * as bs58 from 'bs58';
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum/dist/src/generated";
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata/dist/src/generated";
+import { SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID } from "@solana/spl-account-compression";
+import { type AccountMeta, PublicKey, SystemProgram } from "@solana/web3.js";
+import * as bs58 from "bs58";
 
 export function decode(stuff: string) {
   return bufferToArray(bs58.decode(stuff));
@@ -16,7 +16,7 @@ function bufferToArray(buffer: Buffer): number[] {
 }
 export const mapProof = (assetProof: { proof: string[] }): AccountMeta[] => {
   if (!assetProof.proof || assetProof.proof.length === 0) {
-    throw new Error('Proof is empty');
+    throw new Error("Proof is empty");
   }
   return assetProof.proof.map((node) => ({
     pubkey: new PublicKey(node),
@@ -32,19 +32,24 @@ export function getAccounts(collectionMint: PublicKey, tree: PublicKey) {
   // derive a PDA (owned by Bubblegum) to act as the signer of the compressed minting
   const [bubblegumSigner] = PublicKey.findProgramAddressSync(
     // `collection_cpi` is a custom prefix required by the Bubblegum program
-    [Buffer.from('collection_cpi', 'utf8')],
+    [Buffer.from("collection_cpi", "utf8")],
     BUBBLEGUM_PROGRAM_ID,
   );
 
   // collection metadata account
   const [metadataAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from('metadata', 'utf8'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), collectionMint.toBuffer()],
+    [Buffer.from("metadata", "utf8"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), collectionMint.toBuffer()],
     TOKEN_METADATA_PROGRAM_ID,
   );
 
   // collection master edition
   const [masterEditionAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from('metadata', 'utf8'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), collectionMint.toBuffer(), Buffer.from('edition', 'utf8')],
+    [
+      Buffer.from("metadata", "utf8"),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      collectionMint.toBuffer(),
+      Buffer.from("edition", "utf8"),
+    ],
     TOKEN_METADATA_PROGRAM_ID,
   );
 

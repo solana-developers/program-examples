@@ -47,7 +47,7 @@ pub mod external_delegate_token_master {
 
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 transfer_instruction,
                 &[&[user_account.key().as_ref(), &[ctx.bumps.user_pda]]],
             ),
@@ -67,7 +67,7 @@ pub mod external_delegate_token_master {
 
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 transfer_instruction,
                 &[&[
                     ctx.accounts.user_account.key().as_ref(),

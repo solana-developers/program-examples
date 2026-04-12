@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet';
-import * as web3 from '@solana/web3.js';
-import { type AddCarArgs, addCarArgsBeet } from '../types/AddCarArgs';
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
+import { type AddCarArgs, addCarArgsBeet } from "../types/AddCarArgs";
 
 /**
  * @category Instructions
@@ -28,10 +28,10 @@ export const AddCarStruct = new beet.FixableBeetArgsStruct<
   }
 >(
   [
-    ['instructionDiscriminator', beet.u8],
-    ['addCarArgs', addCarArgsBeet],
+    ["instructionDiscriminator", beet.u8],
+    ["addCarArgs", addCarArgsBeet],
   ],
-  'AddCarInstructionArgs',
+  "AddCarInstructionArgs",
 );
 /**
  * Accounts required by the _AddCar_ instruction
@@ -63,7 +63,7 @@ export const addCarInstructionDiscriminator = 0;
 export function createAddCarInstruction(
   accounts: AddCarInstructionAccounts,
   args: AddCarInstructionArgs,
-  programId = new web3.PublicKey('8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ'),
+  programId = new web3.PublicKey("8avNGHVXDwsELJaWMSoUZ44CirQd4zyU9Ez4ZmP4jNjZ"),
 ) {
   const [data] = AddCarStruct.serialize({
     instructionDiscriminator: addCarInstructionDiscriminator,

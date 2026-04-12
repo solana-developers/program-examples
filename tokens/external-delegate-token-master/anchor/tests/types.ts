@@ -1,7 +1,8 @@
 // tests/types.ts
-import { PublicKey } from '@solana/web3.js';
+import type { PublicKey } from "@solana/web3.js";
 
 export interface ProgramTestContext {
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
   connection: any;
   programs: {
     programId: PublicKey;
