@@ -1,5 +1,5 @@
-import { Buffer } from 'node:buffer';
-import * as borsh from 'borsh';
+import { Buffer } from "node:buffer";
+import * as borsh from "borsh";
 
 export class User {
   name: string;
@@ -27,8 +27,8 @@ export const UserSchema = new Map([
   [
     User,
     {
-      kind: 'struct',
-      fields: [['name', 'string']],
+      kind: "struct",
+      fields: [["name", "string"]],
     },
   ],
 ]);

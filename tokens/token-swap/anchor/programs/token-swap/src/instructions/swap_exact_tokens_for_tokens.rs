@@ -75,7 +75,7 @@ pub fn swap_exact_tokens_for_tokens(
     if swap_a {
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from: ctx.accounts.trader_account_a.to_account_info(),
                     to: ctx.accounts.pool_account_a.to_account_info(),
@@ -86,7 +86,7 @@ pub fn swap_exact_tokens_for_tokens(
         )?;
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from: ctx.accounts.pool_account_b.to_account_info(),
                     to: ctx.accounts.trader_account_b.to_account_info(),
@@ -99,7 +99,7 @@ pub fn swap_exact_tokens_for_tokens(
     } else {
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from: ctx.accounts.pool_account_a.to_account_info(),
                     to: ctx.accounts.trader_account_a.to_account_info(),
@@ -111,7 +111,7 @@ pub fn swap_exact_tokens_for_tokens(
         )?;
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 Transfer {
                     from: ctx.accounts.trader_account_b.to_account_info(),
                     to: ctx.accounts.pool_account_b.to_account_info(),

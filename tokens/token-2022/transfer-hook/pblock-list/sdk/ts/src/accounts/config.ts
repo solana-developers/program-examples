@@ -31,8 +31,8 @@ import {
   getU64Encoder,
   type MaybeAccount,
   type MaybeEncodedAccount,
-} from '@solana/kit';
-import { findConfigPda } from '../pdas';
+} from "@solana/kit";
+import { findConfigPda } from "../pdas";
 
 export const CONFIG_DISCRIMINATOR = 0;
 
@@ -54,17 +54,17 @@ export type ConfigArgs = {
 
 export function getConfigEncoder(): Encoder<ConfigArgs> {
   return getStructEncoder([
-    ['discriminator', getU8Encoder()],
-    ['authority', getAddressEncoder()],
-    ['blockedWalletsCount', getU64Encoder()],
+    ["discriminator", getU8Encoder()],
+    ["authority", getAddressEncoder()],
+    ["blockedWalletsCount", getU64Encoder()],
   ]);
 }
 
 export function getConfigDecoder(): Decoder<Config> {
   return getStructDecoder([
-    ['discriminator', getU8Decoder()],
-    ['authority', getAddressDecoder()],
-    ['blockedWalletsCount', getU64Decoder()],
+    ["discriminator", getU8Decoder()],
+    ["authority", getAddressDecoder()],
+    ["blockedWalletsCount", getU64Decoder()],
   ]);
 }
 
@@ -72,8 +72,12 @@ export function getConfigCodec(): Codec<ConfigArgs, Config> {
   return combineCodec(getConfigEncoder(), getConfigDecoder());
 }
 
-export function decodeConfig<TAddress extends string = string>(encodedAccount: EncodedAccount<TAddress>): Account<Config, TAddress>;
-export function decodeConfig<TAddress extends string = string>(encodedAccount: MaybeEncodedAccount<TAddress>): MaybeAccount<Config, TAddress>;
+export function decodeConfig<TAddress extends string = string>(
+  encodedAccount: EncodedAccount<TAddress>,
+): Account<Config, TAddress>;
+export function decodeConfig<TAddress extends string = string>(
+  encodedAccount: MaybeEncodedAccount<TAddress>,
+): MaybeAccount<Config, TAddress>;
 export function decodeConfig<TAddress extends string = string>(
   encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<Config, TAddress> | MaybeAccount<Config, TAddress> {

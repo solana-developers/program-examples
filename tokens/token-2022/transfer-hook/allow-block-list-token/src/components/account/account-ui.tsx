@@ -1,13 +1,19 @@
-'use client'
+"use client";
 
-import { useWallet } from '@solana/wallet-adapter-react'
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
-import { RefreshCw } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
-
-import { useCluster } from '../cluster/cluster-data-access'
-import { ExplorerLink } from '../cluster/cluster-ui'
+import { useWallet } from "@solana/wallet-adapter-react";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { useQueryClient } from "@tanstack/react-query";
+import { RefreshCw } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AppAlert } from "@/components/app-alert";
+import { AppModal } from "@/components/app-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ellipsify } from "@/lib/utils";
+import { useCluster } from "../cluster/cluster-data-access";
+import { ExplorerLink } from "../cluster/cluster-ui";
 import {
   useGetBalance,
   useGetSignatures,
@@ -15,40 +21,33 @@ import {
   useRequestAirdrop,
   useSendTokens,
   useTransferSol,
-} from './account-data-access'
-import { ellipsify } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { AppAlert } from '@/components/app-alert'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { AppModal } from '@/components/app-modal'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "./account-data-access";
 
 export function AccountBalance({ address }: { address: PublicKey }) {
-  const query = useGetBalance({ address })
+  const query = useGetBalance({ address });
 
   return (
-    <h1 className="text-5xl font-bold cursor-pointer" onClick={() => query.refetch()}>
-      {query.data ? <BalanceSol balance={query.data} /> : '...'} SOL
-    </h1>
-  )
+    <button type="button" className="text-5xl font-bold cursor-pointer" onClick={() => query.refetch()}>
+      {query.data ? <BalanceSol balance={query.data} /> : "..."} SOL
+    </button>
+  );
 }
 
 export function AccountChecker() {
-  const { publicKey } = useWallet()
+  const { publicKey } = useWallet();
   if (!publicKey) {
-    return null
+    return null;
   }
-  return <AccountBalanceCheck address={publicKey} />
+  return <AccountBalanceCheck address={publicKey} />;
 }
 
 export function AccountBalanceCheck({ address }: { address: PublicKey }) {
-  const { cluster } = useCluster()
-  const mutation = useRequestAirdrop({ address })
-  const query = useGetBalance({ address })
+  const { cluster } = useCluster();
+  const mutation = useRequestAirdrop({ address });
+  const query = useGetBalance({ address });
 
   if (query.isLoading) {
-    return null
+    return null;
   }
   if (query.isError || !query.data) {
     return (
@@ -61,33 +60,33 @@ export function AccountBalanceCheck({ address }: { address: PublicKey }) {
       >
         You are connected to <strong>{cluster.name}</strong> but your account is not found on this cluster.
       </AppAlert>
-    )
+    );
   }
-  return null
+  return null;
 }
 
 export function AccountButtons({ address }: { address: PublicKey }) {
-  const { cluster } = useCluster()
+  const { cluster } = useCluster();
   return (
     <div>
       <div className="space-x-2">
-        {cluster.network?.includes('mainnet') ? null : <ModalAirdrop address={address} />}
+        {cluster.network?.includes("mainnet") ? null : <ModalAirdrop address={address} />}
         <ModalSend address={address} />
         <ModalReceive address={address} />
       </div>
     </div>
-  )
+  );
 }
 
 export function AccountTokens({ address }: { address: PublicKey }) {
-  const [showAll, setShowAll] = useState(false)
-  const query = useGetTokenAccounts({ address })
-  const client = useQueryClient()
-  const sendTokens = useSendTokens()
+  const [showAll, setShowAll] = useState(false);
+  const query = useGetTokenAccounts({ address });
+  const client = useQueryClient();
+  const sendTokens = useSendTokens();
   const items = useMemo(() => {
-    if (showAll) return query.data
-    return query.data?.slice(0, 5)
-  }, [query.data, showAll])
+    if (showAll) return query.data;
+    return query.data?.slice(0, 5);
+  }, [query.data, showAll]);
 
   return (
     <div className="space-y-2">
@@ -101,10 +100,10 @@ export function AccountTokens({ address }: { address: PublicKey }) {
               <Button
                 variant="outline"
                 onClick={async () => {
-                  await query.refetch()
+                  await query.refetch();
                   await client.invalidateQueries({
-                    queryKey: ['getTokenAccountBalance'],
-                  })
+                    queryKey: ["getTokenAccountBalance"],
+                  });
                 }}
               >
                 <RefreshCw size={16} />
@@ -153,25 +152,29 @@ export function AccountTokens({ address }: { address: PublicKey }) {
                     </TableCell>
                     <TableCell className="text-right">
                       <span className="font-mono">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const amount = window.prompt("Enter amount to send:")
-                          const destination = window.prompt("Enter destination wallet address:")
-                          if (amount && destination) {
-                            try {
-                              sendTokens.mutateAsync({ mint: new PublicKey(account.data.parsed.info.mint), destination: new PublicKey(destination), amount: parseFloat(amount) });
-                              // TODO: Implement token transfer logic
-                              console.log(`Sending ${amount} tokens to ${destination}`)
-                            } catch (err) {
-                              console.error("Failed to send tokens:", err)
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const amount = window.prompt("Enter amount to send:");
+                            const destination = window.prompt("Enter destination wallet address:");
+                            if (amount && destination) {
+                              try {
+                                sendTokens.mutateAsync({
+                                  mint: new PublicKey(account.data.parsed.info.mint),
+                                  destination: new PublicKey(destination),
+                                  amount: parseFloat(amount),
+                                });
+                                // TODO: Implement token transfer logic
+                                console.log(`Sending ${amount} tokens to ${destination}`);
+                              } catch (err) {
+                                console.error("Failed to send tokens:", err);
+                              }
                             }
-                          }
-                        }}
-                      >
-                        Send
-                      </Button>
+                          }}
+                        >
+                          Send
+                        </Button>
                       </span>
                     </TableCell>
                   </TableRow>
@@ -181,7 +184,7 @@ export function AccountTokens({ address }: { address: PublicKey }) {
                   <TableRow>
                     <TableCell colSpan={4} className="text-center">
                       <Button variant="outline" onClick={() => setShowAll(!showAll)}>
-                        {showAll ? 'Show Less' : 'Show All'}
+                        {showAll ? "Show Less" : "Show All"}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -192,17 +195,17 @@ export function AccountTokens({ address }: { address: PublicKey }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export function AccountTransactions({ address }: { address: PublicKey }) {
-  const query = useGetSignatures({ address })
-  const [showAll, setShowAll] = useState(false)
+  const query = useGetSignatures({ address });
+  const [showAll, setShowAll] = useState(false);
 
   const items = useMemo(() => {
-    if (showAll) return query.data
-    return query.data?.slice(0, 5)
-  }, [query.data, showAll])
+    if (showAll) return query.data;
+    return query.data?.slice(0, 5);
+  }, [query.data, showAll]);
 
   return (
     <div className="space-y-2">
@@ -258,7 +261,7 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
                   <TableRow>
                     <TableCell colSpan={4} className="text-center">
                       <Button variant="outline" onClick={() => setShowAll(!showAll)}>
-                        {showAll ? 'Show Less' : 'Show All'}
+                        {showAll ? "Show Less" : "Show All"}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -269,11 +272,11 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function BalanceSol({ balance }: { balance: number }) {
-  return <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000}</span>
+  return <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000}</span>;
 }
 
 function ModalReceive({ address }: { address: PublicKey }) {
@@ -282,12 +285,12 @@ function ModalReceive({ address }: { address: PublicKey }) {
       <p>Receive assets by sending them to your public key:</p>
       <code>{address.toString()}</code>
     </AppModal>
-  )
+  );
 }
 
 function ModalAirdrop({ address }: { address: PublicKey }) {
-  const mutation = useRequestAirdrop({ address })
-  const [amount, setAmount] = useState('2')
+  const mutation = useRequestAirdrop({ address });
+  const [amount, setAmount] = useState("2");
 
   return (
     <AppModal
@@ -308,17 +311,17 @@ function ModalAirdrop({ address }: { address: PublicKey }) {
         value={amount}
       />
     </AppModal>
-  )
+  );
 }
 
 function ModalSend({ address }: { address: PublicKey }) {
-  const wallet = useWallet()
-  const mutation = useTransferSol({ address })
-  const [destination, setDestination] = useState('')
-  const [amount, setAmount] = useState('1')
+  const wallet = useWallet();
+  const mutation = useTransferSol({ address });
+  const [destination, setDestination] = useState("");
+  const [amount, setAmount] = useState("1");
 
   if (!address || !wallet.sendTransaction) {
-    return <div>Wallet not connected</div>
+    return <div>Wallet not connected</div>;
   }
 
   return (
@@ -330,7 +333,7 @@ function ModalSend({ address }: { address: PublicKey }) {
         mutation.mutateAsync({
           destination: new PublicKey(destination),
           amount: parseFloat(amount),
-        })
+        });
       }}
     >
       <Label htmlFor="destination">Destination</Label>
@@ -354,5 +357,5 @@ function ModalSend({ address }: { address: PublicKey }) {
         value={amount}
       />
     </AppModal>
-  )
+  );
 }

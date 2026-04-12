@@ -1,10 +1,10 @@
-import * as anchor from '@coral-xyz/anchor';
-import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from '@metaplex-foundation/mpl-bubblegum/dist/src/generated';
-import type { Cutils } from '../target/types/cutils';
-import { loadOrGenerateKeypair, loadPublicKeysFromFile } from './utils/helpers';
-import { getAccounts } from './utils/utils';
+import * as anchor from "@anchor-lang/core";
+import { PROGRAM_ID as BUBBLEGUM_PROGRAM_ID } from "@metaplex-foundation/mpl-bubblegum/dist/src/generated";
+import type { Cutils } from "../target/types/cutils";
+import { loadOrGenerateKeypair, loadPublicKeysFromFile } from "./utils/helpers";
+import { getAccounts } from "./utils/utils";
 
-describe('cutils', () => {
+describe("cutils", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
@@ -12,16 +12,16 @@ describe('cutils', () => {
 
   // NFT metadata pointer
   // TODO change
-  const uri = 'https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo';
+  const uri = "https://arweave.net/nVRvZDaOk5YAdr4ZBEeMjOVhynuv8P3vywvuN5sYSPo";
 
-  const payer = loadOrGenerateKeypair('payer');
+  const payer = loadOrGenerateKeypair("payer");
 
   // cNFT receiver
-  const testWallet = loadOrGenerateKeypair('testWallet');
+  const testWallet = loadOrGenerateKeypair("testWallet");
 
   const { collectionMint, treeAddress } = loadPublicKeysFromFile();
 
-  it('Mint!', async () => {
+  it("Mint!", async () => {
     const tx = await program.methods
       .mint({ uri })
       .accounts({

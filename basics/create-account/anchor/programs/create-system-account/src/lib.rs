@@ -19,7 +19,7 @@ pub mod create_system_account {
 
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 CreateAccount {
                     from: ctx.accounts.payer.to_account_info(), // From pubkey
                     to: ctx.accounts.new_account.to_account_info(), // To pubkey

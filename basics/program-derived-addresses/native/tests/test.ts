@@ -1,64 +1,41 @@
-import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { start } from 'solana-bankrun';
+import { Buffer } from "node:buffer";
+import { describe, test } from "node:test";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { start } from "solana-bankrun";
 
-describe('PDAs', async () => {
+describe("PDAs", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'program_derived_addresses_native_program', programId: PROGRAM_ID }], []);
+  const context = await start(
+    [
+      {
+        name: "program_derived_addresses_native_program",
+        programId: PROGRAM_ID,
+      },
+    ],
+    [],
+  );
   const client = context.banksClient;
   const payer = context.payer;
   const rent = await client.getRent();
 
-  class Assignable {
-    constructor(properties) {
-      for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
-      }
-    }
-  }
+  const PageVisitsSchema = {
+    struct: {
+      page_visits: "u32",
+      bump: "u8",
+    },
+  };
 
-  class PageVisits extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(PageVisitsSchema, this));
-    }
+  // Empty struct — just needs to serialize to zero bytes
+  const IncrementPageVisitsSchema = { struct: {} };
 
-    static fromBuffer(buffer: Buffer) {
-      return borsh.deserialize(PageVisitsSchema, PageVisits, buffer);
-    }
+  function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+    return Buffer.from(borsh.serialize(schema, data));
   }
-  const PageVisitsSchema = new Map([
-    [
-      PageVisits,
-      {
-        kind: 'struct',
-        fields: [
-          ['page_visits', 'u32'],
-          ['bump', 'u8'],
-        ],
-      },
-    ],
-  ]);
-
-  class IncrementPageVisits extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(IncrementPageVisitsSchema, this));
-    }
-  }
-  const IncrementPageVisitsSchema = new Map([
-    [
-      IncrementPageVisits,
-      {
-        kind: 'struct',
-        fields: [],
-      },
-    ],
-  ]);
 
   const testUser = Keypair.generate();
 
-  test('Create a test user', async () => {
+  test("Create a test user", async () => {
     const ix = SystemProgram.createAccount({
       fromPubkey: payer.publicKey,
       lamports: Number(rent.minimumBalance(BigInt(0))),
@@ -78,10 +55,10 @@ describe('PDAs', async () => {
   });
 
   function derivePageVisitsPda(userPubkey: PublicKey) {
-    return PublicKey.findProgramAddressSync([Buffer.from('page_visits'), userPubkey.toBuffer()], PROGRAM_ID);
+    return PublicKey.findProgramAddressSync([Buffer.from("page_visits"), userPubkey.toBuffer()], PROGRAM_ID);
   }
 
-  test('Create the page visits tracking PDA', async () => {
+  test("Create the page visits tracking PDA", async () => {
     const [pageVisitsPda, pageVisitsBump] = derivePageVisitsPda(testUser.publicKey);
     const ix = new TransactionInstruction({
       keys: [
@@ -91,7 +68,10 @@ describe('PDAs', async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: new PageVisits({ page_visits: 0, bump: pageVisitsBump }).toBuffer(),
+      data: borshSerialize(PageVisitsSchema, {
+        page_visits: 0,
+        bump: pageVisitsBump,
+      }),
     });
     const tx = new Transaction();
     const blockhash = context.lastBlockhash;
@@ -101,7 +81,7 @@ describe('PDAs', async () => {
     await client.processTransaction(tx);
   });
 
-  test('Visit the page!', async () => {
+  test("Visit the page!", async () => {
     const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
     const ix = new TransactionInstruction({
       keys: [
@@ -109,7 +89,7 @@ describe('PDAs', async () => {
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
       ],
       programId: PROGRAM_ID,
-      data: new IncrementPageVisits({}).toBuffer(),
+      data: borshSerialize(IncrementPageVisitsSchema, {}),
     });
     const tx = new Transaction();
     const blockhash = context.lastBlockhash;
@@ -119,7 +99,7 @@ describe('PDAs', async () => {
     await client.processTransaction(tx);
   });
 
-  test('Visit the page!', async () => {
+  test("Visit the page!", async () => {
     const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
     const ix = new TransactionInstruction({
       keys: [
@@ -127,7 +107,7 @@ describe('PDAs', async () => {
         { pubkey: payer.publicKey, isSigner: true, isWritable: true },
       ],
       programId: PROGRAM_ID,
-      data: new IncrementPageVisits({}).toBuffer(),
+      data: borshSerialize(IncrementPageVisitsSchema, {}),
     });
     const tx = new Transaction();
     const [blockhash, _block_height] = await client.getLatestBlockhash();
@@ -137,10 +117,13 @@ describe('PDAs', async () => {
     await client.processTransaction(tx);
   });
 
-  test('Read page visits', async () => {
+  test("Read page visits", async () => {
     const [pageVisitsPda, _] = derivePageVisitsPda(testUser.publicKey);
     const accountInfo = await client.getAccount(pageVisitsPda);
-    const readPageVisits = PageVisits.fromBuffer(Buffer.from(accountInfo.data));
+    const readPageVisits = borsh.deserialize(PageVisitsSchema, Buffer.from(accountInfo.data)) as {
+      page_visits: number;
+      bump: number;
+    };
     console.log(`Number of page visits: ${readPageVisits.page_visits}`);
   });
 });

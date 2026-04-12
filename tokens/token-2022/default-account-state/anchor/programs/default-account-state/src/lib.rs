@@ -32,7 +32,7 @@ pub mod default_account_state {
         // Invoke System Program to create new account with space for mint and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.mint_account.to_account_info(),
@@ -47,7 +47,7 @@ pub mod default_account_state {
         // This instruction must come before the instruction to initialize the mint data
         default_account_state_initialize(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 DefaultAccountStateInitialize {
                     token_program_id: ctx.accounts.token_program.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),
@@ -59,7 +59,7 @@ pub mod default_account_state {
         // Initialize the standard mint account data
         initialize_mint2(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 InitializeMint2 {
                     mint: ctx.accounts.mint_account.to_account_info(),
                 },
@@ -80,7 +80,7 @@ pub mod default_account_state {
 
         default_account_state_update(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 DefaultAccountStateUpdate {
                     token_program_id: ctx.accounts.token_program.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),

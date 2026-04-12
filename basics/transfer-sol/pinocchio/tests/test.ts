@@ -1,12 +1,4 @@
-import { describe, test } from "node:test";
-import {
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
-import { start } from "solana-bankrun";
+import { describe } from "node:test";
 
 describe("transfer-sol", async () => {
   console.log("transfer-sol");

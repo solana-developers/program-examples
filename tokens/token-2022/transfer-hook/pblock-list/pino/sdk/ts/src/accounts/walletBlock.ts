@@ -28,8 +28,8 @@ import {
   getU8Encoder,
   type MaybeAccount,
   type MaybeEncodedAccount,
-} from '@solana/kit';
-import { findWalletBlockPda, WalletBlockSeeds } from '../pdas';
+} from "@solana/kit";
+import { findWalletBlockPda, type WalletBlockSeeds } from "../pdas";
 
 export const WALLET_BLOCK_DISCRIMINATOR = 1;
 
@@ -42,18 +42,20 @@ export type WalletBlock = { authority: Address };
 export type WalletBlockArgs = WalletBlock;
 
 export function getWalletBlockEncoder(): Encoder<WalletBlockArgs> {
-  return getStructEncoder([['authority', getAddressEncoder()]]);
+  return getStructEncoder([["authority", getAddressEncoder()]]);
 }
 
 export function getWalletBlockDecoder(): Decoder<WalletBlock> {
-  return getStructDecoder([['authority', getAddressDecoder()]]);
+  return getStructDecoder([["authority", getAddressDecoder()]]);
 }
 
 export function getWalletBlockCodec(): Codec<WalletBlockArgs, WalletBlock> {
   return combineCodec(getWalletBlockEncoder(), getWalletBlockDecoder());
 }
 
-export function decodeWalletBlock<TAddress extends string = string>(encodedAccount: EncodedAccount<TAddress>): Account<WalletBlock, TAddress>;
+export function decodeWalletBlock<TAddress extends string = string>(
+  encodedAccount: EncodedAccount<TAddress>,
+): Account<WalletBlock, TAddress>;
 export function decodeWalletBlock<TAddress extends string = string>(
   encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<WalletBlock, TAddress>;

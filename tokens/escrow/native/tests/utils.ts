@@ -6,19 +6,19 @@ import {
   getAssociatedTokenAddressSync,
   MINT_SIZE,
   TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { Keypair, PublicKey, type Signer, SystemProgram, Transaction } from '@solana/web3.js';
-import BN from 'bn.js';
-import { ProgramTestContext } from 'solana-bankrun';
+} from "@solana/spl-token";
+import { Keypair, PublicKey, type Signer, SystemProgram, Transaction } from "@solana/web3.js";
+import BN from "bn.js";
+import type { ProgramTestContext } from "solana-bankrun";
 
 export async function sleep(seconds: number) {
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
-export const expectRevert = async (promise: Promise<any>) => {
+export const expectRevert = async (promise: Promise<unknown>) => {
   try {
     await promise;
-    throw new Error('Expected a revert');
+    throw new Error("Expected a revert");
   } catch {
     return;
   }
@@ -50,7 +50,13 @@ export const mintingTokens = async ({
         lamports: new BN(lamports.toString()).toNumber(),
         programId: TOKEN_PROGRAM_ID,
       }),
-      createInitializeMint2Instruction(mint.publicKey, decimals, context.payer.publicKey, context.payer.publicKey, TOKEN_PROGRAM_ID),
+      createInitializeMint2Instruction(
+        mint.publicKey,
+        decimals,
+        context.payer.publicKey,
+        context.payer.publicKey,
+        TOKEN_PROGRAM_ID,
+      ),
     );
     transaction.recentBlockhash = context.lastBlockhash;
     transaction.sign(context.payer, mint);
@@ -82,7 +88,9 @@ export const mintingTokens = async ({
   }
 
   async function mintTo(context: ProgramTestContext, mint: PublicKey, destination: PublicKey, amount: number | bigint) {
-    const transaction = new Transaction().add(createMintToInstruction(mint, destination, context.payer.publicKey, amount, [], TOKEN_PROGRAM_ID));
+    const transaction = new Transaction().add(
+      createMintToInstruction(mint, destination, context.payer.publicKey, amount, [], TOKEN_PROGRAM_ID),
+    );
     transaction.recentBlockhash = context.lastBlockhash;
     transaction.sign(context.payer);
 
@@ -138,7 +146,10 @@ export function createValues(defaults?: TestValuesDefaults): TestValues {
     mintBKeypair = Keypair.generate();
   }
 
-  const offer = PublicKey.findProgramAddressSync([Buffer.from('offer'), maker.publicKey.toBuffer(), Buffer.from(id.toArray('le', 8))], programId)[0];
+  const offer = PublicKey.findProgramAddressSync(
+    [Buffer.from("offer"), maker.publicKey.toBuffer(), Buffer.from(id.toArray("le", 8))],
+    programId,
+  )[0];
 
   return {
     id,

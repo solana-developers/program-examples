@@ -1,4 +1,5 @@
 [toolchain]
+solana_version = "3.1.8"
 
 [features]
 resolution = true
@@ -7,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 immutable_owner = "6g5URpqqurW8RbKjuGeRCVZBKky3J4kYcLeotQ6vj6UT"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "Localnet"

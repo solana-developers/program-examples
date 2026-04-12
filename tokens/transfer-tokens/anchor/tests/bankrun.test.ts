@@ -1,5 +1,4 @@
-import { describe, it } from "node:test";
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { BankrunProvider } from "anchor-bankrun";
@@ -9,9 +8,7 @@ import IDL from "../target/idl/transfer_tokens.json";
 import type { TransferTokens } from "../target/types/transfer_tokens";
 
 const PROGRAM_ID = new PublicKey(IDL.address);
-const METADATA_PROGRAM_ID = new PublicKey(
-  "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-);
+const METADATA_PROGRAM_ID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 
 describe("Transfer Tokens Bankrun", async () => {
   const context = await startAnchor(
@@ -40,16 +37,10 @@ describe("Transfer Tokens Bankrun", async () => {
   const recipient = new Keypair();
 
   // Derive the associated token address account for the mint and payer.
-  const senderTokenAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    payer.publicKey,
-  );
+  const senderTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, payer.publicKey);
 
   // Derive the associated token address account for the mint and recipient.
-  const recepientTokenAddress = getAssociatedTokenAddressSync(
-    mintKeypair.publicKey,
-    recipient.publicKey,
-  );
+  const recepientTokenAddress = getAssociatedTokenAddressSync(mintKeypair.publicKey, recipient.publicKey);
 
   it("Create an SPL Token!", async () => {
     const transactionSignature = await program.methods

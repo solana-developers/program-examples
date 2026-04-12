@@ -56,7 +56,7 @@ impl<'info> CheckContributions<'info> {
 
         // Transfer the funds to the maker
         // CPI to the token program to transfer the funds
-        let cpi_program = self.token_program.to_account_info();
+        let cpi_program = self.token_program.key();
 
         // Transfer the funds from the vault to the maker
         let cpi_accounts = Transfer {

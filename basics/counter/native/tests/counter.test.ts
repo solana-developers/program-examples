@@ -1,19 +1,19 @@
-import { describe, test } from 'node:test';
-import { Keypair, SystemProgram, Transaction, type TransactionInstruction } from '@solana/web3.js';
-import { assert } from 'chai';
-import { start } from 'solana-bankrun';
-import { COUNTER_ACCOUNT_SIZE, createIncrementInstruction, deserializeCounterAccount, PROGRAM_ID } from '../ts';
+import { describe, test } from "node:test";
+import { Keypair, SystemProgram, Transaction, type TransactionInstruction } from "@solana/web3.js";
+import { assert } from "chai";
+import { start } from "solana-bankrun";
+import { COUNTER_ACCOUNT_SIZE, createIncrementInstruction, deserializeCounterAccount, PROGRAM_ID } from "../ts";
 
-describe('Counter Solana Native', async () => {
+describe("Counter Solana Native", async () => {
   // Randomly generate the program keypair and load the program to solana-bankrun
-  const context = await start([{ name: 'counter_solana_native', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "counter_solana_native", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   // Get the payer keypair from the context, this will be used to sign transactions with enough lamports
   const payer = context.payer;
   // Get the rent object to calculate rent for the accounts
   const rent = await client.getRent();
 
-  test('Test allocate counter + increment tx', async () => {
+  test("Test allocate counter + increment tx", async () => {
     // Randomly generate the account key
     // to sign for setting up the Counter state
     const counterKeypair = Keypair.generate();
@@ -45,15 +45,15 @@ describe('Counter Solana Native', async () => {
 
     // Get the counter account info from network
     const counterAccountInfo = await client.getAccount(counter);
-    assert(counterAccountInfo, 'Expected counter account to have been created');
+    assert(counterAccountInfo, "Expected counter account to have been created");
 
     // Deserialize the counter & check count has been incremented
     const counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
-    assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
+    assert(counterAccount.count.toNumber() === 1, "Expected count to have been 1");
     console.log(`[alloc+increment] count is: ${counterAccount.count.toNumber()}`);
   });
 
-  test('Test allocate tx and increment tx', async () => {
+  test("Test allocate tx and increment tx", async () => {
     const counterKeypair = Keypair.generate();
     const counter = counterKeypair.publicKey;
 
@@ -74,10 +74,10 @@ describe('Counter Solana Native', async () => {
     await client.processTransaction(tx);
 
     let counterAccountInfo = await client.getAccount(counter);
-    assert(counterAccountInfo, 'Expected counter account to have been created');
+    assert(counterAccountInfo, "Expected counter account to have been created");
 
     let counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
-    assert(counterAccount.count.toNumber() === 0, 'Expected count to have been 0');
+    assert(counterAccount.count.toNumber() === 0, "Expected count to have been 0");
     console.log(`[allocate] count is: ${counterAccount.count.toNumber()}`);
 
     // Check increment tx
@@ -90,10 +90,10 @@ describe('Counter Solana Native', async () => {
     await client.processTransaction(tx);
 
     counterAccountInfo = await client.getAccount(counter);
-    assert(counterAccountInfo, 'Expected counter account to have been created');
+    assert(counterAccountInfo, "Expected counter account to have been created");
 
     counterAccount = deserializeCounterAccount(Buffer.from(counterAccountInfo.data));
-    assert(counterAccount.count.toNumber() === 1, 'Expected count to have been 1');
+    assert(counterAccount.count.toNumber() === 1, "Expected count to have been 1");
     console.log(`[increment] count is: ${counterAccount.count.toNumber()}`);
   });
 });

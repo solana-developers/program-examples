@@ -1,6 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { renderJavaScriptVisitor, renderRustVisitor } from '@codama/renderers';
+import fs from "node:fs";
+import path from "node:path";
+import { renderJavaScriptVisitor, renderRustVisitor } from "@codama/renderers";
 import {
   accountNode,
   booleanTypeNode,
@@ -24,242 +24,248 @@ import {
   structFieldTypeNode,
   structTypeNode,
   variablePdaSeedNode,
-} from 'codama';
+} from "codama";
 
-const _rustClientsDir = path.join(__dirname, '..', 'sdk', 'rust');
-const typescriptClientsDir = path.join(__dirname, '..', 'sdk', 'ts');
+const _rustClientsDir = path.join(__dirname, "..", "sdk", "rust");
+const typescriptClientsDir = path.join(__dirname, "..", "sdk", "ts");
 
 const root = rootNode(
   programNode({
-    name: 'block-list',
-    publicKey: 'BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf',
-    version: '1.0.0',
+    name: "block-list",
+    publicKey: "BLoCKLSG2qMQ9YxEyrrKKAQzthvW4Lu8Eyv74axF6mf",
+    version: "1.0.0",
     accounts: [
       accountNode({
-        name: 'config',
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(0)))],
+        name: "config",
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(0)))],
         size: 41,
-        pda: pdaLinkNode('config'),
-        docs: ['The config PDA account'],
+        pda: pdaLinkNode("config"),
+        docs: ["The config PDA account"],
         data: structTypeNode([
           structFieldTypeNode({
-            name: 'discriminator',
-            type: numberTypeNode('u8'),
-            defaultValueStrategy: 'omitted',
+            name: "discriminator",
+            type: numberTypeNode("u8"),
+            defaultValueStrategy: "omitted",
           }),
           structFieldTypeNode({
-            name: 'authority',
+            name: "authority",
             type: publicKeyTypeNode(),
           }),
           structFieldTypeNode({
-            name: 'blocked_wallets_count',
-            type: numberTypeNode('u64'),
+            name: "blocked_wallets_count",
+            type: numberTypeNode("u64"),
           }),
         ]),
       }),
       accountNode({
-        name: 'walletBlock',
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(1)))],
+        name: "walletBlock",
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(1)))],
         size: 33,
-        pda: pdaLinkNode('walletBlock'),
-        docs: ['The config PDA account'],
+        pda: pdaLinkNode("walletBlock"),
+        docs: ["The config PDA account"],
         data: structTypeNode([
           structFieldTypeNode({
-            name: 'authority',
+            name: "authority",
             type: publicKeyTypeNode(),
           }),
         ]),
       }),
       accountNode({
-        name: 'extraMetas',
-        pda: pdaLinkNode('extraMetas'),
-        docs: ['The extra metas PDA account'],
+        name: "extraMetas",
+        pda: pdaLinkNode("extraMetas"),
+        docs: ["The extra metas PDA account"],
       }),
     ],
     instructions: [
       instructionNode({
-        name: 'init',
+        name: "init",
         arguments: [
           instructionArgumentNode({
-            name: 'discriminator',
-            type: numberTypeNode('u8'),
+            name: "discriminator",
+            type: numberTypeNode("u8"),
             defaultValue: numberValueNode(0xf1),
-            defaultValueStrategy: 'omitted',
+            defaultValueStrategy: "omitted",
           }),
         ],
         accounts: [
           instructionAccountNode({
-            name: 'authority',
+            name: "authority",
             isSigner: true,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'config',
+            name: "config",
             isSigner: false,
             isWritable: true,
-            defaultValue: pdaValueNode(pdaLinkNode('config')),
+            defaultValue: pdaValueNode(pdaLinkNode("config")),
           }),
           instructionAccountNode({
-            name: 'systemProgram',
-            defaultValue: publicKeyValueNode('11111111111111111111111111111111', 'systemProgram'),
+            name: "systemProgram",
+            defaultValue: publicKeyValueNode("11111111111111111111111111111111", "systemProgram"),
             isSigner: false,
             isWritable: false,
           }),
         ],
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(0xf1)))],
-        docs: ['Initialize the config PDA account'],
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(0xf1)))],
+        docs: ["Initialize the config PDA account"],
       }),
       instructionNode({
-        name: 'blockWallet',
+        name: "blockWallet",
         arguments: [
           instructionArgumentNode({
-            name: 'discriminator',
-            type: numberTypeNode('u8'),
+            name: "discriminator",
+            type: numberTypeNode("u8"),
             defaultValue: numberValueNode(0xf2),
-            defaultValueStrategy: 'omitted',
+            defaultValueStrategy: "omitted",
           }),
         ],
         accounts: [
           instructionAccountNode({
-            name: 'authority',
+            name: "authority",
             isSigner: true,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'config',
+            name: "config",
             isSigner: false,
             isWritable: true,
-            defaultValue: pdaValueNode(pdaLinkNode('config')),
+            defaultValue: pdaValueNode(pdaLinkNode("config")),
           }),
           instructionAccountNode({
-            name: 'wallet',
+            name: "wallet",
             isSigner: false,
             isWritable: false,
           }),
           instructionAccountNode({
-            name: 'walletBlock',
+            name: "walletBlock",
             isSigner: false,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'systemProgram',
-            defaultValue: publicKeyValueNode('11111111111111111111111111111111', 'systemProgram'),
+            name: "systemProgram",
+            defaultValue: publicKeyValueNode("11111111111111111111111111111111", "systemProgram"),
             isSigner: false,
             isWritable: false,
           }),
         ],
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(0xf2)))],
-        docs: ['Block a wallet'],
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(0xf2)))],
+        docs: ["Block a wallet"],
       }),
       instructionNode({
-        name: 'unblockWallet',
+        name: "unblockWallet",
         arguments: [
           instructionArgumentNode({
-            name: 'discriminator',
-            type: numberTypeNode('u8'),
+            name: "discriminator",
+            type: numberTypeNode("u8"),
             defaultValue: numberValueNode(0xf3),
-            defaultValueStrategy: 'omitted',
+            defaultValueStrategy: "omitted",
           }),
         ],
         accounts: [
           instructionAccountNode({
-            name: 'authority',
+            name: "authority",
             isSigner: true,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'config',
+            name: "config",
             isSigner: false,
             isWritable: true,
-            defaultValue: pdaValueNode(pdaLinkNode('config')),
+            defaultValue: pdaValueNode(pdaLinkNode("config")),
           }),
           instructionAccountNode({
-            name: 'walletBlock',
+            name: "walletBlock",
             isSigner: false,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'systemProgram',
-            defaultValue: publicKeyValueNode('11111111111111111111111111111111', 'systemProgram'),
+            name: "systemProgram",
+            defaultValue: publicKeyValueNode("11111111111111111111111111111111", "systemProgram"),
             isSigner: false,
             isWritable: false,
           }),
         ],
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(0xf3)))],
-        docs: ['Unblock a wallet'],
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(0xf3)))],
+        docs: ["Unblock a wallet"],
       }),
       instructionNode({
-        name: 'setupExtraMetas',
+        name: "setupExtraMetas",
         arguments: [
           instructionArgumentNode({
-            name: 'discriminator',
-            type: numberTypeNode('u8'),
+            name: "discriminator",
+            type: numberTypeNode("u8"),
             defaultValue: numberValueNode(0x6a),
-            defaultValueStrategy: 'omitted',
+            defaultValueStrategy: "omitted",
           }),
           instructionArgumentNode({
-            name: 'checkBothWallets',
+            name: "checkBothWallets",
             type: booleanTypeNode(),
             defaultValue: booleanValueNode(false),
-            defaultValueStrategy: 'optional',
+            defaultValueStrategy: "optional",
           }),
         ],
         accounts: [
           instructionAccountNode({
-            name: 'authority',
+            name: "authority",
             isSigner: true,
             isWritable: true,
           }),
           instructionAccountNode({
-            name: 'config',
+            name: "config",
             isSigner: false,
             isWritable: false,
-            defaultValue: pdaValueNode(pdaLinkNode('config')),
+            defaultValue: pdaValueNode(pdaLinkNode("config")),
           }),
           instructionAccountNode({
-            name: 'mint',
+            name: "mint",
             isSigner: false,
             isWritable: false,
           }),
           instructionAccountNode({
-            name: 'extraMetas',
+            name: "extraMetas",
             isSigner: false,
             isWritable: true,
-            defaultValue: pdaValueNode(pdaLinkNode('extraMetas')),
+            defaultValue: pdaValueNode(pdaLinkNode("extraMetas")),
           }),
           instructionAccountNode({
-            name: 'systemProgram',
-            defaultValue: publicKeyValueNode('11111111111111111111111111111111', 'systemProgram'),
+            name: "systemProgram",
+            defaultValue: publicKeyValueNode("11111111111111111111111111111111", "systemProgram"),
             isSigner: false,
             isWritable: false,
           }),
         ],
-        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode('u8'), numberValueNode(0x6a)))],
-        docs: ['Unblock a wallet'],
+        discriminators: [constantDiscriminatorNode(constantValueNode(numberTypeNode("u8"), numberValueNode(0x6a)))],
+        docs: ["Unblock a wallet"],
       }),
     ],
     pdas: [
       pdaNode({
-        name: 'config',
-        seeds: [constantPdaSeedNodeFromString('utf8', 'config')],
-        docs: ['The config PDA account'],
+        name: "config",
+        seeds: [constantPdaSeedNodeFromString("utf8", "config")],
+        docs: ["The config PDA account"],
       }),
       pdaNode({
-        name: 'walletBlock',
-        seeds: [constantPdaSeedNodeFromString('utf8', 'wallet_block'), variablePdaSeedNode('wallet', publicKeyTypeNode())],
-        docs: ['The wallet block PDA account'],
+        name: "walletBlock",
+        seeds: [
+          constantPdaSeedNodeFromString("utf8", "wallet_block"),
+          variablePdaSeedNode("wallet", publicKeyTypeNode()),
+        ],
+        docs: ["The wallet block PDA account"],
       }),
       pdaNode({
-        name: 'extraMetas',
-        seeds: [constantPdaSeedNodeFromString('utf8', 'extra-account-metas'), variablePdaSeedNode('mint', publicKeyTypeNode())],
-        docs: ['The extra metas PDA account'],
+        name: "extraMetas",
+        seeds: [
+          constantPdaSeedNodeFromString("utf8", "extra-account-metas"),
+          variablePdaSeedNode("mint", publicKeyTypeNode()),
+        ],
+        docs: ["The extra metas PDA account"],
       }),
     ],
   }),
 );
 
 function preserveConfigFiles() {
-  const filesToPreserve = ['package.json', 'tsconfig.json', '.npmignore', 'pnpm-lock.yaml', 'Cargo.toml'];
+  const filesToPreserve = ["package.json", "tsconfig.json", ".npmignore", "pnpm-lock.yaml", "Cargo.toml"];
   const preservedFiles = new Map();
 
   for (const filename of filesToPreserve) {
@@ -289,5 +295,10 @@ const codama = createFromRoot(root);
 
 const _configPreserver = preserveConfigFiles();
 
-codama.accept(renderJavaScriptVisitor('sdk/ts/src', { formatCode: true }));
-codama.accept(renderRustVisitor('sdk/rust/src/client', { crateFolder: 'sdk/rust/', formatCode: true }));
+codama.accept(renderJavaScriptVisitor("sdk/ts/src", { formatCode: true }));
+codama.accept(
+  renderRustVisitor("sdk/rust/src/client", {
+    crateFolder: "sdk/rust/",
+    formatCode: true,
+  }),
+);

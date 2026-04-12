@@ -38,7 +38,7 @@ pub mod interest_bearing {
         // Invoke System Program to create new account with space for mint and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
+                ctx.accounts.system_program.key(),
                 CreateAccount {
                     from: ctx.accounts.payer.to_account_info(),
                     to: ctx.accounts.mint_account.to_account_info(),
@@ -53,7 +53,7 @@ pub mod interest_bearing {
         // This instruction must come before the instruction to initialize the mint data
         interest_bearing_mint_initialize(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 InterestBearingMintInitialize {
                     token_program_id: ctx.accounts.token_program.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),
@@ -66,7 +66,7 @@ pub mod interest_bearing {
         // Initialize the standard mint account data
         initialize_mint2(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 InitializeMint2 {
                     mint: ctx.accounts.mint_account.to_account_info(),
                 },
@@ -86,7 +86,7 @@ pub mod interest_bearing {
     pub fn update_rate(ctx: Context<UpdateRate>, rate: i16) -> Result<()> {
         interest_bearing_mint_update_rate(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 InterestBearingMintUpdateRate {
                     token_program_id: ctx.accounts.token_program.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),

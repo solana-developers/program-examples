@@ -48,7 +48,7 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
     // Transfer additional lamports to mint account
     transfer(
         CpiContext::new(
-            ctx.accounts.system_program.to_account_info(),
+            ctx.accounts.system_program.key(),
             Transfer {
                 from: ctx.accounts.payer.to_account_info(),
                 to: ctx.accounts.mint_account.to_account_info(),
@@ -60,7 +60,7 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
     // Initialize token metadata
     token_metadata_initialize(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             TokenMetadataInitialize {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 mint: ctx.accounts.mint_account.to_account_info(),

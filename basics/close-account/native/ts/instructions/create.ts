@@ -1,7 +1,7 @@
-import { Buffer } from 'node:buffer';
-import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { MyInstruction } from '.';
+import { Buffer } from "node:buffer";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { MyInstruction } from ".";
 
 export class Create {
   instruction: MyInstruction;
@@ -25,16 +25,21 @@ export const CreateSchema = new Map([
   [
     Create,
     {
-      kind: 'struct',
+      kind: "struct",
       fields: [
-        ['instruction', 'u8'],
-        ['name', 'string'],
+        ["instruction", "u8"],
+        ["name", "string"],
       ],
     },
   ],
 ]);
 
-export function createCreateUserInstruction(target: PublicKey, payer: PublicKey, programId: PublicKey, name: string): TransactionInstruction {
+export function createCreateUserInstruction(
+  target: PublicKey,
+  payer: PublicKey,
+  programId: PublicKey,
+  name: string,
+): TransactionInstruction {
   const instructionObject = new Create({
     instruction: MyInstruction.CreateUser,
     name,
