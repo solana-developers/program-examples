@@ -27,6 +27,6 @@ mod quasar_hand {
     /// Pull the lever by invoking the lever program's switch_power via CPI.
     #[instruction(discriminator = 0)]
     pub fn pull_lever(ctx: Ctx<PullLever>, name: String) -> Result<(), ProgramError> {
-        ctx.accounts.pull_lever(name)
+        instructions::handle_pull_lever(&mut ctx.accounts, name)
     }
 }

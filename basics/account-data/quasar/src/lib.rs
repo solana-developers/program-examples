@@ -30,6 +30,6 @@ mod quasar_account_data {
         street: String,
         city: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.create_address_info(name, house_number, street, city)
+        instructions::handle_create_address_info(&mut ctx.accounts, name, house_number, street, city)
     }
 }

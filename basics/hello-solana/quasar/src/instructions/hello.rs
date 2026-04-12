@@ -9,11 +9,9 @@ pub struct Hello<'info> {
     pub payer: &'info Signer,
 }
 
-impl<'info> Hello<'info> {
-    #[inline(always)]
-    pub fn hello(&self) -> Result<(), ProgramError> {
-        log("Hello, Solana!");
-        log("Our program's Program ID: FLUH9c5oAfXb1eYbkZvdGK9r9SLQJBUi2DZQaBVj7Tzr");
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_hello(accounts: &Hello) -> Result<(), ProgramError> {
+    log("Hello, Solana!");
+    log("Our program's Program ID: FLUH9c5oAfXb1eYbkZvdGK9r9SLQJBUi2DZQaBVj7Tzr");
+    Ok(())
 }

@@ -25,6 +25,6 @@ mod quasar_rent {
         name: String,
         address: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.create_system_account(name, address)
+        instructions::handle_create_system_account(&mut ctx.accounts, name, address)
     }
 }

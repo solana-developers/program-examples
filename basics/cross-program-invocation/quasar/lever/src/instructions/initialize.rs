@@ -13,11 +13,9 @@ pub struct InitializeLever<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> InitializeLever<'info> {
-    #[inline(always)]
-    pub fn initialize(&mut self) -> Result<(), ProgramError> {
-        // Power starts off (false).
-        self.power.set_inner(PodBool::from(false));
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_initialize(accounts: &mut InitializeLever) -> Result<(), ProgramError> {
+    // Power starts off (false).
+    accounts.power.set_inner(PodBool::from(false));
+    Ok(())
 }

@@ -21,11 +21,9 @@ pub struct CheckAccounts<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> CheckAccounts<'info> {
-    #[inline(always)]
-    pub fn check_accounts(&self) -> Result<(), ProgramError> {
-        // All validation happens declaratively via the account types above.
-        // If any check fails, the runtime rejects the transaction before this runs.
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_check_accounts(accounts: &CheckAccounts) -> Result<(), ProgramError> {
+    // All validation happens declaratively via the account types above.
+    // If any check fails, the runtime rejects the transaction before this runs.
+    Ok(())
 }

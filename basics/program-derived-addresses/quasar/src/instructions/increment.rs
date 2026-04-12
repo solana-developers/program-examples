@@ -12,11 +12,9 @@ pub struct IncrementPageVisits<'info> {
     pub page_visits: &'info mut Account<PageVisits>,
 }
 
-impl<'info> IncrementPageVisits<'info> {
-    #[inline(always)]
-    pub fn increment_page_visits(&mut self) -> Result<(), ProgramError> {
-        let current: u64 = self.page_visits.page_visits.into();
-        self.page_visits.page_visits = PodU64::from(current.checked_add(1).unwrap());
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_increment_page_visits(accounts: &mut IncrementPageVisits) -> Result<(), ProgramError> {
+    let current: u64 = accounts.page_visits.page_visits.into();
+    accounts.page_visits.page_visits = PodU64::from(current.checked_add(1).unwrap());
+    Ok(())
 }

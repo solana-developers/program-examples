@@ -14,10 +14,8 @@ pub struct CreatePageVisits<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> CreatePageVisits<'info> {
-    #[inline(always)]
-    pub fn create_page_visits(&mut self) -> Result<(), ProgramError> {
-        self.page_visits.set_inner(0u64);
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_create_page_visits(accounts: &mut CreatePageVisits) -> Result<(), ProgramError> {
+    accounts.page_visits.set_inner(0u64);
+    Ok(())
 }

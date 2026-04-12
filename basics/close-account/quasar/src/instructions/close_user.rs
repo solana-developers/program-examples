@@ -15,9 +15,7 @@ pub struct CloseUser<'info> {
     pub user_account: Account<UserState<'info>>,
 }
 
-impl<'info> CloseUser<'info> {
-    #[inline(always)]
-    pub fn close_user(&mut self) -> Result<(), ProgramError> {
-        self.user_account.close(self.user.to_account_view())
-    }
+#[inline(always)]
+pub fn handle_close_user(accounts: &mut CloseUser) -> Result<(), ProgramError> {
+    accounts.user_account.close(accounts.user.to_account_view())
 }

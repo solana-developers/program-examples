@@ -23,7 +23,7 @@ mod quasar_carnival {
         ticket_count: u32,
         ride_name: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.go_on_ride(name, height, ticket_count, ride_name)
+        instructions::handle_go_on_ride(&mut ctx.accounts, name, height, ticket_count, ride_name)
     }
 
     /// Play a carnival game. Validates ticket requirements.
@@ -34,7 +34,7 @@ mod quasar_carnival {
         ticket_count: u32,
         game_name: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.play_game(name, ticket_count, game_name)
+        instructions::handle_play_game(&mut ctx.accounts, name, ticket_count, game_name)
     }
 
     /// Eat at a carnival food stand. Validates ticket requirements.
@@ -45,6 +45,6 @@ mod quasar_carnival {
         ticket_count: u32,
         food_stand_name: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.eat_food(name, ticket_count, food_stand_name)
+        instructions::handle_eat_food(&mut ctx.accounts, name, ticket_count, food_stand_name)
     }
 }

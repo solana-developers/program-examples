@@ -15,6 +15,6 @@ mod quasar_hello_solana {
 
     #[instruction(discriminator = 0)]
     pub fn hello(ctx: Ctx<Hello>) -> Result<(), ProgramError> {
-        ctx.accounts.hello()
+        instructions::handle_hello(&mut ctx.accounts)
     }
 }

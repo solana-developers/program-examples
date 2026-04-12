@@ -10,11 +10,9 @@ pub struct TransferSolWithCpi<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> TransferSolWithCpi<'info> {
-    #[inline(always)]
-    pub fn transfer_sol_with_cpi(&self, amount: u64) -> Result<(), ProgramError> {
-        self.system_program
-            .transfer(self.payer, self.recipient, amount)
-            .invoke()
-    }
+#[inline(always)]
+pub fn handle_transfer_sol_with_cpi(accounts: &TransferSolWithCpi, amount: u64) -> Result<(), ProgramError> {
+    accounts.system_program
+        .transfer(accounts.payer, accounts.recipient, amount)
+        .invoke()
 }

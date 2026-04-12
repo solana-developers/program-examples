@@ -18,6 +18,6 @@ mod quasar_processing_instructions {
     /// can't interpolate them into log messages (no format! in no_std).
     #[instruction(discriminator = 0)]
     pub fn go_to_park(ctx: Ctx<Park>, name: String, height: u32) -> Result<(), ProgramError> {
-        ctx.accounts.go_to_park(name, height)
+        instructions::handle_go_to_park(&mut ctx.accounts, name, height)
     }
 }

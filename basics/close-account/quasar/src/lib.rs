@@ -18,12 +18,12 @@ mod quasar_close_account {
     #[instruction(discriminator = 0)]
     pub fn create_user(ctx: Ctx<CreateUser>, name: String) -> Result<(), ProgramError> {
         let bump = ctx.bumps.user_account;
-        ctx.accounts.create_user(name, bump)
+        instructions::handle_create_user(&mut ctx.accounts, name, bump)
     }
 
     /// Close a user account and return lamports to the user.
     #[instruction(discriminator = 1)]
     pub fn close_user(ctx: Ctx<CloseUser>) -> Result<(), ProgramError> {
-        ctx.accounts.close_user()
+        instructions::handle_close_user(&mut ctx.accounts)
     }
 }

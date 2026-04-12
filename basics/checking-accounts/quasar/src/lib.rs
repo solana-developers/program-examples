@@ -19,6 +19,6 @@ mod quasar_checking_accounts {
     /// - Program<System>: checks account is executable and is the system program
     #[instruction(discriminator = 0)]
     pub fn check_accounts(ctx: Ctx<CheckAccounts>) -> Result<(), ProgramError> {
-        ctx.accounts.check_accounts()
+        instructions::handle_check_accounts(&mut ctx.accounts)
     }
 }

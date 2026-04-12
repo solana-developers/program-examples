@@ -24,6 +24,6 @@ mod quasar_favorites {
         number: u64,
         color: String,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.set_favorites(number, color)
+        instructions::handle_set_favorites(&mut ctx.accounts, number, color)
     }
 }

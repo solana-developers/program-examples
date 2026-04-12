@@ -19,7 +19,7 @@ mod quasar_transfer_sol {
         ctx: Ctx<TransferSolWithCpi>,
         amount: u64,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.transfer_sol_with_cpi(amount)
+        instructions::handle_transfer_sol_with_cpi(&mut ctx.accounts, amount)
     }
 
     /// Transfer SOL by directly manipulating lamports.
@@ -29,6 +29,6 @@ mod quasar_transfer_sol {
         ctx: Ctx<TransferSolWithProgram>,
         amount: u64,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.transfer_sol_with_program(amount)
+        instructions::handle_transfer_sol_with_program(&mut ctx.accounts, amount)
     }
 }

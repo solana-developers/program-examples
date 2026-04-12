@@ -14,13 +14,11 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> Initialize<'info> {
-    #[inline(always)]
-    pub fn initialize(&mut self, message: &str) -> Result<(), ProgramError> {
-        self.message_account.set_inner(
-            message,
-            self.payer.to_account_view(),
-            None,
-        )
-    }
+#[inline(always)]
+pub fn handle_initialize(accounts: &mut Initialize, message: &str) -> Result<(), ProgramError> {
+    accounts.message_account.set_inner(
+        message,
+        accounts.payer.to_account_view(),
+        None,
+    )
 }

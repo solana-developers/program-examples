@@ -16,6 +16,6 @@ mod quasar_create_account {
     /// Create a new system-owned account via CPI to the system program.
     #[instruction(discriminator = 0)]
     pub fn create_system_account(ctx: Ctx<CreateSystemAccount>) -> Result<(), ProgramError> {
-        ctx.accounts.create_system_account()
+        instructions::handle_create_system_account(&mut ctx.accounts)
     }
 }

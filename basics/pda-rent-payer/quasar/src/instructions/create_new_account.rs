@@ -11,27 +11,25 @@ pub struct CreateNewAccount<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> CreateNewAccount<'info> {
-    #[inline(always)]
-    pub fn create_new_account(&self, rent_vault_bump: u8) -> Result<(), ProgramError> {
-        // Build PDA signer seeds: ["rent_vault", bump].
-        let bump_bytes = [rent_vault_bump];
-        let seeds: &[Seed] = &[
-            Seed::from(b"rent_vault" as &[u8]),
-            Seed::from(&bump_bytes as &[u8]),
-        ];
+#[inline(always)]
+pub fn handle_create_new_account(accounts: &CreateNewAccount, rent_vault_bump: u8) -> Result<(), ProgramError> {
+    // Build PDA signer seeds: ["rent_vault", bump].
+    let bump_bytes = [rent_vault_bump];
+    let seeds: &[Seed] = &[
+        Seed::from(b"rent_vault" as &[u8]),
+        Seed::from(&bump_bytes as &[u8]),
+    ];
 
-        let system_program_address = Address::default();
+    let system_program_address = Address::default();
 
-        // Create a zero-data system-owned account, funded from the vault.
-        self.system_program
-            .create_account_with_minimum_balance(
-                self.rent_vault,
-                self.new_account,
-                0, // space: zero bytes of data
-                &system_program_address,
-                None, // fetch Rent sysvar automatically
-            )?
-            .invoke_signed(seeds)
-    }
+    // Create a zero-data system-owned account, funded from the vault.
+    accounts.system_program
+        .create_account_with_minimum_balance(
+            accounts.rent_vault,
+            accounts.new_account,
+            0, // space: zero bytes of data
+            &system_program_address,
+            None, // fetch Rent sysvar automatically
+        )?
+        .invoke_signed(seeds)
 }

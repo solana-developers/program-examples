@@ -14,14 +14,12 @@ pub struct SetFavorites<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> SetFavorites<'info> {
-    #[inline(always)]
-    pub fn set_favorites(&mut self, number: u64, color: &str) -> Result<(), ProgramError> {
-        self.favorites.set_inner(
-            number,
-            color,
-            self.user.to_account_view(),
-            None,
-        )
-    }
+#[inline(always)]
+pub fn handle_set_favorites(accounts: &mut SetFavorites, number: u64, color: &str) -> Result<(), ProgramError> {
+    accounts.favorites.set_inner(
+        number,
+        color,
+        accounts.user.to_account_view(),
+        None,
+    )
 }

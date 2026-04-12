@@ -16,11 +16,11 @@ mod quasar_counter {
 
     #[instruction(discriminator = 0)]
     pub fn initialize_counter(ctx: Ctx<InitializeCounter>) -> Result<(), ProgramError> {
-        ctx.accounts.initialize_counter()
+        instructions::handle_initialize_counter(&mut ctx.accounts)
     }
 
     #[instruction(discriminator = 1)]
     pub fn increment(ctx: Ctx<Increment>) -> Result<(), ProgramError> {
-        ctx.accounts.increment()
+        instructions::handle_increment(&mut ctx.accounts)
     }
 }

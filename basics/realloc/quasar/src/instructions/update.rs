@@ -15,13 +15,11 @@ pub struct Update<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl<'info> Update<'info> {
-    #[inline(always)]
-    pub fn update(&mut self, message: &str) -> Result<(), ProgramError> {
-        self.message_account.set_inner(
-            message,
-            self.payer.to_account_view(),
-            None,
-        )
-    }
+#[inline(always)]
+pub fn handle_update(accounts: &mut Update, message: &str) -> Result<(), ProgramError> {
+    accounts.message_account.set_inner(
+        message,
+        accounts.payer.to_account_view(),
+        None,
+    )
 }
