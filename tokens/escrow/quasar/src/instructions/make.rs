@@ -23,24 +23,22 @@ pub struct Make<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Make<'_> {
-    #[inline(always)]
-    pub fn make_escrow(&mut self, receive: u64, bumps: &MakeBumps) -> Result<(), ProgramError> {
-        self.escrow.set_inner(
-            *self.maker.address(),
-            *self.mint_a.address(),
-            *self.mint_b.address(),
-            *self.maker_ta_b.address(),
-            receive,
-            bumps.escrow,
-        );
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_make_escrow(accounts: &mut Make, receive: u64, bumps: &MakeBumps) -> Result<(), ProgramError> {
+    accounts.escrow.set_inner(
+        *accounts.maker.address(),
+        *accounts.mint_a.address(),
+        *accounts.mint_b.address(),
+        *accounts.maker_ta_b.address(),
+        receive,
+        bumps.escrow,
+    );
+    Ok(())
+}
 
-    #[inline(always)]
-    pub fn deposit_tokens(&mut self, amount: u64) -> Result<(), ProgramError> {
-        self.token_program
-            .transfer(self.maker_ta_a, self.vault_ta_a, self.maker, amount)
-            .invoke()
-    }
+#[inline(always)]
+pub fn handle_deposit_tokens(accounts: &mut Make, amount: u64) -> Result<(), ProgramError> {
+    accounts.token_program
+        .transfer(accounts.maker_ta_a, accounts.vault_ta_a, accounts.maker, amount)
+        .invoke()
 }

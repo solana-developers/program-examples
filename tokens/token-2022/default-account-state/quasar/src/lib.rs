@@ -30,7 +30,7 @@ mod quasar_default_account_state {
     /// The mint account must be a signer (keypair created client-side).
     #[instruction(discriminator = 0)]
     pub fn initialize(ctx: Ctx<Initialize>) -> Result<(), ProgramError> {
-        ctx.accounts.initialize()
+        handle_initialize(&mut ctx.accounts)
     }
 
     /// Update the default account state on an existing mint.
@@ -40,7 +40,7 @@ mod quasar_default_account_state {
         ctx: Ctx<UpdateDefaultState>,
         account_state: u8,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.update_default_state(account_state)
+        handle_update_default_state(&mut ctx.accounts, account_state)
     }
 }
 
@@ -54,55 +54,53 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Initialize<'_> {
-    #[inline(always)]
-    pub fn initialize(&self) -> Result<(), ProgramError> {
-        // Mint + DefaultAccountState extension = 234 bytes
-        let mint_size: u64 = 234;
-        let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
+#[inline(always)]
+pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
+    // Mint + DefaultAccountState extension = 234 bytes
+    let mint_size: u64 = 234;
+    let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
-        // 1. Create account owned by Token-2022
-        self.system_program
-            .create_account(
-                self.payer,
-                self.mint_account,
-                lamports,
-                mint_size,
-                self.token_program.to_account_view().address(),
-            )
-            .invoke()?;
-
-        // 2. Initialize DefaultAccountState extension (frozen = 2)
-        // Instruction: ExtensionInstruction(DefaultAccountStateInitialize) = [28, 0, 2]
-        let ext_data: [u8; 3] = [28, 0, 2]; // opcode 28, sub-opcode 0, state = Frozen
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            ext_data,
+    // 1. Create account owned by Token-2022
+    accounts.system_program
+        .create_account(
+            accounts.payer,
+            accounts.mint_account,
+            lamports,
+            mint_size,
+            accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
 
-        // 3. InitializeMint2: opcode 20, decimals, mint_authority, freeze_authority_option, freeze_authority
-        let mut mint_data = [0u8; 67];
-        mint_data[0] = 20; // InitializeMint2
-        mint_data[1] = 2; // decimals
-        mint_data[2..34].copy_from_slice(self.payer.to_account_view().address().as_ref());
-        mint_data[34] = 1; // has freeze authority
-        mint_data[35..67].copy_from_slice(self.payer.to_account_view().address().as_ref());
+    // 2. Initialize DefaultAccountState extension (frozen = 2)
+    // Instruction: ExtensionInstruction(DefaultAccountStateInitialize) = [28, 0, 2]
+    let ext_data: [u8; 3] = [28, 0, 2]; // opcode 28, sub-opcode 0, state = Frozen
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        ext_data,
+    )
+    .invoke()?;
 
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            mint_data,
-        )
-        .invoke()
-    }
+    // 3. InitializeMint2: opcode 20, decimals, mint_authority, freeze_authority_option, freeze_authority
+    let mut mint_data = [0u8; 67];
+    mint_data[0] = 20; // InitializeMint2
+    mint_data[1] = 2; // decimals
+    mint_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    mint_data[34] = 1; // has freeze authority
+    mint_data[35..67].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        mint_data,
+    )
+    .invoke()
 }
 
 #[derive(Accounts)]
@@ -114,25 +112,23 @@ pub struct UpdateDefaultState<'info> {
     pub token_program: &'info Program<Token2022Program>,
 }
 
-impl UpdateDefaultState<'_> {
-    #[inline(always)]
-    pub fn update_default_state(&self, account_state: u8) -> Result<(), ProgramError> {
-        // DefaultAccountState Update: opcode 28, sub-opcode 1, new state
-        let data: [u8; 3] = [28, 1, account_state];
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [
-                InstructionAccount::writable(self.mint_account.to_account_view().address()),
-                InstructionAccount::readonly_signer(
-                    self.freeze_authority.to_account_view().address(),
-                ),
-            ],
-            [
-                self.mint_account.to_account_view(),
-                self.freeze_authority.to_account_view(),
-            ],
-            data,
-        )
-        .invoke()
-    }
+#[inline(always)]
+pub fn handle_update_default_state(accounts: &UpdateDefaultState, account_state: u8) -> Result<(), ProgramError> {
+    // DefaultAccountState Update: opcode 28, sub-opcode 1, new state
+    let data: [u8; 3] = [28, 1, account_state];
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [
+            InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::readonly_signer(
+                accounts.freeze_authority.to_account_view().address(),
+            ),
+        ],
+        [
+            accounts.mint_account.to_account_view(),
+            accounts.freeze_authority.to_account_view(),
+        ],
+        data,
+    )
+    .invoke()
 }

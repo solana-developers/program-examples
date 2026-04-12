@@ -37,52 +37,49 @@ pub struct WithdrawLiquidity<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl WithdrawLiquidity<'_> {
-    #[inline(always)]
-    pub fn withdraw_liquidity(
-        &mut self,
-        amount: u64,
-        bumps: &WithdrawLiquidityBumps,
-    ) -> Result<(), ProgramError> {
-        let bump = [bumps.pool_authority];
-        let seeds: &[Seed] = &[
-            Seed::from(self.amm.address().as_ref()),
-            Seed::from(self.mint_a.address().as_ref()),
-            Seed::from(self.mint_b.address().as_ref()),
-            Seed::from(crate::AUTHORITY_SEED),
-            Seed::from(&bump as &[u8]),
-        ];
+#[inline(always)]
+pub fn handle_withdraw_liquidity(
+    accounts: &mut WithdrawLiquidity, amount: u64,
+    bumps: &WithdrawLiquidityBumps,
+) -> Result<(), ProgramError> {
+    let bump = [bumps.pool_authority];
+    let seeds: &[Seed] = &[
+        Seed::from(accounts.amm.address().as_ref()),
+        Seed::from(accounts.mint_a.address().as_ref()),
+        Seed::from(accounts.mint_b.address().as_ref()),
+        Seed::from(crate::AUTHORITY_SEED),
+        Seed::from(&bump as &[u8]),
+    ];
 
-        // Compute proportional amounts.
-        let total_liquidity = self.mint_liquidity.supply() + crate::MINIMUM_LIQUIDITY;
+    // Compute proportional amounts.
+    let total_liquidity = accounts.mint_liquidity.supply() + crate::MINIMUM_LIQUIDITY;
 
-        let amount_a = (amount as u128)
-            .checked_mul(self.pool_account_a.amount() as u128)
-            .ok_or(ProgramError::ArithmeticOverflow)?
-            .checked_div(total_liquidity as u128)
-            .ok_or(ProgramError::ArithmeticOverflow)? as u64;
+    let amount_a = (amount as u128)
+        .checked_mul(accounts.pool_account_a.amount() as u128)
+        .ok_or(ProgramError::ArithmeticOverflow)?
+        .checked_div(total_liquidity as u128)
+        .ok_or(ProgramError::ArithmeticOverflow)? as u64;
 
-        let amount_b = (amount as u128)
-            .checked_mul(self.pool_account_b.amount() as u128)
-            .ok_or(ProgramError::ArithmeticOverflow)?
-            .checked_div(total_liquidity as u128)
-            .ok_or(ProgramError::ArithmeticOverflow)? as u64;
+    let amount_b = (amount as u128)
+        .checked_mul(accounts.pool_account_b.amount() as u128)
+        .ok_or(ProgramError::ArithmeticOverflow)?
+        .checked_div(total_liquidity as u128)
+        .ok_or(ProgramError::ArithmeticOverflow)? as u64;
 
-        // Transfer token A from pool to depositor.
-        self.token_program
-            .transfer(self.pool_account_a, self.depositor_account_a, self.pool_authority, amount_a)
-            .invoke_signed(seeds)?;
+    // Transfer token A from pool to depositor.
+    accounts.token_program
+        .transfer(accounts.pool_account_a, accounts.depositor_account_a, accounts.pool_authority, amount_a)
+        .invoke_signed(seeds)?;
 
-        // Transfer token B from pool to depositor.
-        self.token_program
-            .transfer(self.pool_account_b, self.depositor_account_b, self.pool_authority, amount_b)
-            .invoke_signed(seeds)?;
+    // Transfer token B from pool to depositor.
+    accounts.token_program
+        .transfer(accounts.pool_account_b, accounts.depositor_account_b, accounts.pool_authority, amount_b)
+        .invoke_signed(seeds)?;
 
-        // Burn LP tokens.
-        self.token_program
-            .burn(self.depositor_account_liquidity, self.mint_liquidity, self.depositor, amount)
-            .invoke()?;
+    // Burn LP tokens.
+    accounts.token_program
+        .burn(accounts.depositor_account_liquidity, accounts.mint_liquidity, accounts.depositor, amount)
+        .invoke()?;
 
-        Ok(())
-    }
+    Ok(())
 }

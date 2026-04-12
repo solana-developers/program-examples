@@ -16,13 +16,11 @@ pub struct CreateAmm<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl CreateAmm<'_> {
-    #[inline(always)]
-    pub fn create_amm(&mut self, id: Address, fee: u16) -> Result<(), ProgramError> {
-        if fee >= 10000 {
-            return Err(ProgramError::InvalidArgument);
-        }
-        self.amm.set_inner(id, *self.admin.address(), fee);
-        Ok(())
+#[inline(always)]
+pub fn handle_create_amm(accounts: &mut CreateAmm, id: Address, fee: u16) -> Result<(), ProgramError> {
+    if fee >= 10000 {
+        return Err(ProgramError::InvalidArgument);
     }
+    accounts.amm.set_inner(id, *accounts.admin.address(), fee);
+    Ok(())
 }

@@ -30,30 +30,27 @@ pub struct VerifyCollectionMint<'info> {
     pub token_metadata_program: &'info MetadataProgram,
 }
 
-impl VerifyCollectionMint<'_> {
-    #[inline(always)]
-    pub fn verify_collection(
-        &self,
-        bumps: &VerifyCollectionMintBumps,
-    ) -> Result<(), ProgramError> {
-        let bump = [bumps.mint_authority];
-        let seeds: &[Seed] = &[
-            Seed::from(b"authority" as &[u8]),
-            Seed::from(&bump as &[u8]),
-        ];
+#[inline(always)]
+pub fn handle_verify_collection(
+    accounts: &VerifyCollectionMint, bumps: &VerifyCollectionMintBumps,
+) -> Result<(), ProgramError> {
+    let bump = [bumps.mint_authority];
+    let seeds: &[Seed] = &[
+        Seed::from(b"authority" as &[u8]),
+        Seed::from(&bump as &[u8]),
+    ];
 
-        self.token_metadata_program
-            .verify_sized_collection_item(
-                self.metadata,
-                self.mint_authority,
-                self.authority, // payer
-                self.collection_mint,
-                self.collection_metadata,
-                self.collection_master_edition,
-            )
-            .invoke_signed(seeds)?;
+    accounts.token_metadata_program
+        .verify_sized_collection_item(
+            accounts.metadata,
+            accounts.mint_authority,
+            accounts.authority, // payer
+            accounts.collection_mint,
+            accounts.collection_metadata,
+            accounts.collection_master_edition,
+        )
+        .invoke_signed(seeds)?;
 
-        log("Collection Verified!");
-        Ok(())
-    }
+    log("Collection Verified!");
+    Ok(())
 }

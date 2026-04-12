@@ -30,7 +30,7 @@ mod quasar_cpi_guard {
     /// on the sender's token account.
     #[instruction(discriminator = 0)]
     pub fn cpi_transfer(ctx: Ctx<CpiTransfer>) -> Result<(), ProgramError> {
-        ctx.accounts.cpi_transfer()
+        handle_cpi_transfer(&mut ctx.accounts)
     }
 }
 
@@ -46,31 +46,29 @@ pub struct CpiTransfer<'info> {
     pub token_program: &'info Program<Token2022Program>,
 }
 
-impl CpiTransfer<'_> {
-    #[inline(always)]
-    pub fn cpi_transfer(&mut self) -> Result<(), ProgramError> {
-        // TransferChecked: opcode 12, amount=1, decimals=9
-        let mut data = [0u8; 10];
-        data[0] = 12;
-        data[1..9].copy_from_slice(&1u64.to_le_bytes());
-        data[9] = 9; // decimals
+#[inline(always)]
+pub fn handle_cpi_transfer(accounts: &mut CpiTransfer) -> Result<(), ProgramError> {
+    // TransferChecked: opcode 12, amount=1, decimals=9
+    let mut data = [0u8; 10];
+    data[0] = 12;
+    data[1..9].copy_from_slice(&1u64.to_le_bytes());
+    data[9] = 9; // decimals
 
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [
-                InstructionAccount::writable(self.sender_token_account.to_account_view().address()),
-                InstructionAccount::readonly(self.mint_account.to_account_view().address()),
-                InstructionAccount::writable(self.recipient_token_account.to_account_view().address()),
-                InstructionAccount::readonly_signer(self.sender.to_account_view().address()),
-            ],
-            [
-                self.sender_token_account.to_account_view(),
-                self.mint_account.to_account_view(),
-                self.recipient_token_account.to_account_view(),
-                self.sender.to_account_view(),
-            ],
-            data,
-        )
-        .invoke()
-    }
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [
+            InstructionAccount::writable(accounts.sender_token_account.to_account_view().address()),
+            InstructionAccount::readonly(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::writable(accounts.recipient_token_account.to_account_view().address()),
+            InstructionAccount::readonly_signer(accounts.sender.to_account_view().address()),
+        ],
+        [
+            accounts.sender_token_account.to_account_view(),
+            accounts.mint_account.to_account_view(),
+            accounts.recipient_token_account.to_account_view(),
+            accounts.sender.to_account_view(),
+        ],
+        data,
+    )
+    .invoke()
 }

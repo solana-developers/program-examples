@@ -16,50 +16,48 @@ pub struct ChangeMode<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl ChangeMode<'_> {
-    #[inline(always)]
-    pub fn change_mode(&self, mode: u8, threshold: u64) -> Result<(), ProgramError> {
-        let mode_value = mode_to_metadata_value(mode);
-        let token_prog = self.token_program.to_account_view().address();
-        let mint_key = self.mint.to_account_view().address();
-        let auth_key = self.authority.to_account_view().address();
+#[inline(always)]
+pub fn handle_change_mode(accounts: &ChangeMode, mode: u8, threshold: u64) -> Result<(), ProgramError> {
+    let mode_value = mode_to_metadata_value(mode);
+    let token_prog = accounts.token_program.to_account_view().address();
+    let mint_key = accounts.mint.to_account_view().address();
+    let auth_key = accounts.authority.to_account_view().address();
 
-        // Update "AB" metadata field
-        emit_update_field(token_prog, mint_key, auth_key, self, b"AB", mode_value)?;
+    // Update "AB" metadata field
+    emit_update_field(token_prog, mint_key, auth_key, accounts, b"AB", mode_value)?;
 
-        // If Mixed mode or if metadata already has a threshold key, update/set threshold
-        let is_mixed = mode == 2;
-        let has_existing_threshold = has_threshold_in_metadata(self)?;
+    // If Mixed mode or if metadata already has a threshold key, update/set threshold
+    let is_mixed = mode == 2;
+    let has_existing_threshold = has_threshold_in_metadata(accounts)?;
 
-        if is_mixed || has_existing_threshold {
-            let actual_threshold = if is_mixed { threshold } else { 0 };
-            let mut threshold_buf = [0u8; 20];
-            let threshold_len = write_u64_to_buf(actual_threshold, &mut threshold_buf);
-            emit_update_field(
-                token_prog,
-                mint_key,
-                auth_key,
-                self,
-                b"threshold",
-                &threshold_buf[..threshold_len],
-            )?;
-        }
-
-        // Top up mint rent if metadata grew
-        let mint_view = self.mint.to_account_view();
-        let data_len = mint_view.data_len();
-        let min_balance = Rent::get()?.try_minimum_balance(data_len)?;
-        let current_lamports = mint_view.lamports();
-        if min_balance > current_lamports {
-            let diff = min_balance - current_lamports;
-            self.system_program
-                .transfer(self.authority, &*self.mint, diff)
-                .invoke()?;
-        }
-
-        log("Mode changed");
-        Ok(())
+    if is_mixed || has_existing_threshold {
+        let actual_threshold = if is_mixed { threshold } else { 0 };
+        let mut threshold_buf = [0u8; 20];
+        let threshold_len = write_u64_to_buf(actual_threshold, &mut threshold_buf);
+        emit_update_field(
+            token_prog,
+            mint_key,
+            auth_key,
+            accounts,
+            b"threshold",
+            &threshold_buf[..threshold_len],
+        )?;
     }
+
+    // Top up mint rent if metadata grew
+    let mint_view = accounts.mint.to_account_view();
+    let data_len = mint_view.data_len();
+    let min_balance = Rent::get()?.try_minimum_balance(data_len)?;
+    let current_lamports = mint_view.lamports();
+    if min_balance > current_lamports {
+        let diff = min_balance - current_lamports;
+        accounts.system_program
+            .transfer(accounts.authority, &*accounts.mint, diff)
+            .invoke()?;
+    }
+
+    log("Mode changed");
+    Ok(())
 }
 
 /// Emit a TokenMetadataUpdateField CPI (opcode 44, sub-opcode 1).

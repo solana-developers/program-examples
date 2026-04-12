@@ -61,8 +61,7 @@ mod quasar_abl_token {
         let freeze_addr = Address::new_from_array(freeze_authority);
         let delegate_addr = Address::new_from_array(permanent_delegate);
         let hook_auth_addr = Address::new_from_array(transfer_hook_authority);
-        ctx.accounts.init_mint(
-            decimals,
+        instructions::handle_init_mint(&mut ctx.accounts, decimals,
             &freeze_addr,
             &delegate_addr,
             &hook_auth_addr,
@@ -70,21 +69,20 @@ mod quasar_abl_token {
             threshold,
             &name[..nl],
             &symbol[..sl],
-            &uri[..ul],
-        )
+            &uri[..ul],)
     }
 
     /// Create the Config PDA with the payer as authority.
     #[instruction(discriminator = [0, 0, 0, 0, 0, 0, 0, 1])]
     pub fn init_config(ctx: Ctx<InitConfig>) -> Result<(), ProgramError> {
-        ctx.accounts.init_config()
+        instructions::handle_init_config(&mut ctx.accounts)
     }
 
     /// Attach the transfer hook to an existing mint (sets the hook program_id
     /// and creates the ExtraAccountMetaList PDA).
     #[instruction(discriminator = [0, 0, 0, 0, 0, 0, 0, 2])]
     pub fn attach_to_mint(ctx: Ctx<AttachToMint>) -> Result<(), ProgramError> {
-        ctx.accounts.attach_to_mint()
+        instructions::handle_attach_to_mint(&mut ctx.accounts)
     }
 
     /// SPL Transfer Hook execute handler. Called by Token-2022 during
@@ -92,24 +90,24 @@ mod quasar_abl_token {
     /// Discriminator = sha256("spl-transfer-hook-interface:execute")[:8]
     #[instruction(discriminator = [105, 37, 101, 197, 75, 251, 102, 26])]
     pub fn tx_hook(ctx: Ctx<TxHook>, amount: u64) -> Result<(), ProgramError> {
-        ctx.accounts.tx_hook(amount)
+        instructions::handle_tx_hook(&mut ctx.accounts, amount)
     }
 
     /// Create a per-wallet allow/block entry.
     #[instruction(discriminator = [0, 0, 0, 0, 0, 0, 0, 4])]
     pub fn init_wallet(ctx: Ctx<InitWallet>, allowed: bool) -> Result<(), ProgramError> {
-        ctx.accounts.init_wallet(allowed)
+        instructions::handle_init_wallet(&mut ctx.accounts, allowed)
     }
 
     /// Remove a wallet entry, closing the PDA account.
     #[instruction(discriminator = [0, 0, 0, 0, 0, 0, 0, 5])]
     pub fn remove_wallet(ctx: Ctx<RemoveWallet>) -> Result<(), ProgramError> {
-        ctx.accounts.remove_wallet()
+        instructions::handle_remove_wallet(&mut ctx.accounts)
     }
 
     /// Change the allow/block mode on the mint's metadata.
     #[instruction(discriminator = [0, 0, 0, 0, 0, 0, 0, 6])]
     pub fn change_mode(ctx: Ctx<ChangeMode>, mode: u8, threshold: u64) -> Result<(), ProgramError> {
-        ctx.accounts.change_mode(mode, threshold)
+        instructions::handle_change_mode(&mut ctx.accounts, mode, threshold)
     }
 }

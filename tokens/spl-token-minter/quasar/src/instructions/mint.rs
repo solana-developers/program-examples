@@ -15,26 +15,24 @@ pub struct MintToken<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl MintToken<'_> {
-    #[inline(always)]
-    pub fn mint_token(&mut self, amount: u64) -> Result<(), ProgramError> {
-        log("Minting tokens to associated token account...");
+#[inline(always)]
+pub fn handle_mint_token(accounts: &mut MintToken, amount: u64) -> Result<(), ProgramError> {
+    log("Minting tokens to associated token account...");
 
-        let decimals = self.mint_account.decimals();
-        let adjusted_amount = amount
-            .checked_mul(10u64.pow(decimals as u32))
-            .ok_or(ProgramError::ArithmeticOverflow)?;
+    let decimals = accounts.mint_account.decimals();
+    let adjusted_amount = amount
+        .checked_mul(10u64.pow(decimals as u32))
+        .ok_or(ProgramError::ArithmeticOverflow)?;
 
-        self.token_program
-            .mint_to(
-                self.mint_account,
-                self.associated_token_account,
-                self.mint_authority,
-                adjusted_amount,
-            )
-            .invoke()?;
+    accounts.token_program
+        .mint_to(
+            accounts.mint_account,
+            accounts.associated_token_account,
+            accounts.mint_authority,
+            adjusted_amount,
+        )
+        .invoke()?;
 
-        log("Token minted successfully.");
-        Ok(())
-    }
+    log("Token minted successfully.");
+    Ok(())
 }

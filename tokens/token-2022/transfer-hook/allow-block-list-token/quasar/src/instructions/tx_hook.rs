@@ -22,53 +22,51 @@ pub struct TxHook<'info> {
     pub ab_wallet: &'info UncheckedAccount,
 }
 
-impl TxHook<'_> {
-    #[inline(always)]
-    pub fn tx_hook(&self, amount: u64) -> Result<(), ProgramError> {
-        let mint_view = self.mint.to_account_view();
-        let mint_data = mint_view.try_borrow()?;
+#[inline(always)]
+pub fn handle_tx_hook(accounts: &TxHook, amount: u64) -> Result<(), ProgramError> {
+    let mint_view = accounts.mint.to_account_view();
+    let mint_data = mint_view.try_borrow()?;
 
-        let decoded_mode = decode_mint_mode(&mint_data)?;
-        let decoded_wallet = self.decode_wallet_mode()?;
+    let decoded_mode = decode_mint_mode(&mint_data)?;
+    let decoded_wallet = decode_wallet_mode(accounts)?;
 
-        match (decoded_mode, decoded_wallet) {
-            // Allow mode: wallet must be on the allow list
-            (DecodedMintMode::Allow, DecodedWalletMode::Allow) => Ok(()),
-            (DecodedMintMode::Allow, _) => Err(errors::wallet_not_allowed()),
+    match (decoded_mode, decoded_wallet) {
+        // Allow mode: wallet must be on the allow list
+        (DecodedMintMode::Allow, DecodedWalletMode::Allow) => Ok(()),
+        (DecodedMintMode::Allow, _) => Err(errors::wallet_not_allowed()),
 
-            // Any mode: blocked wallet is always blocked
-            (_, DecodedWalletMode::Block) => Err(errors::wallet_blocked()),
+        // Any mode: blocked wallet is always blocked
+        (_, DecodedWalletMode::Block) => Err(errors::wallet_blocked()),
 
-            // Block mode: wallet is not blocked, so allow
-            (DecodedMintMode::Block, _) => Ok(()),
+        // Block mode: wallet is not blocked, so allow
+        (DecodedMintMode::Block, _) => Ok(()),
 
-            // Mixed/Threshold mode: check amount threshold
-            (DecodedMintMode::Threshold(threshold), DecodedWalletMode::None)
-                if amount >= threshold =>
-            {
-                Err(errors::amount_not_allowed())
-            }
-            (DecodedMintMode::Threshold(_), _) => Ok(()),
+        // Mixed/Threshold mode: check amount threshold
+        (DecodedMintMode::Threshold(threshold), DecodedWalletMode::None)
+            if amount >= threshold =>
+        {
+            Err(errors::amount_not_allowed())
         }
+        (DecodedMintMode::Threshold(_), _) => Ok(()),
+    }
+}
+
+fn decode_wallet_mode(accounts: &TxHook) -> Result<DecodedWalletMode, ProgramError> {
+    let wallet_view = accounts.ab_wallet.to_account_view();
+    if wallet_view.data_len() == 0 {
+        return Ok(DecodedWalletMode::None);
     }
 
-    fn decode_wallet_mode(&self) -> Result<DecodedWalletMode, ProgramError> {
-        let wallet_view = self.ab_wallet.to_account_view();
-        if wallet_view.data_len() == 0 {
-            return Ok(DecodedWalletMode::None);
-        }
+    // ABWallet on-chain: [32 bytes wallet] [1 byte allowed]
+    let data = wallet_view.try_borrow()?;
+    if data.len() < AB_WALLET_SIZE as usize {
+        return Ok(DecodedWalletMode::None);
+    }
 
-        // ABWallet on-chain: [32 bytes wallet] [1 byte allowed]
-        let data = wallet_view.try_borrow()?;
-        if data.len() < AB_WALLET_SIZE as usize {
-            return Ok(DecodedWalletMode::None);
-        }
-
-        if read_wallet_allowed(&data) {
-            Ok(DecodedWalletMode::Allow)
-        } else {
-            Ok(DecodedWalletMode::Block)
-        }
+    if read_wallet_allowed(&data) {
+        Ok(DecodedWalletMode::Allow)
+    } else {
+        Ok(DecodedWalletMode::Block)
     }
 }
 

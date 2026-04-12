@@ -44,12 +44,10 @@ pub struct CreatePool<'info> {
     pub rent: &'info Sysvar<Rent>,
 }
 
-impl CreatePool<'_> {
-    #[inline(always)]
-    pub fn create_pool(&mut self) -> Result<(), ProgramError> {
-        self.pool.amm = *self.amm.address();
-        self.pool.mint_a = *self.mint_a.address();
-        self.pool.mint_b = *self.mint_b.address();
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_create_pool(accounts: &mut CreatePool) -> Result<(), ProgramError> {
+    accounts.pool.amm = *accounts.amm.address();
+    accounts.pool.mint_a = *accounts.mint_a.address();
+    accounts.pool.mint_b = *accounts.mint_b.address();
+    Ok(())
 }

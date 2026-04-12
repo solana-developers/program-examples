@@ -20,13 +20,13 @@ mod quasar_create_token {
     /// Create a new token mint (account init handled by Quasar's `#[account(init)]`).
     #[instruction(discriminator = 0)]
     pub fn create_token(ctx: Ctx<CreateToken>, _decimals: u8) -> Result<(), ProgramError> {
-        ctx.accounts.create_token()
+        handle_create_token(&mut ctx.accounts)
     }
 
     /// Mint tokens to the creator's token account.
     #[instruction(discriminator = 1)]
     pub fn mint_tokens(ctx: Ctx<MintTokens>, amount: u64) -> Result<(), ProgramError> {
-        ctx.accounts.mint_tokens(amount)
+        handle_mint_tokens(&mut ctx.accounts, amount)
     }
 }
 
@@ -43,12 +43,10 @@ pub struct CreateToken<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl CreateToken<'_> {
-    #[inline(always)]
-    pub fn create_token(&self) -> Result<(), ProgramError> {
-        // Mint account is created and initialised by Quasar's account init.
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_create_token(accounts: &CreateToken) -> Result<(), ProgramError> {
+    // Mint account is created and initialised by Quasar's account init.
+    Ok(())
 }
 
 /// Accounts for minting tokens to an existing token account.
@@ -63,11 +61,9 @@ pub struct MintTokens<'info> {
     pub token_program: &'info Program<Token>,
 }
 
-impl MintTokens<'_> {
-    #[inline(always)]
-    pub fn mint_tokens(&mut self, amount: u64) -> Result<(), ProgramError> {
-        self.token_program
-            .mint_to(self.mint, self.token_account, self.authority, amount)
-            .invoke()
-    }
+#[inline(always)]
+pub fn handle_mint_tokens(accounts: &mut MintTokens, amount: u64) -> Result<(), ProgramError> {
+    accounts.token_program
+        .mint_to(accounts.mint, accounts.token_account, accounts.authority, amount)
+        .invoke()
 }

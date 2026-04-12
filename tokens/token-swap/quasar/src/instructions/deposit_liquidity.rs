@@ -58,84 +58,81 @@ fn isqrt(n: u128) -> u64 {
     x as u64
 }
 
-impl DepositLiquidity<'_> {
-    #[inline(always)]
-    pub fn deposit_liquidity(
-        &mut self,
-        amount_a: u64,
-        amount_b: u64,
-        bumps: &DepositLiquidityBumps,
-    ) -> Result<(), ProgramError> {
-        // Clamp to what the depositor actually has.
-        let depositor_a = self.depositor_account_a.amount();
-        let depositor_b = self.depositor_account_b.amount();
-        let mut amount_a = if amount_a > depositor_a { depositor_a } else { amount_a };
-        let mut amount_b = if amount_b > depositor_b { depositor_b } else { amount_b };
+#[inline(always)]
+pub fn handle_deposit_liquidity(
+    accounts: &mut DepositLiquidity, amount_a: u64,
+    amount_b: u64,
+    bumps: &DepositLiquidityBumps,
+) -> Result<(), ProgramError> {
+    // Clamp to what the depositor actually has.
+    let depositor_a = accounts.depositor_account_a.amount();
+    let depositor_b = accounts.depositor_account_b.amount();
+    let mut amount_a = if amount_a > depositor_a { depositor_a } else { amount_a };
+    let mut amount_b = if amount_b > depositor_b { depositor_b } else { amount_b };
 
-        let pool_a_amount = self.pool_account_a.amount();
-        let pool_b_amount = self.pool_account_b.amount();
-        let pool_creation = pool_a_amount == 0 && pool_b_amount == 0;
+    let pool_a_amount = accounts.pool_account_a.amount();
+    let pool_b_amount = accounts.pool_account_b.amount();
+    let pool_creation = pool_a_amount == 0 && pool_b_amount == 0;
 
-        if !pool_creation {
-            // Adjust amounts to maintain the pool ratio.
-            if pool_a_amount > pool_b_amount {
-                amount_a = (amount_b as u128)
-                    .checked_mul(pool_a_amount as u128)
-                    .ok_or(ProgramError::ArithmeticOverflow)?
-                    .checked_div(pool_b_amount as u128)
-                    .ok_or(ProgramError::ArithmeticOverflow)? as u64;
-            } else {
-                amount_b = (amount_a as u128)
-                    .checked_mul(pool_b_amount as u128)
-                    .ok_or(ProgramError::ArithmeticOverflow)?
-                    .checked_div(pool_a_amount as u128)
-                    .ok_or(ProgramError::ArithmeticOverflow)? as u64;
-            }
+    if !pool_creation {
+        // Adjust amounts to maintain the pool ratio.
+        if pool_a_amount > pool_b_amount {
+            amount_a = (amount_b as u128)
+                .checked_mul(pool_a_amount as u128)
+                .ok_or(ProgramError::ArithmeticOverflow)?
+                .checked_div(pool_b_amount as u128)
+                .ok_or(ProgramError::ArithmeticOverflow)? as u64;
+        } else {
+            amount_b = (amount_a as u128)
+                .checked_mul(pool_b_amount as u128)
+                .ok_or(ProgramError::ArithmeticOverflow)?
+                .checked_div(pool_a_amount as u128)
+                .ok_or(ProgramError::ArithmeticOverflow)? as u64;
         }
-
-        // Compute liquidity = sqrt(amount_a * amount_b).
-        let product = (amount_a as u128)
-            .checked_mul(amount_b as u128)
-            .ok_or(ProgramError::ArithmeticOverflow)?;
-        let mut liquidity = isqrt(product);
-
-        // Lock minimum liquidity on first deposit.
-        if pool_creation {
-            if liquidity < crate::MINIMUM_LIQUIDITY {
-                return Err(ProgramError::InsufficientFunds);
-            }
-            liquidity -= crate::MINIMUM_LIQUIDITY;
-        }
-
-        // Transfer token A to the pool.
-        self.token_program
-            .transfer(self.depositor_account_a, self.pool_account_a, self.depositor, amount_a)
-            .invoke()?;
-
-        // Transfer token B to the pool.
-        self.token_program
-            .transfer(self.depositor_account_b, self.pool_account_b, self.depositor, amount_b)
-            .invoke()?;
-
-        // Mint LP tokens to the depositor (signed by pool authority).
-        let bump = [bumps.pool_authority];
-        let seeds: &[Seed] = &[
-            Seed::from(self.amm.address().as_ref()),
-            Seed::from(self.mint_a.address().as_ref()),
-            Seed::from(self.mint_b.address().as_ref()),
-            Seed::from(crate::AUTHORITY_SEED),
-            Seed::from(&bump as &[u8]),
-        ];
-
-        self.token_program
-            .mint_to(
-                self.mint_liquidity,
-                self.depositor_account_liquidity,
-                self.pool_authority,
-                liquidity,
-            )
-            .invoke_signed(seeds)?;
-
-        Ok(())
     }
+
+    // Compute liquidity = sqrt(amount_a * amount_b).
+    let product = (amount_a as u128)
+        .checked_mul(amount_b as u128)
+        .ok_or(ProgramError::ArithmeticOverflow)?;
+    let mut liquidity = isqrt(product);
+
+    // Lock minimum liquidity on first deposit.
+    if pool_creation {
+        if liquidity < crate::MINIMUM_LIQUIDITY {
+            return Err(ProgramError::InsufficientFunds);
+        }
+        liquidity -= crate::MINIMUM_LIQUIDITY;
+    }
+
+    // Transfer token A to the pool.
+    accounts.token_program
+        .transfer(accounts.depositor_account_a, accounts.pool_account_a, accounts.depositor, amount_a)
+        .invoke()?;
+
+    // Transfer token B to the pool.
+    accounts.token_program
+        .transfer(accounts.depositor_account_b, accounts.pool_account_b, accounts.depositor, amount_b)
+        .invoke()?;
+
+    // Mint LP tokens to the depositor (signed by pool authority).
+    let bump = [bumps.pool_authority];
+    let seeds: &[Seed] = &[
+        Seed::from(accounts.amm.address().as_ref()),
+        Seed::from(accounts.mint_a.address().as_ref()),
+        Seed::from(accounts.mint_b.address().as_ref()),
+        Seed::from(crate::AUTHORITY_SEED),
+        Seed::from(&bump as &[u8]),
+    ];
+
+    accounts.token_program
+        .mint_to(
+            accounts.mint_liquidity,
+            accounts.depositor_account_liquidity,
+            accounts.pool_authority,
+            liquidity,
+        )
+        .invoke_signed(seeds)?;
+
+    Ok(())
 }

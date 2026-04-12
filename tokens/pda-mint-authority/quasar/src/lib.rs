@@ -24,13 +24,13 @@ mod quasar_pda_mint_authority {
     /// Create a token mint at a PDA. The PDA is its own mint authority.
     #[instruction(discriminator = 0)]
     pub fn create_mint(ctx: Ctx<CreateMint>, _decimals: u8) -> Result<(), ProgramError> {
-        ctx.accounts.create_mint()
+        handle_create_mint(&mut ctx.accounts)
     }
 
     /// Mint tokens using the PDA mint authority.
     #[instruction(discriminator = 1)]
     pub fn mint_tokens(ctx: Ctx<MintTokens>, amount: u64) -> Result<(), ProgramError> {
-        ctx.accounts.mint_tokens(amount, ctx.bumps.mint)
+        handle_mint_tokens(&mut ctx.accounts, amount, ctx.bumps.mint)
     }
 }
 
@@ -47,12 +47,10 @@ pub struct CreateMint<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl CreateMint<'_> {
-    #[inline(always)]
-    pub fn create_mint(&self) -> Result<(), ProgramError> {
-        // Mint is created and initialised by Quasar's #[account(init)].
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_create_mint(accounts: &CreateMint) -> Result<(), ProgramError> {
+    // Mint is created and initialised by Quasar's #[account(init)].
+    Ok(())
 }
 
 /// Mint tokens to a token account, signing with the PDA mint authority.
@@ -69,18 +67,16 @@ pub struct MintTokens<'info> {
     pub token_program: &'info Program<Token>,
 }
 
-impl MintTokens<'_> {
-    #[inline(always)]
-    pub fn mint_tokens(&mut self, amount: u64, mint_bump: u8) -> Result<(), ProgramError> {
-        // The PDA mint is its own authority. Build signer seeds.
-        let bump = [mint_bump];
-        let seeds: &[Seed] = &[
-            Seed::from(b"mint" as &[u8]),
-            Seed::from(&bump as &[u8]),
-        ];
+#[inline(always)]
+pub fn handle_mint_tokens(accounts: &mut MintTokens, amount: u64, mint_bump: u8) -> Result<(), ProgramError> {
+    // The PDA mint is its own authority. Build signer seeds.
+    let bump = [mint_bump];
+    let seeds: &[Seed] = &[
+        Seed::from(b"mint" as &[u8]),
+        Seed::from(&bump as &[u8]),
+    ];
 
-        self.token_program
-            .mint_to(self.mint, self.token_account, self.mint, amount)
-            .invoke_signed(seeds)
-    }
+    accounts.token_program
+        .mint_to(accounts.mint, accounts.token_account, accounts.mint, amount)
+        .invoke_signed(seeds)
 }

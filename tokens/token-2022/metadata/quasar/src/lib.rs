@@ -58,8 +58,7 @@ mod quasar_metadata {
         if nl > MAX_NAME || sl > MAX_SYMBOL || ul > MAX_URI {
             return Err(ProgramError::InvalidInstructionData);
         }
-        ctx.accounts
-            .initialize(&name[..nl], &symbol[..sl], &uri[..ul])
+        handle_initialize(&mut ctx.accounts, &name[..nl], &symbol[..sl], &uri[..ul])
     }
 }
 
@@ -73,125 +72,122 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Initialize<'_> {
-    #[inline(always)]
-    pub fn initialize(
-        &self,
-        name: &[u8],
-        symbol: &[u8],
-        uri: &[u8],
-    ) -> Result<(), ProgramError> {
-        // Calculate the total metadata size.
-        // MetadataPointer (64 bytes) + TLV overhead + actual metadata
-        // Metadata format: 4 (TLV header) + 32 (update_auth) + 32 (mint)
-        //   + 4 + name.len + 4 + symbol.len + 4 + uri.len + 4 + 0 (additional metadata)
-        let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
-        let total_ext_data = 4 + metadata_data_len; // TLV: 2 type + 2 length + data
-        // Mint base (82) + padding (82) + AccountType (1) + MetadataPointer ext (68) + metadata TLV
-        let mint_size = 82 + 82 + 1 + 68 + total_ext_data;
-        let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
+#[inline(always)]
+pub fn handle_initialize(
+    accounts: &Initialize, name: &[u8],
+    symbol: &[u8],
+    uri: &[u8],
+) -> Result<(), ProgramError> {
+    // Calculate the total metadata size.
+    // MetadataPointer (64 bytes) + TLV overhead + actual metadata
+    // Metadata format: 4 (TLV header) + 32 (update_auth) + 32 (mint)
+    //   + 4 + name.len + 4 + symbol.len + 4 + uri.len + 4 + 0 (additional metadata)
+    let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
+    let total_ext_data = 4 + metadata_data_len; // TLV: 2 type + 2 length + data
+    // Mint base (82) + padding (82) + AccountType (1) + MetadataPointer ext (68) + metadata TLV
+    let mint_size = 82 + 82 + 1 + 68 + total_ext_data;
+    let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
 
-        self.system_program
-            .create_account(
-                self.payer,
-                self.mint_account,
-                lamports,
-                mint_size as u64,
-                self.token_program.to_account_view().address(),
-            )
-            .invoke()?;
-
-        // InitializeMetadataPointer: opcode 39, sub-opcode 0.
-        let mut mp_data = [0u8; 66];
-        mp_data[0] = 39;
-        mp_data[1] = 0;
-        mp_data[2..34].copy_from_slice(self.payer.to_account_view().address().as_ref());
-        mp_data[34..66]
-            .copy_from_slice(self.mint_account.to_account_view().address().as_ref());
-
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            mp_data,
+    accounts.system_program
+        .create_account(
+            accounts.payer,
+            accounts.mint_account,
+            lamports,
+            mint_size as u64,
+            accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
 
-        // InitializeMint2.
-        let mut mint_data = [0u8; 67];
-        mint_data[0] = 20; // InitializeMint2
-        mint_data[1] = 2; // decimals
-        mint_data[2..34].copy_from_slice(self.payer.to_account_view().address().as_ref());
-        mint_data[34] = 0; // no freeze authority
+    // InitializeMetadataPointer: opcode 39, sub-opcode 0.
+    let mut mp_data = [0u8; 66];
+    mp_data[0] = 39;
+    mp_data[1] = 0;
+    mp_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    mp_data[34..66]
+        .copy_from_slice(accounts.mint_account.to_account_view().address().as_ref());
 
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            mint_data,
-        )
-        .invoke()?;
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        mp_data,
+    )
+    .invoke()?;
 
-        // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 44
-        // Sub-instruction: Initialize = 0
-        // Layout: [44, 0, update_authority(32), mint(32),
-        //          name_len(u32 LE), name, symbol_len(u32 LE), symbol,
-        //          uri_len(u32 LE), uri]
-        const MAX_META_IX: usize = 512;
-        let mut buf = [0u8; MAX_META_IX];
-        let mut pos = 0usize;
-        buf[pos] = 44;
-        pos += 1;
-        buf[pos] = 0;
-        pos += 1;
-        // update_authority
-        buf[pos..pos + 32].copy_from_slice(self.payer.to_account_view().address().as_ref());
-        pos += 32;
-        // mint
-        buf[pos..pos + 32]
-            .copy_from_slice(self.mint_account.to_account_view().address().as_ref());
-        pos += 32;
-        // name
-        buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + name.len()].copy_from_slice(name);
-        pos += name.len();
-        // symbol
-        buf[pos..pos + 4].copy_from_slice(&(symbol.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + symbol.len()].copy_from_slice(symbol);
-        pos += symbol.len();
-        // uri
-        buf[pos..pos + 4].copy_from_slice(&(uri.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + uri.len()].copy_from_slice(uri);
-        pos += uri.len();
+    // InitializeMint2.
+    let mut mint_data = [0u8; 67];
+    mint_data[0] = 20; // InitializeMint2
+    mint_data[1] = 2; // decimals
+    mint_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    mint_data[34] = 0; // no freeze authority
 
-        quasar_lang::cpi::BufCpiCall::new(
-            self.token_program.to_account_view().address(),
-            [
-                InstructionAccount::writable(
-                    self.mint_account.to_account_view().address(),
-                ),
-                InstructionAccount::readonly_signer(
-                    self.payer.to_account_view().address(),
-                ),
-                InstructionAccount::readonly_signer(
-                    self.payer.to_account_view().address(),
-                ),
-            ],
-            [
-                self.mint_account.to_account_view(),
-                self.payer.to_account_view(),
-                self.payer.to_account_view(),
-            ],
-            buf,
-            pos,
-        )
-        .invoke()
-    }
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        mint_data,
+    )
+    .invoke()?;
+
+    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 44
+    // Sub-instruction: Initialize = 0
+    // Layout: [44, 0, update_authority(32), mint(32),
+    //          name_len(u32 LE), name, symbol_len(u32 LE), symbol,
+    //          uri_len(u32 LE), uri]
+    const MAX_META_IX: usize = 512;
+    let mut buf = [0u8; MAX_META_IX];
+    let mut pos = 0usize;
+    buf[pos] = 44;
+    pos += 1;
+    buf[pos] = 0;
+    pos += 1;
+    // update_authority
+    buf[pos..pos + 32].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    pos += 32;
+    // mint
+    buf[pos..pos + 32]
+        .copy_from_slice(accounts.mint_account.to_account_view().address().as_ref());
+    pos += 32;
+    // name
+    buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + name.len()].copy_from_slice(name);
+    pos += name.len();
+    // symbol
+    buf[pos..pos + 4].copy_from_slice(&(symbol.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + symbol.len()].copy_from_slice(symbol);
+    pos += symbol.len();
+    // uri
+    buf[pos..pos + 4].copy_from_slice(&(uri.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + uri.len()].copy_from_slice(uri);
+    pos += uri.len();
+
+    quasar_lang::cpi::BufCpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [
+            InstructionAccount::writable(
+                accounts.mint_account.to_account_view().address(),
+            ),
+            InstructionAccount::readonly_signer(
+                accounts.payer.to_account_view().address(),
+            ),
+            InstructionAccount::readonly_signer(
+                accounts.payer.to_account_view().address(),
+            ),
+        ],
+        [
+            accounts.mint_account.to_account_view(),
+            accounts.payer.to_account_view(),
+            accounts.payer.to_account_view(),
+        ],
+        buf,
+        pos,
+    )
+    .invoke()
 }

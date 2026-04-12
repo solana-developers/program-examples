@@ -27,7 +27,7 @@ mod quasar_immutable_owner {
 
     #[instruction(discriminator = 0)]
     pub fn initialize(ctx: Ctx<Initialize>) -> Result<(), ProgramError> {
-        ctx.accounts.initialize()
+        handle_initialize(&mut ctx.accounts)
     }
 }
 
@@ -42,52 +42,50 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Initialize<'_> {
-    #[inline(always)]
-    pub fn initialize(&self) -> Result<(), ProgramError> {
-        // Token account + ImmutableOwner extension = 301 bytes
-        let account_size: u64 = 301;
-        let lamports = Rent::get()?.try_minimum_balance(account_size as usize)?;
+#[inline(always)]
+pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
+    // Token account + ImmutableOwner extension = 301 bytes
+    let account_size: u64 = 301;
+    let lamports = Rent::get()?.try_minimum_balance(account_size as usize)?;
 
-        // 1. Create account
-        self.system_program
-            .create_account(
-                self.payer,
-                self.token_account,
-                lamports,
-                account_size,
-                self.token_program.to_account_view().address(),
-            )
-            .invoke()?;
-
-        // 2. Initialize ImmutableOwner extension: opcode 34
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.token_account.to_account_view().address(),
-            )],
-            [self.token_account.to_account_view()],
-            [34u8],
+    // 1. Create account
+    accounts.system_program
+        .create_account(
+            accounts.payer,
+            accounts.token_account,
+            lamports,
+            account_size,
+            accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
 
-        // 3. InitializeAccount3: opcode 18, owner pubkey
-        let mut data = [0u8; 33];
-        data[0] = 18;
-        data[1..33].copy_from_slice(self.payer.to_account_view().address().as_ref());
+    // 2. Initialize ImmutableOwner extension: opcode 34
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.token_account.to_account_view().address(),
+        )],
+        [accounts.token_account.to_account_view()],
+        [34u8],
+    )
+    .invoke()?;
 
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [
-                InstructionAccount::writable(self.token_account.to_account_view().address()),
-                InstructionAccount::readonly(self.mint_account.to_account_view().address()),
-            ],
-            [
-                self.token_account.to_account_view(),
-                self.mint_account.to_account_view(),
-            ],
-            data,
-        )
-        .invoke()
-    }
+    // 3. InitializeAccount3: opcode 18, owner pubkey
+    let mut data = [0u8; 33];
+    data[0] = 18;
+    data[1..33].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [
+            InstructionAccount::writable(accounts.token_account.to_account_view().address()),
+            InstructionAccount::readonly(accounts.mint_account.to_account_view().address()),
+        ],
+        [
+            accounts.token_account.to_account_view(),
+            accounts.mint_account.to_account_view(),
+        ],
+        data,
+    )
+    .invoke()
 }

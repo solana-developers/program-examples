@@ -21,18 +21,18 @@ mod quasar_nft_operations {
     /// Create a collection NFT: mint, metadata, and master edition.
     #[instruction(discriminator = 0)]
     pub fn create_collection(ctx: Ctx<CreateCollection>) -> Result<(), ProgramError> {
-        ctx.accounts.create_collection(&ctx.bumps)
+        instructions::handle_create_collection(&mut ctx.accounts, &ctx.bumps)
     }
 
     /// Mint an individual NFT with a reference to the collection.
     #[instruction(discriminator = 1)]
     pub fn mint_nft(ctx: Ctx<MintNft>) -> Result<(), ProgramError> {
-        ctx.accounts.mint_nft(&ctx.bumps)
+        instructions::handle_mint_nft(&mut ctx.accounts, &ctx.bumps)
     }
 
     /// Verify the NFT as a member of the collection.
     #[instruction(discriminator = 2)]
     pub fn verify_collection(ctx: Ctx<VerifyCollectionMint>) -> Result<(), ProgramError> {
-        ctx.accounts.verify_collection(&ctx.bumps)
+        instructions::handle_verify_collection(&mut ctx.accounts, &ctx.bumps)
     }
 }

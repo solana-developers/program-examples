@@ -26,29 +26,27 @@ pub struct Refund<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Refund<'_> {
-    #[inline(always)]
-    pub fn withdraw_tokens_and_close(&mut self, bumps: &RefundBumps) -> Result<(), ProgramError> {
-        let maker_key = self.escrow.maker;
-        let bump = [bumps.escrow];
-        let seeds: &[Seed] = &[
-            Seed::from(b"escrow" as &[u8]),
-            Seed::from(maker_key.as_ref()),
-            Seed::from(&bump as &[u8]),
-        ];
+#[inline(always)]
+pub fn handle_withdraw_tokens_and_close(accounts: &mut Refund, bumps: &RefundBumps) -> Result<(), ProgramError> {
+    let maker_key = accounts.escrow.maker;
+    let bump = [bumps.escrow];
+    let seeds: &[Seed] = &[
+        Seed::from(b"escrow" as &[u8]),
+        Seed::from(maker_key.as_ref()),
+        Seed::from(&bump as &[u8]),
+    ];
 
-        self.token_program
-            .transfer(
-                self.vault_ta_a,
-                self.maker_ta_a,
-                self.escrow,
-                self.vault_ta_a.amount(),
-            )
-            .invoke_signed(seeds)?;
+    accounts.token_program
+        .transfer(
+            accounts.vault_ta_a,
+            accounts.maker_ta_a,
+            accounts.escrow,
+            accounts.vault_ta_a.amount(),
+        )
+        .invoke_signed(seeds)?;
 
-        self.token_program
-            .close_account(self.vault_ta_a, self.maker, self.escrow)
-            .invoke_signed(seeds)?;
-        Ok(())
-    }
+    accounts.token_program
+        .close_account(accounts.vault_ta_a, accounts.maker, accounts.escrow)
+        .invoke_signed(seeds)?;
+    Ok(())
 }

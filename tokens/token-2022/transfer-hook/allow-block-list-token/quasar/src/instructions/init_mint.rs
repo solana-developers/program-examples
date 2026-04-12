@@ -28,173 +28,170 @@ pub struct InitMint<'info> {
     pub token_program: &'info Program<Token2022>,
 }
 
-impl InitMint<'_> {
-    #[inline(always)]
-    pub fn init_mint(
-        &self,
-        decimals: u8,
-        freeze_authority: &Address,
-        permanent_delegate: &Address,
-        transfer_hook_authority: &Address,
-        mode: u8,
-        threshold: u64,
-        name: &[u8],
-        symbol: &[u8],
-        uri: &[u8],
-    ) -> Result<(), ProgramError> {
-        let payer_key = self.payer.to_account_view().address();
-        let mint_key = self.mint.to_account_view().address();
-        let token_prog = self.token_program.to_account_view().address();
+#[inline(always)]
+pub fn handle_init_mint(
+    accounts: &InitMint, decimals: u8,
+    freeze_authority: &Address,
+    permanent_delegate: &Address,
+    transfer_hook_authority: &Address,
+    mode: u8,
+    threshold: u64,
+    name: &[u8],
+    symbol: &[u8],
+    uri: &[u8],
+) -> Result<(), ProgramError> {
+    let payer_key = accounts.payer.to_account_view().address();
+    let mint_key = accounts.mint.to_account_view().address();
+    let token_prog = accounts.token_program.to_account_view().address();
 
-        // Calculate mint account size with all extensions:
-        // Base mint (82) + padding (82) + AccountType (1)
-        // + TransferHook (68) + PermanentDelegate (36) + MetadataPointer (68)
-        // + Metadata TLV (variable)
-        let mode_value = mode_to_metadata_value(mode);
-        // Metadata: TLV header (4) + update_auth (32) + mint (32) + borsh strings:
-        //   4 + name.len + 4 + symbol.len + 4 + uri.len
-        //   + 4 (additional_metadata length) + additional_metadata entries
-        // Additional metadata: ["AB", mode_value]
-        let ab_key = b"AB";
-        let additional_len = 4 + ab_key.len() + 4 + mode_value.len();
-        let threshold_additional = if mode == 2 {
-            // "threshold" key + value (up to 20 digits)
-            let threshold_str_len = count_digits(threshold);
-            4 + b"threshold".len() + 4 + threshold_str_len
-        } else {
-            0
-        };
-        let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len()
-            + 4 + additional_len + threshold_additional;
-        let total_ext_data = 4 + metadata_data_len;
-        let mint_size = 82 + 82 + 1 + 68 + 36 + 68 + total_ext_data;
-        let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
+    // Calculate mint account size with all extensions:
+    // Base mint (82) + padding (82) + AccountType (1)
+    // + TransferHook (68) + PermanentDelegate (36) + MetadataPointer (68)
+    // + Metadata TLV (variable)
+    let mode_value = mode_to_metadata_value(mode);
+    // Metadata: TLV header (4) + update_auth (32) + mint (32) + borsh strings:
+    //   4 + name.len + 4 + symbol.len + 4 + uri.len
+    //   + 4 (additional_metadata length) + additional_metadata entries
+    // Additional metadata: ["AB", mode_value]
+    let ab_key = b"AB";
+    let additional_len = 4 + ab_key.len() + 4 + mode_value.len();
+    let threshold_additional = if mode == 2 {
+        // "threshold" key + value (up to 20 digits)
+        let threshold_str_len = count_digits(threshold);
+        4 + b"threshold".len() + 4 + threshold_str_len
+    } else {
+        0
+    };
+    let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len()
+        + 4 + additional_len + threshold_additional;
+    let total_ext_data = 4 + metadata_data_len;
+    let mint_size = 82 + 82 + 1 + 68 + 36 + 68 + total_ext_data;
+    let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
 
-        // Create the mint account owned by Token2022.
-        self.system_program
-            .create_account(self.payer, self.mint, lamports, mint_size as u64, token_prog)
-            .invoke()?;
-
-        // Initialize PermanentDelegate extension: opcode 35
-        let mut pd_data = [0u8; 34];
-        pd_data[0] = 35;
-        pd_data[2..34].copy_from_slice(permanent_delegate.as_ref());
-        CpiCall::new(
-            token_prog,
-            [InstructionAccount::writable(mint_key)],
-            [self.mint.to_account_view()],
-            pd_data,
-        )
+    // Create the mint account owned by Token2022.
+    accounts.system_program
+        .create_account(accounts.payer, accounts.mint, lamports, mint_size as u64, token_prog)
         .invoke()?;
 
-        // Initialize TransferHook extension: opcode 36, sub-opcode 0
-        let mut th_data = [0u8; 66];
-        th_data[0] = 36;
-        th_data[1] = 0;
-        th_data[2..34].copy_from_slice(transfer_hook_authority.as_ref());
-        th_data[34..66].copy_from_slice(crate::ID.as_ref());
-        CpiCall::new(
-            token_prog,
-            [InstructionAccount::writable(mint_key)],
-            [self.mint.to_account_view()],
-            th_data,
-        )
-        .invoke()?;
+    // Initialize PermanentDelegate extension: opcode 35
+    let mut pd_data = [0u8; 34];
+    pd_data[0] = 35;
+    pd_data[2..34].copy_from_slice(permanent_delegate.as_ref());
+    CpiCall::new(
+        token_prog,
+        [InstructionAccount::writable(mint_key)],
+        [accounts.mint.to_account_view()],
+        pd_data,
+    )
+    .invoke()?;
 
-        // Initialize MetadataPointer: opcode 39, sub-opcode 0
-        let mut mp_data = [0u8; 66];
-        mp_data[0] = 39;
-        mp_data[1] = 0;
-        mp_data[2..34].copy_from_slice(payer_key.as_ref());
-        mp_data[34..66].copy_from_slice(mint_key.as_ref());
-        CpiCall::new(
-            token_prog,
-            [InstructionAccount::writable(mint_key)],
-            [self.mint.to_account_view()],
-            mp_data,
-        )
-        .invoke()?;
+    // Initialize TransferHook extension: opcode 36, sub-opcode 0
+    let mut th_data = [0u8; 66];
+    th_data[0] = 36;
+    th_data[1] = 0;
+    th_data[2..34].copy_from_slice(transfer_hook_authority.as_ref());
+    th_data[34..66].copy_from_slice(crate::ID.as_ref());
+    CpiCall::new(
+        token_prog,
+        [InstructionAccount::writable(mint_key)],
+        [accounts.mint.to_account_view()],
+        th_data,
+    )
+    .invoke()?;
 
-        // InitializeMint2: opcode 20
-        let mut mint_ix = [0u8; 67];
-        mint_ix[0] = 20;
-        mint_ix[1] = decimals;
-        mint_ix[2..34].copy_from_slice(payer_key.as_ref());
-        mint_ix[34] = 1; // has freeze authority
-        mint_ix[35..67].copy_from_slice(freeze_authority.as_ref());
-        CpiCall::new(
-            token_prog,
-            [InstructionAccount::writable(mint_key)],
-            [self.mint.to_account_view()],
-            mint_ix,
-        )
-        .invoke()?;
+    // Initialize MetadataPointer: opcode 39, sub-opcode 0
+    let mut mp_data = [0u8; 66];
+    mp_data[0] = 39;
+    mp_data[1] = 0;
+    mp_data[2..34].copy_from_slice(payer_key.as_ref());
+    mp_data[34..66].copy_from_slice(mint_key.as_ref());
+    CpiCall::new(
+        token_prog,
+        [InstructionAccount::writable(mint_key)],
+        [accounts.mint.to_account_view()],
+        mp_data,
+    )
+    .invoke()?;
 
-        // TokenMetadataInitialize: opcode 44, sub-opcode 0
-        let mut buf = [0u8; MAX_META_IX];
-        let mut pos = 0;
-        buf[pos] = 44;
-        pos += 1;
-        buf[pos] = 0;
-        pos += 1;
-        // update_authority
-        buf[pos..pos + 32].copy_from_slice(payer_key.as_ref());
-        pos += 32;
-        // mint
-        buf[pos..pos + 32].copy_from_slice(mint_key.as_ref());
-        pos += 32;
-        // name (borsh string: u32 len + bytes)
-        buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + name.len()].copy_from_slice(name);
-        pos += name.len();
-        // symbol
-        buf[pos..pos + 4].copy_from_slice(&(symbol.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + symbol.len()].copy_from_slice(symbol);
-        pos += symbol.len();
-        // uri
-        buf[pos..pos + 4].copy_from_slice(&(uri.len() as u32).to_le_bytes());
-        pos += 4;
-        buf[pos..pos + uri.len()].copy_from_slice(uri);
-        pos += uri.len();
+    // InitializeMint2: opcode 20
+    let mut mint_ix = [0u8; 67];
+    mint_ix[0] = 20;
+    mint_ix[1] = decimals;
+    mint_ix[2..34].copy_from_slice(payer_key.as_ref());
+    mint_ix[34] = 1; // has freeze authority
+    mint_ix[35..67].copy_from_slice(freeze_authority.as_ref());
+    CpiCall::new(
+        token_prog,
+        [InstructionAccount::writable(mint_key)],
+        [accounts.mint.to_account_view()],
+        mint_ix,
+    )
+    .invoke()?;
 
-        BufCpiCall::new(
-            token_prog,
-            [
-                InstructionAccount::writable(mint_key),
-                InstructionAccount::readonly_signer(payer_key),
-                InstructionAccount::readonly_signer(payer_key),
-            ],
-            [
-                self.mint.to_account_view(),
-                self.payer.to_account_view(),
-                self.payer.to_account_view(),
-            ],
-            buf,
-            pos,
-        )
-        .invoke()?;
+    // TokenMetadataInitialize: opcode 44, sub-opcode 0
+    let mut buf = [0u8; MAX_META_IX];
+    let mut pos = 0;
+    buf[pos] = 44;
+    pos += 1;
+    buf[pos] = 0;
+    pos += 1;
+    // update_authority
+    buf[pos..pos + 32].copy_from_slice(payer_key.as_ref());
+    pos += 32;
+    // mint
+    buf[pos..pos + 32].copy_from_slice(mint_key.as_ref());
+    pos += 32;
+    // name (borsh string: u32 len + bytes)
+    buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + name.len()].copy_from_slice(name);
+    pos += name.len();
+    // symbol
+    buf[pos..pos + 4].copy_from_slice(&(symbol.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + symbol.len()].copy_from_slice(symbol);
+    pos += symbol.len();
+    // uri
+    buf[pos..pos + 4].copy_from_slice(&(uri.len() as u32).to_le_bytes());
+    pos += 4;
+    buf[pos..pos + uri.len()].copy_from_slice(uri);
+    pos += uri.len();
 
-        // TokenMetadataUpdateField for "AB" key: opcode 44, sub-opcode 1
-        emit_update_field_cpi(self, b"AB", mode_value)?;
+    BufCpiCall::new(
+        token_prog,
+        [
+            InstructionAccount::writable(mint_key),
+            InstructionAccount::readonly_signer(payer_key),
+            InstructionAccount::readonly_signer(payer_key),
+        ],
+        [
+            accounts.mint.to_account_view(),
+            accounts.payer.to_account_view(),
+            accounts.payer.to_account_view(),
+        ],
+        buf,
+        pos,
+    )
+    .invoke()?;
 
-        // If Mixed mode, also set "threshold"
-        if mode == 2 {
-            let mut threshold_buf = [0u8; 20];
-            let threshold_len = write_u64_to_buf(threshold, &mut threshold_buf);
-            emit_update_field_cpi(self, b"threshold", &threshold_buf[..threshold_len])?;
-        }
+    // TokenMetadataUpdateField for "AB" key: opcode 44, sub-opcode 1
+    emit_update_field_cpi(accounts, b"AB", mode_value)?;
 
-        // Top up mint rent if needed after metadata updates increased the account size.
-        top_up_rent(self)?;
-
-        // Initialize the ExtraAccountMetaList PDA.
-        init_extra_metas(self)?;
-
-        log("Mint initialized with transfer hook and metadata");
-        Ok(())
+    // If Mixed mode, also set "threshold"
+    if mode == 2 {
+        let mut threshold_buf = [0u8; 20];
+        let threshold_len = write_u64_to_buf(threshold, &mut threshold_buf);
+        emit_update_field_cpi(accounts, b"threshold", &threshold_buf[..threshold_len])?;
     }
+
+    // Top up mint rent if needed after metadata updates increased the account size.
+    top_up_rent(accounts)?;
+
+    // Initialize the ExtraAccountMetaList PDA.
+    init_extra_metas(accounts)?;
+
+    log("Mint initialized with transfer hook and metadata");
+    Ok(())
 }
 
 /// Emit a Token-2022 TokenMetadataUpdateField CPI.

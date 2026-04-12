@@ -19,24 +19,22 @@ pub struct Contribute<'info> {
     pub token_program: &'info Program<Token>,
 }
 
-impl Contribute<'_> {
-    #[inline(always)]
-    pub fn contribute(&mut self, amount: u64) -> Result<(), ProgramError> {
-        require!(amount > 0, ProgramError::InvalidArgument);
+#[inline(always)]
+pub fn handle_contribute(accounts: &mut Contribute, amount: u64) -> Result<(), ProgramError> {
+    require!(amount > 0, ProgramError::InvalidArgument);
 
-        // Transfer tokens from contributor to vault
-        self.token_program
-            .transfer(self.contributor_ta, self.vault, self.contributor, amount)
-            .invoke()?;
+    // Transfer tokens from contributor to vault
+    accounts.token_program
+        .transfer(accounts.contributor_ta, accounts.vault, accounts.contributor, amount)
+        .invoke()?;
 
-        // Update fundraiser state
-        self.fundraiser.current_amount = self.fundraiser.current_amount.checked_add(amount)
-            .ok_or(ProgramError::ArithmeticOverflow)?;
+    // Update fundraiser state
+    accounts.fundraiser.current_amount = accounts.fundraiser.current_amount.checked_add(amount)
+        .ok_or(ProgramError::ArithmeticOverflow)?;
 
-        // Update contributor tracking
-        self.contributor_account.amount = self.contributor_account.amount.checked_add(amount)
-            .ok_or(ProgramError::ArithmeticOverflow)?;
+    // Update contributor tracking
+    accounts.contributor_account.amount = accounts.contributor_account.amount.checked_add(amount)
+        .ok_or(ProgramError::ArithmeticOverflow)?;
 
-        Ok(())
-    }
+    Ok(())
 }

@@ -27,7 +27,7 @@ mod quasar_non_transferable {
 
     #[instruction(discriminator = 0)]
     pub fn initialize(ctx: Ctx<Initialize>) -> Result<(), ProgramError> {
-        ctx.accounts.initialize()
+        handle_initialize(&mut ctx.accounts)
     }
 }
 
@@ -41,51 +41,49 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Initialize<'_> {
-    #[inline(always)]
-    pub fn initialize(&self) -> Result<(), ProgramError> {
-        // Mint + NonTransferable extension = 170 bytes
-        let mint_size: u64 = 170;
-        let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
+#[inline(always)]
+pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
+    // Mint + NonTransferable extension = 170 bytes
+    let mint_size: u64 = 170;
+    let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
-        // 1. Create account
-        self.system_program
-            .create_account(
-                self.payer,
-                self.mint_account,
-                lamports,
-                mint_size,
-                self.token_program.to_account_view().address(),
-            )
-            .invoke()?;
-
-        // 2. Initialize NonTransferable extension: opcode 35
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            [35u8],
+    // 1. Create account
+    accounts.system_program
+        .create_account(
+            accounts.payer,
+            accounts.mint_account,
+            lamports,
+            mint_size,
+            accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
 
-        // 3. InitializeMint2
-        let mut mint_data = [0u8; 67];
-        mint_data[0] = 20;
-        mint_data[1] = 2; // decimals
-        mint_data[2..34].copy_from_slice(self.payer.to_account_view().address().as_ref());
-        mint_data[34] = 1; // has freeze authority
-        mint_data[35..67].copy_from_slice(self.payer.to_account_view().address().as_ref());
+    // 2. Initialize NonTransferable extension: opcode 35
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        [35u8],
+    )
+    .invoke()?;
 
-        CpiCall::new(
-            self.token_program.to_account_view().address(),
-            [InstructionAccount::writable(
-                self.mint_account.to_account_view().address(),
-            )],
-            [self.mint_account.to_account_view()],
-            mint_data,
-        )
-        .invoke()
-    }
+    // 3. InitializeMint2
+    let mut mint_data = [0u8; 67];
+    mint_data[0] = 20;
+    mint_data[1] = 2; // decimals
+    mint_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    mint_data[34] = 1; // has freeze authority
+    mint_data[35..67].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+
+    CpiCall::new(
+        accounts.token_program.to_account_view().address(),
+        [InstructionAccount::writable(
+            accounts.mint_account.to_account_view().address(),
+        )],
+        [accounts.mint_account.to_account_view()],
+        mint_data,
+    )
+    .invoke()
 }

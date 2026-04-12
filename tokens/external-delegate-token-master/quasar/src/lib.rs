@@ -24,7 +24,7 @@ mod quasar_external_delegate_token_master {
     /// Initialize a user account with zero Ethereum address.
     #[instruction(discriminator = 0)]
     pub fn initialize(ctx: Ctx<Initialize>) -> Result<(), ProgramError> {
-        ctx.accounts.initialize()
+        handle_initialize(&mut ctx.accounts)
     }
 
     /// Set the Ethereum address for signature verification.
@@ -33,7 +33,7 @@ mod quasar_external_delegate_token_master {
         ctx: Ctx<SetEthereumAddress>,
         ethereum_address: [u8; 20],
     ) -> Result<(), ProgramError> {
-        ctx.accounts.set_ethereum_address(ethereum_address)
+        handle_set_ethereum_address(&mut ctx.accounts, ethereum_address)
     }
 
     /// Transfer tokens using an Ethereum signature for authorisation.
@@ -44,8 +44,7 @@ mod quasar_external_delegate_token_master {
         signature: [u8; 65],
         message: [u8; 32],
     ) -> Result<(), ProgramError> {
-        ctx.accounts
-            .transfer_tokens(amount, &signature, &message, &ctx.bumps)
+        handle_transfer_tokens(&mut ctx.accounts, amount, &signature, &message, &ctx.bumps)
     }
 
     /// Transfer tokens using the Solana authority directly.
@@ -54,7 +53,7 @@ mod quasar_external_delegate_token_master {
         ctx: Ctx<AuthorityTransfer>,
         amount: u64,
     ) -> Result<(), ProgramError> {
-        ctx.accounts.authority_transfer(amount, &ctx.bumps)
+        handle_authority_transfer(&mut ctx.accounts, amount, &ctx.bumps)
     }
 }
 
@@ -71,13 +70,11 @@ pub struct Initialize<'info> {
     pub system_program: &'info Program<System>,
 }
 
-impl Initialize<'_> {
-    #[inline(always)]
-    pub fn initialize(&mut self) -> Result<(), ProgramError> {
-        self.user_account
-            .set_inner(*self.authority.address(), [0u8; 20]);
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_initialize(accounts: &mut Initialize) -> Result<(), ProgramError> {
+    accounts.user_account
+        .set_inner(*accounts.authority.address(), [0u8; 20]);
+    Ok(())
 }
 
 #[derive(Accounts)]
@@ -87,20 +84,17 @@ pub struct SetEthereumAddress<'info> {
     pub authority: &'info Signer,
 }
 
-impl SetEthereumAddress<'_> {
-    #[inline(always)]
-    pub fn set_ethereum_address(
-        &mut self,
-        ethereum_address: [u8; 20],
-    ) -> Result<(), ProgramError> {
-        require_keys_eq!(
-            self.user_account.authority,
-            *self.authority.address(),
-            ProgramError::MissingRequiredSignature
-        );
-        self.user_account.ethereum_address = ethereum_address;
-        Ok(())
-    }
+#[inline(always)]
+pub fn handle_set_ethereum_address(
+    accounts: &mut SetEthereumAddress, ethereum_address: [u8; 20],
+) -> Result<(), ProgramError> {
+    require_keys_eq!(
+        accounts.user_account.authority,
+        *accounts.authority.address(),
+        ProgramError::MissingRequiredSignature
+    );
+    accounts.user_account.ethereum_address = ethereum_address;
+    Ok(())
 }
 
 #[derive(Accounts)]
@@ -117,38 +111,35 @@ pub struct TransferTokens<'info> {
     pub token_program: &'info Program<Token>,
 }
 
-impl TransferTokens<'_> {
-    #[inline(always)]
-    pub fn transfer_tokens(
-        &self,
-        amount: u64,
-        signature: &[u8; 65],
-        message: &[u8; 32],
-        bumps: &TransferTokensBumps,
-    ) -> Result<(), ProgramError> {
-        if !verify_ethereum_signature(
-            &self.user_account.ethereum_address,
-            message,
-            signature,
-        ) {
-            return Err(ProgramError::Custom(1)); // InvalidSignature
-        }
-
-        let bump = [bumps.user_pda];
-        let seeds: &[Seed] = &[
-            Seed::from(self.user_account.address().as_ref()),
-            Seed::from(&bump as &[u8]),
-        ];
-
-        self.token_program
-            .transfer(
-                self.user_token_account,
-                self.recipient_token_account,
-                self.user_pda,
-                amount,
-            )
-            .invoke_signed(seeds)
+#[inline(always)]
+pub fn handle_transfer_tokens(
+    accounts: &TransferTokens, amount: u64,
+    signature: &[u8; 65],
+    message: &[u8; 32],
+    bumps: &TransferTokensBumps,
+) -> Result<(), ProgramError> {
+    if !verify_ethereum_signature(
+        &accounts.user_account.ethereum_address,
+        message,
+        signature,
+    ) {
+        return Err(ProgramError::Custom(1)); // InvalidSignature
     }
+
+    let bump = [bumps.user_pda];
+    let seeds: &[Seed] = &[
+        Seed::from(accounts.user_account.address().as_ref()),
+        Seed::from(&bump as &[u8]),
+    ];
+
+    accounts.token_program
+        .transfer(
+            accounts.user_token_account,
+            accounts.recipient_token_account,
+            accounts.user_pda,
+            amount,
+        )
+        .invoke_signed(seeds)
 }
 
 #[derive(Accounts)]
@@ -165,34 +156,31 @@ pub struct AuthorityTransfer<'info> {
     pub token_program: &'info Program<Token>,
 }
 
-impl AuthorityTransfer<'_> {
-    #[inline(always)]
-    pub fn authority_transfer(
-        &self,
-        amount: u64,
-        bumps: &AuthorityTransferBumps,
-    ) -> Result<(), ProgramError> {
-        require_keys_eq!(
-            self.user_account.authority,
-            *self.authority.address(),
-            ProgramError::MissingRequiredSignature
-        );
+#[inline(always)]
+pub fn handle_authority_transfer(
+    accounts: &AuthorityTransfer, amount: u64,
+    bumps: &AuthorityTransferBumps,
+) -> Result<(), ProgramError> {
+    require_keys_eq!(
+        accounts.user_account.authority,
+        *accounts.authority.address(),
+        ProgramError::MissingRequiredSignature
+    );
 
-        let bump = [bumps.user_pda];
-        let seeds: &[Seed] = &[
-            Seed::from(self.user_account.address().as_ref()),
-            Seed::from(&bump as &[u8]),
-        ];
+    let bump = [bumps.user_pda];
+    let seeds: &[Seed] = &[
+        Seed::from(accounts.user_account.address().as_ref()),
+        Seed::from(&bump as &[u8]),
+    ];
 
-        self.token_program
-            .transfer(
-                self.user_token_account,
-                self.recipient_token_account,
-                self.user_pda,
-                amount,
-            )
-            .invoke_signed(seeds)
-    }
+    accounts.token_program
+        .transfer(
+            accounts.user_token_account,
+            accounts.recipient_token_account,
+            accounts.user_pda,
+            amount,
+        )
+        .invoke_signed(seeds)
 }
 
 // ---------------------------------------------------------------------------
