@@ -195,7 +195,11 @@ jobs:
           solana -V
           rustc -V
           process_projects "stable"
+      # continue-on-error because the beta channel may not have a valid release
+      # (e.g. v4.0 returns 404 from release.anza.xyz). This is an upstream issue
+      # with heyAyushh/setup-solana — beta setup clears the stable install first.
       - name: Setup Solana Beta
+        continue-on-error: true
         uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: beta
