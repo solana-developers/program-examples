@@ -32,6 +32,6 @@ mod quasar_cnft_burn {
 
     #[instruction(discriminator = 0)]
     pub fn burn_cnft(ctx: CtxWithRemaining<BurnCnft>) -> Result<(), ProgramError> {
-        ctx.accounts.burn_cnft(&ctx)
+        instructions::handle_burn_cnft(&ctx.accounts, &ctx)
     }
 }
