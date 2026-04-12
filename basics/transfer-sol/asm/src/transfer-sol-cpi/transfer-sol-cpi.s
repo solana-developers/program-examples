@@ -26,7 +26,6 @@
 
 .equ INSTRUCTION_DATA_LEN, 0x7938
 .equ INSTRUCTION_DATA, 0x7940
-.equ PROGRAM_ID, 0x7940
 
 
 .globl entrypoint
