@@ -30,5 +30,12 @@ solana-signer = "3.0.0"
 solana-keypair = "3.0.1"
 borsh = "1.6.1"
 
+[dev-dependencies]
+litesvm = "0.11.0"
+solana-kite = "0.3.0"
+solana-signer = "3.0.0"
+solana-keypair = "3.0.1"
+borsh = "1.6.1"
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
