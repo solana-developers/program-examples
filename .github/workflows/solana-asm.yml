@@ -186,7 +186,7 @@ jobs:
           # Install sbpf assembler
           cargo install --git https://github.com/blueshift-gg/sbpf.git
       - name: Setup Solana Stable
-        uses: heyAyushh/setup-solana@v2.02
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
       - name: Build and Test with Stable
@@ -196,7 +196,7 @@ jobs:
           rustc -V
           process_projects "stable"
       - name: Setup Solana Beta
-        uses: heyAyushh/setup-solana@v2.02
+        uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: beta
       - name: Build and Test with Beta
