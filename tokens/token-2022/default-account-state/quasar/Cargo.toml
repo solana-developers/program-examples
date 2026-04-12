@@ -1,0 +1,30 @@
+[package]
+name = "quasar-token-2022-default-account-state"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(target_os, values("solana"))',
+]
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+alloc = []
+client = []
+debug = []
+
+[dependencies]
+quasar-lang = "0.0"
+quasar-spl = "0.0"
+solana-instruction = { version = "3.2.0" }
+
+[dev-dependencies]
+quasar-svm = { version = "0.1" }
+spl-token-interface = { version = "2.0.0" }
+solana-program-pack = { version = "3.1.0" }
