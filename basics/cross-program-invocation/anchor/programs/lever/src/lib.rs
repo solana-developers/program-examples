@@ -6,7 +6,7 @@ declare_id!("E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN");
 pub mod lever {
     use super::*;
 
-    pub fn initialize(_mut context: Context<InitializeLeverAccountConstraints>) -> Result<()> {
+    pub fn initialize(context: Context<InitializeLeverAccountConstraints>) -> Result<()> {
         Ok(())
     }
 
