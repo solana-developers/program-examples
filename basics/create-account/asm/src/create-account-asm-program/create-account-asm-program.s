@@ -16,13 +16,7 @@
 .equ NEW_ACCOUNT_DATA, 0x28c0
 .equ NEW_ACCOUNT_RENT_EPOCH, 0x50c0
 
-.equ SYSTEM_PROGRAM_HEADER, 0x50c8
 .equ SYSTEM_PROGRAM_KEY, 0x50d0
-.equ SYSTEM_PROGRAM_OWNER, 0x50f0
-.equ SYSTEM_PROGRAM_LAMPORTS, 0x5110
-.equ SYSTEM_PROGRAM_DATA_LEN, 0x5118
-.equ SYSTEM_PROGRAM_DATA, 0x5120
-.equ SYSTEM_PROGRAM_RENT_EPOCH, 0x7930
 
 .equ PROGRAM_ID, 0x7938
 
@@ -41,7 +35,7 @@ entrypoint:
     ldxdw r2, [r1 + NUM_ACCOUNTS]
     jne r2, 3, error_invalid_num_accounts
 
-    mov64 r6, r1                    # store input pointer at r6 while I mess around with r1 for logging
+    mov64 r6, r1                    # save input pointer before r1 is clobbered by logging calls
 
     lddw r1, message_one
     mov64 r2, 45
