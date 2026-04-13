@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { start } from "solana-bankrun";
@@ -13,7 +14,7 @@ describe("transfer-sol (asm)", async () => {
   const recipient = Keypair.generate();
 
   test("Transfer SOL via CPI to the system program", async () => {
-    await getBalances(payer.publicKey, recipient.publicKey, "Beginning");
+    const [payerBefore, recipientBefore] = await getBalances(payer.publicKey, recipient.publicKey, "Beginning");
 
     const ix = createTransferInstruction(payer.publicKey, recipient.publicKey, PROGRAM_ID, transferAmount);
 
@@ -24,15 +25,31 @@ describe("transfer-sol (asm)", async () => {
 
     await client.processTransaction(tx);
 
-    await getBalances(payer.publicKey, recipient.publicKey, "Resulting");
+    const [payerAfter, recipientAfter] = await getBalances(payer.publicKey, recipient.publicKey, "Resulting");
+
+    assert(
+      payerAfter < payerBefore - BigInt(transferAmount),
+      "Payer balance should decrease by at least the transfer amount",
+    );
+    assert.strictEqual(
+      recipientAfter,
+      recipientBefore + BigInt(transferAmount),
+      "Recipient balance should increase by exactly the transfer amount",
+    );
   });
 
-  async function getBalances(payerPubkey: PublicKey, recipientPubkey: PublicKey, timeframe: string) {
+  async function getBalances(
+    payerPubkey: PublicKey,
+    recipientPubkey: PublicKey,
+    timeframe: string,
+  ): Promise<[bigint, bigint]> {
     const payerBalance = await client.getBalance(payerPubkey);
     const recipientBalance = await client.getBalance(recipientPubkey);
 
     console.log(`${timeframe} balances:`);
     console.log(`   Payer: ${payerBalance}`);
     console.log(`   Recipient: ${recipientBalance}`);
+
+    return [payerBalance, recipientBalance];
   }
 });
