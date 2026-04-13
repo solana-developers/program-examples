@@ -59,7 +59,7 @@ overflow-checks = true
 [workspace.dependencies]
 
 # misc
-borsh = "1.5.7"
+borsh = "1.6.1"
 borsh-derive = "1.5.7"
 mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
 
