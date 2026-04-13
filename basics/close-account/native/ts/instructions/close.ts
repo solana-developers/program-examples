@@ -1,7 +1,7 @@
-import { Buffer } from 'node:buffer';
-import { type PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { MyInstruction } from '.';
+import { Buffer } from "node:buffer";
+import { type PublicKey, SystemProgram, TransactionInstruction } from "@solana/web3.js";
+import * as borsh from "borsh";
+import { MyInstruction } from ".";
 
 export class Close {
   instruction: MyInstruction;
@@ -25,13 +25,17 @@ export const CloseSchema = new Map([
   [
     Close,
     {
-      kind: 'struct',
-      fields: [['instruction', 'u8']],
+      kind: "struct",
+      fields: [["instruction", "u8"]],
     },
   ],
 ]);
 
-export function createCloseUserInstruction(target: PublicKey, payer: PublicKey, programId: PublicKey): TransactionInstruction {
+export function createCloseUserInstruction(
+  target: PublicKey,
+  payer: PublicKey,
+  programId: PublicKey,
+): TransactionInstruction {
   const instructionObject = new Close({
     instruction: MyInstruction.CloseUser,
   });

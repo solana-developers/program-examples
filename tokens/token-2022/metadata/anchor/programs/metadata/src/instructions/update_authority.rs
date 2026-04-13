@@ -27,7 +27,7 @@ pub fn process_update_authority(ctx: Context<UpdateAuthority>) -> Result<()> {
     // Change update authority
     token_metadata_update_authority(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             TokenMetadataUpdateAuthority {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 metadata: ctx.accounts.mint_account.to_account_info(),

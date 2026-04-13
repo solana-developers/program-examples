@@ -18,7 +18,10 @@ use anchor_spl::{
 use spl_tlv_account_resolution::{
     account::ExtraAccountMeta, seeds::Seed, state::ExtraAccountMetaList,
 };
-use spl_transfer_hook_interface::instruction::ExecuteInstruction;
+use spl_discriminator::SplDiscriminate;
+use spl_transfer_hook_interface::instruction::{
+    ExecuteInstruction, InitializeExtraAccountMetaListInstruction,
+};
 
 declare_id!("1qahDxKHeCLZhbBU2NyMU6vQCQmEUmdeSEBrG5drffK");
 
@@ -34,22 +37,24 @@ pub enum TransferError {
 pub mod transfer_hook {
     use super::*;
 
-    #[interface(spl_transfer_hook_interface::initialize_extra_account_meta_list)]
+    #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
         ctx: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
-        )?;
+        ).map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }
 
-    #[interface(spl_transfer_hook_interface::execute)]
+    #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&ctx)?;
@@ -97,9 +102,10 @@ pub struct InitializeExtraAccountMetaList<'info> {
         init,
         seeds = [b"extra-account-metas", mint.key().as_ref()],
         bump,
+        // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas()?.len()
-        )?,
+            InitializeExtraAccountMetaList::extra_account_metas_count()
+        ).unwrap(),
         payer = payer
     )]
     pub extra_account_meta_list: AccountInfo<'info>,
@@ -114,13 +120,20 @@ pub struct InitializeExtraAccountMetaList<'info> {
 // Define extra account metas to store on extra_account_meta_list account
 impl<'info> InitializeExtraAccountMetaList<'info> {
     pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         Ok(vec![ExtraAccountMeta::new_with_seeds(
             &[Seed::Literal {
                 bytes: b"counter".to_vec(),
             }],
             false, // is_signer
             true,  // is_writable
-        )?])
+        ).map_err(|_| ProgramError::InvalidArgument)?])
+    }
+
+    /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
+    pub fn extra_account_metas_count() -> usize {
+        1 // one extra account: the counter PDA
     }
 }
 

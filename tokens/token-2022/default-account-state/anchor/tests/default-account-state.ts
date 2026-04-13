@@ -1,9 +1,9 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
-import { createAccount, mintTo, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
-import type { DefaultAccountState } from '../target/types/default_account_state';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
+import { createAccount, mintTo, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import type { DefaultAccountState } from "../target/types/default_account_state";
 
-describe('default-account-state', () => {
+describe("default-account-state", () => {
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
   const wallet = provider.wallet as anchor.Wallet;
@@ -13,16 +13,16 @@ describe('default-account-state', () => {
 
   const mintKeypair = new anchor.web3.Keypair();
 
-  it('Create Mint with DefaultAccountState extension', async () => {
+  it("Create Mint with DefaultAccountState extension", async () => {
     const transactionSignature = await program.methods
       .initialize()
       .accounts({ mintAccount: mintKeypair.publicKey })
       .signers([mintKeypair])
       .rpc({ skipPreflight: true });
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 
-  it('Attempt Mint Token, expect fail', async () => {
+  it("Attempt Mint Token, expect fail", async () => {
     const amount = 1;
 
     // Create a token account, default state is frozen
@@ -50,20 +50,20 @@ describe('default-account-state', () => {
         TOKEN_2022_PROGRAM_ID, // Token Extension Program ID
       );
     } catch (error) {
-      console.log('\nExpect Error:', error.logs);
+      console.log("\nExpect Error:", error.logs);
     }
   });
 
-  it('Update DefaultAccountState', async () => {
+  it("Update DefaultAccountState", async () => {
     // Update the default state to initialized (not frozen)
     const transactionSignature = await program.methods
       .updateDefaultState({ initialized: {} })
       .accounts({ mintAccount: mintKeypair.publicKey })
       .rpc({ skipPreflight: true });
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 
-  it('Attempt Mint Token, expect success', async () => {
+  it("Attempt Mint Token, expect success", async () => {
     const amount = 1;
 
     // Create a token account, default state is initialized (not frozen)

@@ -1,38 +1,35 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { PublicKey } from "@solana/web3.js"
-import { useWallet } from "@solana/wallet-adapter-react"
-import {
-  CONNECTION,
-} from "@/utils/anchor"
+import { useWallet } from "@solana/wallet-adapter-react";
+import type { PublicKey } from "@solana/web3.js";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { CONNECTION } from "@/utils/anchor";
+
+interface DasNftItem {
+  id: string;
+  authorities: Array<{ address: string } | string>;
+  content: {
+    metadata: { name: string };
+    links: { image: string };
+  };
+}
+
+interface DasNftState {
+  items: DasNftItem[];
+}
 
 const NftContext = createContext<{
-  nftState: any | null  
+  nftState: DasNftState | null;
 }>({
   nftState: null,
-})
+});
 
-export const useNftState = () => useContext(NftContext)
+export const useNftState = () => useContext(NftContext);
 
-export const NftProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
-  const { publicKey } = useWallet()
+export const NftProvider = ({ children }: { children: React.ReactNode }) => {
+  const { publicKey } = useWallet();
 
-  const [nftState, setNftState] = useState<any | null>(null)
+  const [nftState, setNftState] = useState<DasNftState | null>(null);
 
-  useEffect( ()  => {
-    setNftState(null)
-    if (!publicKey) {
-      return
-    }
-    
-    getAssetsByOwner(publicKey);
-
-  }, [publicKey]);
-
-  async function getAssetsByOwner(ownerAddress: PublicKey) {
+  const getAssetsByOwner = useCallback(async (ownerAddress: PublicKey) => {
     const sortBy = {
       sortBy: "created",
       sortDirection: "asc",
@@ -47,12 +44,21 @@ export const NftProvider = ({
       limit,
       page,
       before,
-      after
+      after,
     );
 
-    setNftState(allAssetsOwned);
+    setNftState(allAssetsOwned as DasNftState);
     console.log(allAssetsOwned);
-  }
+  }, []);
+
+  useEffect(() => {
+    setNftState(null);
+    if (!publicKey) {
+      return;
+    }
+
+    getAssetsByOwner(publicKey);
+  }, [publicKey, getAssetsByOwner]);
 
   return (
     <NftContext.Provider
@@ -62,5 +68,5 @@ export const NftProvider = ({
     >
       {children}
     </NftContext.Provider>
-  )
-}
+  );
+};

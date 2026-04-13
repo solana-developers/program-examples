@@ -2,25 +2,25 @@
   Types specific to the ReadApi
 */
 
-import type { Metadata, Option } from '@metaplex-foundation/js';
-import type { ConcurrentMerkleTreeAccount } from '@solana/spl-account-compression';
+import type { Metadata, Option } from "@metaplex-foundation/js";
+import type { ConcurrentMerkleTreeAccount } from "@solana/spl-account-compression";
 
 export type ReadApiAssetInterface =
-  | 'V1_NFT'
-  | 'V1_PRINT'
-  | 'LEGACY_NFT'
-  | 'V2_NFT'
-  | 'FungibleAsset'
-  | 'Custom'
-  | 'Identity'
-  | 'Executable'
-  | 'ProgrammableNFT';
+  | "V1_NFT"
+  | "V1_PRINT"
+  | "LEGACY_NFT"
+  | "V2_NFT"
+  | "FungibleAsset"
+  | "Custom"
+  | "Identity"
+  | "Executable"
+  | "ProgrammableNFT";
 
-export type ReadApiPropGroupKey = 'collection';
+export type ReadApiPropGroupKey = "collection";
 
-export type ReadApiPropSortBy = 'created' | 'updated' | 'recent_action';
+export type ReadApiPropSortBy = "created" | "updated" | "recent_action";
 
-export type ReadApiPropSortDirection = 'asc' | 'desc';
+export type ReadApiPropSortDirection = "asc" | "desc";
 
 export type TransferNftCompressionParam = {
   ownership?: ReadApiOwnershipMetadata;
@@ -36,7 +36,7 @@ export type ReadApiParamAssetSortBy = {
 
 export type ReadApiAssetContent = {
   json_uri: string;
-  metadata: Metadata['json'];
+  metadata: Metadata["json"];
 };
 
 export type ReadApiCompressionMetadata = {
@@ -55,7 +55,7 @@ export type ReadApiOwnershipMetadata = {
   delegated: boolean;
   delegate: string | null;
   owner: string;
-  ownership_model: 'single' | 'token';
+  ownership_model: "single" | "token";
 };
 
 export type ReadApiAssetSupplyMetadata = {
@@ -74,7 +74,7 @@ export type ReadApiAssetGrouping = {
   group_value: string;
 };
 
-export type ReadApiAuthorityScope = 'full';
+export type ReadApiAuthorityScope = "full";
 
 export type ReadApiAssetAuthority = {
   address: string;
@@ -133,7 +133,7 @@ export type ReadApiAsset = {
   content: ReadApiAssetContent;
   royalty: ReadApiAssetRoyaltyMetadata;
   supply: ReadApiAssetSupplyMetadata;
-  creators: Metadata['creators'];
+  creators: Metadata["creators"];
   grouping: Array<ReadApiAssetGrouping>;
   compression: ReadApiCompressionMetadata;
 };

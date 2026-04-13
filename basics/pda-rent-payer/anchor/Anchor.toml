@@ -1,10 +1,12 @@
+[toolchain]
+solana_version = "3.1.8"
+
 [features]
 seeds = false
 [programs.localnet]
 pda_rent_payer = "7Hm9nsYVuBZ9rf8z9AMUHreZRv8Q4vLhqwdVTCawRZtA"
 
-[registry]
-url = "https://anchor.projectserum.com"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletButton } from '../solana/solana-provider'
-import { useParams } from 'next/navigation'
-import React from 'react'
-import { useAblTokenProgram, useGetToken } from './abl-token-data-access'
-import { PublicKey } from '@solana/web3.js'
-import { BN } from '@coral-xyz/anchor'
-import { Button } from '@/components/ui/button'
+import { BN } from "@anchor-lang/core";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { useParams } from "next/navigation";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { WalletButton } from "../solana/solana-provider";
+import { useAblTokenProgram, useGetToken } from "./abl-token-data-access";
 
 interface TokenInfo {
   address: string;
@@ -27,7 +27,7 @@ interface TokenInfo {
 }
 
 function TokenInfo({ tokenAddress }: { tokenAddress: string }) {
-  const { attachToExistingToken } = useAblTokenProgram()
+  const { attachToExistingToken } = useAblTokenProgram();
   const tokenInfo = useGetToken(new PublicKey(tokenAddress));
   return (
     <div className="bg-base-200 p-6 rounded-lg">
@@ -43,16 +43,25 @@ function TokenInfo({ tokenAddress }: { tokenAddress: string }) {
           <div>Mint Authority: {tokenInfo.data?.mintAuthority?.toString()}</div>
           <div>Freeze Authority: {tokenInfo.data?.freezeAuthority?.toString()}</div>
           <div>Permanent Delegate: {tokenInfo.data?.permanentDelegate?.toString()}</div>
-          <br/>
+          <br />
           <div>
             <h3 className="text-xl font-bold mb-2">ABL Token</h3>
             <div>Mode: {tokenInfo.data?.mode}</div>
             <div>Threshold: {tokenInfo.data?.threshold?.toString()}</div>
-            {tokenInfo.data?.isTransferHookEnabled ? (tokenInfo.data?.isTransferHookSet ? (
-              <div>TxHook: Enabled and Set ✅</div>
+            {tokenInfo.data?.isTransferHookEnabled ? (
+              tokenInfo.data?.isTransferHookSet ? (
+                <div>TxHook: Enabled and Set ✅</div>
+              ) : (
+                <div>
+                  TxHook: Enabled.{" "}
+                  <Button
+                    onClick={() => attachToExistingToken.mutateAsync({ mint: new PublicKey(tokenAddress) }).then()}
+                  >
+                    Set
+                  </Button>
+                </div>
+              )
             ) : (
-              <div>TxHook: Enabled. <Button onClick={() => attachToExistingToken.mutateAsync({ mint: new PublicKey(tokenAddress) }).then()}>Set</Button></div>
-            )) : (
               <div>TxHook: Not enabled ❌</div>
             )}
           </div>
@@ -61,15 +70,15 @@ function TokenInfo({ tokenAddress }: { tokenAddress: string }) {
         <p>No token information available.</p>
       )}
     </div>
-  )
+  );
 }
 
 function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
-  const { publicKey } = useWallet()
-  const { changeMode, mintTo } = useAblTokenProgram()
-  const [mode, setMode] = React.useState<'Allow' | 'Block' | 'Mixed'>(tokenInfo.mode as 'Allow' | 'Block' | 'Mixed')
-  const [threshold, setThreshold] = React.useState<string | undefined>(tokenInfo.threshold ?? undefined)
-  const [destinationWallet, setDestinationWallet] = React.useState('')
+  const { publicKey } = useWallet();
+  const { changeMode, mintTo } = useAblTokenProgram();
+  const [mode, setMode] = React.useState<"Allow" | "Block" | "Mixed">(tokenInfo.mode as "Allow" | "Block" | "Mixed");
+  const [threshold, setThreshold] = React.useState<string | undefined>(tokenInfo.threshold ?? undefined);
+  const [destinationWallet, setDestinationWallet] = React.useState("");
 
   const handleApplyChanges = async () => {
     if (!publicKey || !tokenInfo) return;
@@ -81,11 +90,11 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
         mint: new PublicKey(tokenInfo.address),
       });
     } catch (err) {
-      console.error('Failed to apply changes:', err);
+      console.error("Failed to apply changes:", err);
     }
   };
 
-  const [mintAmount, setMintAmount] = React.useState('0')
+  const [mintAmount, setMintAmount] = React.useState("0");
 
   const handleMint = async () => {
     if (!publicKey || !tokenInfo) return;
@@ -96,9 +105,9 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
         amount: new BN(mintAmount),
         recipient: publicKey,
       });
-      console.log('Minted successfully');
+      console.log("Minted successfully");
     } catch (err) {
-      console.error('Failed to mint tokens:', err);
+      console.error("Failed to mint tokens:", err);
     }
   };
 
@@ -109,56 +118,64 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
         <div>
           {tokenInfo.isTransferHookSet && (
             <div>
-              <label className="block mb-2">Mode</label>
+              <p className="block mb-2">Mode</p>
               <div className="flex gap-4">
                 <label>
                   <input
                     type="radio"
-                    checked={mode === 'Allow'}
-                    onChange={() => {setMode('Allow'); setThreshold(tokenInfo.threshold ?? undefined);}}
+                    checked={mode === "Allow"}
+                    onChange={() => {
+                      setMode("Allow");
+                      setThreshold(tokenInfo.threshold ?? undefined);
+                    }}
                     name="mode"
-                  /> Allow
+                  />{" "}
+                  Allow
                 </label>
                 <label>
                   <input
                     type="radio"
-                    checked={mode === 'Block'}
-                    onChange={() => {setMode('Block'); setThreshold(tokenInfo.threshold ?? undefined);}}
+                    checked={mode === "Block"}
+                    onChange={() => {
+                      setMode("Block");
+                      setThreshold(tokenInfo.threshold ?? undefined);
+                    }}
                     name="mode"
-                  /> Block
+                  />{" "}
+                  Block
                 </label>
                 <label>
-                  <input
-                    type="radio"
-                    checked={mode === 'Mixed'}
-                    onChange={() => setMode('Mixed')}
-                    name="mode"
-                  /> Mixed
+                  <input type="radio" checked={mode === "Mixed"} onChange={() => setMode("Mixed")} name="mode" /> Mixed
                 </label>
               </div>
 
-              {mode === 'Mixed' && (
-              <div>
-                <label className="block mb-2">Threshold Amount</label>
-                <input
-                  type="number"
-                  className="w-full p-2 border rounded"
-                  value={threshold}
-                  onChange={e => setThreshold(e.target.value)}
-                  min="0"
-                />
-              </div>
+              {mode === "Mixed" && (
+                <div>
+                  <label htmlFor="threshold-amount" className="block mb-2">
+                    Threshold Amount
+                  </label>
+                  <input
+                    id="threshold-amount"
+                    type="number"
+                    className="w-full p-2 border rounded"
+                    value={threshold}
+                    onChange={(e) => setThreshold(e.target.value)}
+                    min="0"
+                  />
+                </div>
               )}
 
               <div className="mt-4">
-                <Button 
+                <Button
                   onClick={handleApplyChanges}
-                  disabled={mode === tokenInfo.mode && (threshold === tokenInfo.threshold || (threshold === undefined && tokenInfo.threshold === null))}
+                  disabled={
+                    mode === tokenInfo.mode &&
+                    (threshold === tokenInfo.threshold || (threshold === undefined && tokenInfo.threshold === null))
+                  }
                 >
                   Apply Changes
                 </Button>
               </div>
-              
             </div>
           )}
         </div>
@@ -167,12 +184,15 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
           <h3 className="text-xl font-bold mb-2">Mint New Tokens</h3>
           <div className="space-y-4">
             <div>
-              <label className="block mb-2">Destination Wallet</label>
+              <label htmlFor="destination-wallet" className="block mb-2">
+                Destination Wallet
+              </label>
               <input
+                id="destination-wallet"
                 type="text"
                 className="w-full p-2 border rounded"
                 value={destinationWallet}
-                onChange={e => setDestinationWallet(e.target.value)}
+                onChange={(e) => setDestinationWallet(e.target.value)}
                 placeholder="Enter destination wallet address"
               />
             </div>
@@ -181,25 +201,23 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
                 type="number"
                 className="w-full p-2 border rounded"
                 value={mintAmount}
-                onChange={e => setMintAmount(e.target.value)}
+                onChange={(e) => setMintAmount(e.target.value)}
                 min="0"
                 placeholder="Amount to mint"
               />
-              <Button onClick={handleMint}>
-                Mint Tokens
-              </Button>
+              <Button onClick={handleMint}>Mint Tokens</Button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function ManageTokenDetail() {
-  const { publicKey } = useWallet()
-  const params = useParams()
-  const tokenAddress = params?.address as string
+  const { publicKey } = useWallet();
+  const params = useParams();
+  const tokenAddress = params?.address as string;
   const tokenQuery = useGetToken(new PublicKey(tokenAddress));
 
   const tokenInfo = React.useMemo(() => {
@@ -218,7 +236,7 @@ export default function ManageTokenDetail() {
           <WalletButton />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -230,10 +248,9 @@ export default function ManageTokenDetail() {
       ) : (
         <>
           <TokenInfo tokenAddress={tokenAddress} />
-          {tokenInfo && <TokenManagement tokenInfo={tokenInfo}/>}
-          
+          {tokenInfo && <TokenManagement tokenInfo={tokenInfo} />}
         </>
       )}
     </div>
-  )
+  );
 }

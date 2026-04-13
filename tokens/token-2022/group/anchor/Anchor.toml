@@ -1,4 +1,5 @@
 [toolchain]
+solana_version = "3.1.8"
 
 [features]
 resolution = true
@@ -7,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 group = "4XCDGMD8fsdjUzmYj6d9if8twFt1f23Ym52iDmWK8fFs"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"

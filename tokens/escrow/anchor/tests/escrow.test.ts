@@ -1,23 +1,16 @@
-import { randomBytes } from 'node:crypto';
-import anchor from '@coral-xyz/anchor';
+import { randomBytes } from "node:crypto";
+import anchor from "@anchor-lang/core";
+
 const BN = anchor.BN;
-import {
-  getAssociatedTokenAddressSync,
-  TOKEN_2022_PROGRAM_ID,
-  type TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import {
-  confirmTransaction,
-  createAccountsMintsAndTokenAccounts,
-  makeKeypairs,
-} from '@solana-developers/helpers';
-import { assert } from 'chai';
-import type { Escrow } from '../target/types/escrow';
+
+import { getAssociatedTokenAddressSync, TOKEN_2022_PROGRAM_ID, type TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { confirmTransaction, createAccountsMintsAndTokenAccounts, makeKeypairs } from "@solana-developers/helpers";
+import { assert } from "chai";
+import type { Escrow } from "../target/types/escrow";
 
 // Work on both Token Program and new Token Extensions Program
-const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
-  TOKEN_2022_PROGRAM_ID;
+const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID = TOKEN_2022_PROGRAM_ID;
 
 const SECONDS = 1000;
 
@@ -30,7 +23,7 @@ const getRandomBigNumber = (size = 8) => {
   return new BN(randomBytes(size));
 };
 
-describe('escrow', async () => {
+describe("escrow", async () => {
   // Use the cluster and the keypair from Anchor.toml
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
@@ -59,30 +52,29 @@ describe('escrow', async () => {
   const tokenBWantedAmount = new BN(1_000_000);
 
   before(
-    'Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users',
+    "Creates Alice and Bob accounts, 2 token mints, and associated token accounts for both tokens for both users",
     async () => {
-      const usersMintsAndTokenAccounts =
-        await createAccountsMintsAndTokenAccounts(
+      const usersMintsAndTokenAccounts = await createAccountsMintsAndTokenAccounts(
+        [
+          // Alice's token balances
           [
-            // Alice's token balances
-            [
-              // 1_000_000_000 of token A
-              1_000_000_000,
-              // 0 of token B
-              0,
-            ],
-            // Bob's token balances
-            [
-              // 0 of token A
-              0,
-              // 1_000_000_000 of token B
-              1_000_000_000,
-            ],
+            // 1_000_000_000 of token A
+            1_000_000_000,
+            // 0 of token B
+            0,
           ],
-          1 * LAMPORTS_PER_SOL,
-          connection,
-          payer,
-        );
+          // Bob's token balances
+          [
+            // 0 of token A
+            0,
+            // 1_000_000_000 of token B
+            1_000_000_000,
+          ],
+        ],
+        1 * LAMPORTS_PER_SOL,
+        connection,
+        payer,
+      );
 
       // Alice will be the maker (creator) of the offer
       // Bob will be the taker (acceptor) of the offer
@@ -120,26 +112,17 @@ describe('escrow', async () => {
     },
   );
 
-  it('Puts the tokens Alice offers into the vault when Alice makes an offer', async () => {
+  it("Puts the tokens Alice offers into the vault when Alice makes an offer", async () => {
     // Pick a random ID for the offer we'll make
     const offerId = getRandomBigNumber();
 
     // Then determine the account addresses we'll use for the offer and the vault
     const offer = PublicKey.findProgramAddressSync(
-      [
-        Buffer.from('offer'),
-        accounts.maker.toBuffer(),
-        offerId.toArrayLike(Buffer, 'le', 8),
-      ],
+      [Buffer.from("offer"), accounts.maker.toBuffer(), offerId.toArrayLike(Buffer, "le", 8)],
       program.programId,
     )[0];
 
-    const vault = getAssociatedTokenAddressSync(
-      accounts.tokenMintA,
-      offer,
-      true,
-      TOKEN_PROGRAM,
-    );
+    const vault = getAssociatedTokenAddressSync(accounts.tokenMintA, offer, true, TOKEN_PROGRAM);
 
     accounts.offer = offer;
     accounts.vault = vault;
@@ -177,20 +160,14 @@ describe('escrow', async () => {
 
     // Check the offered tokens are now in Bob's account
     // (note: there is no before balance as Bob didn't have any offered tokens before the transaction)
-    const bobTokenAccountBalanceAfterResponse =
-      await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
-    const bobTokenAccountBalanceAfter = new BN(
-      bobTokenAccountBalanceAfterResponse.value.amount,
-    );
+    const bobTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.takerTokenAccountA);
+    const bobTokenAccountBalanceAfter = new BN(bobTokenAccountBalanceAfterResponse.value.amount);
     assert(bobTokenAccountBalanceAfter.eq(tokenAOfferedAmount));
 
     // Check the wanted tokens are now in Alice's account
     // (note: there is no before balance as Alice didn't have any wanted tokens before the transaction)
-    const aliceTokenAccountBalanceAfterResponse =
-      await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
-    const aliceTokenAccountBalanceAfter = new BN(
-      aliceTokenAccountBalanceAfterResponse.value.amount,
-    );
+    const aliceTokenAccountBalanceAfterResponse = await connection.getTokenAccountBalance(accounts.makerTokenAccountB);
+    const aliceTokenAccountBalanceAfter = new BN(aliceTokenAccountBalanceAfterResponse.value.amount);
     assert(aliceTokenAccountBalanceAfter.eq(tokenBWantedAmount));
   }).slow(ANCHOR_SLOW_TEST_THRESHOLD);
 });

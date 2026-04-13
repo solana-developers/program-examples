@@ -1,28 +1,24 @@
 import { describe, it } from "node:test";
-import * as anchor from "@coral-xyz/anchor";
+import * as anchor from "@anchor-lang/core";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
   createMint,
   getAssociatedTokenAddressSync,
   getOrCreateAssociatedTokenAccount,
   mintTo,
+  TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 import { BankrunProvider } from "anchor-bankrun";
 import BN from "bn.js";
 import { startAnchor } from "solana-bankrun";
+import IDL from "../target/idl/fundraiser.json";
 import type { Fundraiser } from "../target/types/fundraiser";
 
-import IDL from "../target/idl/fundraiser.json";
 const PROGRAM_ID = new PublicKey(IDL.address);
 
 describe("fundraiser bankrun", async () => {
-  const context = await startAnchor(
-    "",
-    [{ name: "fundraiser", programId: PROGRAM_ID }],
-    []
-  );
+  const context = await startAnchor("", [{ name: "fundraiser", programId: PROGRAM_ID }], []);
   const provider = new BankrunProvider(context);
   anchor.setProvider(provider);
   const wallet = provider.wallet as anchor.Wallet;
@@ -38,16 +34,12 @@ describe("fundraiser bankrun", async () => {
 
   const fundraiser = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("fundraiser"), maker.publicKey.toBuffer()],
-    program.programId
+    program.programId,
   )[0];
 
   const contributor = anchor.web3.PublicKey.findProgramAddressSync(
-    [
-      Buffer.from("contributor"),
-      fundraiser.toBuffer(),
-      provider.publicKey.toBuffer(),
-    ],
-    program.programId
+    [Buffer.from("contributor"), fundraiser.toBuffer(), provider.publicKey.toBuffer()],
+    program.programId,
   )[0];
 
   const confirm = async (signature: string): Promise<string> => {
@@ -65,32 +57,15 @@ describe("fundraiser bankrun", async () => {
       .then(confirm);
     console.log("\nAirdropped 1 SOL to maker", airdrop);
 
-    mint = await createMint(
-      provider.connection,
-      wallet.payer,
-      provider.publicKey,
-      provider.publicKey,
-      6
-    );
+    mint = await createMint(provider.connection, wallet.payer, provider.publicKey, provider.publicKey, 6);
     console.log("Mint created", mint.toBase58());
 
     contributorATA = (
-      await getOrCreateAssociatedTokenAccount(
-        provider.connection,
-        wallet.payer,
-        mint,
-        wallet.publicKey
-      )
+      await getOrCreateAssociatedTokenAccount(provider.connection, wallet.payer, mint, wallet.publicKey)
     ).address;
 
-    makerATA = (
-      await getOrCreateAssociatedTokenAccount(
-        provider.connection,
-        wallet.payer,
-        mint,
-        maker.publicKey
-      )
-    ).address;
+    makerATA = (await getOrCreateAssociatedTokenAccount(provider.connection, wallet.payer, mint, maker.publicKey))
+      .address;
 
     const mintTx = await mintTo(
       provider.connection,
@@ -98,7 +73,7 @@ describe("fundraiser bankrun", async () => {
       mint,
       contributorATA,
       provider.publicKey,
-      1_000_000_0
+      1_000_000_0,
     );
     console.log("Minted 10 tokens to contributor", mintTx);
   });
@@ -143,14 +118,9 @@ describe("fundraiser bankrun", async () => {
 
     console.log("\nContributed to fundraiser", tx);
     console.log("Your transaction signature", tx);
-    console.log(
-      "Vault balance",
-      (await provider.connection.getTokenAccountBalance(vault)).value.amount
-    );
+    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
 
-    const contributorAccount = await program.account.contributor.fetch(
-      contributor
-    );
+    const contributorAccount = await program.account.contributor.fetch(contributor);
     console.log("Contributor balance", contributorAccount.amount.toString());
   });
   it("Contribute to Fundraiser", async () => {
@@ -171,14 +141,9 @@ describe("fundraiser bankrun", async () => {
 
     console.log("\nContributed to fundraiser", tx);
     console.log("Your transaction signature", tx);
-    console.log(
-      "Vault balance",
-      (await provider.connection.getTokenAccountBalance(vault)).value.amount
-    );
+    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
 
-    const contributorAccount = await program.account.contributor.fetch(
-      contributor
-    );
+    const contributorAccount = await program.account.contributor.fetch(contributor);
     console.log("Contributor balance", contributorAccount.amount.toString());
   });
 
@@ -201,10 +166,7 @@ describe("fundraiser bankrun", async () => {
 
       console.log("\nContributed to fundraiser", tx);
       console.log("Your transaction signature", tx);
-      console.log(
-        "Vault balance",
-        (await provider.connection.getTokenAccountBalance(vault)).value.amount
-      );
+      console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
     } catch (error) {
       console.log("\nError contributing to fundraiser");
       console.log(error.msg);
@@ -231,10 +193,7 @@ describe("fundraiser bankrun", async () => {
 
       console.log("\nChecked contributions");
       console.log("Your transaction signature", tx);
-      console.log(
-        "Vault balance",
-        (await provider.connection.getTokenAccountBalance(vault)).value.amount
-      );
+      console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
     } catch (error) {
       console.log("\nError checking contributions");
       console.log(error.msg);
@@ -244,9 +203,7 @@ describe("fundraiser bankrun", async () => {
   it("Refund Contributions", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const contributorAccount = await program.account.contributor.fetch(
-      contributor
-    );
+    const contributorAccount = await program.account.contributor.fetch(contributor);
     console.log("\nContributor balance", contributorAccount.amount.toString());
 
     const tx = await program.methods
@@ -267,9 +224,6 @@ describe("fundraiser bankrun", async () => {
 
     console.log("\nRefunded contributions", tx);
     console.log("Your transaction signature", tx);
-    console.log(
-      "Vault balance",
-      (await provider.connection.getTokenAccountBalance(vault)).value.amount
-    );
+    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
   });
 });

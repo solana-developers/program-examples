@@ -1,45 +1,35 @@
-import { Buffer } from 'node:buffer';
-import { describe, test } from 'node:test';
-import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
-import { Keypair, PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
-import * as borsh from 'borsh';
-import { assert } from 'chai';
-import { start } from 'solana-bankrun';
+import { Buffer } from "node:buffer";
+import { describe, test } from "node:test";
+import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import {
+  Keypair,
+  PublicKey,
+  SYSVAR_RENT_PUBKEY,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import * as borsh from "borsh";
+import { assert } from "chai";
+import { start } from "solana-bankrun";
 
-class Assignable {
-  constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
-  }
+const CreateTokenArgsSchema = { struct: { token_decimals: "u8" } };
+
+function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+  return Buffer.from(borsh.serialize(schema, data));
 }
 
-class CreateTokenArgs extends Assignable {
-  toBuffer() {
-    return Buffer.from(borsh.serialize(CreateTokenArgsSchema, this));
-  }
-}
-const CreateTokenArgsSchema = new Map([
-  [
-    CreateTokenArgs,
-    {
-      kind: 'struct',
-      fields: [['token_decimals', 'u8']],
-    },
-  ],
-]);
-
-describe('Create Token', async () => {
+describe("Create Token", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start([{ name: 'token_2022_multiple_extensions_program', programId: PROGRAM_ID }], []);
+  const context = await start([{ name: "token_2022_multiple_extensions_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
 
-  test('Create a Token-22 SPL-Token !', async () => {
+  test("Create a Token-22 SPL-Token !", async () => {
     const blockhash = context.lastBlockhash;
     const mintKeypair: Keypair = Keypair.generate();
 
-    const instructionData = new CreateTokenArgs({
+    const instructionData = borshSerialize(CreateTokenArgsSchema, {
       token_decimals: 9,
     });
 
@@ -54,7 +44,7 @@ describe('Create Token', async () => {
         { pubkey: TOKEN_2022_PROGRAM_ID, isSigner: false, isWritable: false }, // Token program
       ],
       programId: PROGRAM_ID,
-      data: instructionData.toBuffer(),
+      data: instructionData,
     });
 
     const tx = new Transaction();
@@ -64,6 +54,6 @@ describe('Create Token', async () => {
     const transaction = await client.processTransaction(tx);
 
     assert(transaction.logMessages[0].startsWith(`Program ${PROGRAM_ID}`));
-    console.log('Token Mint Address: ', mintKeypair.publicKey.toBase58());
+    console.log("Token Mint Address: ", mintKeypair.publicKey.toBase58());
   });
 });

@@ -5,20 +5,32 @@ import {
   createCreateTreeInstruction,
   createMintToCollectionV1Instruction,
   type MetadataArgs,
-} from '@metaplex-foundation/mpl-bubblegum';
+} from "@metaplex-foundation/mpl-bubblegum";
 import {
   type CreateMetadataAccountArgsV3,
   createCreateMasterEditionV3Instruction,
   createCreateMetadataAccountV3Instruction,
   createSetCollectionSizeInstruction,
   PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
-} from '@metaplex-foundation/mpl-token-metadata';
-import { createAllocTreeIx, SPL_ACCOUNT_COMPRESSION_PROGRAM_ID, SPL_NOOP_PROGRAM_ID, type ValidDepthSizePair } from '@solana/spl-account-compression';
-import { createAccount, createMint, mintTo, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { type Connection, type Keypair, PublicKey, sendAndConfirmTransaction, Transaction, type TransactionInstruction } from '@solana/web3.js';
+} from "@metaplex-foundation/mpl-token-metadata";
+import {
+  createAllocTreeIx,
+  SPL_ACCOUNT_COMPRESSION_PROGRAM_ID,
+  SPL_NOOP_PROGRAM_ID,
+  type ValidDepthSizePair,
+} from "@solana/spl-account-compression";
+import { createAccount, createMint, mintTo, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  type Connection,
+  type Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  Transaction,
+  type TransactionInstruction,
+} from "@solana/web3.js";
 
 // import local helper functions
-import { explorerURL, extractSignatureFromFailedTransaction } from './helpers';
+import { explorerURL, extractSignatureFromFailedTransaction } from "./helpers";
 
 /*
   Helper function to create a merkle tree on chain, including allocating
@@ -31,16 +43,25 @@ export async function createTree(
   maxDepthSizePair: ValidDepthSizePair,
   canopyDepth = 0,
 ) {
-  console.log('Creating a new Merkle tree...');
-  console.log('treeAddress:', treeKeypair.publicKey.toBase58());
+  console.log("Creating a new Merkle tree...");
+  console.log("treeAddress:", treeKeypair.publicKey.toBase58());
 
   // derive the tree's authority (PDA), owned by Bubblegum
-  const [treeAuthority, _bump] = PublicKey.findProgramAddressSync([treeKeypair.publicKey.toBuffer()], BUBBLEGUM_PROGRAM_ID);
-  console.log('treeAuthority:', treeAuthority.toBase58());
+  const [treeAuthority, _bump] = PublicKey.findProgramAddressSync(
+    [treeKeypair.publicKey.toBuffer()],
+    BUBBLEGUM_PROGRAM_ID,
+  );
+  console.log("treeAuthority:", treeAuthority.toBase58());
 
   // allocate the tree's account on chain with the `space`
   // NOTE: this will compute the space needed to store the tree on chain (and the lamports required to store it)
-  const allocTreeIx = await createAllocTreeIx(connection, treeKeypair.publicKey, payer.publicKey, maxDepthSizePair, canopyDepth);
+  const allocTreeIx = await createAllocTreeIx(
+    connection,
+    treeKeypair.publicKey,
+    payer.publicKey,
+    maxDepthSizePair,
+    canopyDepth,
+  );
 
   // create the instruction to actually create the tree
   const createTreeIx = createCreateTreeInstruction(
@@ -65,7 +86,7 @@ export async function createTree(
     // create and send the transaction to initialize the tree
     const tx = new Transaction().add(allocTreeIx).add(createTreeIx);
     tx.feePayer = payer.publicKey;
-    console.log('tx');
+    console.log("tx");
 
     // send the transaction
     const txSignature = await sendAndConfirmTransaction(
@@ -74,18 +95,19 @@ export async function createTree(
       // ensuring the `treeKeypair` PDA and the `payer` are BOTH signers
       [treeKeypair, payer],
       {
-        commitment: 'confirmed',
+        commitment: "confirmed",
         skipPreflight: true,
       },
     );
 
-    console.log('\nMerkle tree created successfully!');
+    console.log("\nMerkle tree created successfully!");
     console.log(explorerURL({ txSignature }));
 
     // return useful info
     return { treeAuthority, treeAddress: treeKeypair.publicKey };
+    // biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
   } catch (err: any) {
-    console.error('\nFailed to create merkle tree:', err);
+    console.error("\nFailed to create merkle tree:", err);
 
     // log a block explorer link for the failed transaction
     await extractSignatureFromFailedTransaction(connection, err);
@@ -98,7 +120,11 @@ export async function createTree(
  * Create an NFT collection on-chain, using the regular Metaplex standards
  * with the `payer` as the authority
  */
-export async function createCollection(connection: Connection, payer: Keypair, metadataV3: CreateMetadataAccountArgsV3) {
+export async function createCollection(
+  connection: Connection,
+  payer: Keypair,
+  metadataV3: CreateMetadataAccountArgsV3,
+) {
   // create and initialize the SPL token mint
   console.log("Creating the collection's mint...");
   const mint = await createMint(
@@ -111,10 +137,10 @@ export async function createCollection(connection: Connection, payer: Keypair, m
     // decimals - use `0` for NFTs since they are non-fungible
     0,
   );
-  console.log('Mint address:', mint.toBase58());
+  console.log("Mint address:", mint.toBase58());
 
   // create the token account
-  console.log('Creating a token account...');
+  console.log("Creating a token account...");
   const tokenAccount = await createAccount(
     connection,
     payer,
@@ -122,10 +148,10 @@ export async function createCollection(connection: Connection, payer: Keypair, m
     payer.publicKey,
     // undefined, undefined,
   );
-  console.log('Token account:', tokenAccount.toBase58());
+  console.log("Token account:", tokenAccount.toBase58());
 
   // mint 1 token ()
-  console.log('Minting 1 token for the collection...');
+  console.log("Minting 1 token for the collection...");
   const _mintSig = await mintTo(
     connection,
     payer,
@@ -143,10 +169,10 @@ export async function createCollection(connection: Connection, payer: Keypair, m
 
   // derive the PDA for the metadata account
   const [metadataAccount, _bump] = PublicKey.findProgramAddressSync(
-    [Buffer.from('metadata', 'utf8'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+    [Buffer.from("metadata", "utf8"), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
     TOKEN_METADATA_PROGRAM_ID,
   );
-  console.log('Metadata account:', metadataAccount.toBase58());
+  console.log("Metadata account:", metadataAccount.toBase58());
 
   // create an instruction to create the metadata account
   const createMetadataIx = createCreateMetadataAccountV3Instruction(
@@ -164,10 +190,15 @@ export async function createCollection(connection: Connection, payer: Keypair, m
 
   // derive the PDA for the metadata account
   const [masterEditionAccount, _bump2] = PublicKey.findProgramAddressSync(
-    [Buffer.from('metadata', 'utf8'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition', 'utf8')],
+    [
+      Buffer.from("metadata", "utf8"),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+      Buffer.from("edition", "utf8"),
+    ],
     TOKEN_METADATA_PROGRAM_ID,
   );
-  console.log('Master edition account:', masterEditionAccount.toBase58());
+  console.log("Master edition account:", masterEditionAccount.toBase58());
 
   // create an instruction to create the metadata account
   const createMasterEditionIx = createCreateMasterEditionV3Instruction(
@@ -205,14 +236,14 @@ export async function createCollection(connection: Connection, payer: Keypair, m
 
     // send the transaction to the cluster
     const txSignature = await sendAndConfirmTransaction(connection, tx, [payer], {
-      commitment: 'confirmed',
+      commitment: "confirmed",
       skipPreflight: true,
     });
 
-    console.log('\nCollection successfully created!');
+    console.log("\nCollection successfully created!");
     console.log(explorerURL({ txSignature }));
   } catch (err) {
-    console.error('\nFailed to create collection:', err);
+    console.error("\nFailed to create collection:", err);
 
     // log a block explorer link for the failed transaction
     await extractSignatureFromFailedTransaction(connection, err);
@@ -243,7 +274,7 @@ export async function mintCompressedNFT(
   // derive a PDA (owned by Bubblegum) to act as the signer of the compressed minting
   const [bubblegumSigner, _bump2] = PublicKey.findProgramAddressSync(
     // `collection_cpi` is a custom prefix required by the Bubblegum program
-    [Buffer.from('collection_cpi', 'utf8')],
+    [Buffer.from("collection_cpi", "utf8")],
     BUBBLEGUM_PROGRAM_ID,
   );
 
@@ -270,8 +301,8 @@ export async function mintCompressedNFT(
    */
   const computedDataHash = new PublicKey(computeDataHash(metadataArgs)).toBase58();
   const computedCreatorHash = new PublicKey(computeCreatorHash(metadataArgs.creators)).toBase58();
-  console.log('computedDataHash:', computedDataHash);
-  console.log('computedCreatorHash:', computedCreatorHash);
+  console.log("computedDataHash:", computedDataHash);
+  console.log("computedCreatorHash:", computedCreatorHash);
 
   /*
       Add a single mint to collection instruction
@@ -327,16 +358,16 @@ export async function mintCompressedNFT(
 
     // send the transaction to the cluster
     const txSignature = await sendAndConfirmTransaction(connection, tx, [payer], {
-      commitment: 'confirmed',
+      commitment: "confirmed",
       skipPreflight: true,
     });
 
-    console.log('\nSuccessfully minted the compressed NFT!');
+    console.log("\nSuccessfully minted the compressed NFT!");
     console.log(explorerURL({ txSignature }));
 
     return txSignature;
   } catch (err) {
-    console.error('\nFailed to mint compressed NFT:', err);
+    console.error("\nFailed to mint compressed NFT:", err);
 
     // log a block explorer link for the failed transaction
     await extractSignatureFromFailedTransaction(connection, err);

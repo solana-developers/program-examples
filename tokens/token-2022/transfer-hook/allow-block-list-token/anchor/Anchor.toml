@@ -1,4 +1,5 @@
 [toolchain]
+solana_version = "3.1.8"
 package_manager = "yarn"
 
 [features]
@@ -8,8 +9,7 @@ skip-lint = false
 [programs.localnet]
 abl-token = "EYBRvArz4kb5YLtzjD4TW6DbWhS8qjcMYqBU4wHLW3qj"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "localnet"
