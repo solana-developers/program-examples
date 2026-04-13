@@ -9,9 +9,6 @@ This repo contains Solana onchain programs (referred to as 'Smart Contracts' in 
 > [!NOTE]
 > If you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, sending tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making account or transferring SOL) or the token program (for creating tokens and NFTs). See the [Solana Developer site](https://solana.com/developers) to learn more.
 
-> ⚠️ This repository uses **pnpm** as the default package manager.  
-> Ensure pnpm is installed before running any examples.
-
 Each folder includes examples for one or more of the following:
 
 - `anchor` - Written using [Anchor](https://www.anchor-lang.com/), the most popular framework for Solana development, which uses Rust.
