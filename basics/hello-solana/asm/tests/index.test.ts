@@ -1,10 +1,6 @@
-import {
-  PublicKey,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { assert } from "chai";
-import { ProgramTestContext, start } from "solana-bankrun";
+import { type ProgramTestContext, start } from "solana-bankrun";
 
 describe("hello-solana", () => {
   const PROGRAM_ID = PublicKey.unique();
@@ -12,10 +8,7 @@ describe("hello-solana", () => {
   // load program in solana-bankrun
   let context: ProgramTestContext;
   before(async () => {
-    context = await start(
-      [{ name: "hello-solana-asm-program", programId: PROGRAM_ID }],
-      [],
-    );
+    context = await start([{ name: "hello-solana-asm-program", programId: PROGRAM_ID }], []);
   });
 
   it("Say hello!", async () => {
