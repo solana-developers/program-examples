@@ -663,6 +663,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eab1c04a571841102f5345a8fc0f6bb3d31c315dec879b5c6e42e40ce7ffa34e"
 
 [[package]]
+name = "asm"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "solana-address 2.4.0",
+ "solana-instruction 3.3.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction 3.1.0",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
