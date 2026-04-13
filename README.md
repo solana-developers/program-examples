@@ -1,8 +1,8 @@
 # Program Examples
 
-## Onchain program examples for ⚓ Anchor, 🤥 Pinocchio, 💫 Quasar, and 🦀 Native Rust.
+## Onchain program examples for ⚓ Anchor, 💫 Quasar, 🤥 Pinocchio, and 🦀 Native Rust.
 
-[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Quasar](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml)
+[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Quasar](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
@@ -18,11 +18,11 @@ Each folder includes examples for one or more of the following:
   Use `anchor build` and `anchor deploy` to build and deploy the program.
   Tests should be executed using `pnpm test` as defined in the `Anchor.toml` scripts section.
 
-- `pinocchio` - Written using [Pinocchio](https://github.com/febo/pinocchio), a zero-copy, zero-allocation library for Solana programs.
+- `quasar` - Written using [Quasar](https://github.com/blueshift-gg/quasar), a zero-copy, zero-allocation `no_std` framework for Solana programs with Anchor-compatible ergonomics.
   Build and test commands are the same as native examples.
   Run `pnpm test` to execute tests.
 
-- `quasar` - Written using [Quasar](https://github.com/blueshift-gg/quasar), a zero-copy, zero-allocation `no_std` framework for Solana programs with Anchor-compatible ergonomics.
+- `pinocchio` - Written using [Pinocchio](https://github.com/febo/pinocchio), a zero-copy, zero-allocation library for Solana programs.
   Build and test commands are the same as native examples.
   Run `pnpm test` to execute tests.
 
@@ -39,43 +39,43 @@ Each folder includes examples for one or more of the following:
 
 [Hello World on Solana! A minimal program that logs a greeting.](./basics/hello-solana/README.md)
 
-[anchor](./basics/hello-solana/anchor) [pinocchio](./basics/hello-solana/pinocchio) [quasar](./basics/hello-solana/quasar) [native](./basics/hello-solana/native)
+[anchor](./basics/hello-solana/anchor) [quasar](./basics/hello-solana/quasar) [pinocchio](./basics/hello-solana/pinocchio) [native](./basics/hello-solana/native)
 
 ### Account-data
 
 Store and retrieve data using Solana accounts.
 
-[anchor](./basics/account-data/anchor) [pinocchio](./basics/account-data/pinocchio) [quasar](./basics/account-data/quasar) [native](./basics/account-data/native)
+[anchor](./basics/account-data/anchor) [quasar](./basics/account-data/quasar) [pinocchio](./basics/account-data/pinocchio) [native](./basics/account-data/native)
 
 ### Storing global state - Counter
 
 [Use a PDA to store global state, making a counter that increments when called.](./basics/counter/README.md)
 
-[anchor](./basics/counter/anchor) [pinocchio](./basics/counter/pinocchio) [quasar](./basics/counter/quasar) [native](./basics/counter/native)
+[anchor](./basics/counter/anchor) [quasar](./basics/counter/quasar) [pinocchio](./basics/counter/pinocchio) [native](./basics/counter/native)
 
 ### Saving per-user state - Favorites
 
 Save and update per-user state on the blockchain, ensuring users can only update their own information.
 
-[anchor](./basics/favorites/anchor) [pinocchio](./basics/favorites/pinocchio) [quasar](./basics/favorites/quasar) [native](./basics/favorites/native)
+[anchor](./basics/favorites/anchor) [quasar](./basics/favorites/quasar) [pinocchio](./basics/favorites/pinocchio) [native](./basics/favorites/native)
 
 ### Checking Instruction Accounts
 
 [Check that the accounts provided in incoming instructions meet particular criteria.](./basics/checking-accounts/README.md)
 
-[anchor](./basics/checking-accounts/anchor) [pinocchio](./basics/checking-accounts/pinocchio) [quasar](./basics/checking-accounts/quasar) [native](./basics/checking-accounts/native)
+[anchor](./basics/checking-accounts/anchor) [quasar](./basics/checking-accounts/quasar) [pinocchio](./basics/checking-accounts/pinocchio) [native](./basics/checking-accounts/native)
 
 ### Closing Accounts
 
 Close an account and get the Lamports back.
 
-[anchor](./basics/close-account/anchor) [pinocchio](./basics/close-account/pinocchio) [quasar](./basics/close-account/quasar) [native](./basics/close-account/native)
+[anchor](./basics/close-account/anchor) [quasar](./basics/close-account/quasar) [pinocchio](./basics/close-account/pinocchio) [native](./basics/close-account/native)
 
 ### Creating Accounts
 
 [Make new accounts on the blockchain.](./basics/create-account/README.md)
 
-[anchor](./basics/create-account/anchor) [pinocchio](./basics/create-account/pinocchio) [quasar](./basics/create-account/quasar) [native](./basics/create-account/native)
+[anchor](./basics/create-account/anchor) [quasar](./basics/create-account/quasar) [pinocchio](./basics/create-account/pinocchio) [native](./basics/create-account/native)
 
 ### Cross program invocations
 
@@ -87,31 +87,31 @@ Close an account and get the Lamports back.
 
 [Use a PDA to pay the rent for the creation of a new account.](./basics/pda-rent-payer/README.md)
 
-[anchor](./basics/pda-rent-payer/anchor) [pinocchio](./basics/pda-rent-payer/pinocchio) [quasar](./basics/pda-rent-payer/quasar) [native](./basics/pda-rent-payer/native)
+[anchor](./basics/pda-rent-payer/anchor) [quasar](./basics/pda-rent-payer/quasar) [pinocchio](./basics/pda-rent-payer/pinocchio) [native](./basics/pda-rent-payer/native)
 
 ### Processing instructions
 
 [Add parameters to an instruction handler and use them.](./basics/processing-instructions/README.md)
 
-[anchor](./basics/processing-instructions/anchor) [pinocchio](./basics/processing-instructions/pinocchio) [quasar](./basics/processing-instructions/quasar) [native](./basics/processing-instructions/native)
+[anchor](./basics/processing-instructions/anchor) [quasar](./basics/processing-instructions/quasar) [pinocchio](./basics/processing-instructions/pinocchio) [native](./basics/processing-instructions/native)
 
 ### Storing date in program derived addresses
 
 Store and retrieve state in Solana.
 
-[anchor](./basics/program-derived-addresses/anchor) [pinocchio](./basics/program-derived-addresses/pinocchio) [quasar](./basics/program-derived-addresses/quasar) [native](./basics/program-derived-addresses/native)
+[anchor](./basics/program-derived-addresses/anchor) [quasar](./basics/program-derived-addresses/quasar) [pinocchio](./basics/program-derived-addresses/pinocchio) [native](./basics/program-derived-addresses/native)
 
 ### Handling accounts that expand in size
 
 How to store state that changes size in Solana.
 
-[anchor](./basics/realloc/anchor) [pinocchio](./basics/realloc/pinocchio) [quasar](./basics/realloc/quasar) [native](./basics/realloc/native)
+[anchor](./basics/realloc/anchor) [quasar](./basics/realloc/quasar) [pinocchio](./basics/realloc/pinocchio) [native](./basics/realloc/native)
 
 ### Calculating account size to determine rent
 
 [Determine the necessary minimum rent by calculating an account's size.](./basics/rent/README.md)
 
-[anchor](./basics/rent/anchor) [pinocchio](./basics/rent/pinocchio) [quasar](./basics/rent/quasar) [native](./basics/rent/native)
+[anchor](./basics/rent/anchor) [quasar](./basics/rent/quasar) [pinocchio](./basics/rent/pinocchio) [native](./basics/rent/native)
 
 ### Laying out larger programs
 
@@ -123,7 +123,7 @@ How to store state that changes size in Solana.
 
 [Send SOL between two accounts.](./basics/transfer-sol/README.md)
 
-[anchor](./basics/transfer-sol/anchor) [pinocchio](./basics/transfer-sol/pinocchio) [quasar](./basics/transfer-sol/quasar) [native](./basics/transfer-sol/native)
+[anchor](./basics/transfer-sol/anchor) [quasar](./basics/transfer-sol/quasar) [pinocchio](./basics/transfer-sol/pinocchio) [native](./basics/transfer-sol/native)
 ## Tokens
 ### Creating tokens
 
