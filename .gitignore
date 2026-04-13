@@ -20,3 +20,4 @@ node_modules/
 **/*/yarn.lock
 
 /target
+deploy
