@@ -10,7 +10,7 @@ use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 use crate::{get_extra_account_metas, get_meta_list_size, META_LIST_ACCOUNT_SEED};
 
 #[derive(Accounts)]
-pub struct AttachToMint<'info> {
+pub struct AttachToMintAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -43,9 +43,9 @@ impl AttachToMint<'_> {
             authority: self.payer.to_account_info(),
         };
 
-        let ctx = CpiContext::new(self.token_program.key(), tx_hook_accs);
+        let context = CpiContext::new(self.token_program.key(), tx_hook_accs);
 
-        transfer_hook_update(ctx, Some(crate::ID_CONST))?;
+        transfer_hook_update(context, Some(crate::ID_CONST))?;
 
         // initialize the extra metas account
         let extra_metas_account = &self.extra_metas_account;

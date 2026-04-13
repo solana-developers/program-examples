@@ -10,7 +10,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct CreateToken<'info> {
+pub struct CreateTokenAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -38,8 +38,8 @@ pub struct CreateToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn create_token(
-    ctx: Context<CreateToken>,
+pub fn handle_create_token(
+    context: Context<CreateTokenAccountConstraints>,
     token_name: String,
     token_symbol: String,
     token_uri: String,
@@ -50,15 +50,15 @@ pub fn create_token(
     // Invoking the create_metadata_account_v3 instruction on the token metadata program
     create_metadata_accounts_v3(
         CpiContext::new(
-            ctx.accounts.token_metadata_program.key(),
+            context.accounts.token_metadata_program.key(),
             CreateMetadataAccountsV3 {
-                metadata: ctx.accounts.metadata_account.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
-                mint_authority: ctx.accounts.payer.to_account_info(),
-                update_authority: ctx.accounts.payer.to_account_info(),
-                payer: ctx.accounts.payer.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
+                metadata: context.accounts.metadata_account.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
+                mint_authority: context.accounts.payer.to_account_info(),
+                update_authority: context.accounts.payer.to_account_info(),
+                payer: context.accounts.payer.to_account_info(),
+                system_program: context.accounts.system_program.to_account_info(),
+                rent: context.accounts.rent.to_account_info(),
             },
         ),
         DataV2 {

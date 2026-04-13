@@ -39,7 +39,7 @@ pub mod transfer_hook {
 
     #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>,
+        mut context: Context<InitializeExtraAccountMetaListAccountConstraints>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
@@ -47,7 +47,7 @@ pub mod transfer_hook {
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
-            &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
+            &mut context.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
         ).map_err(|_| ProgramError::InvalidAccountData)?;
 
@@ -55,9 +55,9 @@ pub mod transfer_hook {
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
+    pub fn transfer_hook(context: Context<TransferHookAccountConstraints>, amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
-        check_is_transferring(&ctx)?;
+        check_is_transferring(&context)?;
 
         // Check if the amount is too big
         if amount > 50 {
@@ -66,7 +66,7 @@ pub mod transfer_hook {
         }
 
         // Increment the transfer count safely
-        let count = ctx
+        let count = context
             .accounts
             .counter_account
             .counter
@@ -79,8 +79,8 @@ pub mod transfer_hook {
     }
 }
 
-fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
-    let source_token_info = ctx.accounts.source_token.to_account_info();
+fn check_is_transferring(context: &Context<TransferHookAccountConstraints>) -> Result<()> {
+    let source_token_info = context.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
     // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
     // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
@@ -97,7 +97,7 @@ fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
 }
 
 #[derive(Accounts)]
-pub struct InitializeExtraAccountMetaList<'info> {
+pub struct InitializeExtraAccountMetaListAccountConstraints<'info> {
     #[account(mut)]
     payer: Signer<'info>,
 
@@ -122,8 +122,7 @@ pub struct InitializeExtraAccountMetaList<'info> {
 }
 
 // Define extra account metas to store on extra_account_meta_list account
-impl<'info> InitializeExtraAccountMetaList<'info> {
-    pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+pub fn handle_extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         Ok(vec![ExtraAccountMeta::new_with_seeds(
@@ -142,18 +141,20 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
         ).map_err(|_| ProgramError::InvalidArgument)?])
     }
 
+
+
     /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
-    pub fn extra_account_metas_count() -> usize {
+pub fn handle_extra_account_metas_count() -> usize {
         1 // one extra account: the counter PDA
     }
-}
+
 
 // Order of accounts matters for this struct.
 // The first 4 accounts are the accounts required for token transfer (source, mint, destination, owner)
 // Remaining accounts are the extra accounts required from the ExtraAccountMetaList account
 // These accounts are provided via CPI to this program from the token2022 program
 #[derive(Accounts)]
-pub struct TransferHook<'info> {
+pub struct TransferHookAccountConstraints<'info> {
     #[account(token::mint = mint, token::authority = owner)]
     pub source_token: InterfaceAccount<'info, TokenAccount>,
     pub mint: InterfaceAccount<'info, Mint>,

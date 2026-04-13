@@ -7,7 +7,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct MintToken<'info> {
+pub struct MintTokenAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -34,29 +34,29 @@ pub struct MintToken<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+pub fn handle_mint_token(context: Context<MintTokenAccountConstraints>, amount: u64) -> Result<()> {
     msg!("Minting token to associated token account...");
-    msg!("Mint: {}", &ctx.accounts.mint_account.key());
+    msg!("Mint: {}", &context.accounts.mint_account.key());
     msg!(
         "Token Address: {}",
-        &ctx.accounts.associated_token_account.key()
+        &context.accounts.associated_token_account.key()
     );
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[ctx.bumps.mint_account]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[context.bumps.mint_account]]];
 
     // Invoke the mint_to instruction on the token program
     mint_to(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             MintTo {
-                mint: ctx.accounts.mint_account.to_account_info(),
-                to: ctx.accounts.associated_token_account.to_account_info(),
-                authority: ctx.accounts.mint_account.to_account_info(), // PDA mint authority, required as signer
+                mint: context.accounts.mint_account.to_account_info(),
+                to: context.accounts.associated_token_account.to_account_info(),
+                authority: context.accounts.mint_account.to_account_info(), // PDA mint authority, required as signer
             },
         )
         .with_signer(signer_seeds), // using PDA to sign
-        amount * 10u64.pow(ctx.accounts.mint_account.decimals as u32), // Mint tokens, adjust for decimals
+        amount * 10u64.pow(context.accounts.mint_account.decimals as u32), // Mint tokens, adjust for decimals
     )?;
 
     msg!("Token minted successfully.");

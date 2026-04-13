@@ -26,7 +26,7 @@ pub mod interest_bearing {
 
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, rate: i16) -> Result<()> {
+    pub fn initialize(context: Context<InitializeAccountConstraints>, rate: i16) -> Result<()> {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::InterestBearingConfig,
@@ -38,74 +38,74 @@ pub mod interest_bearing {
         // Invoke System Program to create new account with space for mint and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.mint_account.to_account_info(),
+                    from: context.accounts.payer.to_account_info(),
+                    to: context.accounts.mint_account.to_account_info(),
                 },
             ),
             lamports,                          // Lamports
             mint_size as u64,                  // Space
-            &ctx.accounts.token_program.key(), // Owner Program
+            &context.accounts.token_program.key(), // Owner Program
         )?;
 
         // Initialize the InterestBearingConfig extension
         // This instruction must come before the instruction to initialize the mint data
         interest_bearing_mint_initialize(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 InterestBearingMintInitialize {
-                    token_program_id: ctx.accounts.token_program.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
+                    token_program_id: context.accounts.token_program.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
                 },
             ),
-            Some(ctx.accounts.payer.key()),
+            Some(context.accounts.payer.key()),
             rate,
         )?;
 
         // Initialize the standard mint account data
         initialize_mint2(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 InitializeMint2 {
-                    mint: ctx.accounts.mint_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
                 },
             ),
             2,                               // decimals
-            &ctx.accounts.payer.key(),       // mint authority
-            Some(&ctx.accounts.payer.key()), // freeze authority
+            &context.accounts.payer.key(),       // mint authority
+            Some(&context.accounts.payer.key()), // freeze authority
         )?;
 
         check_mint_data(
-            &ctx.accounts.mint_account.to_account_info(),
-            &ctx.accounts.payer.key(),
+            &context.accounts.mint_account.to_account_info(),
+            &context.accounts.payer.key(),
         )?;
         Ok(())
     }
 
-    pub fn update_rate(ctx: Context<UpdateRate>, rate: i16) -> Result<()> {
+    pub fn update_rate(context: Context<UpdateRateAccountConstraints>, rate: i16) -> Result<()> {
         interest_bearing_mint_update_rate(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 InterestBearingMintUpdateRate {
-                    token_program_id: ctx.accounts.token_program.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    rate_authority: ctx.accounts.authority.to_account_info(),
+                    token_program_id: context.accounts.token_program.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    rate_authority: context.accounts.authority.to_account_info(),
                 },
             ),
             rate,
         )?;
 
         check_mint_data(
-            &ctx.accounts.mint_account.to_account_info(),
-            &ctx.accounts.authority.key(),
+            &context.accounts.mint_account.to_account_info(),
+            &context.accounts.authority.key(),
         )?;
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct Initialize<'info> {
+pub struct InitializeAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     #[account(mut)]
@@ -116,7 +116,7 @@ pub struct Initialize<'info> {
 }
 
 #[derive(Accounts)]
-pub struct UpdateRate<'info> {
+pub struct UpdateRateAccountConstraints<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
     #[account(mut)]

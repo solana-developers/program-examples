@@ -6,39 +6,39 @@ mod instructions;
 mod state;
 
 // Set the correct key here
-declare_id!("AsGVFxWqEn8icRBFQApxJe68x3r9zvfSbmiEzYFATGYn");
+declare_id!("QmzKmhyUQ9jbNKCPWQjqYNcrqek3FVjSSxc4sCtJeJL");
 
 #[program]
 pub mod swap_example {
     pub use super::instructions::*;
     use super::*;
 
-    pub fn create_amm(ctx: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {
-        instructions::create_amm(ctx, id, fee)
+    pub fn create_amm(context: Context<CreateAmmAccountConstraints>, id: Pubkey, fee: u16) -> Result<()> {
+        instructions::handle_create_amm(context, id, fee)
     }
 
-    pub fn create_pool(ctx: Context<CreatePool>) -> Result<()> {
-        instructions::create_pool(ctx)
+    pub fn create_pool(context: Context<CreatePoolAccountConstraints>) -> Result<()> {
+        instructions::handle_create_pool(context)
     }
 
     pub fn deposit_liquidity(
-        ctx: Context<DepositLiquidity>,
+        context: Context<DepositLiquidityAccountConstraints>,
         amount_a: u64,
         amount_b: u64,
     ) -> Result<()> {
-        instructions::deposit_liquidity(ctx, amount_a, amount_b)
+        instructions::handle_deposit_liquidity(context, amount_a, amount_b)
     }
 
-    pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Result<()> {
-        instructions::withdraw_liquidity(ctx, amount)
+    pub fn withdraw_liquidity(context: Context<WithdrawLiquidityAccountConstraints>, amount: u64) -> Result<()> {
+        instructions::handle_withdraw_liquidity(context, amount)
     }
 
     pub fn swap_exact_tokens_for_tokens(
-        ctx: Context<SwapExactTokensForTokens>,
+        context: Context<SwapExactTokensForTokensAccountConstraints>,
         swap_a: bool,
         input_amount: u64,
         min_output_amount: u64,
     ) -> Result<()> {
-        instructions::swap_exact_tokens_for_tokens(ctx, swap_a, input_amount, min_output_amount)
+        instructions::handle_swap_exact_tokens_for_tokens(context, swap_a, input_amount, min_output_amount)
     }
 }

@@ -16,7 +16,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct Refund<'info> {
+pub struct RefundAccountConstraints<'info> {
     #[account(mut)]
     pub contributor: Signer<'info>,
     pub maker: SystemAccount<'info>,
@@ -51,49 +51,47 @@ pub struct Refund<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Refund<'info> {
-    pub fn refund(&mut self) -> Result<()> {
+pub fn handle_refund(accounts: &mut RefundAccountConstraints) -> Result<()> {
 
         // Check if the fundraising duration has been reached
         let current_time = Clock::get()?.unix_timestamp;
  
         require!(
-            self.fundraiser.duration >= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
+            accounts.fundraiser.duration >= ((current_time - accounts.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
             crate::FundraiserError::FundraiserNotEnded
         );
 
         require!(
-            self.vault.amount < self.fundraiser.amount_to_raise,
+            accounts.vault.amount < accounts.fundraiser.amount_to_raise,
             crate::FundraiserError::TargetMet
         );
 
         // Transfer the funds back to the contributor
         // CPI to the token program to transfer the funds
-        let cpi_program = self.token_program.key();
+        let cpi_program = accounts.token_program.key();
 
         // Transfer the funds from the vault to the contributor
         let cpi_accounts = Transfer {
-            from: self.vault.to_account_info(),
-            to: self.contributor_ata.to_account_info(),
-            authority: self.fundraiser.to_account_info(),
+            from: accounts.vault.to_account_info(),
+            to: accounts.contributor_ata.to_account_info(),
+            authority: accounts.fundraiser.to_account_info(),
         };
 
         // Signer seeds to sign the CPI on behalf of the fundraiser account
         let signer_seeds: [&[&[u8]]; 1] = [&[
             b"fundraiser".as_ref(),
-            self.maker.to_account_info().key.as_ref(),
-            &[self.fundraiser.bump],
+            accounts.maker.to_account_info().key.as_ref(),
+            &[accounts.fundraiser.bump],
         ]];
 
         // CPI context with signer since the fundraiser account is a PDA
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds);
 
         // Transfer the funds from the vault to the contributor
-        transfer(cpi_ctx, self.contributor_account.amount)?;
+        transfer(cpi_ctx, accounts.contributor_account.amount)?;
 
         // Update the fundraiser state by reducing the amount contributed
-        self.fundraiser.current_amount -= self.contributor_account.amount;
+        accounts.fundraiser.current_amount -= accounts.contributor_account.amount;
 
         Ok(())
     }
-}

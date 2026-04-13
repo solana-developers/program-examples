@@ -4,7 +4,7 @@ use anchor_lang::solana_program::instruction::{AccountMeta, Instruction};
 
 #[derive(Accounts)]
 #[instruction(params: VerifyParams)]
-pub struct Verify<'info> {
+pub struct VerifyAccountConstraints<'info> {
     pub leaf_owner: Signer<'info>,
 
     /// CHECK: This account is neither written to nor read from.
@@ -26,19 +26,19 @@ pub struct VerifyParams {
 }
 
 impl Verify<'_> {
-    pub fn validate(&self, _ctx: &Context<Self>, _params: &VerifyParams) -> Result<()> {
+    pub fn validate(&self, _context: &Context<Self>, _params: &VerifyParams) -> Result<()> {
         Ok(())
     }
 
     pub fn actuate<'info>(
-        ctx: Context<'info, Verify<'info>>,
+        context: Context<'info, VerifyAccountConstraints<'info>>,
         params: &VerifyParams,
     ) -> Result<()> {
-        let asset_id = get_asset_id(&ctx.accounts.merkle_tree.key(), params.nonce);
+        let asset_id = get_asset_id(&context.accounts.merkle_tree.key(), params.nonce);
         let leaf_hash = leaf_schema_v1_hash(
             &asset_id,
-            &ctx.accounts.leaf_owner.key(),
-            &ctx.accounts.leaf_delegate.key(),
+            &context.accounts.leaf_owner.key(),
+            &context.accounts.leaf_delegate.key(),
             params.nonce,
             &params.data_hash,
             &params.creator_hash,
@@ -50,10 +50,10 @@ impl Verify<'_> {
         use sha2::{Digest, Sha256};
 
         let mut accounts = vec![AccountMeta::new_readonly(
-            ctx.accounts.merkle_tree.key(),
+            context.accounts.merkle_tree.key(),
             false,
         )];
-        for acc in ctx.remaining_accounts.iter() {
+        for acc in context.remaining_accounts.iter() {
             accounts.push(AccountMeta::new_readonly(acc.key(), false));
         }
 
@@ -67,14 +67,14 @@ impl Verify<'_> {
         data.extend_from_slice(&leaf_hash);
         data.extend_from_slice(&params.index.to_le_bytes());
 
-        let mut account_infos = vec![ctx.accounts.merkle_tree.to_account_info()];
-        for acc in ctx.remaining_accounts.iter() {
+        let mut account_infos = vec![context.accounts.merkle_tree.to_account_info()];
+        for acc in context.remaining_accounts.iter() {
             account_infos.push(acc.to_account_info());
         }
 
         anchor_lang::solana_program::program::invoke(
             &Instruction {
-                program_id: ctx.accounts.compression_program.key(),
+                program_id: context.accounts.compression_program.key(),
                 accounts,
                 data,
             },

@@ -5,7 +5,7 @@ use anchor_spl::token_interface::{
 };
 
 #[derive(Accounts)]
-pub struct UpdateAuthority<'info> {
+pub struct UpdateAuthorityAccountConstraints<'info> {
     pub current_authority: Signer<'info>,
     pub new_authority: Option<UncheckedAccount<'info>>,
 
@@ -18,8 +18,8 @@ pub struct UpdateAuthority<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn process_update_authority(ctx: Context<UpdateAuthority>) -> Result<()> {
-    let new_authority_key = match &ctx.accounts.new_authority {
+pub fn handle_process_update_authority(context: Context<UpdateAuthorityAccountConstraints>) -> Result<()> {
+    let new_authority_key = match &context.accounts.new_authority {
         Some(account) => OptionalNonZeroPubkey::try_from(Some(account.key()))?,
         None => OptionalNonZeroPubkey::try_from(None)?,
     };
@@ -27,15 +27,15 @@ pub fn process_update_authority(ctx: Context<UpdateAuthority>) -> Result<()> {
     // Change update authority
     token_metadata_update_authority(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             TokenMetadataUpdateAuthority {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                metadata: ctx.accounts.mint_account.to_account_info(),
-                current_authority: ctx.accounts.current_authority.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                metadata: context.accounts.mint_account.to_account_info(),
+                current_authority: context.accounts.current_authority.to_account_info(),
 
                 // new authority isn't actually needed as account in the CPI
                 // using current_authority as a placeholder to satisfy the struct
-                new_authority: ctx.accounts.current_authority.to_account_info(),
+                new_authority: context.accounts.current_authority.to_account_info(),
             },
         ),
         new_authority_key,

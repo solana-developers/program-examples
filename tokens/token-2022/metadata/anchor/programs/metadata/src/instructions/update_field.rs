@@ -10,7 +10,7 @@ use anchor_spl::{
 use spl_token_metadata_interface::state::{Field, TokenMetadata};
 
 #[derive(Accounts)]
-pub struct UpdateField<'info> {
+pub struct UpdateFieldAccountConstraints<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -23,7 +23,7 @@ pub struct UpdateField<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) -> Result<()> {
+pub fn handle_process_update_field(context: Context<UpdateFieldAccountConstraints>, args: UpdateFieldArgs) -> Result<()> {
     let UpdateFieldArgs { field, value } = args;
 
     // Convert to Field type from spl_token_metadata_interface
@@ -32,7 +32,7 @@ pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) ->
 
     let (current_lamports, required_lamports) = {
         // Get the current state of the mint account
-        let mint = &ctx.accounts.mint_account.to_account_info();
+        let mint = &context.accounts.mint_account.to_account_info();
         let buffer = mint.try_borrow_data()?;
         let state = PodStateWithExtensions::<PodMint>::unpack(&buffer)?;
 
@@ -61,10 +61,10 @@ pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) ->
         let lamport_difference = required_lamports - current_lamports;
         transfer(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 Transfer {
-                    from: ctx.accounts.authority.to_account_info(),
-                    to: ctx.accounts.mint_account.to_account_info(),
+                    from: context.accounts.authority.to_account_info(),
+                    to: context.accounts.mint_account.to_account_info(),
                 },
             ),
             lamport_difference,
@@ -78,11 +78,11 @@ pub fn process_update_field(ctx: Context<UpdateField>, args: UpdateFieldArgs) ->
     // Update token metadata
     token_metadata_update_field(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             TokenMetadataUpdateField {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                metadata: ctx.accounts.mint_account.to_account_info(),
-                update_authority: ctx.accounts.authority.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                metadata: context.accounts.mint_account.to_account_info(),
+                update_authority: context.accounts.authority.to_account_info(),
             },
         ),
         field,

@@ -15,25 +15,25 @@ declare_id!("FjcHckEgXcBhFmSGai3FRpDLiT6hbpV893n8iTxVd81g");
 pub mod transfer_switch {
     use super::*;
 
-    pub fn configure_admin(ctx: Context<ConfigureAdmin>) -> Result<()> {
-        ctx.accounts.is_admin()?;
-        ctx.accounts.configure_admin()
+    pub fn configure_admin(mut context: Context<ConfigureAdminAccountConstraints>) -> Result<()> {
+        handle_is_admin(&mut context.accounts)?;
+        handle_configure_admin(&mut context.accounts)
     }
 
     #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_metas_list(
-        ctx: Context<InitializeExtraAccountMetas>,
+        mut context: Context<InitializeExtraAccountMetasAccountConstraints>,
     ) -> Result<()> {
-        ctx.accounts.initialize_extra_account_metas_list(ctx.bumps)
+        handle_initialize_extra_account_metas_list(&mut context.accounts, context.bumps)
     }
 
-    pub fn switch(ctx: Context<Switch>, on: bool) -> Result<()> {
-        ctx.accounts.switch(on)
+    pub fn switch(mut context: Context<SwitchAccountConstraints>, on: bool) -> Result<()> {
+        handle_switch(&mut context.accounts, on)
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn transfer_hook(ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
-        ctx.accounts.assert_is_transferring()?;
-        ctx.accounts.assert_switch_is_on()
+    pub fn transfer_hook(mut context: Context<TransferHookAccountConstraints>, _amount: u64) -> Result<()> {
+        handle_assert_is_transferring(&mut context.accounts)?;
+        handle_assert_switch_is_on(&mut context.accounts)
     }
 }

@@ -11,26 +11,26 @@ use crate::{
     state::Pool,
 };
 
-pub fn deposit_liquidity(
-    ctx: Context<DepositLiquidity>,
+pub fn handle_deposit_liquidity(
+    context: Context<DepositLiquidityAccountConstraints>,
     amount_a: u64,
     amount_b: u64,
 ) -> Result<()> {
     // Prevent depositing assets the depositor does not own
-    let mut amount_a = if amount_a > ctx.accounts.depositor_account_a.amount {
-        ctx.accounts.depositor_account_a.amount
+    let mut amount_a = if amount_a > context.accounts.depositor_account_a.amount {
+        context.accounts.depositor_account_a.amount
     } else {
         amount_a
     };
-    let mut amount_b = if amount_b > ctx.accounts.depositor_account_b.amount {
-        ctx.accounts.depositor_account_b.amount
+    let mut amount_b = if amount_b > context.accounts.depositor_account_b.amount {
+        context.accounts.depositor_account_b.amount
     } else {
         amount_b
     };
 
     // Making sure they are provided in the same proportion as existing liquidity
-    let pool_a = &ctx.accounts.pool_account_a;
-    let pool_b = &ctx.accounts.pool_account_b;
+    let pool_a = &context.accounts.pool_account_a;
+    let pool_b = &context.accounts.pool_account_b;
     // Defining pool creation like this allows attackers to frontrun pool creation with bad ratios
     let pool_creation = pool_a.amount == 0 && pool_b.amount == 0;
     (amount_a, amount_b) = if pool_creation {
@@ -78,44 +78,44 @@ pub fn deposit_liquidity(
     // Transfer tokens to the pool
     token::transfer(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             Transfer {
-                from: ctx.accounts.depositor_account_a.to_account_info(),
-                to: ctx.accounts.pool_account_a.to_account_info(),
-                authority: ctx.accounts.depositor.to_account_info(),
+                from: context.accounts.depositor_account_a.to_account_info(),
+                to: context.accounts.pool_account_a.to_account_info(),
+                authority: context.accounts.depositor.to_account_info(),
             },
         ),
         amount_a,
     )?;
     token::transfer(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             Transfer {
-                from: ctx.accounts.depositor_account_b.to_account_info(),
-                to: ctx.accounts.pool_account_b.to_account_info(),
-                authority: ctx.accounts.depositor.to_account_info(),
+                from: context.accounts.depositor_account_b.to_account_info(),
+                to: context.accounts.pool_account_b.to_account_info(),
+                authority: context.accounts.depositor.to_account_info(),
             },
         ),
         amount_b,
     )?;
 
     // Mint the liquidity to user
-    let authority_bump = ctx.bumps.pool_authority;
+    let authority_bump = context.bumps.pool_authority;
     let authority_seeds = &[
-        &ctx.accounts.pool.amm.to_bytes(),
-        &ctx.accounts.mint_a.key().to_bytes(),
-        &ctx.accounts.mint_b.key().to_bytes(),
+        &context.accounts.pool.amm.to_bytes(),
+        &context.accounts.mint_a.key().to_bytes(),
+        &context.accounts.mint_b.key().to_bytes(),
         AUTHORITY_SEED,
         &[authority_bump],
     ];
     let signer_seeds = &[&authority_seeds[..]];
     token::mint_to(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             MintTo {
-                mint: ctx.accounts.mint_liquidity.to_account_info(),
-                to: ctx.accounts.depositor_account_liquidity.to_account_info(),
-                authority: ctx.accounts.pool_authority.to_account_info(),
+                mint: context.accounts.mint_liquidity.to_account_info(),
+                to: context.accounts.depositor_account_liquidity.to_account_info(),
+                authority: context.accounts.pool_authority.to_account_info(),
             },
             signer_seeds,
         ),
@@ -126,7 +126,7 @@ pub fn deposit_liquidity(
 }
 
 #[derive(Accounts)]
-pub struct DepositLiquidity<'info> {
+pub struct DepositLiquidityAccountConstraints<'info> {
     #[account(
         seeds = [
             pool.amm.as_ref(),

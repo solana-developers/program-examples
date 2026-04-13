@@ -20,10 +20,10 @@ pub struct CreateUserContext<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn create_user(ctx: Context<CreateUserContext>, name: String) -> Result<()> {
-    *ctx.accounts.user_account = UserState {
-        bump: ctx.bumps.user_account,
-        user: ctx.accounts.user.key(),
+pub fn handle_create_user(context: Context<CreateUserContext>, name: String) -> Result<()> {
+    *context.accounts.user_account = UserState {
+        bump: context.bumps.user_account,
+        user: context.accounts.user.key(),
         name,
     };
     Ok(())

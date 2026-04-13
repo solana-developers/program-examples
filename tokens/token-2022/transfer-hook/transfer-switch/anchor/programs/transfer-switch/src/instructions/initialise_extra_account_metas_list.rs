@@ -11,7 +11,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct InitializeExtraAccountMetas<'info> {
+pub struct InitializeExtraAccountMetasAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -29,11 +29,7 @@ pub struct InitializeExtraAccountMetas<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> InitializeExtraAccountMetas<'info> {
-    pub fn initialize_extra_account_metas_list(
-        &self,
-        bumps: InitializeExtraAccountMetasBumps,
-    ) -> Result<()> {
+pub fn handle_initialize_extra_account_metas_list(accounts: &mut InitializeExtraAccountMetasAccountConstraints, bumps: InitializeExtraAccountMetasAccountConstraintsBumps) -> Result<()> {
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         let account_metas = vec![
@@ -54,7 +50,7 @@ impl<'info> InitializeExtraAccountMetas<'info> {
         // calculate minimum required lamports
         let lamports = Rent::get()?.minimum_balance(account_size as usize);
 
-        let mint = self.token_mint.key();
+        let mint = accounts.token_mint.key();
         let signer_seeds: &[&[&[u8]]] = &[&[
             b"extra-account-metas",
             mint.as_ref(),
@@ -63,10 +59,10 @@ impl<'info> InitializeExtraAccountMetas<'info> {
 
         create_account(
             CpiContext::new(
-                self.system_program.key(),
+                accounts.system_program.key(),
                 CreateAccount {
-                    from: self.payer.to_account_info(),
-                    to: self.extra_account_metas_list.to_account_info(),
+                    from: accounts.payer.to_account_info(),
+                    to: accounts.extra_account_metas_list.to_account_info(),
                 },
             )
             .with_signer(signer_seeds),
@@ -77,10 +73,10 @@ impl<'info> InitializeExtraAccountMetas<'info> {
 
         // Initialize the account data to store the list of ExtraAccountMetas
         ExtraAccountMetaList::init::<ExecuteInstruction>(
-            &mut self.extra_account_metas_list.try_borrow_mut_data()?,
+            &mut accounts.extra_account_metas_list.try_borrow_mut_data()?,
             &account_metas,
         ).map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }
-}
+

@@ -37,19 +37,19 @@ declare_id!("BuFyrgRYzg2nPhqYrxZ7d9uYUs4VXtxH71U8EcoAfTQZ");
 pub mod cutils {
     use super::*;
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    #[access_control(context.accounts.validate(&context, &params))]
     pub fn mint<'info>(
-        ctx: Context<'info, Mint<'info>>,
+        context: Context<'info, MintAccountConstraints<'info>>,
         params: MintParams,
     ) -> Result<()> {
-        Mint::actuate(ctx, params)
+        Mint::actuate(context, params)
     }
 
-    #[access_control(ctx.accounts.validate(&ctx, &params))]
+    #[access_control(context.accounts.validate(&context, &params))]
     pub fn verify<'info>(
-        ctx: Context<'info, Verify<'info>>,
+        context: Context<'info, VerifyAccountConstraints<'info>>,
         params: VerifyParams,
     ) -> Result<()> {
-        Verify::actuate(ctx, &params)
+        Verify::actuate(context, &params)
     }
 }

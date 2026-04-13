@@ -15,26 +15,26 @@ pub mod group {
 
     use super::*;
 
-    pub fn test_initialize_group(ctx: Context<InitializeGroup>) -> Result<()> {
-        ctx.accounts.check_mint_data()?;
+    pub fn test_initialize_group(mut context: Context<InitializeGroupAccountConstraints>) -> Result<()> {
+        handle_check_mint_data(&mut context.accounts)?;
 
         // // Token Group and Token Member extensions features not enabled yet on the Token2022 program
         // // This is temporary placeholder to update one extensions are live
         // // Initializing the "pointers" works, but you can't initialize the group/member data yet
 
-        // let signer_seeds: &[&[&[u8]]] = &[&[b"group", &[ctx.bumps.mint_account]]];
+        // let signer_seeds: &[&[&[u8]]] = &[&[b"group", &[context.bumps.mint_account]]];
         // token_group_initialize(
         //     CpiContext::new(
-        //         ctx.accounts.token_program.to_account_info(),
+        //         context.accounts.token_program.to_account_info(),
         //         TokenGroupInitialize {
-        //             token_program_id: ctx.accounts.token_program.to_account_info(),
-        //             group: ctx.accounts.mint_account.to_account_info(),
-        //             mint: ctx.accounts.mint_account.to_account_info(),
-        //             mint_authority: ctx.accounts.mint_account.to_account_info(),
+        //             token_program_id: context.accounts.token_program.to_account_info(),
+        //             group: context.accounts.mint_account.to_account_info(),
+        //             mint: context.accounts.mint_account.to_account_info(),
+        //             mint_authority: context.accounts.mint_account.to_account_info(),
         //         },
         //     )
         //     .with_signer(signer_seeds),
-        //     Some(ctx.accounts.payer.key()), // update_authority
+        //     Some(context.accounts.payer.key()), // update_authority
         //     10,                             // max_size
         // )?;
         Ok(())
@@ -42,7 +42,7 @@ pub mod group {
 }
 
 #[derive(Accounts)]
-pub struct InitializeGroup<'info> {
+pub struct InitializeGroupAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -62,9 +62,8 @@ pub struct InitializeGroup<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> InitializeGroup<'info> {
-    pub fn check_mint_data(&self) -> Result<()> {
-        let mint = &self.mint_account.to_account_info();
+pub fn handle_check_mint_data(accounts: &mut InitializeGroupAccountConstraints) -> Result<()> {
+        let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
         let extension_data = mint_with_extension.get_extension::<GroupPointer>()?;
@@ -73,4 +72,4 @@ impl<'info> InitializeGroup<'info> {
         msg!("{:?}", extension_data);
         Ok(())
     }
-}
+

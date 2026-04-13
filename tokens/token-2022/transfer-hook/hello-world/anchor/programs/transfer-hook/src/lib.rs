@@ -41,14 +41,14 @@ pub mod transfer_hook {
     use super::*;
 
     // create a mint account that specifies this program as the transfer hook program
-    pub fn initialize(ctx: Context<Initialize>, _decimals: u8) -> Result<()> {
-        ctx.accounts.check_mint_data()?;
+    pub fn initialize(mut context: Context<InitializeAccountConstraints>, _decimals: u8) -> Result<()> {
+        handle_check_mint_data(&mut context.accounts)?;
         Ok(())
     }
 
     #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>,
+        mut context: Context<InitializeExtraAccountMetaListAccountConstraints>,
     ) -> Result<()> {
         let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
 
@@ -56,7 +56,7 @@ pub mod transfer_hook {
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         ExtraAccountMetaList::init::<ExecuteInstruction>(
-            &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
+            &mut context.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
         ).map_err(|_| ProgramError::InvalidAccountData)?;
 
@@ -64,9 +64,9 @@ pub mod transfer_hook {
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn transfer_hook(ctx: Context<TransferHook>, _amount: u64) -> Result<()> {
+    pub fn transfer_hook(context: Context<TransferHookAccountConstraints>, _amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
-        check_is_transferring(&ctx)?;
+        check_is_transferring(&context)?;
 
         msg!("Hello Transfer Hook!");
 
@@ -74,8 +74,8 @@ pub mod transfer_hook {
     }
 }
 
-fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
-    let source_token_info = ctx.accounts.source_token.to_account_info();
+fn check_is_transferring(context: &Context<TransferHookAccountConstraints>) -> Result<()> {
+    let source_token_info = context.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
     // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
     // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
@@ -93,7 +93,7 @@ fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
 
 #[derive(Accounts)]
 #[instruction(_decimals: u8)]
-pub struct Initialize<'info> {
+pub struct InitializeAccountConstraints<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -111,9 +111,8 @@ pub struct Initialize<'info> {
 }
 
 // helper to check mint data, and demonstrate how to read mint extension data within a program
-impl<'info> Initialize<'info> {
-    pub fn check_mint_data(&self) -> Result<()> {
-        let mint = &self.mint_account.to_account_info();
+pub fn handle_check_mint_data(accounts: &mut InitializeAccountConstraints) -> Result<()> {
+        let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
@@ -124,7 +123,7 @@ impl<'info> Initialize<'info> {
 
         assert_eq!(
             extension_data.authority,
-            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))
+            OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))
                 .map_err(|_| ProgramError::InvalidArgument)?
         );
 
@@ -137,10 +136,10 @@ impl<'info> Initialize<'info> {
         msg!("{:?}", extension_data);
         Ok(())
     }
-}
+
 
 #[derive(Accounts)]
-pub struct InitializeExtraAccountMetaList<'info> {
+pub struct InitializeExtraAccountMetaListAccountConstraints<'info> {
     #[account(mut)]
     payer: Signer<'info>,
 
@@ -164,23 +163,24 @@ pub struct InitializeExtraAccountMetaList<'info> {
 
 // Define extra account metas to store on extra_account_meta_list account
 // In this example there are none
-impl<'info> InitializeExtraAccountMetaList<'info> {
-    pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+pub fn handle_extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
         Ok(vec![])
     }
 
+
+
     /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
-    pub fn extra_account_metas_count() -> usize {
+pub fn handle_extra_account_metas_count() -> usize {
         0 // no extra accounts in this example
     }
-}
+
 
 // Order of accounts matters for this struct.
 // The first 4 accounts are the accounts required for token transfer (source, mint, destination, owner)
 // Remaining accounts are the extra accounts required from the ExtraAccountMetaList account
 // These accounts are provided via CPI to this program from the token2022 program
 #[derive(Accounts)]
-pub struct TransferHook<'info> {
+pub struct TransferHookAccountConstraints<'info> {
     #[account(token::mint = mint, token::authority = owner)]
     pub source_token: InterfaceAccount<'info, TokenAccount>,
     pub mint: InterfaceAccount<'info, Mint>,
