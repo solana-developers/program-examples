@@ -1,14 +1,19 @@
-import { Connection } from '@solana/web3.js';
-import axios from 'axios';
-import { METAPLEX_READAPI } from './anchor';
+import { Connection } from "@solana/web3.js";
+import axios from "axios";
+import { METAPLEX_READAPI } from "./anchor";
+
+interface SortBy {
+  sortBy: string;
+  sortDirection: string;
+}
 
 export class WrappedConnection extends Connection {
-  async getAsset(assetId: any): Promise<any> {
+  async getAsset(assetId: string): Promise<unknown> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAsset',
-        id: 'compression-example',
+        jsonrpc: "2.0",
+        method: "getAsset",
+        id: "compression-example",
         params: [assetId],
       });
       return response.data.result;
@@ -17,12 +22,12 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  async getAssetProof(assetId: any): Promise<any> {
+  async getAssetProof(assetId: string): Promise<unknown> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetProof',
-        id: 'compression-example',
+        jsonrpc: "2.0",
+        method: "getAssetProof",
+        id: "compression-example",
         params: [assetId],
       });
       return response.data.result;
@@ -31,12 +36,19 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  async getAssetsByOwner(assetId: string, sortBy: any, limit: number, page: number, before: string, after: string): Promise<any> {
+  async getAssetsByOwner(
+    assetId: string,
+    sortBy: SortBy,
+    limit: number,
+    page: number,
+    before: string,
+    after: string,
+  ): Promise<unknown> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetsByOwner',
-        id: 'rpd-op-123',
+        jsonrpc: "2.0",
+        method: "getAssetsByOwner",
+        id: "rpd-op-123",
         params: [assetId, sortBy, limit, page, before, after],
       });
       //console.log("getAssetsByOwner: " + JSON.stringify(response.data));
@@ -46,12 +58,19 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  async getAssetsByCreator(assetId: string, sortBy: any, limit: number, page: number, _before: string, _after: string): Promise<any> {
+  async getAssetsByCreator(
+    assetId: string,
+    sortBy: SortBy,
+    limit: number,
+    page: number,
+    _before: string,
+    _after: string,
+  ): Promise<unknown> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetsByCreator',
-        id: 'compression-example',
+        jsonrpc: "2.0",
+        method: "getAssetsByCreator",
+        id: "compression-example",
         params: [assetId, true, sortBy, limit, page, null, null],
       });
 
@@ -61,12 +80,19 @@ export class WrappedConnection extends Connection {
     }
   }
 
-  async getAssetsByAuthority(assetId: string, sortBy: any, limit: number, page: number, before: string, after: string): Promise<any> {
+  async getAssetsByAuthority(
+    assetId: string,
+    sortBy: SortBy,
+    limit: number,
+    page: number,
+    before: string,
+    after: string,
+  ): Promise<unknown> {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetsByAuthority',
-        id: 'compression-example',
+        jsonrpc: "2.0",
+        method: "getAssetsByAuthority",
+        id: "compression-example",
         params: [assetId, sortBy, limit, page, before, after],
       });
       return response.data.result;
@@ -78,19 +104,19 @@ export class WrappedConnection extends Connection {
   async getAssetsByGroup(
     groupKey: string,
     groupValue: string,
-    sortBy: any,
+    sortBy: SortBy,
     limit: number,
     page: number,
     before: string,
     after: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     try {
       const events = [];
 
       const response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetsByGroup',
-        id: 'rpd-op-123',
+        jsonrpc: "2.0",
+        method: "getAssetsByGroup",
+        id: "rpd-op-123",
         params: [groupKey, groupValue, sortBy, limit, page, before, after],
       });
       events.push(...response.data.result.items);
@@ -105,19 +131,19 @@ export class WrappedConnection extends Connection {
   async getAllAssetsByGroup(
     groupKey: string,
     groupValue: string,
-    sortBy: any,
+    sortBy: SortBy,
     limit: number,
     startPage: number,
     before: string,
     after: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     let page = startPage;
     try {
       const events = [];
       let response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-        jsonrpc: '2.0',
-        method: 'getAssetsByGroup',
-        id: 'rpd-op-123',
+        jsonrpc: "2.0",
+        method: "getAssetsByGroup",
+        id: "rpd-op-123",
         params: [groupKey, groupValue, sortBy, limit, page, before, after],
       });
 
@@ -128,9 +154,9 @@ export class WrappedConnection extends Connection {
 
         page += 1;
         response = await axios.post(process.env.NEXT_PUBLIC_RPC ? process.env.NEXT_PUBLIC_RPC : METAPLEX_READAPI, {
-          jsonrpc: '2.0',
-          method: 'getAssetsByGroup',
-          id: 'rpd-op-123',
+          jsonrpc: "2.0",
+          method: "getAssetsByGroup",
+          id: "rpd-op-123",
           params: [groupKey, groupValue, sortBy, limit, page, before, after],
         });
 

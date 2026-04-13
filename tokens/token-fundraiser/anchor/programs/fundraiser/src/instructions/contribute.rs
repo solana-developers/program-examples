@@ -84,7 +84,7 @@ impl<'info> Contribute<'info> {
 
         // Transfer the funds to the vault
         // CPI to the token program to transfer the funds
-        let cpi_program = self.token_program.to_account_info();
+        let cpi_program = self.token_program.key();
 
         // Transfer the funds from the contributor to the vault
         let cpi_accounts = Transfer {

@@ -1,75 +1,39 @@
 import { Buffer } from "node:buffer";
 import { describe, test } from "node:test";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import * as borsh from "borsh";
 import { start } from "solana-bankrun";
 
 describe("PDA Rent-Payer", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "pda_rent_payer_program", programId: PROGRAM_ID }],
-    [],
-  );
+  const context = await start([{ name: "pda_rent_payer_program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
-
-  class Assignable {
-    constructor(properties) {
-      for (const [key, value] of Object.entries(properties)) {
-        this[key] = value;
-      }
-    }
-  }
 
   const MyInstruction = {
     InitRentVault: 0,
     CreateNewAccount: 1,
   } as const;
 
-  class InitRentVault extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(InitRentVaultSchema, this));
-    }
-  }
-  const InitRentVaultSchema = new Map([
-    [
-      InitRentVault,
-      {
-        kind: "struct",
-        fields: [
-          ["instruction", "u8"],
-          ["fund_lamports", "u64"],
-        ],
-      },
-    ],
-  ]);
+  const InitRentVaultSchema = {
+    struct: {
+      instruction: "u8",
+      fund_lamports: "u64",
+    },
+  };
 
-  class CreateNewAccount extends Assignable {
-    toBuffer() {
-      return Buffer.from(borsh.serialize(CreateNewAccountSchema, this));
-    }
+  const CreateNewAccountSchema = {
+    struct: {
+      instruction: "u8",
+    },
+  };
+
+  function borshSerialize(schema: borsh.Schema, data: object): Buffer {
+    return Buffer.from(borsh.serialize(schema, data));
   }
-  const CreateNewAccountSchema = new Map([
-    [
-      CreateNewAccount,
-      {
-        kind: "struct",
-        fields: [["instruction", "u8"]],
-      },
-    ],
-  ]);
 
   function deriveRentVaultPda() {
-    const pda = PublicKey.findProgramAddressSync(
-      [Buffer.from("rent_vault")],
-      PROGRAM_ID,
-    );
+    const pda = PublicKey.findProgramAddressSync([Buffer.from("rent_vault")], PROGRAM_ID);
     console.log(`PDA: ${pda[0].toBase58()}`);
     return pda;
   }
@@ -84,10 +48,10 @@ describe("PDA Rent-Payer", async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: new InitRentVault({
+      data: borshSerialize(InitRentVaultSchema, {
         instruction: MyInstruction.InitRentVault,
         fund_lamports: 1000000000,
-      }).toBuffer(),
+      }),
     });
 
     const tx = new Transaction();
@@ -108,9 +72,9 @@ describe("PDA Rent-Payer", async () => {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: new CreateNewAccount({
+      data: borshSerialize(CreateNewAccountSchema, {
         instruction: MyInstruction.CreateNewAccount,
-      }).toBuffer(),
+      }),
     });
 
     const tx = new Transaction();

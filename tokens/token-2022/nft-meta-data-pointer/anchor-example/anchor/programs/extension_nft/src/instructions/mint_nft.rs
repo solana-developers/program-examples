@@ -37,7 +37,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
 
     system_program::create_account(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             system_program::CreateAccount {
                 from: ctx.accounts.signer.to_account_info(),
                 to: ctx.accounts.mint.to_account_info(),
@@ -50,7 +50,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
 
     // Assign the mint to the token program
     system_program::assign(
-        CpiContext::new(ctx.accounts.token_program.to_account_info(), system_program::Assign {
+        CpiContext::new(ctx.accounts.token_program.key(), system_program::Assign {
             account_to_assign: ctx.accounts.mint.to_account_info(),
         }),
         &token_2022::ID
@@ -78,7 +78,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
 
     // Initialize the mint cpi
     let mint_cpi_ix = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
+        ctx.accounts.token_program.key(),
         token_2022::InitializeMint2 {
             mint: ctx.accounts.mint.to_account_info(),
         }
@@ -134,7 +134,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     // Create the associated token account
     associated_token::create(
         CpiContext::new(
-            ctx.accounts.associated_token_program.to_account_info(),
+            ctx.accounts.associated_token_program.key(),
             associated_token::Create {
                 payer: ctx.accounts.signer.to_account_info(),
                 associated_token: ctx.accounts.token_account.to_account_info(),
@@ -149,7 +149,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     // Mint one token to the associated token account of the player
     token_2022::mint_to(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             token_2022::MintTo {
                 mint: ctx.accounts.mint.to_account_info(),
                 to: ctx.accounts.token_account.to_account_info(),
@@ -163,7 +163,7 @@ pub fn mint_nft(ctx: Context<MintNft>) -> Result<()> {
     // Freeze the mint authority so no more tokens can be minted to make it an NFT
     token_2022::set_authority(
         CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             token_2022::SetAuthority {
                 current_authority: ctx.accounts.nft_authority.to_account_info(),
                 account_or_mint: ctx.accounts.mint.to_account_info(),

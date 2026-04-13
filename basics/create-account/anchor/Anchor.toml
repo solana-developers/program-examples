@@ -1,3 +1,6 @@
+[toolchain]
+solana_version = "3.1.8"
+
 [features]
 seeds = false
 skip-lint = false
@@ -5,8 +8,7 @@ skip-lint = false
 [programs.localnet]
 create_system_account = "ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi"
 
-[registry]
-url = "https://api.apr.dev"
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
 cluster = "Localnet"

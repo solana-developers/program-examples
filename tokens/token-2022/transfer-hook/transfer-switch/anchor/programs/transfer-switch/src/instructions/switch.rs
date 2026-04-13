@@ -4,7 +4,6 @@ use {
 };
 
 #[derive(Accounts)]
-#[instruction(decimals: u8)]
 pub struct Switch<'info> {
     /// admin that controls the switch
     #[account(mut)]

@@ -1,22 +1,21 @@
-'use client'
+"use client";
 
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletButton } from '../solana/solana-provider'
-
-import { redirect } from 'next/navigation'
-import React from 'react'
-import { Button } from '@/components/ui/button'
+import { useWallet } from "@solana/wallet-adapter-react";
+import { redirect } from "next/navigation";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { WalletButton } from "../solana/solana-provider";
 
 export default function ManageTokenInput() {
-  const { publicKey } = useWallet()
-  const [tokenAddress, setTokenAddress] = React.useState('')
+  const { publicKey } = useWallet();
+  const [tokenAddress, setTokenAddress] = React.useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (tokenAddress) {
-      redirect(`/manage-token/${tokenAddress.toString()}`)
+      redirect(`/manage-token/${tokenAddress.toString()}`);
     }
-  }
+  };
 
   if (!publicKey) {
     return (
@@ -25,7 +24,7 @@ export default function ManageTokenInput() {
           <WalletButton />
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -39,17 +38,15 @@ export default function ManageTokenInput() {
                 type="text"
                 className="w-full p-2 border rounded"
                 value={tokenAddress}
-                onChange={e => setTokenAddress(e.target.value)}
+                onChange={(e) => setTokenAddress(e.target.value)}
                 placeholder="Enter token address"
                 required
               />
             </label>
-            <Button type="submit">
-              Manage Token
-            </Button>
+            <Button type="submit">Manage Token</Button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

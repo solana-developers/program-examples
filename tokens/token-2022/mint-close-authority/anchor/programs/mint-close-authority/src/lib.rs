@@ -28,7 +28,7 @@ pub mod mint_close_authority {
         // cpi to token extensions programs to close mint account
         // alternatively, this can also be done in the client
         close_account(CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             CloseAccount {
                 account: ctx.accounts.mint_account.to_account_info(),
                 destination: ctx.accounts.authority.to_account_info(),

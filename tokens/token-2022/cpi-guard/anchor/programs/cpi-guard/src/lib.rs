@@ -15,7 +15,7 @@ pub mod cpi_guard {
     pub fn cpi_transfer(ctx: Context<CpiTransfer>) -> Result<()> {
         transfer_checked(
             CpiContext::new(
-                ctx.accounts.token_program.to_account_info(),
+                ctx.accounts.token_program.key(),
                 TransferChecked {
                     from: ctx.accounts.sender_token_account.to_account_info(),
                     mint: ctx.accounts.mint_account.to_account_info(),

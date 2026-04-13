@@ -21,7 +21,7 @@ pub mod transfer_fee {
         process_transfer(ctx, amount)
     }
 
-    pub fn harvest<'info>(ctx: Context<'_, '_, 'info, 'info, Harvest<'info>>) -> Result<()> {
+    pub fn harvest<'info>(ctx: Context<'info, Harvest<'info>>) -> Result<()> {
         process_harvest(ctx)
     }
 

@@ -21,8 +21,9 @@ custom-panic = []
 
 
 [dependencies]
-anchor-lang = "0.32.1"
-anchor-spl = { version = "0.32.1", features = ["metadata"] }
+# Anchor 1.0.0-rc.5 — pin to RC until stable release
+anchor-lang = "1.0.0-rc.5"
+anchor-spl = { version = "1.0.0-rc.5", features = ["metadata"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

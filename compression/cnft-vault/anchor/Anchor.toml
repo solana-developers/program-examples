@@ -1,14 +1,17 @@
-[features]
-seeds = false
-skip-lint = false
-[programs.devnet]
-cnft_vault = "CNftyK7T8udPwYRzZUMWzbh79rKrz9a5GwV2wv7iEHpk"
+[toolchain]
+solana_version = "3.1.8"
 
-[registry]
-url = "https://api.apr.dev"
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+cnft_vault = "Fd4iwpPWaCU8BNwGQGtvvrcvG4Tfizq3RgLm8YLBJX6D"
+
+# [registry] section removed — no longer used in Anchor 1.0
 
 [provider]
-cluster = "Devnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
