@@ -114,7 +114,7 @@ pub struct InitializeExtraAccountMetaList<'info> {
     )]
     pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
-    #[account(init, seeds = [b"counter", payer.key().as_ref()], bump, payer = payer, space = 16)]
+    #[account(init, seeds = [b"counter", payer.key().as_ref()], bump, payer = payer, space = CounterAccount::DISCRIMINATOR.len() + CounterAccount::INIT_SPACE)]
     pub counter_account: Account<'info, CounterAccount>,
     pub token_program: Program<'info, Token2022>,
     pub associated_token_program: Program<'info, AssociatedToken>,
@@ -169,6 +169,7 @@ pub struct TransferHook<'info> {
 }
 
 #[account]
+#[derive(InitSpace)]
 pub struct CounterAccount {
     counter: u64,
 }

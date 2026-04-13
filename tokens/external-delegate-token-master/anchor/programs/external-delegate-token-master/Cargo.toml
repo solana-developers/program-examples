@@ -20,9 +20,8 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-# Anchor 1.0.0-rc.5 — pin to RC until stable release
-anchor-lang = { version = "1.0.0-rc.5", features = ["init-if-needed"] }
-anchor-spl = { version = "1.0.0-rc.5", features = ["metadata"] }
+anchor-lang = { version = "1.0.0", features = ["init-if-needed"] }
+anchor-spl = { version = "1.0.0", features = ["metadata"] }
 sha3 = "0.10.8"
 solana-secp256k1-recover = "2.0.0"
 

@@ -6,7 +6,7 @@
     "postinstall": "zx prepare.mjs"
   },
   "dependencies": {
-    "@anchor-lang/core": "1.0.0-rc.5",
+    "@anchor-lang/core": "1.0.0",
     "@metaplex-foundation/mpl-token-metadata": "^3.1.2",
     "@metaplex-foundation/umi": "^0.9.0",
     "@solana/spl-token": "^0.4.6",
