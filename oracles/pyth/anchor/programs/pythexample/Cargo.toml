@@ -24,5 +24,14 @@ custom-panic = []
 anchor-lang = "1.0.0"
 pyth-solana-receiver-sdk = "1.1.0"
 
+[dev-dependencies]
+litesvm = "0.11.0"
+solana-signer = "3.0.0"
+solana-keypair = "3.0.1"
+solana-account = "3.0.0"
+borsh = "1.6.1"
+sha2 = "0.10"
+solana-kite = "0.3.0"
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

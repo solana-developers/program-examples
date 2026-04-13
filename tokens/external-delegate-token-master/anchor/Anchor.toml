@@ -15,4 +15,4 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "yarn test"
+test = "cargo test"
