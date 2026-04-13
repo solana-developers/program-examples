@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program::{create_account, CreateAccount};
 
 #[derive(Accounts)]
-pub struct CreateNewAccountAccountConstraints<'info> {
+pub struct CreateNewAccount<'info> {
     #[account(mut)]
     new_account: Signer<'info>,
 
@@ -17,7 +17,7 @@ pub struct CreateNewAccountAccountConstraints<'info> {
     system_program: Program<'info, System>,
 }
 
-pub fn handle_create_new_account(context: Context<CreateNewAccountAccountConstraints>) -> Result<()> {
+pub fn handle_create_new_account(context: Context<CreateNewAccount>) -> Result<()> {
     // PDA signer seeds
     let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[context.bumps.rent_vault]]];
 

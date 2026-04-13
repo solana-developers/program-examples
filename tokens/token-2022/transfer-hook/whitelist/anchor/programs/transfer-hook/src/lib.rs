@@ -33,7 +33,7 @@ pub mod transfer_hook {
 
     #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
-        mut context: Context<InitializeExtraAccountMetaListAccountConstraints>,
+        mut context: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
         // set authority field on white_list account as payer address
         context.accounts.white_list.authority = context.accounts.payer.key();
@@ -51,7 +51,7 @@ pub mod transfer_hook {
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn transfer_hook(context: Context<TransferHookAccountConstraints>, _amount: u64) -> Result<()> {
+    pub fn transfer_hook(context: Context<TransferHook>, _amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
         check_is_transferring(&context)?;
 
@@ -69,7 +69,7 @@ pub mod transfer_hook {
         Ok(())
     }
 
-    pub fn add_to_whitelist(context: Context<AddToWhiteListAccountConstraints>) -> Result<()> {
+    pub fn add_to_whitelist(context: Context<AddToWhiteList>) -> Result<()> {
         if context.accounts.white_list.authority != context.accounts.signer.key() {
             panic!("Only the authority can add to the white list!");
         }
@@ -91,7 +91,7 @@ pub mod transfer_hook {
     }
 }
 
-fn check_is_transferring(context: &Context<TransferHookAccountConstraints>) -> Result<()> {
+fn check_is_transferring(context: &Context<TransferHook>) -> Result<()> {
     let source_token_info = context.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
     // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
@@ -109,7 +109,7 @@ fn check_is_transferring(context: &Context<TransferHookAccountConstraints>) -> R
 }
 
 #[derive(Accounts)]
-pub struct InitializeExtraAccountMetaListAccountConstraints<'info> {
+pub struct InitializeExtraAccountMetaList<'info> {
     #[account(mut)]
     payer: Signer<'info>,
 
@@ -157,7 +157,7 @@ pub fn handle_extra_account_metas_count() -> usize {
 // Remaining accounts are the extra accounts required from the ExtraAccountMetaList account
 // These accounts are provided via CPI to this program from the token2022 program
 #[derive(Accounts)]
-pub struct TransferHookAccountConstraints<'info> {
+pub struct TransferHook<'info> {
     #[account(token::mint = mint, token::authority = owner)]
     pub source_token: InterfaceAccount<'info, TokenAccount>,
     pub mint: InterfaceAccount<'info, Mint>,
@@ -173,7 +173,7 @@ pub struct TransferHookAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct AddToWhiteListAccountConstraints<'info> {
+pub struct AddToWhiteList<'info> {
     /// CHECK: New account to add to white list
     #[account()]
     pub new_account: UncheckedAccount<'info>,

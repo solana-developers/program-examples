@@ -19,12 +19,12 @@ declare_id!("AcfQLsYKuzprcCNH1n96pKKgAbAnZchwpbr3gbVN742n");
 pub mod mint_close_authority {
     use super::*;
 
-    pub fn initialize(mut context: Context<InitializeAccountConstraints>) -> Result<()> {
+    pub fn initialize(mut context: Context<Initialize>) -> Result<()> {
         handle_check_mint_data(&mut context.accounts)?;
         Ok(())
     }
 
-    pub fn close(context: Context<CloseAccountConstraints>) -> Result<()> {
+    pub fn close(context: Context<Close>) -> Result<()> {
         // cpi to token extensions programs to close mint account
         // alternatively, this can also be done in the client
         close_account(CpiContext::new(
@@ -40,7 +40,7 @@ pub mod mint_close_authority {
 }
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -57,7 +57,7 @@ pub struct InitializeAccountConstraints<'info> {
 }
 
 // helper to check mint data, and demonstrate how to read mint extension data within a program
-pub fn handle_check_mint_data(accounts: &mut InitializeAccountConstraints) -> Result<()> {
+pub fn handle_check_mint_data(accounts: &mut Initialize) -> Result<()> {
         let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
@@ -74,7 +74,7 @@ pub fn handle_check_mint_data(accounts: &mut InitializeAccountConstraints) -> Re
 
 
 #[derive(Accounts)]
-pub struct CloseAccountConstraints<'info> {
+pub struct Close<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 

@@ -20,7 +20,7 @@ use anchor_spl::{
 };
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     #[account(mut)]
@@ -33,7 +33,7 @@ pub struct InitializeAccountConstraints<'info> {
 // There is currently not an anchor constraint to automatically initialize the TransferFeeConfig extension
 // We can manually create and initialize the mint account via CPIs in the instruction handler
 pub fn handle_process_initialize(
-    context: Context<InitializeAccountConstraints>,
+    context: Context<Initialize>,
     transfer_fee_basis_points: u16,
     maximum_fee: u64,
 ) -> Result<()> {
@@ -92,7 +92,7 @@ pub fn handle_process_initialize(
 }
 
 // helper to demonstrate how to read mint extension data within a program
-pub fn handle_check_mint_data(accounts: &mut InitializeAccountConstraints) -> Result<()> {
+pub fn handle_check_mint_data(accounts: &mut Initialize) -> Result<()> {
         let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;

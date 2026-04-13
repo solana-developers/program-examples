@@ -14,7 +14,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct TransferHookAccountConstraints<'info> {
+pub struct TransferHook<'info> {
     /// CHECK: Sender token account
     #[account()]
     pub source_token_account: UncheckedAccount<'info>,
@@ -46,14 +46,14 @@ pub struct TransferHookAccountConstraints<'info> {
     pub wallet_switch: Account<'info, TransferSwitch>,
 }
 
-pub fn handle_assert_switch_is_on(accounts: &mut TransferHookAccountConstraints) -> Result<()> {
+pub fn handle_assert_switch_is_on(accounts: &mut TransferHook) -> Result<()> {
         if !accounts.wallet_switch.on {
             return err!(TransferError::SwitchNotOn);
         }
         Ok(())
     }
 
-pub fn handle_assert_is_transferring(accounts: &mut TransferHookAccountConstraints) -> Result<()> {
+pub fn handle_assert_is_transferring(accounts: &mut TransferHook) -> Result<()> {
         let source_token_info = accounts.source_token_account.to_account_info();
         let mut account_data_ref = source_token_info.try_borrow_mut_data()?;
         // .map_err() needed because spl-token-2022 uses solana-program-error 2.x

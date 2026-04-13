@@ -48,7 +48,7 @@ pub mod cnft_burn {
     use super::*;
 
     pub fn burn_cnft<'info>(
-        context: Context<'info, BurnCnftAccountConstraints<'info>>,
+        context: Context<'info, BurnCnft<'info>>,
         root: [u8; 32],
         data_hash: [u8; 32],
         creator_hash: [u8; 32],
@@ -126,7 +126,7 @@ pub mod cnft_burn {
 }
 
 #[derive(Accounts)]
-pub struct BurnCnftAccountConstraints<'info> {
+pub struct BurnCnft<'info> {
     #[account(mut)]
     pub leaf_owner: Signer<'info>,
     #[account(mut)]

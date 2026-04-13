@@ -12,7 +12,7 @@ use crate::{
 };
 
 pub fn handle_deposit_liquidity(
-    context: Context<DepositLiquidityAccountConstraints>,
+    context: Context<DepositLiquidity>,
     amount_a: u64,
     amount_b: u64,
 ) -> Result<()> {
@@ -126,7 +126,7 @@ pub fn handle_deposit_liquidity(
 }
 
 #[derive(Accounts)]
-pub struct DepositLiquidityAccountConstraints<'info> {
+pub struct DepositLiquidity<'info> {
     #[account(
         seeds = [
             pool.amm.as_ref(),

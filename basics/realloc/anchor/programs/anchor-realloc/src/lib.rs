@@ -6,12 +6,12 @@ declare_id!("Fod47xKXjdHVQDzkFPBvfdWLm8gEAV4iMSXkfUzCHiSD");
 pub mod anchor_realloc {
     use super::*;
 
-    pub fn initialize(context: Context<InitializeAccountConstraints>, input: String) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>, input: String) -> Result<()> {
         context.accounts.message_account.message = input;
         Ok(())
     }
 
-    pub fn update(context: Context<UpdateAccountConstraints>, input: String) -> Result<()> {
+    pub fn update(context: Context<Update>, input: String) -> Result<()> {
         context.accounts.message_account.message = input;
         Ok(())
     }
@@ -19,7 +19,7 @@ pub mod anchor_realloc {
 
 #[derive(Accounts)]
 #[instruction(input: String)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -34,7 +34,7 @@ pub struct InitializeAccountConstraints<'info> {
 
 #[derive(Accounts)]
 #[instruction(input: String)]
-pub struct UpdateAccountConstraints<'info> {
+pub struct Update<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 

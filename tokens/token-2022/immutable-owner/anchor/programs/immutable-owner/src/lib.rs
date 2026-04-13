@@ -17,7 +17,7 @@ pub mod immutable_owner {
 
     // There is currently not an anchor constraint to automatically initialize the ImmutableOwner extension
     // We can manually create and initialize the token account via CPIs in the instruction handler
-    pub fn initialize(context: Context<InitializeAccountConstraints>) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>) -> Result<()> {
         // Calculate space required for token and extension data
         let token_account_size = ExtensionType::try_calculate_account_len::<PodAccount>(&[
             ExtensionType::ImmutableOwner,
@@ -63,7 +63,7 @@ pub mod immutable_owner {
 }
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 

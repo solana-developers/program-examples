@@ -26,7 +26,7 @@ pub mod interest_bearing {
 
     use super::*;
 
-    pub fn initialize(context: Context<InitializeAccountConstraints>, rate: i16) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>, rate: i16) -> Result<()> {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::InterestBearingConfig,
@@ -83,7 +83,7 @@ pub mod interest_bearing {
         Ok(())
     }
 
-    pub fn update_rate(context: Context<UpdateRateAccountConstraints>, rate: i16) -> Result<()> {
+    pub fn update_rate(context: Context<UpdateRate>, rate: i16) -> Result<()> {
         interest_bearing_mint_update_rate(
             CpiContext::new(
                 context.accounts.token_program.key(),
@@ -105,7 +105,7 @@ pub mod interest_bearing {
 }
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     #[account(mut)]
@@ -116,7 +116,7 @@ pub struct InitializeAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct UpdateRateAccountConstraints<'info> {
+pub struct UpdateRate<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
     #[account(mut)]

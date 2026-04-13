@@ -10,7 +10,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct CreateTokenAccountConstraints<'info> {
+pub struct CreateToken<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -40,7 +40,7 @@ pub struct CreateTokenAccountConstraints<'info> {
 }
 
 pub fn handle_create_token(
-    context: Context<CreateTokenAccountConstraints>,
+    context: Context<CreateToken>,
     token_name: String,
     token_symbol: String,
     token_uri: String,

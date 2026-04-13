@@ -20,32 +20,32 @@ pub mod abl_token {
 
     use super::*;
 
-    pub fn init_mint(context: Context<InitMintAccountConstraints>, args: InitMintArgs) -> Result<()> {
+    pub fn init_mint(context: Context<InitMint>, args: InitMintArgs) -> Result<()> {
         context.accounts.init_mint(args)
     }
 
-    pub fn init_config(context: Context<InitConfigAccountConstraints>) -> Result<()> {
+    pub fn init_config(context: Context<InitConfig>) -> Result<()> {
         context.accounts.init_config(context.bumps.config)
     }
 
-    pub fn attach_to_mint(context: Context<AttachToMintAccountConstraints>) -> Result<()> {
+    pub fn attach_to_mint(context: Context<AttachToMint>) -> Result<()> {
         context.accounts.attach_to_mint()
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn tx_hook(context: Context<TxHookAccountConstraints>, amount: u64) -> Result<()> {
+    pub fn tx_hook(context: Context<TxHook>, amount: u64) -> Result<()> {
         context.accounts.tx_hook(amount)
     }
 
-    pub fn init_wallet(context: Context<InitWalletAccountConstraints>, args: InitWalletArgs) -> Result<()> {
+    pub fn init_wallet(context: Context<InitWallet>, args: InitWalletArgs) -> Result<()> {
         context.accounts.init_wallet(args)
     }
 
-    pub fn remove_wallet(context: Context<RemoveWalletAccountConstraints>) -> Result<()> {
+    pub fn remove_wallet(context: Context<RemoveWallet>) -> Result<()> {
         context.accounts.remove_wallet()
     }
 
-    pub fn change_mode(context: Context<ChangeModeAccountConstraints>, args: ChangeModeArgs) -> Result<()> {
+    pub fn change_mode(context: Context<ChangeMode>, args: ChangeModeArgs) -> Result<()> {
         context.accounts.change_mode(args)
     }
 }

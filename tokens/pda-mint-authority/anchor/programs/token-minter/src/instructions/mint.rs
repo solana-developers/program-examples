@@ -7,7 +7,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct MintTokenAccountConstraints<'info> {
+pub struct MintToken<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -34,7 +34,7 @@ pub struct MintTokenAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_mint_token(context: Context<MintTokenAccountConstraints>, amount: u64) -> Result<()> {
+pub fn handle_mint_token(context: Context<MintToken>, amount: u64) -> Result<()> {
     msg!("Minting token to associated token account...");
     msg!("Mint: {}", &context.accounts.mint_account.key());
     msg!(

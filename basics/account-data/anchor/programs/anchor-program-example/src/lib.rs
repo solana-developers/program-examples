@@ -12,7 +12,7 @@ pub mod account_data_anchor_program {
     use super::*;
 
     pub fn create_address_info(
-        context: Context<CreateAddressInfoAccountConstraints>,
+        context: Context<CreateAddressInfo>,
         name: String,
         house_number: u8,
         street: String,

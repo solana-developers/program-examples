@@ -18,7 +18,7 @@ declare_id!("5BQyC7y2Pc283woThq11uZRqsgcRbBRLKz4yQ8BJadi2");
 pub mod memo_transfer {
     use super::*;
 
-    pub fn initialize(context: Context<InitializeAccountConstraints>) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>) -> Result<()> {
         // Calculate space required for token and extension data
         let token_account_size =
             ExtensionType::try_calculate_account_len::<PodAccount>(&[ExtensionType::MemoTransfer])?;
@@ -63,7 +63,7 @@ pub mod memo_transfer {
         Ok(())
     }
 
-    pub fn disable(context: Context<DisableAccountConstraints>) -> Result<()> {
+    pub fn disable(context: Context<Disable>) -> Result<()> {
         memo_transfer_disable(CpiContext::new(
             context.accounts.token_program.key(),
             MemoTransfer {
@@ -77,7 +77,7 @@ pub mod memo_transfer {
 }
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -89,7 +89,7 @@ pub struct InitializeAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct DisableAccountConstraints<'info> {
+pub struct Disable<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 

@@ -16,7 +16,7 @@ use crate::{get_extra_account_metas, get_meta_list_size, Mode, META_LIST_ACCOUNT
 
 #[derive(Accounts)]
 #[instruction(args: InitMintArgs)]
-pub struct InitMintAccountConstraints<'info> {
+pub struct InitMint<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 

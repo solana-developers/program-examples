@@ -10,7 +10,7 @@ use anchor_spl::{
 use spl_token_metadata_interface::state::{Field, TokenMetadata};
 
 #[derive(Accounts)]
-pub struct UpdateFieldAccountConstraints<'info> {
+pub struct UpdateField<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -23,7 +23,7 @@ pub struct UpdateFieldAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_process_update_field(context: Context<UpdateFieldAccountConstraints>, args: UpdateFieldArgs) -> Result<()> {
+pub fn handle_process_update_field(context: Context<UpdateField>, args: UpdateFieldArgs) -> Result<()> {
     let UpdateFieldArgs { field, value } = args;
 
     // Convert to Field type from spl_token_metadata_interface

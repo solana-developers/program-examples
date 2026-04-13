@@ -12,7 +12,7 @@ use crate::{
 };
 
 pub fn handle_swap_exact_tokens_for_tokens(
-    context: Context<SwapExactTokensForTokensAccountConstraints>,
+    context: Context<SwapExactTokensForTokens>,
     swap_a: bool,
     input_amount: u64,
     min_output_amount: u64,
@@ -142,7 +142,7 @@ pub fn handle_swap_exact_tokens_for_tokens(
 }
 
 #[derive(Accounts)]
-pub struct SwapExactTokensForTokensAccountConstraints<'info> {
+pub struct SwapExactTokensForTokens<'info> {
     #[account(
         seeds = [
             amm.id.as_ref()

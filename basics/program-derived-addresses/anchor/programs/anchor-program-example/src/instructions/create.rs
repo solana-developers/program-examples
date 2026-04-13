@@ -2,7 +2,7 @@ use crate::state::PageVisits;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct CreatePageVisitsAccountConstraints<'info> {
+pub struct CreatePageVisits<'info> {
     #[account(mut)]
     payer: Signer<'info>,
 
@@ -20,7 +20,7 @@ pub struct CreatePageVisitsAccountConstraints<'info> {
     system_program: Program<'info, System>,
 }
 
-pub fn handle_create_page_visits(context: Context<CreatePageVisitsAccountConstraints>) -> Result<()> {
+pub fn handle_create_page_visits(context: Context<CreatePageVisits>) -> Result<()> {
     *context.accounts.page_visits = PageVisits {
         page_visits: 0,
         bump: context.bumps.page_visits,

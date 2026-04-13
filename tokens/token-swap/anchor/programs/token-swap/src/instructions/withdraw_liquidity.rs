@@ -10,7 +10,7 @@ use crate::{
     state::{Amm, Pool},
 };
 
-pub fn handle_withdraw_liquidity(context: Context<WithdrawLiquidityAccountConstraints>, amount: u64) -> Result<()> {
+pub fn handle_withdraw_liquidity(context: Context<WithdrawLiquidity>, amount: u64) -> Result<()> {
     let authority_bump = context.bumps.pool_authority;
     let authority_seeds = &[
         &context.accounts.pool.amm.to_bytes(),
@@ -84,7 +84,7 @@ pub fn handle_withdraw_liquidity(context: Context<WithdrawLiquidityAccountConstr
 }
 
 #[derive(Accounts)]
-pub struct WithdrawLiquidityAccountConstraints<'info> {
+pub struct WithdrawLiquidity<'info> {
     #[account(
         seeds = [
             amm.id.as_ref()

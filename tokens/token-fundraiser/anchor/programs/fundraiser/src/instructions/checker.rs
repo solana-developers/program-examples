@@ -16,7 +16,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct CheckContributionsAccountConstraints<'info> {
+pub struct CheckContributions<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
     pub mint_to_raise: Account<'info, Mint>,
@@ -45,7 +45,7 @@ pub struct CheckContributionsAccountConstraints<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
-pub fn handle_check_contributions(accounts: &mut CheckContributionsAccountConstraints) -> Result<()> {
+pub fn handle_check_contributions(accounts: &mut CheckContributions) -> Result<()> {
         
         // Check if the target amount has been met
         require!(

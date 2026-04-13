@@ -13,7 +13,7 @@ use crate::Offer;
 use super::transfer_tokens;
 
 #[derive(Accounts)]
-pub struct TakeOfferAccountConstraints<'info> {
+pub struct TakeOffer<'info> {
     #[account(mut)]
     pub taker: Signer<'info>,
 
@@ -74,7 +74,7 @@ pub struct TakeOfferAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_send_wanted_tokens_to_maker(context: &Context<TakeOfferAccountConstraints>) -> Result<()> {
+pub fn handle_send_wanted_tokens_to_maker(context: &Context<TakeOffer>) -> Result<()> {
     transfer_tokens(
         &context.accounts.taker_token_account_b,
         &context.accounts.maker_token_account_b,
@@ -85,7 +85,7 @@ pub fn handle_send_wanted_tokens_to_maker(context: &Context<TakeOfferAccountCons
     )
 }
 
-pub fn handle_withdraw_and_close_vault(context: Context<TakeOfferAccountConstraints>) -> Result<()> {
+pub fn handle_withdraw_and_close_vault(context: Context<TakeOffer>) -> Result<()> {
     let seeds = &[
         b"offer",
         context.accounts.maker.to_account_info().key.as_ref(),

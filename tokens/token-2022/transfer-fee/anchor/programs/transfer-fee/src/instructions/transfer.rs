@@ -13,7 +13,7 @@ use anchor_spl::{
 };
 
 #[derive(Accounts)]
-pub struct TransferAccountConstraints<'info> {
+pub struct Transfer<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
     pub recipient: SystemAccount<'info>,
@@ -43,7 +43,7 @@ pub struct TransferAccountConstraints<'info> {
 // transfer fees are automatically deducted from the transfer amount
 // recipients receives (transfer amount - fees)
 // transfer fees are stored directly on the recipient token account and must be "harvested"
-pub fn handle_process_transfer(context: Context<TransferAccountConstraints>, amount: u64) -> Result<()> {
+pub fn handle_process_transfer(context: Context<Transfer>, amount: u64) -> Result<()> {
     // read mint account extension data
     let mint = &context.accounts.mint_account.to_account_info();
     let mint_data = mint.data.borrow();

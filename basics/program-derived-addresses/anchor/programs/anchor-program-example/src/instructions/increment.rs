@@ -2,7 +2,7 @@ use crate::state::PageVisits;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct IncrementPageVisitsAccountConstraints<'info> {
+pub struct IncrementPageVisits<'info> {
     user: SystemAccount<'info>,
     #[account(
         mut,
@@ -15,7 +15,7 @@ pub struct IncrementPageVisitsAccountConstraints<'info> {
     page_visits: Account<'info, PageVisits>,
 }
 
-pub fn handle_increment_page_visits(mut context: Context<IncrementPageVisitsAccountConstraints>) -> Result<()> {
+pub fn handle_increment_page_visits(mut context: Context<IncrementPageVisits>) -> Result<()> {
     let page_visits = &mut context.accounts.page_visits;
     page_visits.increment();
     Ok(())

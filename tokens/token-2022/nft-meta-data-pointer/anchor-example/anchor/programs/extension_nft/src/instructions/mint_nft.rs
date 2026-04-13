@@ -10,7 +10,7 @@ use anchor_spl::{
 use solana_program::program::{ invoke, invoke_signed };
 use spl_token_2022::{ extension::ExtensionType, state::Mint };
 
-pub fn handle_mint_nft(context: Context<MintNftAccountConstraints>) -> Result<()> {
+pub fn handle_mint_nft(context: Context<MintNft>) -> Result<()> {
     msg!("Mint nft with meta data extension and additional meta data");
 
     let space = match
@@ -178,7 +178,7 @@ pub fn handle_mint_nft(context: Context<MintNftAccountConstraints>) -> Result<()
 }
 
 #[derive(Accounts)]
-pub struct MintNftAccountConstraints<'info> {
+pub struct MintNft<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     pub system_program: Program<'info, System>,

@@ -12,7 +12,7 @@ use anchor_spl::{
 use crate::{ABListError, ABWallet, Mode};
 
 #[derive(Accounts)]
-pub struct TxHookAccountConstraints<'info> {
+pub struct TxHook<'info> {
     /// CHECK:
     pub source_token_account: UncheckedAccount<'info>,
     /// CHECK:

@@ -12,7 +12,7 @@ declare_id!("6tU3MEowU6oxxeDZLSxEwzcEZsZrhBJsfUR6xECvShid");
 pub mod cpi_guard {
     use super::*;
 
-    pub fn cpi_transfer(context: Context<CpiTransferAccountConstraints>) -> Result<()> {
+    pub fn cpi_transfer(context: Context<CpiTransfer>) -> Result<()> {
         transfer_checked(
             CpiContext::new(
                 context.accounts.token_program.key(),
@@ -31,7 +31,7 @@ pub mod cpi_guard {
 }
 
 #[derive(Accounts)]
-pub struct CpiTransferAccountConstraints<'info> {
+pub struct CpiTransfer<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
 

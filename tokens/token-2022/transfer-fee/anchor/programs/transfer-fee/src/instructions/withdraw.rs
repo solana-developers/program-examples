@@ -5,7 +5,7 @@ use anchor_spl::token_interface::{
 };
 
 #[derive(Accounts)]
-pub struct WithdrawAccountConstraints<'info> {
+pub struct Withdraw<'info> {
     pub authority: Signer<'info>,
 
     #[account(mut)]
@@ -17,7 +17,7 @@ pub struct WithdrawAccountConstraints<'info> {
 
 // transfer fees "harvested" to the mint account can then be withdraw by the withdraw authority
 // this transfers fees on the mint account to the specified token account
-pub fn handle_process_withdraw(context: Context<WithdrawAccountConstraints>) -> Result<()> {
+pub fn handle_process_withdraw(context: Context<Withdraw>) -> Result<()> {
     withdraw_withheld_tokens_from_mint(CpiContext::new(
         context.accounts.token_program.key(),
         WithdrawWithheldTokensFromMint {

@@ -3,7 +3,7 @@ use crate::state::player_data::PlayerData;
 use crate::{constants::MAX_ENERGY, GameData};
 use anchor_lang::prelude::*;
 
-pub fn handle_init_player(context: Context<InitPlayerAccountConstraints>) -> Result<()> {
+pub fn handle_init_player(context: Context<InitPlayer>) -> Result<()> {
     context.accounts.player.energy = MAX_ENERGY;
     context.accounts.player.last_login = Clock::get()?.unix_timestamp;
     context.accounts.player.authority = context.accounts.signer.key();
@@ -12,7 +12,7 @@ pub fn handle_init_player(context: Context<InitPlayerAccountConstraints>) -> Res
 
 #[derive(Accounts)]
 #[instruction(level_seed: String)]
-pub struct InitPlayerAccountConstraints<'info> {
+pub struct InitPlayer<'info> {
     #[account(
         init,
         payer = signer,

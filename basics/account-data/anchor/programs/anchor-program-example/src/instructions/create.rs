@@ -2,7 +2,7 @@ use crate::{constants::ANCHOR_DISCRIMINATOR_SIZE, state::AddressInfo};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct CreateAddressInfoAccountConstraints<'info> {
+pub struct CreateAddressInfo<'info> {
     #[account(mut)]
     payer: Signer<'info>,
 
@@ -16,7 +16,7 @@ pub struct CreateAddressInfoAccountConstraints<'info> {
 }
 
 pub fn handle_create_address_info(
-    context: Context<CreateAddressInfoAccountConstraints>,
+    context: Context<CreateAddressInfo>,
     name: String,
     house_number: u8,
     street: String,

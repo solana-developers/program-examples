@@ -15,7 +15,7 @@ pub mod group {
 
     use super::*;
 
-    pub fn test_initialize_group(mut context: Context<InitializeGroupAccountConstraints>) -> Result<()> {
+    pub fn test_initialize_group(mut context: Context<InitializeGroup>) -> Result<()> {
         handle_check_mint_data(&mut context.accounts)?;
 
         // // Token Group and Token Member extensions features not enabled yet on the Token2022 program
@@ -42,7 +42,7 @@ pub mod group {
 }
 
 #[derive(Accounts)]
-pub struct InitializeGroupAccountConstraints<'info> {
+pub struct InitializeGroup<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -62,7 +62,7 @@ pub struct InitializeGroupAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_check_mint_data(accounts: &mut InitializeGroupAccountConstraints) -> Result<()> {
+pub fn handle_check_mint_data(accounts: &mut InitializeGroup) -> Result<()> {
         let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;

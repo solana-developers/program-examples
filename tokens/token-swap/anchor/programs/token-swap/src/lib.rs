@@ -13,28 +13,28 @@ pub mod swap_example {
     pub use super::instructions::*;
     use super::*;
 
-    pub fn create_amm(context: Context<CreateAmmAccountConstraints>, id: Pubkey, fee: u16) -> Result<()> {
+    pub fn create_amm(context: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {
         instructions::handle_create_amm(context, id, fee)
     }
 
-    pub fn create_pool(context: Context<CreatePoolAccountConstraints>) -> Result<()> {
+    pub fn create_pool(context: Context<CreatePool>) -> Result<()> {
         instructions::handle_create_pool(context)
     }
 
     pub fn deposit_liquidity(
-        context: Context<DepositLiquidityAccountConstraints>,
+        context: Context<DepositLiquidity>,
         amount_a: u64,
         amount_b: u64,
     ) -> Result<()> {
         instructions::handle_deposit_liquidity(context, amount_a, amount_b)
     }
 
-    pub fn withdraw_liquidity(context: Context<WithdrawLiquidityAccountConstraints>, amount: u64) -> Result<()> {
+    pub fn withdraw_liquidity(context: Context<WithdrawLiquidity>, amount: u64) -> Result<()> {
         instructions::handle_withdraw_liquidity(context, amount)
     }
 
     pub fn swap_exact_tokens_for_tokens(
-        context: Context<SwapExactTokensForTokensAccountConstraints>,
+        context: Context<SwapExactTokensForTokens>,
         swap_a: bool,
         input_amount: u64,
         min_output_amount: u64,

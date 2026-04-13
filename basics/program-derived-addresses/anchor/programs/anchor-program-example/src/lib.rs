@@ -11,11 +11,11 @@ declare_id!("oCCQRZyAbVxujyd8m57MPmDzZDmy2FoKW4ULS7KofCE");
 pub mod program_derived_addresses_program {
     use super::*;
 
-    pub fn create_page_visits(context: Context<CreatePageVisitsAccountConstraints>) -> Result<()> {
+    pub fn create_page_visits(context: Context<CreatePageVisits>) -> Result<()> {
         create::handle_create_page_visits(context)
     }
 
-    pub fn increment_page_visits(context: Context<IncrementPageVisitsAccountConstraints>) -> Result<()> {
+    pub fn increment_page_visits(context: Context<IncrementPageVisits>) -> Result<()> {
         increment::handle_increment_page_visits(context)
     }
 }

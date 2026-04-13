@@ -7,7 +7,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct TransferTokensAccountConstraints<'info> {
+pub struct TransferTokens<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
     pub recipient: SystemAccount<'info>,
@@ -33,7 +33,7 @@ pub struct TransferTokensAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_transfer_tokens(context: Context<TransferTokensAccountConstraints>, amount: u64) -> Result<()> {
+pub fn handle_transfer_tokens(context: Context<TransferTokens>, amount: u64) -> Result<()> {
     msg!("Transferring tokens...");
     msg!(
         "Mint: {}",

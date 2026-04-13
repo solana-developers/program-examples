@@ -39,7 +39,7 @@ pub mod cutils {
 
     #[access_control(context.accounts.validate(&context, &params))]
     pub fn mint<'info>(
-        context: Context<'info, MintAccountConstraints<'info>>,
+        context: Context<'info, Mint<'info>>,
         params: MintParams,
     ) -> Result<()> {
         Mint::actuate(context, params)
@@ -47,7 +47,7 @@ pub mod cutils {
 
     #[access_control(context.accounts.validate(&context, &params))]
     pub fn verify<'info>(
-        context: Context<'info, VerifyAccountConstraints<'info>>,
+        context: Context<'info, Verify<'info>>,
         params: VerifyParams,
     ) -> Result<()> {
         Verify::actuate(context, &params)

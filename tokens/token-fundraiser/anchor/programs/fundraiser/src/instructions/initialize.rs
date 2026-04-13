@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
     pub mint_to_raise: Account<'info, Mint>,
@@ -37,7 +37,7 @@ pub struct InitializeAccountConstraints<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
-pub fn handle_initialize(accounts: &mut InitializeAccountConstraints, amount: u64, duration: u16, bumps: &InitializeAccountConstraintsBumps) -> Result<()> {
+pub fn handle_initialize(accounts: &mut Initialize, amount: u64, duration: u16, bumps: &InitializeBumps) -> Result<()> {
 
         // Check if the amount to raise meets the minimum amount required
         require!(

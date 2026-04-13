@@ -11,7 +11,7 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct InitializeExtraAccountMetasAccountConstraints<'info> {
+pub struct InitializeExtraAccountMetas<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -29,7 +29,7 @@ pub struct InitializeExtraAccountMetasAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_initialize_extra_account_metas_list(accounts: &mut InitializeExtraAccountMetasAccountConstraints, bumps: InitializeExtraAccountMetasAccountConstraintsBumps) -> Result<()> {
+pub fn handle_initialize_extra_account_metas_list(accounts: &mut InitializeExtraAccountMetas, bumps: InitializeExtraAccountMetasBumps) -> Result<()> {
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         let account_metas = vec![

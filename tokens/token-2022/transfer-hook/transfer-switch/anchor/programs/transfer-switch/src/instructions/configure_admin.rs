@@ -1,7 +1,7 @@
 use {crate::state::AdminConfig, anchor_lang::prelude::*};
 
 #[derive(Accounts)]
-pub struct ConfigureAdminAccountConstraints<'info> {
+pub struct ConfigureAdmin<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
@@ -22,7 +22,7 @@ pub struct ConfigureAdminAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_is_admin(accounts: &mut ConfigureAdminAccountConstraints) -> Result<()> {
+pub fn handle_is_admin(accounts: &mut ConfigureAdmin) -> Result<()> {
         // check if we are not creating the account for the first time,
         // ensure it's the admin that is making the change
         //
@@ -38,7 +38,7 @@ pub fn handle_is_admin(accounts: &mut ConfigureAdminAccountConstraints) -> Resul
         Ok(())
     }
 
-pub fn handle_configure_admin(accounts: &mut ConfigureAdminAccountConstraints) -> Result<()> {
+pub fn handle_configure_admin(accounts: &mut ConfigureAdmin) -> Result<()> {
         accounts.admin_config.set_inner(AdminConfig {
             admin: accounts.new_admin.key(), // set the admin pubkey that can switch transfers on/off
             is_initialised: true,        // let us know an admin has been set

@@ -18,7 +18,7 @@ pub mod nft_minter {
     use super::*;
 
     pub fn mint_nft(
-        context: Context<CreateTokenAccountConstraints>,
+        context: Context<CreateToken>,
         nft_name: String,
         nft_symbol: String,
         nft_uri: String,
@@ -96,7 +96,7 @@ pub mod nft_minter {
 }
 
 #[derive(Accounts)]
-pub struct CreateTokenAccountConstraints<'info> {
+pub struct CreateToken<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 

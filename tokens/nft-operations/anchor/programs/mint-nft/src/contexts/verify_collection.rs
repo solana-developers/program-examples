@@ -16,7 +16,7 @@ use anchor_spl::{
 const INSTRUCTIONS_SYSVAR_ID: Pubkey = anchor_lang::solana_program::pubkey::pubkey!("Sysvar1nstructions1111111111111111111111111");
 
 #[derive(Accounts)]
-pub struct VerifyCollectionMintAccountConstraints<'info> {
+pub struct VerifyCollectionMint<'info> {
     pub authority: Signer<'info>,
     #[account(mut)]
     pub metadata: Account<'info, MetadataAccount>,
@@ -38,7 +38,7 @@ pub struct VerifyCollectionMintAccountConstraints<'info> {
     pub token_metadata_program: Program<'info, Metadata>,
 }
 
-pub fn handle_verify_collection(accounts: &mut VerifyCollectionMintAccountConstraints, bumps: &VerifyCollectionMintAccountConstraintsBumps) -> Result<()> {
+pub fn handle_verify_collection(accounts: &mut VerifyCollectionMint, bumps: &VerifyCollectionMintBumps) -> Result<()> {
         let metadata = &accounts.metadata.to_account_info();
         let authority = &accounts.mint_authority.to_account_info();
         let collection_mint = &accounts.collection_mint.to_account_info();

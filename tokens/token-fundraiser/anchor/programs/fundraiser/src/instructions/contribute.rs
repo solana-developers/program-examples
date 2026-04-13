@@ -18,7 +18,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct ContributeAccountConstraints<'info> {
+pub struct Contribute<'info> {
     #[account(mut)]
     pub contributor: Signer<'info>,
     pub mint_to_raise: Account<'info, Mint>,
@@ -53,7 +53,7 @@ pub struct ContributeAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_contribute(accounts: &mut ContributeAccountConstraints, amount: u64) -> Result<()> {
+pub fn handle_contribute(accounts: &mut Contribute, amount: u64) -> Result<()> {
 
         // Check if the amount to contribute meets the minimum amount required
         require!(

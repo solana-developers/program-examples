@@ -27,7 +27,7 @@ use anchor_spl::metadata::mpl_token_metadata::{
 };
 
 #[derive(Accounts)]
-pub struct MintNFTAccountConstraints<'info> {
+pub struct MintNFT<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
     #[account(
@@ -65,7 +65,7 @@ pub struct MintNFTAccountConstraints<'info> {
     pub token_metadata_program: Program<'info, Metadata>,
 }
 
-pub fn handle_mint_nft(accounts: &mut MintNFTAccountConstraints, bumps: &MintNFTAccountConstraintsBumps) -> Result<()> {
+pub fn handle_mint_nft(accounts: &mut MintNFT, bumps: &MintNFTBumps) -> Result<()> {
 
         let metadata = &accounts.metadata.to_account_info();
         let master_edition = &accounts.master_edition.to_account_info();

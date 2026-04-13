@@ -4,7 +4,7 @@ use anchor_lang::solana_program::instruction::{AccountMeta, Instruction};
 
 #[derive(Accounts)]
 #[instruction(params: VerifyParams)]
-pub struct VerifyAccountConstraints<'info> {
+pub struct Verify<'info> {
     pub leaf_owner: Signer<'info>,
 
     /// CHECK: This account is neither written to nor read from.
@@ -31,7 +31,7 @@ impl Verify<'_> {
     }
 
     pub fn actuate<'info>(
-        context: Context<'info, VerifyAccountConstraints<'info>>,
+        context: Context<'info, Verify<'info>>,
         params: &VerifyParams,
     ) -> Result<()> {
         let asset_id = get_asset_id(&context.accounts.merkle_tree.key(), params.nonce);

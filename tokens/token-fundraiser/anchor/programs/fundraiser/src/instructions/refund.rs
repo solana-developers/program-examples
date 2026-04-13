@@ -16,7 +16,7 @@ use crate::{
 };
 
 #[derive(Accounts)]
-pub struct RefundAccountConstraints<'info> {
+pub struct Refund<'info> {
     #[account(mut)]
     pub contributor: Signer<'info>,
     pub maker: SystemAccount<'info>,
@@ -51,7 +51,7 @@ pub struct RefundAccountConstraints<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle_refund(accounts: &mut RefundAccountConstraints) -> Result<()> {
+pub fn handle_refund(accounts: &mut Refund) -> Result<()> {
 
         // Check if the fundraising duration has been reached
         let current_time = Clock::get()?.unix_timestamp;

@@ -10,27 +10,27 @@ pub mod transfer_fee {
     use super::*;
 
     pub fn initialize(
-        context: Context<InitializeAccountConstraints>,
+        context: Context<Initialize>,
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {
         process_initialize(context, transfer_fee_basis_points, maximum_fee)
     }
 
-    pub fn transfer(context: Context<TransferAccountConstraints>, amount: u64) -> Result<()> {
+    pub fn transfer(context: Context<Transfer>, amount: u64) -> Result<()> {
         process_transfer(context, amount)
     }
 
-    pub fn harvest<'info>(context: Context<'info, HarvestAccountConstraints<'info>>) -> Result<()> {
+    pub fn harvest<'info>(context: Context<'info, Harvest<'info>>) -> Result<()> {
         process_harvest(context)
     }
 
-    pub fn withdraw(context: Context<WithdrawAccountConstraints>) -> Result<()> {
+    pub fn withdraw(context: Context<Withdraw>) -> Result<()> {
         process_withdraw(context)
     }
 
     pub fn update_fee(
-        context: Context<UpdateFeeAccountConstraints>,
+        context: Context<UpdateFee>,
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {

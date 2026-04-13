@@ -12,7 +12,7 @@ use super::transfer_tokens;
 // See https://www.anchor-lang.com/docs/account-constraints#instruction-attribute
 #[derive(Accounts)]
 #[instruction(id: u64)]
-pub struct MakeOfferAccountConstraints<'info> {
+pub struct MakeOffer<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
 
@@ -55,7 +55,7 @@ pub struct MakeOfferAccountConstraints<'info> {
 
 // Move the tokens from the maker's ATA to the vault
 pub fn handle_send_offered_tokens_to_vault(
-    context: &Context<MakeOfferAccountConstraints>,
+    context: &Context<MakeOffer>,
     token_a_offered_amount: u64,
 ) -> Result<()> {
     transfer_tokens(
@@ -69,7 +69,7 @@ pub fn handle_send_offered_tokens_to_vault(
 }
 
 // Save the details of the offer to the offer account
-pub fn handle_save_offer(context: Context<MakeOfferAccountConstraints>, id: u64, token_b_wanted_amount: u64) -> Result<()> {
+pub fn handle_save_offer(context: Context<MakeOffer>, id: u64, token_b_wanted_amount: u64) -> Result<()> {
     context.accounts.offer.set_inner(Offer {
         id,
         maker: context.accounts.maker.key(),

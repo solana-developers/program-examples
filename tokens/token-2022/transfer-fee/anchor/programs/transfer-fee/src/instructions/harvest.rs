@@ -4,7 +4,7 @@ use anchor_spl::token_interface::{
 };
 
 #[derive(Accounts)]
-pub struct HarvestAccountConstraints<'info> {
+pub struct Harvest<'info> {
     #[account(mut)]
     pub mint_account: InterfaceAccount<'info, Mint>,
     pub token_program: Program<'info, Token2022>,
@@ -12,7 +12,7 @@ pub struct HarvestAccountConstraints<'info> {
 
 // transfer fees are stored directly on the recipient token account and must be "harvested"
 // "harvesting" transfers fees accumulated on token accounts to the mint account
-pub fn process_harvest<'info>(context: Context<'info, HarvestAccountConstraints<'info>>) -> Result<()> {
+pub fn process_harvest<'info>(context: Context<'info, Harvest<'info>>) -> Result<()> {
     // Using remaining accounts to allow for passing in an unknown number of token accounts to harvest from
     // Check that remaining accounts are token accounts for the mint to harvest to
     let sources = context

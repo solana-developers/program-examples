@@ -27,7 +27,7 @@ use anchor_spl::metadata::mpl_token_metadata::{
 };
 
 #[derive(Accounts)]
-pub struct CreateCollectionAccountConstraints<'info> {
+pub struct CreateCollection<'info> {
     #[account(mut)]
     user: Signer<'info>,
     #[account(
@@ -63,7 +63,7 @@ pub struct CreateCollectionAccountConstraints<'info> {
     token_metadata_program: Program<'info, Metadata>,
 }
 
-pub fn handle_create_collection(accounts: &mut CreateCollectionAccountConstraints, bumps: &CreateCollectionAccountConstraintsBumps) -> Result<()> {
+pub fn handle_create_collection(accounts: &mut CreateCollection, bumps: &CreateCollectionBumps) -> Result<()> {
 
         let metadata = &accounts.metadata.to_account_info();
         let master_edition = &accounts.master_edition.to_account_info();

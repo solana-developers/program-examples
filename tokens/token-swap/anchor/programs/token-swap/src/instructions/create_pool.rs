@@ -9,7 +9,7 @@ use crate::{
     state::{Amm, Pool},
 };
 
-pub fn handle_create_pool(mut context: Context<CreatePoolAccountConstraints>) -> Result<()> {
+pub fn handle_create_pool(mut context: Context<CreatePool>) -> Result<()> {
     let pool = &mut context.accounts.pool;
     pool.amm = context.accounts.amm.key();
     pool.mint_a = context.accounts.mint_a.key();
@@ -19,7 +19,7 @@ pub fn handle_create_pool(mut context: Context<CreatePoolAccountConstraints>) ->
 }
 
 #[derive(Accounts)]
-pub struct CreatePoolAccountConstraints<'info> {
+pub struct CreatePool<'info> {
     #[account(
         seeds = [
             amm.id.as_ref()

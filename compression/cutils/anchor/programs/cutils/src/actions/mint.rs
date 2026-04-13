@@ -11,7 +11,7 @@ use borsh::BorshSerialize;
 
 #[derive(Accounts)]
 #[instruction(params: MintParams)]
-pub struct MintAccountConstraints<'info> {
+pub struct Mint<'info> {
     pub payer: Signer<'info>,
 
     #[account(
@@ -76,7 +76,7 @@ impl Mint<'_> {
     }
 
     pub fn actuate<'info>(
-        context: Context<'info, MintAccountConstraints<'info>>,
+        context: Context<'info, Mint<'info>>,
         params: MintParams,
     ) -> Result<()> {
         // Build MintToCollectionV1 instruction data

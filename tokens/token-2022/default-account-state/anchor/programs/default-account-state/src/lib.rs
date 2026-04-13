@@ -20,7 +20,7 @@ pub mod default_account_state {
 
     // There is currently not an anchor constraint to automatically initialize the DefaultAccountState extension
     // We can manually create and initialize the mint account via CPIs in the instruction handler
-    pub fn initialize(context: Context<InitializeAccountConstraints>) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>) -> Result<()> {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::DefaultAccountState,
@@ -72,7 +72,7 @@ pub mod default_account_state {
     }
 
     pub fn update_default_state(
-        context: Context<UpdateDefaultStateAccountConstraints>,
+        context: Context<UpdateDefaultState>,
         account_state: AnchorAccountState,
     ) -> Result<()> {
         // Convert AnchorAccountState to spl_token_2022::state::AccountState
@@ -94,7 +94,7 @@ pub mod default_account_state {
 }
 
 #[derive(Accounts)]
-pub struct InitializeAccountConstraints<'info> {
+pub struct Initialize<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     #[account(mut)]
@@ -105,7 +105,7 @@ pub struct InitializeAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct UpdateDefaultStateAccountConstraints<'info> {
+pub struct UpdateDefaultState<'info> {
     #[account(mut)]
     pub freeze_authority: Signer<'info>,
     #[account(

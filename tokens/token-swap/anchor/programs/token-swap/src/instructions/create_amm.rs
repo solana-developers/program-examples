@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{errors::*, state::Amm};
 
-pub fn handle_create_amm(mut context: Context<CreateAmmAccountConstraints>, id: Pubkey, fee: u16) -> Result<()> {
+pub fn handle_create_amm(mut context: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {
     let amm = &mut context.accounts.amm;
     amm.id = id;
     amm.admin = context.accounts.admin.key();
@@ -13,7 +13,7 @@ pub fn handle_create_amm(mut context: Context<CreateAmmAccountConstraints>, id: 
 
 #[derive(Accounts)]
 #[instruction(id: Pubkey, fee: u16)]
-pub struct CreateAmmAccountConstraints<'info> {
+pub struct CreateAmm<'info> {
     #[account(
         init,
         payer = payer,

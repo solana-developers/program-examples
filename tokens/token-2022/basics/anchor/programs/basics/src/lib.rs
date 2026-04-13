@@ -11,21 +11,21 @@ pub mod anchor {
 
     use super::*;
 
-    pub fn create_token(_context: Context<CreateTokenAccountConstraints>, _token_name: String) -> Result<()> {
+    pub fn create_token(_context: Context<CreateToken>, _token_name: String) -> Result<()> {
         msg!("Create Token");
         Ok(())
     }
-    pub fn create_token_account(_context: Context<CreateTokenAccountAccountConstraints>) -> Result<()> {
+    pub fn create_token_account(_context: Context<CreateTokenAccount>) -> Result<()> {
         msg!("Create Token Account");
         Ok(())
     }
     pub fn create_associated_token_account(
-        _context: Context<CreateAssociatedTokenAccountAccountConstraints>,
+        _context: Context<CreateAssociatedTokenAccount>,
     ) -> Result<()> {
         msg!("Create Associated Token Account");
         Ok(())
     }
-    pub fn transfer_token(context: Context<TransferTokenAccountConstraints>, amount: u64) -> Result<()> {
+    pub fn transfer_token(context: Context<TransferToken>, amount: u64) -> Result<()> {
         let cpi_accounts = TransferChecked {
             from: context.accounts.from.to_account_info().clone(),
             mint: context.accounts.mint.to_account_info().clone(),
@@ -38,7 +38,7 @@ pub mod anchor {
         msg!("Transfer Token");
         Ok(())
     }
-    pub fn mint_token(context: Context<MintTokenAccountConstraints>, amount: u64) -> Result<()> {
+    pub fn mint_token(context: Context<MintToken>, amount: u64) -> Result<()> {
         let cpi_accounts = MintTo {
             mint: context.accounts.mint.to_account_info().clone(),
             to: context.accounts.receiver.to_account_info().clone(),
@@ -54,7 +54,7 @@ pub mod anchor {
 
 #[derive(Accounts)]
 #[instruction(token_name: String)]
-pub struct CreateTokenAccountConstraints<'info> {
+pub struct CreateToken<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     #[account(
@@ -71,7 +71,7 @@ pub struct CreateTokenAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct CreateTokenAccountAccountConstraints<'info> {
+pub struct CreateTokenAccount<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
@@ -89,7 +89,7 @@ pub struct CreateTokenAccountAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct CreateAssociatedTokenAccountAccountConstraints<'info> {
+pub struct CreateAssociatedTokenAccount<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
@@ -107,7 +107,7 @@ pub struct CreateAssociatedTokenAccountAccountConstraints<'info> {
 
 #[derive(Accounts)]
 
-pub struct TransferTokenAccountConstraints<'info> {
+pub struct TransferToken<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     #[account(mut)]
@@ -128,7 +128,7 @@ pub struct TransferTokenAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct MintTokenAccountConstraints<'info> {
+pub struct MintToken<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
     #[account(mut)]

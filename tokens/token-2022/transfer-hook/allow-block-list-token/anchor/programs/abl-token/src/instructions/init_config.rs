@@ -2,7 +2,7 @@ use crate::{Config, CONFIG_SEED};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct InitConfigAccountConstraints<'info> {
+pub struct InitConfig<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 

@@ -85,7 +85,7 @@ pub mod cnft_vault {
     use super::*;
 
     pub fn withdraw_cnft<'info>(
-        context: Context<'info, WithdrawAccountConstraints<'info>>,
+        context: Context<'info, Withdraw<'info>>,
         root: [u8; 32],
         data_hash: [u8; 32],
         creator_hash: [u8; 32],
@@ -149,7 +149,7 @@ pub mod cnft_vault {
 
     #[allow(clippy::too_many_arguments)]
     pub fn withdraw_two_cnfts<'info>(
-        context: Context<'info, WithdrawTwoAccountConstraints<'info>>,
+        context: Context<'info, WithdrawTwo<'info>>,
         root1: [u8; 32],
         data_hash1: [u8; 32],
         creator_hash1: [u8; 32],
@@ -267,7 +267,7 @@ pub mod cnft_vault {
 }
 
 #[derive(Accounts)]
-pub struct WithdrawAccountConstraints<'info> {
+pub struct Withdraw<'info> {
     #[account(mut)]
     #[account(
         seeds = [merkle_tree.key().as_ref()],
@@ -296,7 +296,7 @@ pub struct WithdrawAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct WithdrawTwoAccountConstraints<'info> {
+pub struct WithdrawTwo<'info> {
     #[account(mut)]
     #[account(
         seeds = [merkle_tree1.key().as_ref()],

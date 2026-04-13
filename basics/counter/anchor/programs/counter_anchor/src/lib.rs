@@ -6,18 +6,18 @@ declare_id!("BmDHboaj1kBUoinJKKSRqKfMeRKJqQqEbUj1VgzeQe4A");
 pub mod counter_anchor {
     use super::*;
 
-    pub fn initialize_counter(_context: Context<InitializeCounterAccountConstraints>) -> Result<()> {
+    pub fn initialize_counter(_context: Context<InitializeCounter>) -> Result<()> {
         Ok(())
     }
 
-    pub fn increment(context: Context<IncrementAccountConstraints>) -> Result<()> {
+    pub fn increment(context: Context<Increment>) -> Result<()> {
         context.accounts.counter.count = context.accounts.counter.count.checked_add(1).unwrap();
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct InitializeCounterAccountConstraints<'info> {
+pub struct InitializeCounter<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -31,7 +31,7 @@ pub struct InitializeCounterAccountConstraints<'info> {
 }
 
 #[derive(Accounts)]
-pub struct IncrementAccountConstraints<'info> {
+pub struct Increment<'info> {
     #[account(mut)]
     pub counter: Account<'info, Counter>,
 }

@@ -7,7 +7,7 @@ declare_id!("ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi");
 pub mod create_system_account {
     use super::*;
 
-    pub fn create_system_account(context: Context<CreateSystemAccountAccountConstraints>) -> Result<()> {
+    pub fn create_system_account(context: Context<CreateSystemAccount>) -> Result<()> {
         msg!("Program invoked. Creating a system account...");
         msg!(
             "  New public key will be: {}",
@@ -36,7 +36,7 @@ pub mod create_system_account {
 }
 
 #[derive(Accounts)]
-pub struct CreateSystemAccountAccountConstraints<'info> {
+pub struct CreateSystemAccount<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     #[account(mut)]
