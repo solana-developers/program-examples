@@ -224,7 +224,7 @@ Create tokens where transfers must have a memo describing the transaction attach
 
 [Anchor](./tokens/token-2022/memo-transfer/anchor) [Quasar](./tokens/token-2022/memo-transfer/quasar)
 
-### Adding on-chain metadata to the token mint
+### Adding onchain metadata to the token mint
 
 Create tokens that store their onchain metadata inside the token mint, without needing to use or pay for additional programs.
 
@@ -286,7 +286,7 @@ Use token account owner data as seeds to derive extra accounts in a transfer hoo
 
 ### Transfer hook - allow/block list
 
-Restrict or allow token transfers using an on-chain allow/block list managed by a list authority.
+Restrict or allow token transfers using an onchain allow/block list managed by a list authority.
 
 [Anchor](./tokens/token-2022/transfer-hook/allow-block-list-token/anchor) [Quasar](./tokens/token-2022/transfer-hook/allow-block-list-token/quasar)
 
@@ -298,7 +298,7 @@ Charge an additional cost or fee on every token transfer using a transfer hook.
 
 ### Transfer hook - transfer switch
 
-Enable or disable token transfers with an on-chain switch using a transfer hook.
+Enable or disable token transfers with an onchain switch using a transfer hook.
 
 [Anchor](./tokens/token-2022/transfer-hook/transfer-switch/anchor) [Quasar](./tokens/token-2022/transfer-hook/transfer-switch/quasar)
 
