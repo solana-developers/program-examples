@@ -1,6 +1,6 @@
-# Program Examples
+# Solana Program Examples
 
-## Onchain program examples for ⚓ Anchor, 💫 Quasar, 🤥 Pinocchio, and 🦀 Native Rust.
+## Solana onchain program examples for ⚓ Anchor, 💫 Quasar, 🤥 Pinocchio, and 🦀 Native Rust.
 
 [![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Quasar](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
 
