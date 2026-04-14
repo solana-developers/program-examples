@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { describe, test } from "node:test";
 import {
   Keypair,
@@ -34,6 +35,11 @@ describe("Create a system account", async () => {
     tx.add(ix).sign(payer, newKeypair);
 
     await client.processTransaction(tx);
+
+    const accountInfo = await client.getAccount(newKeypair.publicKey);
+    assert.ok(accountInfo, "new account should exist");
+    assert.ok(accountInfo.lamports > 0n, "new account should have lamports");
+    assert.equal(accountInfo.owner.toString(), SystemProgram.programId.toString());
   });
 
   test("Create the account via direct call to system program", async () => {
@@ -53,6 +59,10 @@ describe("Create a system account", async () => {
     tx.add(ix).sign(payer, newKeypair);
 
     await client.processTransaction(tx);
-    console.log(`Account with public key ${newKeypair.publicKey} successfully created`);
+
+    const accountInfo = await client.getAccount(newKeypair.publicKey);
+    assert.ok(accountInfo, "new account should exist");
+    assert.equal(accountInfo.lamports, BigInt(LAMPORTS_PER_SOL));
+    assert.equal(accountInfo.owner.toString(), SystemProgram.programId.toString());
   });
 });
