@@ -53,19 +53,10 @@ entrypoint:
     mov64 r1, r10
     add64 r1, -16
     call sol_get_rent_sysvar
-    ldxdw r3, [r1 + 0]
+    ldxdw r3, [r10 + -16]           # r1 is clobbered after the call, use r10 directly
     lddw r4, ACCOUNT_STORAGE_OVERHEAD
     mul64 r4, r3
     mul64 r4, DEFAULT_RENT_EXEMPTION_THRESHOLD
-
-    # log
-    mov64 r1, r4
-    lddw r2, 0
-    lddw r3, 0
-    lddw r4, 0
-    lddw r5, 0
-    call sol_log_64_
-
 
     # build ix data for create account
 
@@ -84,14 +75,6 @@ entrypoint:
     add64 r2, PROGRAM_ID            # set src in r2
     lddw r3, 32                     # set len in r3
     call sol_memcpy_                # call sol_memcpy_(dst, src, len)
-
-    # log
-    mov64 r1, r8
-    lddw r2, 0
-    lddw r3, 0
-    lddw r4, 0
-    lddw r5, 0
-    call sol_log_64_
 
 
     # construct account metas
@@ -133,13 +116,6 @@ entrypoint:
     lddw r3, CPI_CREATE_ACCOUNT_INSN_DATA_LEN
     stxdw [r2 + 32], r3             # data_len
 
-    # log
-    mov64 r1, r6                    # input buffer
-    mov64 r2, r7                    # SolInstruction
-    mov64 r3, r8                    # ix data
-    mov64 r4, r9                    # account metas
-    lddw r5, 0
-    call sol_log_64_
 
     # build account infos
     mov64 r5, r7
@@ -203,7 +179,6 @@ entrypoint:
     call sol_invoke_signed_c
 
     exit
-
 
 
 error_invalid_num_accounts:
