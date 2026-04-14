@@ -39,7 +39,6 @@ mod tests {
 
         let res = svm.send_transaction(tx);
         assert!(res.is_ok());
-        dbg!(&res.unwrap().logs);
 
         assert!(svm.get_account(&new_keypair.pubkey()).is_some());
     }
