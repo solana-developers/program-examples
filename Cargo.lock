@@ -663,6 +663,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eab1c04a571841102f5345a8fc0f6bb3d31c315dec879b5c6e42e40ce7ffa34e"
 
 [[package]]
+name = "asm"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "solana-address 2.4.0",
+ "solana-instruction 3.3.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction 3.1.0",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1168,6 +1182,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "create-account-asm-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "solana-instruction 3.3.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction 3.1.0",
 ]
 
 [[package]]
@@ -1768,6 +1795,19 @@ name = "hello-solana-anchor"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
+]
+
+[[package]]
+name = "hello-solana-asm-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "solana-instruction 3.0.0",
+ "solana-keypair",
+ "solana-native-token 3.0.0",
+ "solana-pubkey 3.0.0",
+ "solana-system-interface 2.0.0",
+ "solana-transaction",
 ]
 
 [[package]]
@@ -6140,9 +6180,9 @@ checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
 name = "unicode-segmentation"
-version = "1.12.0"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6ccf251212114b54433ec949fd6a7841275f9ada20dddd2f29e9ceea4501493"
+checksum = "da36089a805484bcccfffe0739803392c8298778a2d2f09febf76fac5ad9025b"
 
 [[package]]
 name = "universal-hash"
