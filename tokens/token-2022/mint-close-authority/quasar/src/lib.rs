@@ -50,8 +50,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
-    // Mint + MintCloseAuthority extension = 218 bytes
-    let mint_size: u64 = 218;
+    // 165 (base) + 1 (account type) + 4 (TLV header) + 32 (MintCloseAuthority data) = 202 bytes
+    let mint_size: u64 = 202;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     accounts.system_program

@@ -48,8 +48,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize, rate: i16) -> Result<(), ProgramError> {
-    // Mint + InterestBearingConfig extension = 234 bytes
-    let mint_size: u64 = 234;
+    // 165 (base) + 1 (account type) + 4 (TLV header) + 52 (InterestBearingConfig data) = 222 bytes
+    let mint_size: u64 = 222;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     accounts.system_program
