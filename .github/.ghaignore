@@ -34,6 +34,9 @@ tokens/token-2022/group/quasar
 # CPI quasar project uses subdirectories (hand/ and lever/) instead of a root Quasar.toml
 basics/cross-program-invocation/quasar
 
+# has Cargo.toml but no Quasar.toml
+tokens/spl-token-minter/quasar
+
 # error in tests
 tokens/external-delegate-token-master/anchor
 

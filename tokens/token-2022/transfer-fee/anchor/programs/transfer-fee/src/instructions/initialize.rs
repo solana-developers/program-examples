@@ -87,12 +87,12 @@ pub fn handle_process_initialize(
         Some(&context.accounts.payer.key()), // freeze authority
     )?;
 
-    handle_check_mint_data(&mut context.accounts)?;
+    handle_check_mint_data(&context.accounts)?;
     Ok(())
 }
 
 // helper to demonstrate how to read mint extension data within a program
-pub fn handle_check_mint_data(accounts: &mut Initialize) -> Result<()> {
+pub fn handle_check_mint_data(accounts: &Initialize) -> Result<()> {
     let mint = &accounts.mint_account.to_account_info();
     let mint_data = mint.data.borrow();
     let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
