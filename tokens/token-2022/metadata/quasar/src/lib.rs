@@ -99,11 +99,14 @@ pub fn handle_initialize(
         .invoke()?;
 
     // InitializeMetadataPointer: opcode 39, sub-opcode 0.
-    let mut mp_data = [0u8; 66];
+    // Layout: [39, 0, COption_flag(1), authority(32), COption_flag(1), metadata_address(32)]
+    let mut mp_data = [0u8; 68];
     mp_data[0] = 39;
     mp_data[1] = 0;
-    mp_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
-    mp_data[34..66]
+    mp_data[2] = 1; // COption::Some for authority
+    mp_data[3..35].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    mp_data[35] = 1; // COption::Some for metadata_address
+    mp_data[36..68]
         .copy_from_slice(accounts.mint_account.to_account_view().address().as_ref());
 
     CpiCall::new(

@@ -70,8 +70,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize, basis_points: u16, max_fee: u64) -> Result<(), ProgramError> {
-    // Mint + TransferFeeConfig extension = 378 bytes
-    let mint_size: u64 = 378;
+    // 165 (base) + 1 (AccountType) + 4 (TLV header) + 108 (TransferFeeConfig data) = 278 bytes
+    let mint_size: u64 = 278;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     accounts.system_program
