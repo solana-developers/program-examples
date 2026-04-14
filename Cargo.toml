@@ -68,7 +68,7 @@ mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
 
 
 # spl
-solana-program = "3.0"
+solana-program = "4.0"
 spl-token = { version = "8.0.0", features = [ "no-entrypoint" ] }
 spl-token-2022 = {version = "9.0.0" , features = [ "no-entrypoint" ] }
 spl-associated-token-account = { version = "7.0.0", features = [ "no-entrypoint" ] }
