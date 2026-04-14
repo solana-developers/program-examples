@@ -84,14 +84,18 @@ pub fn handle_initialize(accounts: &Initialize, basis_points: u16, max_fee: u64)
         )
         .invoke()?;
 
-    // TransferFeeInitialize: opcode 26
-    // Data: [26, config_authority (32), withdraw_authority (32), basis_points (u16 LE), max_fee (u64 LE)]
-    let mut ext_data = [0u8; 75];
-    ext_data[0] = 26;
-    ext_data[1..33].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
-    ext_data[33..65].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
-    ext_data[65..67].copy_from_slice(&basis_points.to_le_bytes());
-    ext_data[67..75].copy_from_slice(&max_fee.to_le_bytes());
+    // TransferFeeExtension opcode 26, sub-instruction 0 = InitializeTransferFeeConfig
+    // Data: [26, 0, COption_flag(1), config_authority(32), COption_flag(1), withdraw_authority(32),
+    //        basis_points(u16 LE), max_fee(u64 LE)]
+    let mut ext_data = [0u8; 78];
+    ext_data[0] = 26; // TransferFeeExtension
+    ext_data[1] = 0;  // InitializeTransferFeeConfig sub-instruction
+    ext_data[2] = 1;  // COption::Some for config_authority
+    ext_data[3..35].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    ext_data[35] = 1; // COption::Some for withdraw_authority
+    ext_data[36..68].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    ext_data[68..70].copy_from_slice(&basis_points.to_le_bytes());
+    ext_data[70..78].copy_from_slice(&max_fee.to_le_bytes());
 
     CpiCall::new(
         accounts.token_program.to_account_view().address(),

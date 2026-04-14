@@ -44,8 +44,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
-    // Token account + ImmutableOwner extension = 301 bytes
-    let account_size: u64 = 301;
+    // 165 (base) + 1 (account type) + 4 (TLV header, ImmutableOwner is zero-size) = 170 bytes
+    let account_size: u64 = 170;
     let lamports = Rent::get()?.try_minimum_balance(account_size as usize)?;
 
     // 1. Create account
@@ -59,14 +59,14 @@ pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
         )
         .invoke()?;
 
-    // 2. Initialize ImmutableOwner extension: opcode 34
+    // 2. Initialize ImmutableOwner extension: opcode 22 (no additional data)
     CpiCall::new(
         accounts.token_program.to_account_view().address(),
         [InstructionAccount::writable(
             accounts.token_account.to_account_view().address(),
         )],
         [accounts.token_account.to_account_view()],
-        [34u8],
+        [22u8],
     )
     .invoke()?;
 

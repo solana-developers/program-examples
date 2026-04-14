@@ -84,8 +84,8 @@ pub fn handle_initialize(
     //   + 4 + name.len + 4 + symbol.len + 4 + uri.len + 4 + 0 (additional metadata)
     let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
     let total_ext_data = 4 + metadata_data_len; // TLV: 2 type + 2 length + data
-    // Mint base (82) + padding (82) + AccountType (1) + MetadataPointer ext (68) + metadata TLV
-    let mint_size = 82 + 82 + 1 + 68 + total_ext_data;
+    // 165 (base with padding) + 1 (AccountType) + 68 (MetadataPointer TLV) + metadata TLV
+    let mint_size = 165 + 1 + 68 + total_ext_data;
     let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
 
     accounts.system_program

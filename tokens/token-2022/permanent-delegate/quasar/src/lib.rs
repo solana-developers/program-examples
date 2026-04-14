@@ -43,8 +43,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
-    // Mint + PermanentDelegate extension = 218 bytes
-    let mint_size: u64 = 218;
+    // 165 (base) + 1 (account type) + 4 (TLV header) + 32 (PermanentDelegate data) = 202 bytes
+    let mint_size: u64 = 202;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     accounts.system_program
@@ -57,10 +57,9 @@ pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
         )
         .invoke()?;
 
-    // InitializePermanentDelegate: opcode 35, delegate pubkey
-    // Actually the correct opcode is 38 (PermanentDelegate)
+    // InitializePermanentDelegate: opcode 35, delegate pubkey (32 bytes, not COption)
     let mut ext_data = [0u8; 33];
-    ext_data[0] = 38;
+    ext_data[0] = 35;
     ext_data[1..33].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
 
     CpiCall::new(

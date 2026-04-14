@@ -58,14 +58,14 @@ pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
         )
         .invoke()?;
 
-    // 2. Initialize NonTransferable extension: opcode 35
+    // 2. Initialize NonTransferable extension: opcode 32 (InitializeNonTransferableMint, no data)
     CpiCall::new(
         accounts.token_program.to_account_view().address(),
         [InstructionAccount::writable(
             accounts.mint_account.to_account_view().address(),
         )],
         [accounts.mint_account.to_account_view()],
-        [35u8],
+        [32u8],
     )
     .invoke()?;
 
