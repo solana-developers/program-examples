@@ -54,9 +54,10 @@ fn test_pull_lever_cpi() {
     // include_bytes!() runs at compile time, and during `anchor build` the IDL generation
     // step compiles tests before the .so files exist. Since this is a cross-program
     // dependency (not our own program), lever.so may not be built yet at compile time.
-    let lever_bytes = std::fs::read("target/deploy/lever.so").expect("lever.so not found — run `anchor build` first");
+    let lever_bytes = std::fs::read("target/deploy/lever.so")
+        .expect("lever.so not found — run `anchor build` first");
     svm.add_program(hand_program_id, hand_bytes).unwrap();
-    svm.add_program(lever_program_id, lever_bytes).unwrap();
+    svm.add_program(lever_program_id, &lever_bytes).unwrap();
     let payer = create_wallet(&mut svm, 10_000_000_000).unwrap();
 
     let power_keypair = Keypair::new();

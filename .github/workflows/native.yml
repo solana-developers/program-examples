@@ -1,4 +1,4 @@
-name: Pinocchio
+name: Native
 
 on:
   schedule:
@@ -35,10 +35,10 @@ jobs:
         with:
           list-files: shell
           filters: |
-            pinocchio:
-              - added|modified: '**/pinocchio/**'
+            native:
+              - added|modified: '**/native/**'
             workflow:
-              - added|modified: '.github/workflows/solana-pinocchio.yml'
+              - added|modified: '.github/workflows/native.yml'
       - name: Analyze Changes
         id: analyze
         run: |
@@ -47,15 +47,15 @@ jobs:
           echo "Ignore pattern: $ignore_pattern"
 
           function get_projects() {
-            find . -type d -name "pinocchio" | grep -vE "$ignore_pattern" | sort
+            find . -type d -name "native" | grep -vE "$ignore_pattern" | sort
           }
 
           # Determine which projects to build and test
           if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" || "${{ steps.changes.outputs.workflow }}" == "true" ]]; then
             projects=$(get_projects)
-          elif [[ "${{ steps.changes.outputs.pinocchio }}" == "true" ]]; then
-            changed_files=(${{ steps.changes.outputs.pinocchio_files }})
-            projects=$(for file in "${changed_files[@]}"; do dirname "${file}" | grep pinocchio | sed 's#/pinocchio/.*#/pinocchio#g'; done | grep -vE "$ignore_pattern" | sort -u)
+          elif [[ "${{ steps.changes.outputs.native }}" == "true" ]]; then
+            changed_files=(${{ steps.changes.outputs.native_files }})
+            projects=$(for file in "${changed_files[@]}"; do dirname "${file}" | grep native | sed 's#/native/.*#/native#g'; done | grep -vE "$ignore_pattern" | sort -u)
           else
             projects=""
           fi
@@ -109,7 +109,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: "lts/*"
+          node-version: 'lts/*'
           check-latest: true
       - name: Setup build environment
         id: setup
@@ -236,7 +236,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Create job summary
         run: |
-          echo "## Pinocchio Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Native Workflow Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Total projects: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
 
           # List all processed projects

@@ -14,11 +14,11 @@ pub mod transfer_fee {
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {
-        process_initialize(context, transfer_fee_basis_points, maximum_fee)
+        handle_process_initialize(context, transfer_fee_basis_points, maximum_fee)
     }
 
     pub fn transfer(context: Context<Transfer>, amount: u64) -> Result<()> {
-        process_transfer(context, amount)
+        handle_process_transfer(context, amount)
     }
 
     pub fn harvest<'info>(context: Context<'info, Harvest<'info>>) -> Result<()> {
@@ -26,7 +26,7 @@ pub mod transfer_fee {
     }
 
     pub fn withdraw(context: Context<Withdraw>) -> Result<()> {
-        process_withdraw(context)
+        handle_process_withdraw(context)
     }
 
     pub fn update_fee(
@@ -34,6 +34,6 @@ pub mod transfer_fee {
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {
-        process_update_fee(context, transfer_fee_basis_points, maximum_fee)
+        handle_process_update_fee(context, transfer_fee_basis_points, maximum_fee)
     }
 }

@@ -1,4 +1,4 @@
-name: Native
+name: Quasar
 
 on:
   schedule:
@@ -15,7 +15,9 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
-  # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+  # Force all JavaScript-based actions to use Node.js 24 runtime.
+  # Node.js 20 actions are deprecated and will stop working June 2026.
+  # This catches composite actions whose internal dependencies still reference @v4.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -35,10 +37,10 @@ jobs:
         with:
           list-files: shell
           filters: |
-            native:
-              - added|modified: '**/native/**'
+            quasar:
+              - added|modified: '**/quasar/**'
             workflow:
-              - added|modified: '.github/workflows/solana-native.yml'
+              - added|modified: '.github/workflows/quasar.yml'
       - name: Analyze Changes
         id: analyze
         run: |
@@ -47,15 +49,15 @@ jobs:
           echo "Ignore pattern: $ignore_pattern"
 
           function get_projects() {
-            find . -type d -name "native" | grep -vE "$ignore_pattern" | sort
+            find . -type d -name "quasar" | grep -vE "$ignore_pattern" | sort
           }
 
           # Determine which projects to build and test
           if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "schedule" || "${{ steps.changes.outputs.workflow }}" == "true" ]]; then
             projects=$(get_projects)
-          elif [[ "${{ steps.changes.outputs.native }}" == "true" ]]; then
-            changed_files=(${{ steps.changes.outputs.native_files }})
-            projects=$(for file in "${changed_files[@]}"; do dirname "${file}" | grep native | sed 's#/native/.*#/native#g'; done | grep -vE "$ignore_pattern" | sort -u)
+          elif [[ "${{ steps.changes.outputs.quasar }}" == "true" ]]; then
+            changed_files=(${{ steps.changes.outputs.quasar_files }})
+            projects=$(for file in "${changed_files[@]}"; do dirname "${file}" | grep quasar | sed 's#/quasar/.*#/quasar#g'; done | grep -vE "$ignore_pattern" | sort -u)
           else
             projects=""
           fi
@@ -105,12 +107,6 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 'lts/*'
-          check-latest: true
       - name: Setup build environment
         id: setup
         run: |
@@ -122,39 +118,20 @@ jobs:
             echo "Building and Testing $project with Solana $solana_version"
             cd "$project" || return 1
 
-            # Install dependencies
-            if ! pnpm install --frozen-lockfile; then
-              echo "::error::pnpm install failed for $project"
-              echo "$project: pnpm install failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+            # Build with quasar CLI
+            if ! quasar build; then
+              echo "::error::quasar build failed for $project"
+              echo "$project: quasar build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
             fi
 
-            # Build
-            if ! pnpm build; then
-              echo "::error::build failed for $project"
-              echo "$project: build failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
+            # Run Rust tests (quasar examples use cargo test with quasar-svm)
+            if ! cargo test; then
+              echo "::error::cargo test failed for $project"
+              echo "$project: cargo test failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
               cd - > /dev/null
               return 1
-            fi
-
-            # Test
-            if ! pnpm build-and-test; then
-              echo "::error::tests failed for $project"
-              echo "$project: tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-              cd - > /dev/null
-              return 1
-            fi
-
-          # Run Rust unit tests
-            if [ -d "program" ]; then
-              echo "Running Rust unit tests for $project"
-              if ! cargo test --manifest-path=./program/Cargo.toml; then
-                echo "::error::Rust unit tests failed for $project"
-                echo "$project: Rust unit tests failed with $solana_version" >> $GITHUB_WORKSPACE/failed_projects.txt
-                cd - > /dev/null
-                return 1
-              fi
             fi
 
             echo "Build and tests succeeded for $project with $solana_version version."
@@ -188,34 +165,20 @@ jobs:
           }
           EOF
 
-          # Make the script executable
           chmod +x build_and_test.sh
-
       - name: Setup Solana Stable
         uses: heyAyushh/setup-solana@v5.9
         with:
           solana-cli-version: stable
+      - name: Install Quasar CLI
+        run: cargo install --git https://github.com/blueshift-gg/quasar quasar-cli --locked
       - name: Build and Test with Stable
         run: |
           source build_and_test.sh
           solana -V
           rustc -V
+          quasar --version || true
           process_projects "stable"
-      # continue-on-error because the beta channel may not have a valid release
-      # (e.g. v4.0 returns 404 from release.anza.xyz). This is an upstream issue
-      # with heyAyushh/setup-solana — beta setup clears the stable install first.
-      - name: Setup Solana Beta
-        continue-on-error: true
-        uses: heyAyushh/setup-solana@v5.9
-        with:
-          solana-cli-version: beta
-      - name: Build and Test with Beta
-        continue-on-error: true
-        run: |
-          source build_and_test.sh
-          solana -V
-          rustc -V
-          process_projects "beta"
 
       - name: Set failed projects output
         id: set-failed
@@ -236,7 +199,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Create job summary
         run: |
-          echo "## Native Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Quasar Workflow Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Total projects: ${{ needs.changes.outputs.total_projects }}" >> $GITHUB_STEP_SUMMARY
 
           # List all processed projects

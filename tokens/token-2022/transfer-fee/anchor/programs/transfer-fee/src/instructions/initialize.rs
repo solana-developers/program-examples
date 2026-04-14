@@ -87,28 +87,28 @@ pub fn handle_process_initialize(
         Some(&context.accounts.payer.key()), // freeze authority
     )?;
 
-    context.accounts.check_mint_data()?;
+    handle_check_mint_data(&mut context.accounts)?;
     Ok(())
 }
 
 // helper to demonstrate how to read mint extension data within a program
 pub fn handle_check_mint_data(accounts: &mut Initialize) -> Result<()> {
-        let mint = &accounts.mint_account.to_account_info();
-        let mint_data = mint.data.borrow();
-        let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
-        let extension_data = mint_with_extension.get_extension::<TransferFeeConfig>()?;
+    let mint = &accounts.mint_account.to_account_info();
+    let mint_data = mint.data.borrow();
+    let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
+    let extension_data = mint_with_extension.get_extension::<TransferFeeConfig>()?;
 
-        assert_eq!(
-            extension_data.transfer_fee_config_authority,
-            OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
-        );
+    assert_eq!(
+        extension_data.transfer_fee_config_authority,
+        OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
+    );
 
-        assert_eq!(
-            extension_data.withdraw_withheld_authority,
-            OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
-        );
+    assert_eq!(
+        extension_data.withdraw_withheld_authority,
+        OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
+    );
 
-        msg!("{:?}", extension_data);
-        Ok(())
-    }
+    msg!("{:?}", extension_data);
+    Ok(())
+}
 
