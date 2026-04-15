@@ -140,19 +140,21 @@ pub fn handle_initialize(
     )
     .invoke()?;
 
-    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 45, sub = 0
-    // Data: [45, 0, update_authority(32), mint(32),
+    // TokenMetadataInitialize via spl-token-metadata-interface discriminator format.
+    // Token-2022 v7 uses 8-byte SHA256 discriminators for TokenMetadata/TokenGroup
+    // instructions rather than simple opcode bytes.
+    // Discriminator = sha256("spl_token_metadata_interface:initialize_account")[0..8]
+    //               = [210, 225, 30, 162, 88, 184, 77, 141]
+    // Data: [discriminator(8), update_authority(32), mint(32),
     //        name_len(u32 LE), name, symbol_len(u32 LE), symbol, uri_len(u32 LE), uri]
     // Accounts: [metadata(=mint, writable), update_authority(readonly),
     //            mint(readonly), mint_authority(signer)]
-    // In token-2022 v7: 44=PausableExtension, 45=TokenMetadataExtension
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
-    buf[pos] = 45;
-    pos += 1;
-    buf[pos] = 0;
-    pos += 1;
+    let discriminator: [u8; 8] = [210, 225, 30, 162, 88, 184, 77, 141];
+    buf[pos..pos + 8].copy_from_slice(&discriminator);
+    pos += 8;
     buf[pos..pos + 32].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
     pos += 32;
     buf[pos..pos + 32]
