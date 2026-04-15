@@ -38,24 +38,23 @@ pub fn deposit_liquidity(
         (amount_a, amount_b)
     } else {
         let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+            .checked_div(I64F64::from_num(pool_b.amount))
             .unwrap();
-        if pool_a.amount > pool_b.amount {
-            (
-                I64F64::from_num(amount_b)
-                    .checked_mul(ratio)
-                    .unwrap()
-                    .to_num::<u64>(),
-                amount_b,
-            )
+
+        // Calculate the optimal amount of A needed for the given amount of B
+        let optimal_amount_a = I64F64::from_num(amount_b)
+            .checked_mul(ratio)
+            .unwrap()
+            .to_num::<u64>();
+
+        if optimal_amount_a <= amount_a {
+            (optimal_amount_a, amount_b)
         } else {
-            (
-                amount_a,
-                I64F64::from_num(amount_a)
-                    .checked_div(ratio)
-                    .unwrap()
-                    .to_num::<u64>(),
-            )
+            let optimal_amount_b = I64F64::from_num(amount_a)
+                .checked_div(ratio)
+                .unwrap()
+                .to_num::<u64>();
+            (amount_a, optimal_amount_b)
         }
     };
 
