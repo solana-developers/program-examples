@@ -88,15 +88,16 @@ pub fn handle_initialize(
     let mint_size_full = mint_size_base + 4 + metadata_data_len;
     let lamports = Rent::get()?.try_minimum_balance(mint_size_full)?;
 
-    // Create at base size; TokenMetadataInitialize will realloc to mint_size_full.
-    // Lamports are pre-funded for the full size so the realloc has sufficient rent.
+    // Create at full size so TokenMetadataInitialize can write TLV data without realloc.
+    // Account data direct mapping prevents realloc within nested CPIs when the account
+    // was created in the same transaction.
     accounts
         .system_program
         .create_account(
             accounts.payer,
             accounts.mint_account,
             lamports,
-            mint_size_base as u64,
+            mint_size_full as u64,
             accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
