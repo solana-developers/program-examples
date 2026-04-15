@@ -1,0 +1,21 @@
+[package]
+name = "cross-program-invocation-pinocchio-lever"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+pinocchio = "0.9.2"
+pinocchio-log = "0.5.1"
+pinocchio-system = "0.4.0"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
