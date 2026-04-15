@@ -140,15 +140,16 @@ pub fn handle_initialize(
     )
     .invoke()?;
 
-    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 44, sub = 0
-    // Data: [44, 0, update_authority(32), mint(32),
+    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 45, sub = 0
+    // Data: [45, 0, update_authority(32), mint(32),
     //        name_len(u32 LE), name, symbol_len(u32 LE), symbol, uri_len(u32 LE), uri]
     // Accounts: [metadata(=mint, writable), update_authority(readonly),
     //            mint(readonly), mint_authority(signer)]
+    // In token-2022 v7: 44=PausableExtension, 45=TokenMetadataExtension
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
-    buf[pos] = 44;
+    buf[pos] = 45;
     pos += 1;
     buf[pos] = 0;
     pos += 1;
