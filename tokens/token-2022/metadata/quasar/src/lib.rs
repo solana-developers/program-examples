@@ -145,8 +145,9 @@ pub fn handle_initialize(
     // instructions rather than simple opcode bytes.
     // Discriminator = sha256("spl_token_metadata_interface:initialize_account")[0..8]
     //               = [210, 225, 30, 162, 88, 184, 77, 141]
-    // Data: [discriminator(8), update_authority(32), mint(32),
-    //        name_len(u32 LE), name, symbol_len(u32 LE), symbol, uri_len(u32 LE), uri]
+    // Data: [discriminator(8), name_len(u32 LE), name, symbol_len(u32 LE), symbol,
+    //        uri_len(u32 LE), uri]
+    // (update_authority and mint are passed as accounts, not instruction data)
     // Accounts: [metadata(=mint, writable), update_authority(readonly),
     //            mint(readonly), mint_authority(signer)]
     const MAX_META_IX: usize = 512;
@@ -155,11 +156,6 @@ pub fn handle_initialize(
     let discriminator: [u8; 8] = [210, 225, 30, 162, 88, 184, 77, 141];
     buf[pos..pos + 8].copy_from_slice(&discriminator);
     pos += 8;
-    buf[pos..pos + 32].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
-    pos += 32;
-    buf[pos..pos + 32]
-        .copy_from_slice(accounts.mint_account.to_account_view().address().as_ref());
-    pos += 32;
     buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
     pos += 4;
     buf[pos..pos + name.len()].copy_from_slice(name);
