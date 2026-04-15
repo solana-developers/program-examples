@@ -74,26 +74,31 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(
-    accounts: &Initialize, name: &[u8],
+    accounts: &Initialize,
+    name: &[u8],
     symbol: &[u8],
     uri: &[u8],
 ) -> Result<(), ProgramError> {
-    // Calculate the total metadata size.
-    // MetadataPointer (64 bytes) + TLV overhead + actual metadata
-    // Metadata format: 4 (TLV header) + 32 (update_auth) + 32 (mint)
-    //   + 4 + name.len + 4 + symbol.len + 4 + uri.len + 4 + 0 (additional metadata)
-    let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
-    let total_ext_data = 4 + metadata_data_len; // TLV: 2 type + 2 length + data
-    // 165 (base with padding) + 1 (AccountType) + 68 (MetadataPointer TLV) + metadata TLV
-    let mint_size = 165 + 1 + 68 + total_ext_data;
-    let lamports = Rent::get()?.try_minimum_balance(mint_size)?;
+    // Create account with only base + MetadataPointer TLV space initially.
+    // TokenMetadataInitialize reallocates the account internally when called.
+    // 165 (base) + 1 (AccountType) + 68 (MetadataPointer TLV: 2+2+64) = 234 bytes
+    let mint_size_base: usize = 234;
 
-    accounts.system_program
+    // Compute full rent to over-fund the account so the token-2022 realloc
+    // during TokenMetadataInitialize has sufficient lamports.
+    // TokenMetadata TLV: 2 (type) + 2 (length) + data
+    // data: update_auth(32) + mint(32) + name(4+len) + symbol(4+len) + uri(4+len) + additional(4)
+    let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
+    let mint_size_full = mint_size_base + 4 + metadata_data_len;
+    let lamports = Rent::get()?.try_minimum_balance(mint_size_full)?;
+
+    accounts
+        .system_program
         .create_account(
             accounts.payer,
             accounts.mint_account,
             lamports,
-            mint_size as u64,
+            mint_size_base as u64,
             accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
@@ -118,9 +123,9 @@ pub fn handle_initialize(
     )
     .invoke()?;
 
-    // InitializeMint2.
+    // InitializeMint2: opcode 20
     let mut mint_data = [0u8; 67];
-    mint_data[0] = 20; // InitializeMint2
+    mint_data[0] = 20;
     mint_data[1] = 2; // decimals
     mint_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
     mint_data[34] = 0; // no freeze authority
@@ -135,11 +140,11 @@ pub fn handle_initialize(
     )
     .invoke()?;
 
-    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 44
-    // Sub-instruction: Initialize = 0
-    // Layout: [44, 0, update_authority(32), mint(32),
-    //          name_len(u32 LE), name, symbol_len(u32 LE), symbol,
-    //          uri_len(u32 LE), uri]
+    // TokenMetadataInitialize: TokenInstruction::TokenMetadataExtension = 44, sub = 0
+    // Data: [44, 0, update_authority(32), mint(32),
+    //        name_len(u32 LE), name, symbol_len(u32 LE), symbol, uri_len(u32 LE), uri]
+    // Accounts: [metadata(=mint, writable), update_authority(readonly),
+    //            mint(readonly), mint_authority(signer)]
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
@@ -147,24 +152,19 @@ pub fn handle_initialize(
     pos += 1;
     buf[pos] = 0;
     pos += 1;
-    // update_authority
     buf[pos..pos + 32].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
     pos += 32;
-    // mint
     buf[pos..pos + 32]
         .copy_from_slice(accounts.mint_account.to_account_view().address().as_ref());
     pos += 32;
-    // name
     buf[pos..pos + 4].copy_from_slice(&(name.len() as u32).to_le_bytes());
     pos += 4;
     buf[pos..pos + name.len()].copy_from_slice(name);
     pos += name.len();
-    // symbol
     buf[pos..pos + 4].copy_from_slice(&(symbol.len() as u32).to_le_bytes());
     pos += 4;
     buf[pos..pos + symbol.len()].copy_from_slice(symbol);
     pos += symbol.len();
-    // uri
     buf[pos..pos + 4].copy_from_slice(&(uri.len() as u32).to_le_bytes());
     pos += 4;
     buf[pos..pos + uri.len()].copy_from_slice(uri);
@@ -173,19 +173,15 @@ pub fn handle_initialize(
     quasar_lang::cpi::BufCpiCall::new(
         accounts.token_program.to_account_view().address(),
         [
-            InstructionAccount::writable(
-                accounts.mint_account.to_account_view().address(),
-            ),
-            InstructionAccount::readonly_signer(
-                accounts.payer.to_account_view().address(),
-            ),
-            InstructionAccount::readonly_signer(
-                accounts.payer.to_account_view().address(),
-            ),
+            InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::readonly(accounts.payer.to_account_view().address()),
+            InstructionAccount::readonly(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::readonly_signer(accounts.payer.to_account_view().address()),
         ],
         [
             accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
+            accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
         ],
         buf,
