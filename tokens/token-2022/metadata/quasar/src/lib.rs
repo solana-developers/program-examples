@@ -88,14 +88,15 @@ pub fn handle_initialize(
     let mint_size_full = mint_size_base + 4 + metadata_data_len;
     let lamports = Rent::get()?.try_minimum_balance(mint_size_full)?;
 
-    // Create at full size upfront: token-2022 cannot realloc an account inside CPI.
+    // Create at base size; TokenMetadataInitialize will realloc to mint_size_full.
+    // Lamports are pre-funded for the full size so the realloc has sufficient rent.
     accounts
         .system_program
         .create_account(
             accounts.payer,
             accounts.mint_account,
             lamports,
-            mint_size_full as u64,
+            mint_size_base as u64,
             accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
@@ -146,7 +147,9 @@ pub fn handle_initialize(
     //        uri_len(u32 LE), uri]
     // (update_authority and mint are passed as accounts, not instruction data)
     // Accounts: [metadata(=mint, writable), update_authority(readonly),
-    //            mint(readonly), mint_authority(signer)]
+    //            mint(writable, same as metadata), mint_authority(signer)]
+    // mint must be writable (not readonly) to avoid InvalidRealloc: the Solana
+    // runtime rejects resizing an account that's also aliased as readonly.
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
@@ -171,7 +174,7 @@ pub fn handle_initialize(
         [
             InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
             InstructionAccount::readonly(accounts.payer.to_account_view().address()),
-            InstructionAccount::readonly(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
             InstructionAccount::readonly_signer(accounts.payer.to_account_view().address()),
         ],
         [
