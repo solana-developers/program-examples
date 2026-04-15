@@ -146,10 +146,14 @@ pub fn handle_initialize(
     // Data: [discriminator(8), name_len(u32 LE), name, symbol_len(u32 LE), symbol,
     //        uri_len(u32 LE), uri]
     // (update_authority and mint are passed as accounts, not instruction data)
-    // Accounts: [metadata(=mint, writable), update_authority(readonly),
-    //            mint(writable, same as metadata), mint_authority(signer)]
-    // mint must be writable (not readonly) to avoid InvalidRealloc: the Solana
-    // runtime rejects resizing an account that's also aliased as readonly.
+    // Accounts for TokenMetadataInitialize:
+    //   0: metadata (= mint, writable)
+    //   1: update_authority (writable_signer — same as payer; must match access of accounts 3+4)
+    //   2: mint (writable — same account as 0; must be writable to allow realloc without alias conflict)
+    //   3: mint_authority (writable_signer — same as payer)
+    //   4: payer for realloc (writable_signer — token-2022 v7 requires explicit payer+system_program)
+    //   5: system_program (readonly — for the realloc CPI)
+    // All payer instances are writable_signer to avoid access-mode conflict from deduplication.
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
@@ -173,15 +177,19 @@ pub fn handle_initialize(
         accounts.token_program.to_account_view().address(),
         [
             InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
-            InstructionAccount::readonly(accounts.payer.to_account_view().address()),
+            InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
             InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
-            InstructionAccount::readonly_signer(accounts.payer.to_account_view().address()),
+            InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
+            InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
+            InstructionAccount::readonly(accounts.system_program.to_account_view().address()),
         ],
         [
             accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
             accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
+            accounts.payer.to_account_view(),
+            accounts.system_program.to_account_view(),
         ],
         buf,
         pos,
