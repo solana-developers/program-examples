@@ -79,26 +79,23 @@ pub fn handle_initialize(
     symbol: &[u8],
     uri: &[u8],
 ) -> Result<(), ProgramError> {
-    // Create account with only base + MetadataPointer TLV space initially.
-    // TokenMetadataInitialize reallocates the account internally when called.
     // 165 (base) + 1 (AccountType) + 68 (MetadataPointer TLV: 2+2+64) = 234 bytes
     let mint_size_base: usize = 234;
 
-    // Compute full rent to over-fund the account so the token-2022 realloc
-    // during TokenMetadataInitialize has sufficient lamports.
     // TokenMetadata TLV: 2 (type) + 2 (length) + data
     // data: update_auth(32) + mint(32) + name(4+len) + symbol(4+len) + uri(4+len) + additional(4)
     let metadata_data_len = 32 + 32 + 4 + name.len() + 4 + symbol.len() + 4 + uri.len() + 4;
     let mint_size_full = mint_size_base + 4 + metadata_data_len;
     let lamports = Rent::get()?.try_minimum_balance(mint_size_full)?;
 
+    // Create at full size upfront: token-2022 cannot realloc an account inside CPI.
     accounts
         .system_program
         .create_account(
             accounts.payer,
             accounts.mint_account,
             lamports,
-            mint_size_base as u64,
+            mint_size_full as u64,
             accounts.token_program.to_account_view().address(),
         )
         .invoke()?;
