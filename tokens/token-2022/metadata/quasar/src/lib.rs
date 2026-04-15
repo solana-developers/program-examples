@@ -146,14 +146,13 @@ pub fn handle_initialize(
     // Data: [discriminator(8), name_len(u32 LE), name, symbol_len(u32 LE), symbol,
     //        uri_len(u32 LE), uri]
     // (update_authority and mint are passed as accounts, not instruction data)
-    // Accounts for TokenMetadataInitialize:
-    //   0: metadata (= mint, writable)
-    //   1: update_authority (writable_signer — same as payer; must match access of accounts 3+4)
-    //   2: mint (writable — same account as 0; must be writable to allow realloc without alias conflict)
-    //   3: mint_authority (writable_signer — same as payer)
-    //   4: payer for realloc (writable_signer — token-2022 v7 requires explicit payer+system_program)
-    //   5: system_program (readonly — for the realloc CPI)
-    // All payer instances are writable_signer to avoid access-mode conflict from deduplication.
+    // Accounts match spl-token-metadata-interface::instruction::initialize layout:
+    //   0: metadata (= mint, writable) — where TLV data is written and realloc happens
+    //   1: update_authority (= payer, readonly) — stored in metadata
+    //   2: mint (= mint, readonly, dup of 0) — read for mint_authority validation
+    //   3: mint_authority (= payer, writable+signer, dup of 1) — must sign
+    // No explicit payer/system_program needed: the mint was pre-funded in create_account
+    // with sufficient lamports for the full post-realloc size (mint_size_full).
     const MAX_META_IX: usize = 512;
     let mut buf = [0u8; MAX_META_IX];
     let mut pos = 0usize;
@@ -177,19 +176,15 @@ pub fn handle_initialize(
         accounts.token_program.to_account_view().address(),
         [
             InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
+            InstructionAccount::readonly(accounts.payer.to_account_view().address()),
+            InstructionAccount::readonly(accounts.mint_account.to_account_view().address()),
             InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
-            InstructionAccount::writable(accounts.mint_account.to_account_view().address()),
-            InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
-            InstructionAccount::writable_signer(accounts.payer.to_account_view().address()),
-            InstructionAccount::readonly(accounts.system_program.to_account_view().address()),
         ],
         [
             accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
             accounts.mint_account.to_account_view(),
             accounts.payer.to_account_view(),
-            accounts.payer.to_account_view(),
-            accounts.system_program.to_account_view(),
         ],
         buf,
         pos,
