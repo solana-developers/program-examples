@@ -136,6 +136,9 @@ jobs:
               return 1
             fi
 
+            # Sync program IDs (Anchor 1.0.0 requires keypair and declare_id! to match)
+            anchor keys sync
+
             # Run anchor build
             if ! anchor build; then
               echo "::error::anchor build failed for $project"
