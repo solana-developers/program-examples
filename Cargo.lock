@@ -1802,12 +1802,12 @@ name = "hello-solana-asm-program"
 version = "0.1.0"
 dependencies = [
  "litesvm",
- "solana-instruction 3.0.0",
+ "solana-instruction 3.3.0",
  "solana-keypair",
  "solana-native-token 3.0.0",
  "solana-pubkey 3.0.0",
  "solana-system-interface 2.0.0",
- "solana-transaction",
+ "solana-transaction 3.1.0",
 ]
 
 [[package]]
