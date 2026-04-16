@@ -18,4 +18,5 @@ args = [
 ]
 
 [clients]
+path = "target/client"
 languages = ["rust"]

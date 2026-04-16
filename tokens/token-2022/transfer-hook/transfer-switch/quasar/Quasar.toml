@@ -15,4 +15,5 @@ program = "cargo"
 args = ["test", "tests::"]
 
 [clients]
+path = "target/client"
 languages = ["rust"]

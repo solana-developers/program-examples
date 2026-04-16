@@ -109,7 +109,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: heyAyushh/setup-anchor@v4.999
         with:
-          anchor-version: 0.32.1
+          anchor-version: 1.0.0
           solana-cli-version: stable
       - name: Display Versions
         run: |
