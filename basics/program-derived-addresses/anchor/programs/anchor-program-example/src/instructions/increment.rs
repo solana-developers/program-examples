@@ -15,7 +15,7 @@ pub struct IncrementPageVisits<'info> {
     page_visits: Account<'info, PageVisits>,
 }
 
-pub fn handle_increment_page_visits(mut context: Context<IncrementPageVisits>) -> Result<()> {
+pub fn handle_increment_page_visits(context: Context<IncrementPageVisits>) -> Result<()> {
     let page_visits = &mut context.accounts.page_visits;
     page_visits.increment();
     Ok(())

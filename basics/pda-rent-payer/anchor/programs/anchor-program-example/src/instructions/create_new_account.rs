@@ -34,8 +34,8 @@ pub fn handle_create_new_account(context: Context<CreateNewAccount>) -> Result<(
             },
         )
         .with_signer(signer_seeds),
-        lamports,                           // Lamports
-        0,                                  // Space
+        lamports,                               // Lamports
+        0,                                      // Space
         &context.accounts.system_program.key(), // Owner Program
     )?;
     Ok(())

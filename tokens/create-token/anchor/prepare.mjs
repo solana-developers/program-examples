@@ -7,7 +7,7 @@ import { $ } from "zx";
 const programs = [
   {
     id: "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-    name: "token_metadata.so",
+    name: "mpl_token_metadata.so",
   },
 ];
 

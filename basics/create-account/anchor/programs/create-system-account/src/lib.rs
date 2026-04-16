@@ -25,8 +25,8 @@ pub mod create_system_account {
                     to: context.accounts.new_account.to_account_info(), // To pubkey
                 },
             ),
-            lamports,                           // Lamports
-            0,                                  // Space
+            lamports,                               // Lamports
+            0,                                      // Space
             &context.accounts.system_program.key(), // Owner Program
         )?;
 

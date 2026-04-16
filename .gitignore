@@ -14,7 +14,8 @@ node_modules/
 **/*/.anchor
 **/*/.DS_Store
 **/*/target
-**/*/tests/fixtures
+**/*/tests/fixtures/*
+!**/*/tests/fixtures/*.so
 **/*.rs.bk
 **/*/test-ledger
 **/*/yarn.lock

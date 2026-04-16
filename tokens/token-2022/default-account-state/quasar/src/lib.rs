@@ -56,8 +56,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
-    // Mint + DefaultAccountState extension = 234 bytes
-    let mint_size: u64 = 234;
+    // 165 (base account) + 1 (account type) + 4 (TLV header) + 1 (DefaultAccountState data) = 171 bytes
+    let mint_size: u64 = 171;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     // 1. Create account owned by Token-2022
@@ -85,11 +85,13 @@ pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
     .invoke()?;
 
     // 3. InitializeMint2: opcode 20, decimals, mint_authority, freeze_authority_option, freeze_authority
+    // COption<Pubkey> is encoded as 1-byte flag (1 = Some, 0 = None) + 32-byte pubkey
+    // Total: 1 (opcode) + 1 (decimals) + 32 (mint_authority) + 1 (COption flag) + 32 (freeze_authority) = 67 bytes
     let mut mint_data = [0u8; 67];
     mint_data[0] = 20; // InitializeMint2
     mint_data[1] = 2; // decimals
     mint_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
-    mint_data[34] = 1; // has freeze authority
+    mint_data[34] = 1; // COption::Some flag (1-byte format used by quasar-svm token-2022)
     mint_data[35..67].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
 
     CpiCall::new(

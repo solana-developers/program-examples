@@ -50,8 +50,8 @@ pub struct Initialize<'info> {
 
 #[inline(always)]
 pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
-    // Mint + MintCloseAuthority extension = 218 bytes
-    let mint_size: u64 = 218;
+    // 165 (base) + 1 (account type) + 4 (TLV header) + 32 (MintCloseAuthority data) = 202 bytes
+    let mint_size: u64 = 202;
     let lamports = Rent::get()?.try_minimum_balance(mint_size as usize)?;
 
     accounts.system_program
@@ -64,10 +64,11 @@ pub fn handle_initialize(accounts: &Initialize) -> Result<(), ProgramError> {
         )
         .invoke()?;
 
-    // InitializeMintCloseAuthority: opcode 25, close_authority pubkey
-    let mut ext_data = [0u8; 33];
-    ext_data[0] = 25;
-    ext_data[1..33].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
+    // InitializeMintCloseAuthority: opcode 25, COption::Some flag (1 byte), close_authority pubkey (32 bytes)
+    let mut ext_data = [0u8; 34];
+    ext_data[0] = 25; // InitializeMintCloseAuthority
+    ext_data[1] = 1;  // COption::Some
+    ext_data[2..34].copy_from_slice(accounts.payer.to_account_view().address().as_ref());
 
     CpiCall::new(
         accounts.token_program.to_account_view().address(),
