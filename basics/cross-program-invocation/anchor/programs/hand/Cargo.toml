@@ -27,7 +27,7 @@ litesvm = "0.11.0"
 solana-signer = "3.0.0"
 solana-keypair = "3.0.1"
 solana-kite = "0.3.0"
-lever = { path = "../../lever", features = ["no-entrypoint"] }
+lever = { path = "../lever", features = ["no-entrypoint"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
