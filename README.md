@@ -1,13 +1,10 @@
 # Solana Program Examples
 
-## Solana onchain program examples for ⚓ Anchor, 💫 Quasar, 🤥 Pinocchio, and 🦀 Native Rust.
+## Solana onchain program examples for ⚓ Anchor, 💫 Quasar, 🤥 Pinocchio, and 🦀  Rust.
 
 [![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Quasar](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-quasar.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
-
-> [!NOTE]
-> If you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, sending tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making account or transferring SOL) or the token program (for creating tokens and NFTs). See the [Solana Developer site](https://solana.com/developers) to learn more.
 
 Each folder includes examples for one or more of the following:
 
@@ -15,7 +12,7 @@ Each folder includes examples for one or more of the following:
   Use `anchor build` and `anchor deploy` to build and deploy the program.
   Tests should be executed using `pnpm test` as defined in the `Anchor.toml` scripts section.
 
-- `quasar` - Written using [Quasar](https://github.com/blueshift-gg/quasar), a zero-copy, zero-allocation `no_std` framework for Solana programs with Anchor-compatible ergonomics.
+- `quasar` - Written using [Quasar](https://github.com/blueshift-gg/quasar), a newer more performant framework with Anchor-compatible ergonomics. 
   Build and test commands are the same as native examples.
   Run `pnpm test` to execute tests.
 
@@ -27,6 +24,8 @@ Each folder includes examples for one or more of the following:
   Build and test commands are defined via pnpm scripts and use `litesvm` for testing.
   Run `pnpm test` to execute tests.
 
+> [!NOTE]
+> If you're new to Solana, you don't need to create your own programs to perform basic things like making accounts, creating tokens, sending tokens, or minting NFTs. These common tasks are handled with existing programs, for example the System Program (for making an account or transferring SOL) or the token program (for creating tokens and NFTs). 
 
 **If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
 
