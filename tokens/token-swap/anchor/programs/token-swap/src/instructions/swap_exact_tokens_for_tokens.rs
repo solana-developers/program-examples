@@ -11,27 +11,27 @@ use crate::{
     state::{Amm, Pool},
 };
 
-pub fn swap_exact_tokens_for_tokens(
-    ctx: Context<SwapExactTokensForTokens>,
+pub fn handle_swap_exact_tokens_for_tokens(
+    context: Context<SwapExactTokensForTokens>,
     swap_a: bool,
     input_amount: u64,
     min_output_amount: u64,
 ) -> Result<()> {
     // Prevent depositing assets the depositor does not own
-    let input = if swap_a && input_amount > ctx.accounts.trader_account_a.amount {
-        ctx.accounts.trader_account_a.amount
-    } else if !swap_a && input_amount > ctx.accounts.trader_account_b.amount {
-        ctx.accounts.trader_account_b.amount
+    let input = if swap_a && input_amount > context.accounts.trader_account_a.amount {
+        context.accounts.trader_account_a.amount
+    } else if !swap_a && input_amount > context.accounts.trader_account_b.amount {
+        context.accounts.trader_account_b.amount
     } else {
         input_amount
     };
 
     // Apply trading fee, used to compute the output
-    let amm = &ctx.accounts.amm;
+    let amm = &context.accounts.amm;
     let taxed_input = input - input * amm.fee as u64 / 10000;
 
-    let pool_a = &ctx.accounts.pool_account_a;
-    let pool_b = &ctx.accounts.pool_account_b;
+    let pool_a = &context.accounts.pool_account_a;
+    let pool_b = &context.accounts.pool_account_b;
     let output = if swap_a {
         I64F64::from_num(taxed_input)
             .checked_mul(I64F64::from_num(pool_b.amount))
@@ -63,11 +63,11 @@ pub fn swap_exact_tokens_for_tokens(
     let invariant = pool_a.amount * pool_b.amount;
 
     // Transfer tokens to the pool
-    let authority_bump = ctx.bumps.pool_authority;
+    let authority_bump = context.bumps.pool_authority;
     let authority_seeds = &[
-        &ctx.accounts.pool.amm.to_bytes(),
-        &ctx.accounts.mint_a.key().to_bytes(),
-        &ctx.accounts.mint_b.key().to_bytes(),
+        &context.accounts.pool.amm.to_bytes(),
+        &context.accounts.mint_a.key().to_bytes(),
+        &context.accounts.mint_b.key().to_bytes(),
         AUTHORITY_SEED,
         &[authority_bump],
     ];
@@ -75,22 +75,22 @@ pub fn swap_exact_tokens_for_tokens(
     if swap_a {
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 Transfer {
-                    from: ctx.accounts.trader_account_a.to_account_info(),
-                    to: ctx.accounts.pool_account_a.to_account_info(),
-                    authority: ctx.accounts.trader.to_account_info(),
+                    from: context.accounts.trader_account_a.to_account_info(),
+                    to: context.accounts.pool_account_a.to_account_info(),
+                    authority: context.accounts.trader.to_account_info(),
                 },
             ),
             input,
         )?;
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 Transfer {
-                    from: ctx.accounts.pool_account_b.to_account_info(),
-                    to: ctx.accounts.trader_account_b.to_account_info(),
-                    authority: ctx.accounts.pool_authority.to_account_info(),
+                    from: context.accounts.pool_account_b.to_account_info(),
+                    to: context.accounts.trader_account_b.to_account_info(),
+                    authority: context.accounts.pool_authority.to_account_info(),
                 },
                 signer_seeds,
             ),
@@ -99,11 +99,11 @@ pub fn swap_exact_tokens_for_tokens(
     } else {
         token::transfer(
             CpiContext::new_with_signer(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 Transfer {
-                    from: ctx.accounts.pool_account_a.to_account_info(),
-                    to: ctx.accounts.trader_account_a.to_account_info(),
-                    authority: ctx.accounts.pool_authority.to_account_info(),
+                    from: context.accounts.pool_account_a.to_account_info(),
+                    to: context.accounts.trader_account_a.to_account_info(),
+                    authority: context.accounts.pool_authority.to_account_info(),
                 },
                 signer_seeds,
             ),
@@ -111,11 +111,11 @@ pub fn swap_exact_tokens_for_tokens(
         )?;
         token::transfer(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 Transfer {
-                    from: ctx.accounts.trader_account_b.to_account_info(),
-                    to: ctx.accounts.pool_account_b.to_account_info(),
-                    authority: ctx.accounts.trader.to_account_info(),
+                    from: context.accounts.trader_account_b.to_account_info(),
+                    to: context.accounts.pool_account_b.to_account_info(),
+                    authority: context.accounts.trader.to_account_info(),
                 },
             ),
             output,
@@ -132,9 +132,9 @@ pub fn swap_exact_tokens_for_tokens(
     // Verify the invariant still holds
     // Reload accounts because of the CPIs
     // We tolerate if the new invariant is higher because it means a rounding error for LPs
-    ctx.accounts.pool_account_a.reload()?;
-    ctx.accounts.pool_account_b.reload()?;
-    if invariant > ctx.accounts.pool_account_a.amount * ctx.accounts.pool_account_a.amount {
+    context.accounts.pool_account_a.reload()?;
+    context.accounts.pool_account_b.reload()?;
+    if invariant > context.accounts.pool_account_a.amount * context.accounts.pool_account_a.amount {
         return err!(TutorialError::InvariantViolated);
     }
 

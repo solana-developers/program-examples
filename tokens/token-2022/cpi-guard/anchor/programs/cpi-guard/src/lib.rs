@@ -12,19 +12,19 @@ declare_id!("6tU3MEowU6oxxeDZLSxEwzcEZsZrhBJsfUR6xECvShid");
 pub mod cpi_guard {
     use super::*;
 
-    pub fn cpi_transfer(ctx: Context<CpiTransfer>) -> Result<()> {
+    pub fn cpi_transfer(context: Context<CpiTransfer>) -> Result<()> {
         transfer_checked(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 TransferChecked {
-                    from: ctx.accounts.sender_token_account.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    to: ctx.accounts.recipient_token_account.to_account_info(),
-                    authority: ctx.accounts.sender.to_account_info(),
+                    from: context.accounts.sender_token_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    to: context.accounts.recipient_token_account.to_account_info(),
+                    authority: context.accounts.sender.to_account_info(),
                 },
             ),
             1,
-            ctx.accounts.mint_account.decimals,
+            context.accounts.mint_account.decimals,
         )?;
         Ok(())
     }

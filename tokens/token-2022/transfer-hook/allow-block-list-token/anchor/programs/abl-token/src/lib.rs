@@ -20,32 +20,32 @@ pub mod abl_token {
 
     use super::*;
 
-    pub fn init_mint(ctx: Context<InitMint>, args: InitMintArgs) -> Result<()> {
-        ctx.accounts.init_mint(args)
+    pub fn init_mint(context: Context<InitMint>, args: InitMintArgs) -> Result<()> {
+        context.accounts.init_mint(args)
     }
 
-    pub fn init_config(ctx: Context<InitConfig>) -> Result<()> {
-        ctx.accounts.init_config(ctx.bumps.config)
+    pub fn init_config(context: Context<InitConfig>) -> Result<()> {
+        context.accounts.init_config(context.bumps.config)
     }
 
-    pub fn attach_to_mint(ctx: Context<AttachToMint>) -> Result<()> {
-        ctx.accounts.attach_to_mint()
+    pub fn attach_to_mint(context: Context<AttachToMint>) -> Result<()> {
+        context.accounts.attach_to_mint()
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn tx_hook(ctx: Context<TxHook>, amount: u64) -> Result<()> {
-        ctx.accounts.tx_hook(amount)
+    pub fn tx_hook(context: Context<TxHook>, amount: u64) -> Result<()> {
+        context.accounts.tx_hook(amount)
     }
 
-    pub fn init_wallet(ctx: Context<InitWallet>, args: InitWalletArgs) -> Result<()> {
-        ctx.accounts.init_wallet(args)
+    pub fn init_wallet(context: Context<InitWallet>, args: InitWalletArgs) -> Result<()> {
+        context.accounts.init_wallet(args)
     }
 
-    pub fn remove_wallet(ctx: Context<RemoveWallet>) -> Result<()> {
-        ctx.accounts.remove_wallet()
+    pub fn remove_wallet(context: Context<RemoveWallet>) -> Result<()> {
+        context.accounts.remove_wallet()
     }
 
-    pub fn change_mode(ctx: Context<ChangeMode>, args: ChangeModeArgs) -> Result<()> {
-        ctx.accounts.change_mode(args)
+    pub fn change_mode(context: Context<ChangeMode>, args: ChangeModeArgs) -> Result<()> {
+        context.accounts.change_mode(args)
     }
 }

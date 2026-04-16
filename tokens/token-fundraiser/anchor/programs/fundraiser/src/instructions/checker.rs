@@ -45,39 +45,37 @@ pub struct CheckContributions<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
-impl<'info> CheckContributions<'info> {
-    pub fn check_contributions(&self) -> Result<()> {
+pub fn handle_check_contributions(accounts: &mut CheckContributions) -> Result<()> {
         
         // Check if the target amount has been met
         require!(
-            self.vault.amount >= self.fundraiser.amount_to_raise,
+            accounts.vault.amount >= accounts.fundraiser.amount_to_raise,
             FundraiserError::TargetNotMet
         );
 
         // Transfer the funds to the maker
         // CPI to the token program to transfer the funds
-        let cpi_program = self.token_program.key();
+        let cpi_program = accounts.token_program.key();
 
         // Transfer the funds from the vault to the maker
         let cpi_accounts = Transfer {
-            from: self.vault.to_account_info(),
-            to: self.maker_ata.to_account_info(),
-            authority: self.fundraiser.to_account_info(),
+            from: accounts.vault.to_account_info(),
+            to: accounts.maker_ata.to_account_info(),
+            authority: accounts.fundraiser.to_account_info(),
         };
 
         // Signer seeds to sign the CPI on behalf of the fundraiser account
         let signer_seeds: [&[&[u8]]; 1] = [&[
             b"fundraiser".as_ref(),
-            self.maker.to_account_info().key.as_ref(),
-            &[self.fundraiser.bump],
+            accounts.maker.to_account_info().key.as_ref(),
+            &[accounts.fundraiser.bump],
         ]];
 
         // CPI context with signer since the fundraiser account is a PDA
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds);
 
         // Transfer the funds from the vault to the maker
-        transfer(cpi_ctx, self.vault.amount)?;
+        transfer(cpi_ctx, accounts.vault.amount)?;
 
         Ok(())
     }
-}

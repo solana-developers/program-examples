@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 #[account]
-#[derive(Default)]
+#[derive(Default, InitSpace)]
 pub struct Amm {
     /// The primary key of the AMM
     pub id: Pubkey,
@@ -13,12 +13,8 @@ pub struct Amm {
     pub fee: u16,
 }
 
-impl Amm {
-    pub const LEN: usize = 8 + 32 + 32 + 2;
-}
-
 #[account]
-#[derive(Default)]
+#[derive(Default, InitSpace)]
 pub struct Pool {
     /// Primary key of the AMM
     pub amm: Pubkey,
@@ -28,8 +24,4 @@ pub struct Pool {
 
     /// Mint of token B
     pub mint_b: Pubkey,
-}
-
-impl Pool {
-    pub const LEN: usize = 8 + 32 + 32 + 32;
 }

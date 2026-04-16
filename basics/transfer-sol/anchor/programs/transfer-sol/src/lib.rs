@@ -7,13 +7,13 @@ declare_id!("4fQVnLWKKKYxtxgGn7Haw8v2g2Hzbu8K61JvWKvqAi7W");
 pub mod transfer_sol {
     use super::*;
 
-    pub fn transfer_sol_with_cpi(ctx: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
+    pub fn transfer_sol_with_cpi(context: Context<TransferSolWithCpi>, amount: u64) -> Result<()> {
         system_program::transfer(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 system_program::Transfer {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.recipient.to_account_info(),
+                    from: context.accounts.payer.to_account_info(),
+                    to: context.accounts.recipient.to_account_info(),
                 },
             ),
             amount,
@@ -24,11 +24,11 @@ pub mod transfer_sol {
 
     // Directly modifying lamports is only possible if the program is the owner of the account
     pub fn transfer_sol_with_program(
-        ctx: Context<TransferSolWithProgram>,
+        context: Context<TransferSolWithProgram>,
         amount: u64,
     ) -> Result<()> {
-        **ctx.accounts.payer.try_borrow_mut_lamports()? -= amount;
-        **ctx.accounts.recipient.try_borrow_mut_lamports()? += amount;
+        **context.accounts.payer.try_borrow_mut_lamports()? -= amount;
+        **context.accounts.recipient.try_borrow_mut_lamports()? += amount;
         Ok(())
     }
 }

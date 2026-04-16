@@ -48,7 +48,7 @@ pub mod cnft_burn {
     use super::*;
 
     pub fn burn_cnft<'info>(
-        ctx: Context<'info, BurnCnft<'info>>,
+        context: Context<'info, BurnCnft<'info>>,
         root: [u8; 32],
         data_hash: [u8; 32],
         creator_hash: [u8; 32],
@@ -67,35 +67,35 @@ pub mod cnft_burn {
         args.serialize(&mut data)?;
 
         // Build account metas matching mpl-bubblegum Burn instruction layout
-        let mut accounts = Vec::with_capacity(7 + ctx.remaining_accounts.len());
+        let mut accounts = Vec::with_capacity(7 + context.remaining_accounts.len());
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.tree_authority.key(),
+            context.accounts.tree_authority.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
             true,
         ));
         // leaf_delegate = leaf_owner, not a signer in this call
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
             false,
         ));
-        accounts.push(AccountMeta::new(ctx.accounts.merkle_tree.key(), false));
+        accounts.push(AccountMeta::new(context.accounts.merkle_tree.key(), false));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.log_wrapper.key(),
-            false,
-        ));
-        accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.compression_program.key(),
+            context.accounts.log_wrapper.key(),
             false,
         ));
         accounts.push(AccountMeta::new_readonly(
-            ctx.accounts.system_program.key(),
+            context.accounts.compression_program.key(),
+            false,
+        ));
+        accounts.push(AccountMeta::new_readonly(
+            context.accounts.system_program.key(),
             false,
         ));
         // Append remaining accounts (proof nodes)
-        for acc in ctx.remaining_accounts.iter() {
+        for acc in context.remaining_accounts.iter() {
             accounts.push(AccountMeta::new_readonly(acc.key(), false));
         }
 
@@ -107,15 +107,15 @@ pub mod cnft_burn {
 
         // Gather all account infos for the CPI
         let mut account_infos = vec![
-            ctx.accounts.bubblegum_program.to_account_info(),
-            ctx.accounts.tree_authority.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.merkle_tree.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
+            context.accounts.bubblegum_program.to_account_info(),
+            context.accounts.tree_authority.to_account_info(),
+            context.accounts.leaf_owner.to_account_info(),
+            context.accounts.merkle_tree.to_account_info(),
+            context.accounts.log_wrapper.to_account_info(),
+            context.accounts.compression_program.to_account_info(),
+            context.accounts.system_program.to_account_info(),
         ];
-        for acc in ctx.remaining_accounts.iter() {
+        for acc in context.remaining_accounts.iter() {
             account_infos.push(acc.to_account_info());
         }
 

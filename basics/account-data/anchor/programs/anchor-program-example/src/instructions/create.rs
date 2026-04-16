@@ -15,14 +15,14 @@ pub struct CreateAddressInfo<'info> {
     system_program: Program<'info, System>,
 }
 
-pub fn create_address_info(
-    ctx: Context<CreateAddressInfo>,
+pub fn handle_create_address_info(
+    context: Context<CreateAddressInfo>,
     name: String,
     house_number: u8,
     street: String,
     city: String,
 ) -> Result<()> {
-    *ctx.accounts.address_info = AddressInfo {
+    *context.accounts.address_info = AddressInfo {
         name,
         house_number,
         street,

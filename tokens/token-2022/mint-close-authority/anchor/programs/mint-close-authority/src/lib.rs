@@ -19,20 +19,20 @@ declare_id!("AcfQLsYKuzprcCNH1n96pKKgAbAnZchwpbr3gbVN742n");
 pub mod mint_close_authority {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        ctx.accounts.check_mint_data()?;
+    pub fn initialize(mut context: Context<Initialize>) -> Result<()> {
+        handle_check_mint_data(&mut context.accounts)?;
         Ok(())
     }
 
-    pub fn close(ctx: Context<Close>) -> Result<()> {
+    pub fn close(context: Context<Close>) -> Result<()> {
         // cpi to token extensions programs to close mint account
         // alternatively, this can also be done in the client
         close_account(CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             CloseAccount {
-                account: ctx.accounts.mint_account.to_account_info(),
-                destination: ctx.accounts.authority.to_account_info(),
-                authority: ctx.accounts.authority.to_account_info(),
+                account: context.accounts.mint_account.to_account_info(),
+                destination: context.accounts.authority.to_account_info(),
+                authority: context.accounts.authority.to_account_info(),
             },
         ))?;
         Ok(())
@@ -57,22 +57,21 @@ pub struct Initialize<'info> {
 }
 
 // helper to check mint data, and demonstrate how to read mint extension data within a program
-impl<'info> Initialize<'info> {
-    pub fn check_mint_data(&self) -> Result<()> {
-        let mint = &self.mint_account.to_account_info();
+pub fn handle_check_mint_data(accounts: &mut Initialize) -> Result<()> {
+        let mint = &accounts.mint_account.to_account_info();
         let mint_data = mint.data.borrow();
         let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
         let extension_data = mint_with_extension.get_extension::<MintCloseAuthority>()?;
 
         assert_eq!(
             extension_data.close_authority,
-            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
+            OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
         );
 
         msg!("{:?}", extension_data);
         Ok(())
     }
-}
+
 
 #[derive(Accounts)]
 pub struct Close<'info> {

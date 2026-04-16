@@ -18,7 +18,7 @@ pub mod nft_minter {
     use super::*;
 
     pub fn mint_nft(
-        ctx: Context<CreateToken>,
+        context: Context<CreateToken>,
         nft_name: String,
         nft_symbol: String,
         nft_uri: String,
@@ -28,11 +28,11 @@ pub mod nft_minter {
         // Invoking the mint_to instruction on the token program
         mint_to(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 MintTo {
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    to: ctx.accounts.associated_token_account.to_account_info(),
-                    authority: ctx.accounts.payer.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    to: context.accounts.associated_token_account.to_account_info(),
+                    authority: context.accounts.payer.to_account_info(),
                 },
             ),
             1,
@@ -43,15 +43,15 @@ pub mod nft_minter {
         // Invoking the create_metadata_account_v3 instruction on the token metadata program
         create_metadata_accounts_v3(
             CpiContext::new(
-                ctx.accounts.token_metadata_program.key(),
+                context.accounts.token_metadata_program.key(),
                 CreateMetadataAccountsV3 {
-                    metadata: ctx.accounts.metadata_account.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    mint_authority: ctx.accounts.payer.to_account_info(),
-                    update_authority: ctx.accounts.payer.to_account_info(),
-                    payer: ctx.accounts.payer.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
+                    metadata: context.accounts.metadata_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    mint_authority: context.accounts.payer.to_account_info(),
+                    update_authority: context.accounts.payer.to_account_info(),
+                    payer: context.accounts.payer.to_account_info(),
+                    system_program: context.accounts.system_program.to_account_info(),
+                    rent: context.accounts.rent.to_account_info(),
                 },
             ),
             DataV2 {
@@ -73,17 +73,17 @@ pub mod nft_minter {
         // Invoking the create_master_edition_v3 instruction on the token metadata program
         create_master_edition_v3(
             CpiContext::new(
-                ctx.accounts.token_metadata_program.key(),
+                context.accounts.token_metadata_program.key(),
                 CreateMasterEditionV3 {
-                    edition: ctx.accounts.edition_account.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    update_authority: ctx.accounts.payer.to_account_info(),
-                    mint_authority: ctx.accounts.payer.to_account_info(),
-                    payer: ctx.accounts.payer.to_account_info(),
-                    metadata: ctx.accounts.metadata_account.to_account_info(),
-                    token_program: ctx.accounts.token_program.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
+                    edition: context.accounts.edition_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    update_authority: context.accounts.payer.to_account_info(),
+                    mint_authority: context.accounts.payer.to_account_info(),
+                    payer: context.accounts.payer.to_account_info(),
+                    metadata: context.accounts.metadata_account.to_account_info(),
+                    token_program: context.accounts.token_program.to_account_info(),
+                    system_program: context.accounts.system_program.to_account_info(),
+                    rent: context.accounts.rent.to_account_info(),
                 },
             ),
             None, // Max Supply

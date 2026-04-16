@@ -18,7 +18,7 @@ declare_id!("5BQyC7y2Pc283woThq11uZRqsgcRbBRLKz4yQ8BJadi2");
 pub mod memo_transfer {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>) -> Result<()> {
         // Calculate space required for token and extension data
         let token_account_size =
             ExtensionType::try_calculate_account_len::<PodAccount>(&[ExtensionType::MemoTransfer])?;
@@ -29,47 +29,47 @@ pub mod memo_transfer {
         // Invoke System Program to create new account with space for token account and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.token_account.to_account_info(),
+                    from: context.accounts.payer.to_account_info(),
+                    to: context.accounts.token_account.to_account_info(),
                 },
             ),
             lamports,                          // Lamports
             token_account_size as u64,         // Space
-            &ctx.accounts.token_program.key(), // Owner Program
+            &context.accounts.token_program.key(), // Owner Program
         )?;
 
         // Initialize the standard token account data
         initialize_account3(CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             InitializeAccount3 {
-                account: ctx.accounts.token_account.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
-                authority: ctx.accounts.payer.to_account_info(),
+                account: context.accounts.token_account.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
+                authority: context.accounts.payer.to_account_info(),
             },
         ))?;
 
         // Initialize the memo transfer extension
         // This instruction must come after the token account initialization
         memo_transfer_initialize(CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             MemoTransfer {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                account: ctx.accounts.token_account.to_account_info(),
-                owner: ctx.accounts.payer.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                account: context.accounts.token_account.to_account_info(),
+                owner: context.accounts.payer.to_account_info(),
             },
         ))?;
         Ok(())
     }
 
-    pub fn disable(ctx: Context<Disable>) -> Result<()> {
+    pub fn disable(context: Context<Disable>) -> Result<()> {
         memo_transfer_disable(CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             MemoTransfer {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                account: ctx.accounts.token_account.to_account_info(),
-                owner: ctx.accounts.owner.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                account: context.accounts.token_account.to_account_info(),
+                owner: context.accounts.owner.to_account_info(),
             },
         ))?;
         Ok(())

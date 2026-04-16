@@ -6,8 +6,6 @@ on:
   push:
     branches:
       - main
-      - anchor-1.0
-      - fix-biome-errors
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
@@ -17,9 +15,7 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
-  # Force all JavaScript-based actions to use Node.js 24 runtime.
-  # Node.js 20 actions are deprecated and will stop working June 2026.
-  # This catches composite actions whose internal dependencies still reference @v4.
+  # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -110,18 +106,21 @@ jobs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: heyAyushh/setup-anchor@v4.999
         with:
-          anchor-version: 0.32.1
+          anchor-version: 1.0.0
           solana-cli-version: stable
-      - name: Display Versions and Install pnpm
+      - name: Install Surfpool
+        run: curl -sL https://run.surfpool.run/ | bash
+      - name: Display Versions
         run: |
           solana -V
           # it's okay to use --force in github action since all programs are tested in isolation
           solana-keygen new --no-bip39-passphrase --force
           rustc -V
           anchor -V
-          npm i -g pnpm
+          surfpool --version
       - name: Build and Test
         env:
           TOTAL_PROJECTS: ${{ needs.changes.outputs.total_projects }}
@@ -139,6 +138,9 @@ jobs:
               cd - > /dev/null
               return 1
             fi
+
+            # Sync program IDs (Anchor 1.0.0 requires keypair and declare_id! to match)
+            anchor keys sync
 
             # Run anchor build
             if ! anchor build; then

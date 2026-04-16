@@ -74,53 +74,53 @@ pub struct TakeOffer<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn send_wanted_tokens_to_maker(ctx: &Context<TakeOffer>) -> Result<()> {
+pub fn handle_send_wanted_tokens_to_maker(context: &Context<TakeOffer>) -> Result<()> {
     transfer_tokens(
-        &ctx.accounts.taker_token_account_b,
-        &ctx.accounts.maker_token_account_b,
-        &ctx.accounts.offer.token_b_wanted_amount,
-        &ctx.accounts.token_mint_b,
-        &ctx.accounts.taker,
-        &ctx.accounts.token_program,
+        &context.accounts.taker_token_account_b,
+        &context.accounts.maker_token_account_b,
+        &context.accounts.offer.token_b_wanted_amount,
+        &context.accounts.token_mint_b,
+        &context.accounts.taker,
+        &context.accounts.token_program,
     )
 }
 
-pub fn withdraw_and_close_vault(ctx: Context<TakeOffer>) -> Result<()> {
+pub fn handle_withdraw_and_close_vault(context: Context<TakeOffer>) -> Result<()> {
     let seeds = &[
         b"offer",
-        ctx.accounts.maker.to_account_info().key.as_ref(),
-        &ctx.accounts.offer.id.to_le_bytes()[..],
-        &[ctx.accounts.offer.bump],
+        context.accounts.maker.to_account_info().key.as_ref(),
+        &context.accounts.offer.id.to_le_bytes()[..],
+        &[context.accounts.offer.bump],
     ];
     let signer_seeds = [&seeds[..]];
 
     let accounts = TransferChecked {
-        from: ctx.accounts.vault.to_account_info(),
-        mint: ctx.accounts.token_mint_a.to_account_info(),
-        to: ctx.accounts.taker_token_account_a.to_account_info(),
-        authority: ctx.accounts.offer.to_account_info(),
+        from: context.accounts.vault.to_account_info(),
+        mint: context.accounts.token_mint_a.to_account_info(),
+        to: context.accounts.taker_token_account_a.to_account_info(),
+        authority: context.accounts.offer.to_account_info(),
     };
 
     let cpi_context = CpiContext::new_with_signer(
-        ctx.accounts.token_program.key(),
+        context.accounts.token_program.key(),
         accounts,
         &signer_seeds,
     );
 
     transfer_checked(
         cpi_context,
-        ctx.accounts.vault.amount,
-        ctx.accounts.token_mint_a.decimals,
+        context.accounts.vault.amount,
+        context.accounts.token_mint_a.decimals,
     )?;
 
     let accounts = CloseAccount {
-        account: ctx.accounts.vault.to_account_info(),
-        destination: ctx.accounts.taker.to_account_info(),
-        authority: ctx.accounts.offer.to_account_info(),
+        account: context.accounts.vault.to_account_info(),
+        destination: context.accounts.taker.to_account_info(),
+        authority: context.accounts.offer.to_account_info(),
     };
 
     let cpi_context = CpiContext::new_with_signer(
-        ctx.accounts.token_program.key(),
+        context.accounts.token_program.key(),
         accounts,
         &signer_seeds,
     );

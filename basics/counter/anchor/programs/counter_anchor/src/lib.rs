@@ -6,12 +6,12 @@ declare_id!("BmDHboaj1kBUoinJKKSRqKfMeRKJqQqEbUj1VgzeQe4A");
 pub mod counter_anchor {
     use super::*;
 
-    pub fn initialize_counter(_ctx: Context<InitializeCounter>) -> Result<()> {
+    pub fn initialize_counter(_context: Context<InitializeCounter>) -> Result<()> {
         Ok(())
     }
 
-    pub fn increment(ctx: Context<Increment>) -> Result<()> {
-        ctx.accounts.counter.count = ctx.accounts.counter.count.checked_add(1).unwrap();
+    pub fn increment(context: Context<Increment>) -> Result<()> {
+        context.accounts.counter.count = context.accounts.counter.count.checked_add(1).unwrap();
         Ok(())
     }
 }

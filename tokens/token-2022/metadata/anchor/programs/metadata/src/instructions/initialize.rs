@@ -27,7 +27,7 @@ pub struct Initialize<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> Result<()> {
+pub fn handle_process_initialize(context: Context<Initialize>, args: TokenMetadataArgs) -> Result<()> {
     let TokenMetadataArgs { name, symbol, uri } = args;
 
     // Define token metadata
@@ -48,10 +48,10 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
     // Transfer additional lamports to mint account
     transfer(
         CpiContext::new(
-            ctx.accounts.system_program.key(),
+            context.accounts.system_program.key(),
             Transfer {
-                from: ctx.accounts.payer.to_account_info(),
-                to: ctx.accounts.mint_account.to_account_info(),
+                from: context.accounts.payer.to_account_info(),
+                to: context.accounts.mint_account.to_account_info(),
             },
         ),
         lamports,
@@ -60,13 +60,13 @@ pub fn process_initialize(ctx: Context<Initialize>, args: TokenMetadataArgs) -> 
     // Initialize token metadata
     token_metadata_initialize(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             TokenMetadataInitialize {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
-                metadata: ctx.accounts.mint_account.to_account_info(),
-                mint_authority: ctx.accounts.payer.to_account_info(),
-                update_authority: ctx.accounts.payer.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
+                metadata: context.accounts.mint_account.to_account_info(),
+                mint_authority: context.accounts.payer.to_account_info(),
+                update_authority: context.accounts.payer.to_account_info(),
             },
         ),
         name,
