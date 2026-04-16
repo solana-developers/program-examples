@@ -6,6 +6,7 @@ use {
         },
         InstructionData, ToAccountMetas,
     },
+    lever,
     litesvm::LiteSVM,
     solana_keypair::Keypair,
     solana_kite::{create_wallet, send_transaction_from_instructions},
@@ -43,8 +44,9 @@ fn build_lever_initialize_ix(
 #[test]
 fn test_pull_lever_cpi() {
     let hand_program_id = hand::id();
-    // The lever program ID from declare_program!(lever) inside hand crate
-    let lever_program_id = hand::lever::ID;
+    // Use lever::id() (not hand::lever::ID) so the ID stays in sync with the compiled lever.so
+    // after anchor keys sync changes the program ID on fresh CI runs.
+    let lever_program_id = lever::id();
 
     let mut svm = LiteSVM::new();
 
