@@ -38,7 +38,7 @@ pub mod transfer_hook {
         // set authority field on white_list account as payer address
         context.accounts.white_list.authority = context.accounts.payer.key();
 
-        let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
+        let extra_account_metas = handle_extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
@@ -120,7 +120,7 @@ pub struct InitializeExtraAccountMetaList<'info> {
         bump,
         // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas_count()
+            handle_extra_account_metas_count()
         ).unwrap(),
         payer = payer
     )]

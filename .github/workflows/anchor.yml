@@ -111,6 +111,8 @@ jobs:
         with:
           anchor-version: 1.0.0
           solana-cli-version: stable
+      - name: Install Surfpool
+        run: curl -sL https://run.surfpool.run/ | bash
       - name: Display Versions
         run: |
           solana -V
@@ -118,6 +120,7 @@ jobs:
           solana-keygen new --no-bip39-passphrase --force
           rustc -V
           anchor -V
+          surfpool --version
       - name: Build and Test
         env:
           TOTAL_PROJECTS: ${{ needs.changes.outputs.total_projects }}

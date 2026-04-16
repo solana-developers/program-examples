@@ -41,7 +41,7 @@ pub mod transfer_hook {
     pub fn initialize_extra_account_meta_list(
         mut context: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
-        let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
+        let extra_account_metas = handle_extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
@@ -132,7 +132,7 @@ pub struct InitializeExtraAccountMetaList<'info> {
         bump,
         // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas_count()
+            handle_extra_account_metas_count()
         ).unwrap(),
         payer = payer
     )]
