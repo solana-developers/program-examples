@@ -44,6 +44,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "account-data-poseidon-program"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+]
+
+[[package]]
 name = "account-data-steel-program"
 version = "0.1.0"
 dependencies = [
@@ -6679,6 +6686,13 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction 3.1.0",
+]
+
+[[package]]
+name = "transfer-sol-poseidon-program"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
 ]
 
 [[package]]

@@ -4,6 +4,7 @@ members = [
     "basics/account-data/native/program",
     "basics/account-data/pinocchio/program",
     "basics/account-data/steel/program",
+    "basics/account-data/poseidon/program",
     "basics/account-data/anchor/programs/anchor-program-example",
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/pinocchio/program",
@@ -46,6 +47,7 @@ members = [
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/pinocchio/program",
     "basics/transfer-sol/steel/program",
+    "basics/transfer-sol/poseidon/program",
     "basics/transfer-sol/anchor/programs/*",
     "basics/transfer-sol/asm",
 
