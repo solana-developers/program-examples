@@ -159,6 +159,12 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 [anchor](./tokens/escrow/anchor) [native](./tokens/escrow/native)
 
+### Central Limit Order Book
+
+Order-book exchange — users post limit bids and asks at chosen prices, tokens are locked in program vaults, and orders can be cancelled and funds settled back. A minimal teaching example of the mechanics behind Openbook and Phoenix.
+
+[anchor](./defi/clob/anchor)
+
 ### Minting a token from inside a program with a PDA as the mint authority
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/pda-mint-authority/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.

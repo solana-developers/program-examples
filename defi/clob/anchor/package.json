@@ -1,0 +1,24 @@
+{
+  "name": "clob",
+  "version": "0.1.0",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "build": "anchor build",
+    "codama": "npx create-codama-clients",
+    "test": "npx create-codama-clients && npx tsx --test --test-reporter=spec tests/*.ts"
+  },
+  "dependencies": {
+    "@solana/kit": "^6.1.0"
+  },
+  "devDependencies": {
+    "@codama/nodes-from-anchor": "^1.3.8",
+    "@codama/renderers": "^1.0.34",
+    "@codama/renderers-js": "^1.7.0",
+    "@types/node": "^20.11.0",
+    "codama": "^1.5.0",
+    "solana-kite": "^3.2.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.3"
+  }
+}

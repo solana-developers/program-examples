@@ -1,0 +1,34 @@
+[toolchain]
+anchor_version = "1.0.0"
+solana_version = "3.1.8"
+# pnpm matches the program-examples root package manager.
+package_manager = "pnpm"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+clob = "C69UJ8irfmHq5ysyLek7FKApHR86FBeupiz4JnoyPzzx"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+# Generate the Codama TS client from the built IDL, then run node:test tests
+# via tsx. Run with: `anchor test --validator legacy`
+#
+# The `legacy` flag selects `solana-test-validator`, which Kit can talk to.
+# Anchor 1.0's default "surfpool" validator does not accept the websocket RPC
+# methods Kit uses for confirmation, so tests time out waiting for their
+# first transaction. Revisit when surfpool adds full Kit support.
+test = "npx create-codama-clients && npx tsx --test --test-reporter=spec tests/*.ts"
+
+[hooks]
+
+[test]
+# Give the local validator enough time to become reachable before tests start.
+startup_wait = 10000
+shutdown_wait = 2000
+upgradeable = false
