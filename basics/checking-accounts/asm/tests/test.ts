@@ -1,19 +1,10 @@
 import { describe, test } from "node:test";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { Keypair, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { start } from "solana-bankrun";
 
 describe("Checking accounts", async () => {
   const PROGRAM_ID = PublicKey.unique();
-  const context = await start(
-    [{ name: "checking-account-asm-program", programId: PROGRAM_ID }],
-    [],
-  );
+  const context = await start([{ name: "checking-account-asm-program", programId: PROGRAM_ID }], []);
   const client = context.banksClient;
   const payer = context.payer;
   const rent = await client.getRent();

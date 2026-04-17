@@ -36,6 +36,8 @@
 .equ SYSTEM_PROGRAM_DATA,       0x7980
 .equ SYSTEM_PROGRAM_RENT_EPOCH, 0xa180
 
+.equ MAX_PERMITTED_DATA_INCREASE, 0x2800
+
 .globl entrypoint
 
 entrypoint:
@@ -72,6 +74,40 @@ entrypoint:
     ldxdw r2, [r1 + SYSTEM_PROGRAM_KEY + 24]
     jne r2, 0, error_invalid_system_program
 
+    # Derive the runtime program_id offset dynamically because the system
+    # program account has variable-length data.
+    mov64 r6, r1
+    add64 r6, SYSTEM_PROGRAM_DATA
+
+    ldxdw r7, [r1 + SYSTEM_PROGRAM_DATA_LEN]
+    add64 r6, r7
+    add64 r6, MAX_PERMITTED_DATA_INCREASE
+    add64 r6, 8                              # rent_epoch
+    add64 r6, 7
+    and64 r6, -8                             # align up to 8 bytes for instruction_data_len
+
+    ldxdw r7, [r6 + 0]                       # instruction_data_len
+    add64 r6, 8
+    add64 r6, r7                             # skip instruction_data
+
+
+    # Check account to change's owner is the same as program id
+    ldxdw r7, [r6 + 0]
+    ldxdw r8, [r1 + ACCOUNT_TO_CHANGE_OWNER + 0]
+    jne r7, r8, error_incorrect_program_id
+
+    ldxdw r7, [r6 + 8]
+    ldxdw r8, [r1 + ACCOUNT_TO_CHANGE_OWNER + 8]
+    jne r7, r8, error_incorrect_program_id
+
+    ldxdw r7, [r6 + 16]
+    ldxdw r8, [r1 + ACCOUNT_TO_CHANGE_OWNER + 16]
+    jne r7, r8, error_incorrect_program_id
+
+    ldxdw r7, [r6 + 24]
+    ldxdw r8, [r1 + ACCOUNT_TO_CHANGE_OWNER + 24]
+    jne r7, r8, error_incorrect_program_id
+
     lddw r0, 0
     exit
 
@@ -93,4 +129,8 @@ error_not_initialized:
 
 error_invalid_system_program:
     lddw r0, 5
+    exit
+
+error_incorrect_program_id:
+    lddw r0, 6
     exit

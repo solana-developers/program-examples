@@ -49,7 +49,7 @@ mod tests {
                 AccountMeta::new(account_to_change.pubkey(), true),
                 AccountMeta::new(solana_system_interface::program::ID, false),
             ],
-            data: vec![0],
+            data: vec![],
         };
 
         let tx = Transaction::new_signed_with_payer(
@@ -196,6 +196,39 @@ mod tests {
 
         let res = svm.send_transaction(tx);
         assert!(res.is_err()); // error code 4
+    }
+
+    #[test]
+    fn test_account_to_change_wrong_owner() {
+        let (mut svm, program_id) = setup();
+        let payer = Keypair::new();
+        let account_to_create = Keypair::new();
+        let account_to_change = Keypair::new();
+
+        svm.airdrop(&payer.pubkey(), LAMPORTS_PER_SOL * 10).unwrap();
+        svm.airdrop(&account_to_change.pubkey(), LAMPORTS_PER_SOL)
+            .unwrap(); // initialized, but still owned by the system program
+
+        let ix = Instruction {
+            program_id,
+            accounts: vec![
+                AccountMeta::new(payer.pubkey(), true),
+                AccountMeta::new(account_to_create.pubkey(), true),
+                AccountMeta::new(account_to_change.pubkey(), true),
+                AccountMeta::new(solana_system_interface::program::ID, false),
+            ],
+            data: vec![0],
+        };
+
+        let tx = Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&payer.pubkey()),
+            &[&payer, &account_to_create, &account_to_change],
+            svm.latest_blockhash(),
+        );
+
+        let res = svm.send_transaction(tx);
+        assert!(res.is_err()); // error code 6
     }
 
     #[test]
