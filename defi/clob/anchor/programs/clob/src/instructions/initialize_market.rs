@@ -27,6 +27,7 @@ pub fn handle_initialize_market(
     market.quote_mint = context.accounts.quote_mint.key();
     market.base_vault = context.accounts.base_vault.key();
     market.quote_vault = context.accounts.quote_vault.key();
+    market.fee_vault = context.accounts.fee_vault.key();
     market.order_book = context.accounts.order_book.key();
     market.fee_basis_points = fee_basis_points;
     market.tick_size = tick_size;
@@ -86,6 +87,17 @@ pub struct InitializeMarket<'info> {
         token::token_program = token_program
     )]
     pub quote_vault: InterfaceAccount<'info, TokenAccount>,
+
+    // Taker fees accumulate here (quote mint). Separate from quote_vault so
+    // maker-owed balances and market-earned fees can't be confused.
+    #[account(
+        init,
+        payer = authority,
+        token::mint = quote_mint,
+        token::authority = market,
+        token::token_program = token_program
+    )]
+    pub fee_vault: InterfaceAccount<'info, TokenAccount>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

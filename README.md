@@ -161,7 +161,7 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 ### Central Limit Order Book
 
-Order-book exchange — users post limit bids and asks at chosen prices, tokens are locked in program vaults, and orders can be cancelled and funds settled back. A minimal teaching example of the mechanics behind Openbook and Phoenix.
+Order-book exchange — users post limit bids and asks at chosen prices, tokens are locked in program vaults, and orders cross against the opposing side using price-time priority. Fees route to a dedicated fee vault, maker/taker proceeds land in unsettled balances, and funds are withdrawn via `settle_funds`. A minimal teaching example of the mechanics behind Openbook and Phoenix.
 
 [anchor](./defi/clob/anchor)
 

@@ -37,4 +37,19 @@ pub enum ErrorCode {
 
     #[msg("Fee basis points out of range")]
     InvalidFeeBasisPoints,
+
+    #[msg("Fee vault does not match the market's fee vault")]
+    InvalidFeeVault,
+
+    #[msg("Maker account provided does not correspond to a resting order on the book")]
+    MakerAccountMismatch,
+
+    #[msg("Not enough maker accounts supplied to cross the incoming order")]
+    MissingMakerAccounts,
+
+    #[msg("Maker order and maker user account owner mismatch")]
+    MakerOwnerMismatch,
+
+    #[msg("Only the market authority can withdraw fees")]
+    NotMarketAuthority,
 }

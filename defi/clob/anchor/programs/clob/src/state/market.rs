@@ -18,6 +18,13 @@ pub struct Market {
 
     pub quote_vault: Pubkey,
 
+    // Dedicated token account (quote mint) that accumulates taker fees.
+    // Kept separate from `quote_vault` so user-owed balances and
+    // market-earned fees cannot be confused. The market PDA signs transfers
+    // out of it, so only program instructions (notably `withdraw_fees`) can
+    // drain it.
+    pub fee_vault: Pubkey,
+
     pub order_book: Pubkey,
 
     pub fee_basis_points: u16,

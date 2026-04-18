@@ -35,11 +35,19 @@ pub mod clob {
         instructions::create_user_account::handle_create_user_account(context)
     }
 
-    /// Place a bid or ask. Locks the required funds (quote for bids, base for
-    /// asks) into the market vault and inserts the order into the book at the
-    /// correct price-time-priority position.
-    pub fn place_order(
-        context: Context<PlaceOrder>,
+    /// Place a bid or ask. Locks the required funds (quote for bids, base
+    /// for asks) into the market vault, crosses against the opposing side
+    /// of the book using price-time priority (best price first, earliest
+    /// timestamp at a tie), credits fills to maker/taker `unsettled_*`
+    /// balances, routes the taker fee to the fee vault, and rests any
+    /// unmatched remainder on the book at the caller's limit price.
+    ///
+    /// Callers supply resting orders to cross against as
+    /// `remaining_accounts`, in pairs of
+    /// `(maker_order_pda, maker_user_account_pda)`, ordered by the
+    /// book's price-time priority (i.e. best ask first for a taker bid).
+    pub fn place_order<'info>(
+        context: Context<'info, PlaceOrder<'info>>,
         side: state::OrderSide,
         price: u64,
         quantity: u64,
@@ -58,5 +66,11 @@ pub mod clob {
     /// the user's token accounts. No-op if both balances are zero.
     pub fn settle_funds(context: Context<SettleFunds>) -> Result<()> {
         instructions::settle_funds::handle_settle_funds(context)
+    }
+
+    /// Drain the fee vault into the market authority's token account.
+    /// Authority-gated — only the market's stored `authority` may call this.
+    pub fn withdraw_fees(context: Context<WithdrawFees>) -> Result<()> {
+        instructions::withdraw_fees::handle_withdraw_fees(context)
     }
 }
