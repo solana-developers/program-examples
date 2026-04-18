@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::state::{Market, UserAccount, USER_ACCOUNT_SEED};
 
-pub fn create_user_account(context: Context<CreateUserAccountAccountConstraints>) -> Result<()> {
+pub fn handle_create_user_account(context: Context<CreateUserAccount>) -> Result<()> {
     let user_account = &mut context.accounts.user_account;
     user_account.market = context.accounts.market.key();
     user_account.owner = context.accounts.owner.key();
@@ -15,7 +15,7 @@ pub fn create_user_account(context: Context<CreateUserAccountAccountConstraints>
 }
 
 #[derive(Accounts)]
-pub struct CreateUserAccountAccountConstraints<'info> {
+pub struct CreateUserAccount<'info> {
     #[account(
         init,
         payer = owner,

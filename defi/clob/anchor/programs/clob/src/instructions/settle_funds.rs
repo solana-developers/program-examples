@@ -5,7 +5,7 @@ use anchor_spl::token_interface::{
 
 use crate::state::{Market, UserAccount, MARKET_SEED, USER_ACCOUNT_SEED};
 
-pub fn settle_funds(context: Context<SettleFundsAccountConstraints>) -> Result<()> {
+pub fn handle_settle_funds(context: Context<SettleFunds>) -> Result<()> {
     let user_account = &mut context.accounts.user_account;
     let market = &context.accounts.market;
 
@@ -63,7 +63,7 @@ pub fn settle_funds(context: Context<SettleFundsAccountConstraints>) -> Result<(
 }
 
 #[derive(Accounts)]
-pub struct SettleFundsAccountConstraints<'info> {
+pub struct SettleFunds<'info> {
     #[account(mut)]
     pub market: Account<'info, Market>,
 
@@ -74,7 +74,7 @@ pub struct SettleFundsAccountConstraints<'info> {
     )]
     pub user_account: Account<'info, UserAccount>,
 
-    // Boxed for the same reason as in PlaceOrderAccountConstraints —
+    // Boxed for the same reason as in PlaceOrder —
     // InterfaceAccount is too large to keep on the BPF stack in bulk.
     #[account(mut)]
     pub base_vault: Box<InterfaceAccount<'info, TokenAccount>>,

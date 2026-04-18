@@ -34,13 +34,11 @@ anchor build
 ## Test
 
 ```shell
-anchor test --validator legacy
+anchor test
 ```
 
-The `--validator legacy` flag is required: Anchor 1.0's default "surfpool" validator does not yet accept the websocket RPC methods Solana Kit uses for transaction confirmation, so tests hang waiting for their first transaction. `solana-test-validator` works.
-
-The test script (defined in `Anchor.toml`) first runs `npx create-codama-clients` to generate a TypeScript client from the built IDL into `dist/clob-client/`, then executes the `node:test` suite with `tsx`.
+Tests are pure Rust, running against [LiteSVM](https://github.com/LiteSVM/litesvm). They live in `programs/clob/tests/test_clob.rs` and include the built `.so` via `include_bytes!`, so a fresh `anchor build` must run first. `anchor test` does this automatically; alternatively run `anchor build && cargo test`.
 
 ## Credit
 
-Ported and modernised from [anchor-decentralized-exchange-clob](https://github.com/mikemaccana/anchor-decentralized-exchange-clob). Migrated from Anchor 0.32.1 to Anchor 1.0.0 and conformed to the [Solana Anchor coding skill](https://github.com/mikemaccana/solana-anchor-claude-skill) (Kit + Kite + Codama, `node:test`, no `@coral-xyz/anchor`, no magic numbers, `Box`-ed interface accounts to keep BPF stack size within budget).
+Ported and modernised from [anchor-decentralized-exchange-clob](https://github.com/mikemaccana/anchor-decentralized-exchange-clob). Migrated from Anchor 0.32.1 to Anchor 1.0.0 and conformed to the repo's LiteSVM-Rust-tests convention (no magic numbers, `Box`-ed interface accounts to keep BPF stack size within budget).

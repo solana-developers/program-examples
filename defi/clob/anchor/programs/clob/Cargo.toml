@@ -23,5 +23,14 @@ custom-panic = []
 anchor-lang = "1.0.0"
 anchor-spl = "1.0.0"
 
+[dev-dependencies]
+# Match the test stack used by tokens/escrow, defi/asset-leasing, and the
+# other LiteSVM-based Anchor examples so contributors can move between them
+# without version drift.
+litesvm = "0.11.0"
+solana-signer = "3.0.0"
+solana-keypair = "3.0.1"
+solana-kite = "0.3.0"
+
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

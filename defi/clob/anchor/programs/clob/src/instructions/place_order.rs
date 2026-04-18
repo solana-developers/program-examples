@@ -13,8 +13,8 @@ use crate::state::{
 // PlaceOrder check reads clearly and the limit is documented in one place.
 const MAX_OPEN_ORDERS_PER_USER: usize = 20;
 
-pub fn place_order(
-    context: Context<PlaceOrderAccountConstraints>,
+pub fn handle_place_order(
+    context: Context<PlaceOrder>,
     side: OrderSide,
     price: u64,
     quantity: u64,
@@ -105,7 +105,7 @@ pub fn place_order(
 
 #[derive(Accounts)]
 #[instruction(side: OrderSide, price: u64, quantity: u64)]
-pub struct PlaceOrderAccountConstraints<'info> {
+pub struct PlaceOrder<'info> {
     #[account(mut)]
     pub market: Account<'info, Market>,
 

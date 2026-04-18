@@ -8,8 +8,8 @@ use crate::state::{Market, OrderBook, MARKET_SEED, ORDER_BOOK_SEED};
 // would be nonsensical, so we cap here.
 const MAX_FEE_BASIS_POINTS: u16 = 10_000;
 
-pub fn initialize_market(
-    context: Context<InitializeMarketAccountConstraints>,
+pub fn handle_initialize_market(
+    context: Context<InitializeMarket>,
     fee_basis_points: u16,
     tick_size: u64,
     min_order_size: u64,
@@ -46,7 +46,7 @@ pub fn initialize_market(
 }
 
 #[derive(Accounts)]
-pub struct InitializeMarketAccountConstraints<'info> {
+pub struct InitializeMarket<'info> {
     #[account(
         init,
         payer = authority,

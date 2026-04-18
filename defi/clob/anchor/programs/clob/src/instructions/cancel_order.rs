@@ -6,7 +6,7 @@ use crate::state::{
     OrderStatus, UserAccount, ORDER_BOOK_SEED, ORDER_SEED, USER_ACCOUNT_SEED,
 };
 
-pub fn cancel_order(context: Context<CancelOrderAccountConstraints>) -> Result<()> {
+pub fn handle_cancel_order(context: Context<CancelOrder>) -> Result<()> {
     let order = &mut context.accounts.order;
 
     require!(
@@ -58,7 +58,7 @@ pub fn cancel_order(context: Context<CancelOrderAccountConstraints>) -> Result<(
 }
 
 #[derive(Accounts)]
-pub struct CancelOrderAccountConstraints<'info> {
+pub struct CancelOrder<'info> {
     pub market: Account<'info, Market>,
 
     #[account(
