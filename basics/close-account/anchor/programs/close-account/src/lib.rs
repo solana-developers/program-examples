@@ -3,7 +3,7 @@ mod instructions;
 mod state;
 use instructions::*;
 
-declare_id!("99TQtoDdQ5NS2v5Ppha93aqEmv3vV9VZVfHTP5rGST3c");
+declare_id!("7vVv26XfvWz8stD4WMnS9KtgLFQq41XCC5sY4WtVjkgv");
 
 #[program]
 pub mod close_account_program {
