@@ -2,11 +2,13 @@
 mod tests {
 
     use litesvm::LiteSVM;
+    use solana_instruction::error::InstructionError;
     use solana_keypair::{Keypair, Signer};
     use solana_native_token::LAMPORTS_PER_SOL;
     use solana_pubkey::Pubkey;
     use solana_system_interface::instruction::create_account;
     use solana_transaction::{AccountMeta, Instruction, Transaction};
+    use solana_transaction_error::TransactionError;
 
     #[test]
     fn test_checking_accounts() {
@@ -91,8 +93,8 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 1
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(1)));
     }
 
     #[test]
@@ -126,8 +128,8 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 2
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(2)));
     }
 
     #[test]
@@ -162,8 +164,8 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 3
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(3)));
     }
 
     #[test]
@@ -194,8 +196,8 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 4
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(4)));
     }
 
     #[test]
@@ -227,8 +229,8 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 6
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(6)));
     }
 
     #[test]
@@ -261,7 +263,7 @@ mod tests {
             svm.latest_blockhash(),
         );
 
-        let res = svm.send_transaction(tx);
-        assert!(res.is_err()); // error code 5
+        let err = svm.send_transaction(tx).unwrap_err();
+        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(5)));
     }
 }

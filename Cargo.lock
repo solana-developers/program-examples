@@ -992,6 +992,7 @@ dependencies = [
  "solana-pubkey 3.0.0",
  "solana-system-interface 2.0.0",
  "solana-transaction 3.1.0",
+ "solana-transaction-error 3.1.0",
 ]
 
 [[package]]
