@@ -60,9 +60,9 @@ const ASK_PRICE: u64 = 100;
 const ASK_QUANTITY: u64 = 5;
 
 fn token_program_id() -> Pubkey {
-    // The program accepts either SPL Token or Token-2022 via `TokenInterface`;
-    // we use classic SPL Token for tests because solana-kite's helpers create
-    // classic-token mints.
+    // The program accepts either the Classic Token Program or the Token
+    // Extensions Program via `TokenInterface`; we use the Classic Token
+    // Program for tests because solana-kite's helpers create classic mints.
     "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         .parse()
         .unwrap()

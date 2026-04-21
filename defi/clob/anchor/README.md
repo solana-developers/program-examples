@@ -1,33 +1,42 @@
 # CLOB — Central Limit Order Book
 
-An Anchor program that runs a simple **onchain order book** for a single
-SPL-token trading pair. Users post buy or sell offers at the prices they
-want, the program matches crossing offers, and settles the resulting
-token movements.
+An Anchor program that runs an **onchain central limit order book**
+(CLOB) for a single pair of token mints. Users post buy or sell offers
+at the prices they want, the program matches crossing offers in
+price-time priority, and settles the resulting token movements.
 
-This README is a teaching document. If you have never written a Solana
-program before and have no background in trading, you are the target
-reader. Every term that could be unfamiliar is explained the first time
-it appears, and every instruction is walked through step by step with
-the exact token movements it causes.
+A CLOB is the standard piece of financial-market infrastructure: NYSE,
+NASDAQ, LSE, and CME all run on one, and every major crypto venue
+(Binance, Coinbase, Openbook, Phoenix) implements the same idea. This
+program is a simplified, onchain version of that mechanism. Two simple
+Solana CLOBs you can read alongside it:
+[Openbook v2](https://github.com/openbook-dex/openbook-v2) and
+[Phoenix](https://github.com/Ellipsis-Labs/phoenix-v1). Both use
+zero-copy slabs for scale; this example uses plain `Vec`s so the
+matching-engine logic stays readable.
 
-If you already know what an order book, a limit order and a taker fee
-are, skip to [Accounts and PDAs](#3-accounts-and-pdas) or
-[Instruction lifecycle walkthrough](#4-instruction-lifecycle-walkthrough).
+This README is a teaching document. Every term specific to the program
+— order book, bid/ask, maker/taker, tick size, unsettled balance — is
+defined inline when it first appears. Solana-level terminology
+(account, PDA, CPI, bump, discriminator) is defined at
+<https://solana.com/docs/terminology>.
+
+If you already know what an order book, a limit order, and a taker fee
+are, skip to [Accounts and PDAs](#2-accounts-and-pdas) or
+[Instruction lifecycle walkthrough](#3-instruction-lifecycle-walkthrough).
 
 ---
 
 ## Table of contents
 
 1. [What does this program do?](#1-what-does-this-program-do)
-2. [Glossary](#2-glossary)
-3. [Accounts and PDAs](#3-accounts-and-pdas)
-4. [Instruction lifecycle walkthrough](#4-instruction-lifecycle-walkthrough)
-5. [The matching engine — step by step](#5-the-matching-engine--step-by-step)
-6. [Full-lifecycle worked examples](#6-full-lifecycle-worked-examples)
-7. [Safety and edge cases](#7-safety-and-edge-cases)
-8. [Running the tests](#8-running-the-tests)
-9. [Extending the program](#9-extending-the-program)
+2. [Accounts and PDAs](#2-accounts-and-pdas)
+3. [Instruction lifecycle walkthrough](#3-instruction-lifecycle-walkthrough)
+4. [The matching engine — step by step](#4-the-matching-engine--step-by-step)
+5. [Full-lifecycle worked examples](#5-full-lifecycle-worked-examples)
+6. [Safety and edge cases](#6-safety-and-edge-cases)
+7. [Running the tests](#7-running-the-tests)
+8. [Extending the program](#8-extending-the-program)
 
 ---
 
@@ -35,21 +44,21 @@ are, skip to [Accounts and PDAs](#3-accounts-and-pdas) or
 
 Two users want to swap tokens at prices they each picked:
 
-- Alice holds some amount of SPL mint **Q** (the "quote" mint — think of
-  this as the pricing currency, like USD in "BTC is $60 000") and wants
-  to obtain some amount of SPL mint **B** (the "base" mint — the asset
-  being priced), but only if she can get B at 900 Q per unit or lower.
-- Bob holds mint **B** and wants Q, but only if he can get at least 950
-  Q per unit of B he sells.
+- Alice holds some amount of mint **Q** (the *quote* mint — the pricing
+  unit, like USD in "BTC is $60 000") and wants to obtain some amount
+  of mint **B** (the *base* mint — the asset being priced), but only
+  if she can get B at 900 Q per unit or lower.
+- Bob holds mint **B** and wants Q, but only if he can get at least
+  950 Q per unit of B he sells.
 
-They post their offers — Alice a **bid** (buy offer) at price 900, Bob
-an **ask** (sell offer) at price 950 — and wait. Alice's bid sits on
-the book. Bob's ask sits on the book. Neither crosses the other, so
-nothing happens yet.
+They post their offers — Alice a *bid* (a buy offer at a limit price),
+Bob an *ask* (a sell offer at a limit price) — and wait. Alice's bid
+sits on the book. Bob's ask sits on the book. Neither crosses the
+other, so nothing happens yet.
 
 Later, Carol shows up holding B and willing to sell at any price ≥ 900.
-She posts an ask at 900. Now Alice's bid (900) crosses Carol's new ask
-(900). The program:
+She posts an ask at 900. Now Alice's bid (900) *crosses* Carol's new
+ask (900) — the bid is ≥ the ask. The program:
 
 1. Pairs them up.
 2. Takes Carol's B out of Carol's token account, locks it in the
@@ -83,39 +92,40 @@ call `settle_funds` to pull their balances out.
   `quote_vault` (mirror for quote), and `fee_vault` (accumulated taker
   fees).
 
-### Tradfi background, briefly
+### Finance background, briefly
 
-For readers new to trading terms — two quick sentences per concept.
-They're optional; everything above already describes the program
-mechanically.
+For readers new to trading terms — these are the same concepts every
+equity, futures, and crypto exchange uses. They're optional;
+everything above describes the program mechanically.
 
-- **A limit order** is an instruction to trade an amount of asset at a
-  specific price or better. A *bid* is a limit order to buy, an *ask*
-  is a limit order to sell. The "limit" part means: don't trade at a
-  worse price than the one I named.
+- **A limit order** is an order to trade an amount of an asset at a
+  specific price *or better*. A *bid* is a limit order to buy, an
+  *ask* is a limit order to sell. The "limit" part means: don't trade
+  at a worse price than the one I named.
 
-- **An order book** is just the currently-open bids and asks, usually
+- **An order book** is the set of currently-open bids and asks,
   sorted so the best price on each side sits at the top. The "top of
   book" on the bid side is the highest-priced buy offer; the top of
   book on the ask side is the lowest-priced sell offer.
 
-- **A maker** is whoever posts an order that doesn't immediately match
-  — they "make" liquidity by leaving their offer on the book for
-  others to trade against. A **taker** is whoever walks into the book
-  and hits the resting orders — they "take" liquidity.
+- **A maker** is whoever posts an order that doesn't immediately
+  match — they "make" liquidity by leaving their offer on the book
+  for others to trade against. A **taker** is whoever walks into the
+  book and hits the resting orders — they "take" liquidity.
 
-- **A taker fee** is a small cut of each trade that the market
-  operator takes from the taker's leg of the trade. Expressed in basis
-  points (see glossary), so 50 bps = 0.5%.
+- **A taker fee** is a cut of each trade taken by the venue from the
+  taker's leg of the trade, expressed in *basis points* (bps). One
+  bps is 0.01%; 10 000 bps is 100%. A 50 bps fee is 0.5%.
 
-- **Price-time priority** is the universal ordering rule: at the same
-  price level, whoever posted first fills first.
+- **Price-time priority** is the universal matching rule on every
+  limit order book: best price first, and at the same price level,
+  whoever posted first fills first.
 
 - **Settlement** is the step that actually moves tokens out of the
-  custody account and back to the user. This program splits matching
-  and settlement into two instructions (`place_order` + `settle_funds`)
-  so a taker crossing a long list of orders doesn't have to pay for a
-  token CPI per maker.
+  venue's custody account and back to the user. This program splits
+  matching and settlement into two instruction handlers (`place_order`
+  and `settle_funds`) so a taker crossing a long list of makers
+  doesn't have to pay for a token CPI per maker.
 
 ### What this example is not
 
@@ -128,148 +138,57 @@ mechanically.
   can and rests the rest.
 - **No circuit breakers, no oracles, no price bands.**
 
----
+Solana terminology (account, PDA, CPI, bump, discriminator, signer,
+lamport, ATA) is defined at <https://solana.com/docs/terminology>.
+Terms specific to this program are explained inline when they first
+appear; a few extra definitions appear below where useful.
 
-## 2. Glossary
+**Base asset, quote asset.** In "BASE/QUOTE", the base is the asset
+being priced and the quote is the pricing unit. Bids spend quote and
+receive base; asks spend base and receive quote.
 
-Terms used below, defined in terms of what they are mechanically.
+**Limit price.** The worst price at which an order is allowed to
+trade — for a bid, the *highest* the buyer will pay; for an ask, the
+*lowest* the seller will accept. A bid at 900 won't fill against an
+ask at 950.
 
-**Account**
-: On Solana, every piece of state lives in an *account* — a 32-byte
-address, some lamports keeping it rent-exempt, an owner program, and
-a byte buffer. Wallets, token balances, and program config are all
-accounts.
+**Tick size.** Smallest allowable price increment. A market with
+`tick_size = 10` accepts prices 10, 20, 30, …, but rejects 15. Stops
+the book filling up with 1-unit-apart orders.
 
-**Lamport**
-: The smallest unit of SOL. 1 SOL = 10⁹ lamports.
+**Minimum order size.** Smallest allowable `quantity` on any order.
+Keeps dust orders from polluting the book.
 
-**Signer**
-: An account whose private key signed the transaction. A signer is the
-only thing that can authorise transfers out of an account it owns.
+**Match / fill / cross.** Two orders *cross* when the bid's price is
+≥ the ask's price; they *match* (are paired up) and a *fill* is the
+result — one crossing event with a fill quantity and a fill price.
+One call to `place_order` can produce many fills.
 
-**SPL token**
-: Solana's ERC-20 equivalent. An SPL *mint* describes a token; each
-user's balance lives in a separate *token account* owned by the SPL
-Token program.
+**Price improvement.** When a taker's limit is better than the best
+resting price on the opposite side, the fill happens at the resting
+(maker's) price. The taker gets a better deal than they named; the
+difference is refunded to the taker's `unsettled_quote`.
 
-**Token account**
-: An account holding a balance of one mint, with an *authority* pubkey
-that can move tokens out. Authorities are usually user wallets but can
-be PDAs — in this program the Market PDA is the authority of all
-three vaults.
+**Unsettled balance.** Two `u64` counters on each `UserAccount`:
+`unsettled_base` and `unsettled_quote`. Fills, price-improvement
+rebates, and cancellations all increase these counters. The physical
+tokens still sit in the market's vaults. `settle_funds` moves them
+to the user's own token accounts and zeroes the counters.
 
-**ATA (Associated Token Account)**
-: The conventional, deterministic token account for a `(wallet, mint)`
-pair. "Sending USDC to someone's wallet" really means sending to their
-USDC ATA.
+**Fee vault.** A separate token account (quote mint) owned by the
+Market PDA. Every taker fee — `gross * fee_bps / 10_000` per fill —
+moves here in one batched CPI at the end of `place_order`.
 
-**PDA (Program Derived Address)**
-: A deterministic address derived from a list of byte "seeds" plus a
-program id. PDAs have no private key. A program *signs* as a PDA by
-re-supplying the seeds during a CPI. This program creates four kinds
-of PDA: `Market`, `OrderBook`, `Order`, `UserAccount`. The vaults are
-regular token accounts (not PDAs) whose authority is set to the
-`Market` PDA.
-
-**Seeds**
-: Bytes that, with the program id, derive a PDA. This program's seeds:
-
-    Market        ["market", base_mint, quote_mint]
-    OrderBook     ["order_book", market]
-    Order         ["order", market, order_id.to_le_bytes()]
-    UserAccount   ["user",   market, owner]
-
-**Bump**
-: The byte offset that makes `find_program_address` produce an
-off-curve address. Stored on each PDA struct so the program doesn't
-recompute it every time it signs.
-
-**CPI (Cross-Program Invocation)**
-: One program calling another inside the same transaction. This
-program's CPIs go to the SPL Token program's `TransferChecked`.
-
-**Discriminator**
-: First 8 bytes of each Anchor account — the first 8 bytes of
-`sha256("account:<StructName>")`. Anchor writes it at initialisation
-and rejects any deserialisation where the prefix doesn't match.
-
-**Basis point (bps)**
-: 1/100 of a percent. 10 000 bps = 100%. The program's fee rate is
-expressed in bps (`fee_basis_points: u16`).
-
-**Base asset, quote asset**
-: Two words for the two sides of a pair. In "BASE/QUOTE", the base is
-the asset being priced and the quote is the pricing unit. Bids spend
-quote and receive base; asks spend base and receive quote.
-
-**Bid, ask**
-: A bid is a buy order (sits on the bid side of the book). An ask is a
-sell order. On this program they're the two variants of `OrderSide`.
-
-**Limit price**
-: The worst price at which an order is allowed to trade — for a bid,
-the *highest* the taker is willing to pay; for an ask, the *lowest*
-the seller is willing to accept. A bid at 900 will not fill against
-an ask at 950; it rests at 900 until a seller drops their price.
-
-**Tick size**
-: Smallest allowable price increment. A market with `tick_size = 10`
-accepts prices 10, 20, 30, … but rejects 15. Stops the book filling
-up with 1-unit-apart orders.
-
-**Minimum order size**
-: Smallest allowable `quantity` for any order. Keeps dust orders from
-polluting the book.
-
-**Maker, taker**
-: A maker is whoever posted the resting order that gets hit. A taker
-is whoever walked in and hit it. The same person is sometimes both in
-one call to `place_order`: they fill some quantity as a taker and
-rest the rest as a maker for the next person.
-
-**Match, fill, cross**
-: Two orders *cross* when the bid's price is ≥ the ask's price. They
-*match* (are paired up) and a *fill* is the result — one crossing
-event, with a fill quantity and a fill price. A single `place_order`
-call can produce many fills if the taker quantity eats through
-several resting orders.
-
-**Price improvement**
-: When a taker's limit is better than the best resting price on the
-other side, the fill happens at the resting price (maker's price
-wins). The taker got a better deal than they asked for — the
-difference is *price improvement*. In this program that's reflected
-by refunding the difference to the taker's `unsettled_quote`.
-
-**Unsettled balance**
-: Two `u64` counters on each `UserAccount`: `unsettled_base` and
-`unsettled_quote`. Fills, price-improvement rebates, and order
-cancellations all increase these counters. The physical tokens still
-sit in the market's vaults. `settle_funds` moves them to the user's
-own token accounts and zeroes the counters.
-
-**Fee vault**
-: A separate SPL token account (quote mint) owned by the Market PDA.
-Every taker fee — `gross * fee_bps / 10_000` per fill — moves here in
-one batched CPI at the end of `place_order`.
-
-**Price-time priority**
-: Best price first; at the same price, earliest-posted first. Here
-price priority is enforced by keeping `bids` sorted descending and
-`asks` sorted ascending, and time priority falls out of insertion
-order at each level (new orders at an existing price go to the end of
-that price's run).
-
-**Remaining accounts**
-: Solana lets the caller pass a tail of extra `AccountInfo`s beyond
-the ones named in `#[derive(Accounts)]`. This program uses them for
-maker orders: for each resting order the taker wants to cross, the
-caller supplies `(maker_order_pda, maker_user_account_pda)` in the
-book's price-time order. The handler walks them in pairs.
+**Remaining accounts.** Solana lets the caller pass a tail of extra
+`AccountInfo`s beyond the ones named in `#[derive(Accounts)]`. The
+`place_order` handler uses them for the resting orders the taker
+wants to cross: for each one, the caller supplies
+`(maker_order_pda, maker_user_account_pda)` in the book's price-time
+order.
 
 ---
 
-## 3. Accounts and PDAs
+## 2. Accounts and PDAs
 
 ### State / data accounts
 
@@ -280,7 +199,7 @@ book's price-time order. The handler walks them in pairs.
 | `Order` | yes | `["order", market, order_id.to_le_bytes()]` | program | owner, side, price, original_quantity, filled_quantity, status, timestamp |
 | `UserAccount` | yes | `["user", market, owner]` | program | `unsettled_base`, `unsettled_quote`, `open_orders: Vec<u64>` (max 20) |
 
-### Token accounts (owned by SPL Token, authority = Market PDA)
+### Token accounts (owned by the Token Program, authority = Market PDA)
 
 | Account | PDA? | Authority | Mint | Holds |
 |---|---|---|---|---|
@@ -371,9 +290,10 @@ this directly (`settle_funds_after_match_pays_out_both_unsettled_balances`).
 
 ---
 
-## 4. Instruction lifecycle walkthrough
+## 3. Instruction lifecycle walkthrough
 
-The program has six instructions. The order a user encounters them is:
+The program has six instruction handlers. The order a user encounters
+them is:
 
 1. `initialize_market` (market operator — once)
 2. `create_user_account` (every user, once per market)
@@ -392,7 +312,7 @@ Token flow shorthand:
   <source> --[amount of <mint>]--> <destination>
 ```
 
-### 4.1 `initialize_market`
+### 3.1 `initialize_market`
 
 **Who calls it:** the market operator. They create a new trading pair.
 
@@ -433,12 +353,12 @@ the supplied parameters plus all the derived fields
 (`market.authority`, the vault pubkeys, `is_active = true`,
 `next_order_id = 1`).
 
-The vaults are regular SPL token accounts, *not* PDAs — their
+The vaults are regular token accounts, *not* PDAs — their
 addresses are chosen by the caller (typically fresh keypairs) and
-captured on the market's state so later instructions can validate
-them.
+captured on the market's state so later instruction handlers can
+validate them.
 
-### 4.2 `create_user_account`
+### 3.2 `create_user_account`
 
 **Who calls it:** every user, exactly once per market they want to
 trade on.
@@ -457,7 +377,7 @@ trade on.
 **State changes:** new `UserAccount` with all counters zero and no
 open orders.
 
-### 4.3 `place_order`
+### 3.3 `place_order`
 
 **Who calls it:** anyone with a `UserAccount` for this market.
 
@@ -553,7 +473,7 @@ always holds *exactly* what's needed to fulfil every open position
 plus every unsettled balance.
 
 **Token movements (during matching, per fill):** see
-[§5. The matching engine — step by step](#5-the-matching-engine--step-by-step).
+[§4. The matching engine — step by step](#4-the-matching-engine--step-by-step).
 Summary:
 
 - For a taker bid crossing a resting ask at price `p`:
@@ -611,7 +531,7 @@ On the caller's new `order`:
 - `status = Filled` if taker fully matched; otherwise
   `PartiallyFilled` (if some fills) or `Open` (if no fills)
 
-### 4.4 `cancel_order`
+### 3.4 `cancel_order`
 
 **Who calls it:** the order's owner.
 
@@ -647,7 +567,7 @@ On the caller's new `order`:
 
 The actual token move happens on the next `settle_funds` call.
 
-### 4.5 `settle_funds`
+### 3.5 `settle_funds`
 
 **Who calls it:** any user. No-op when both unsettled counters are
 zero, so it is safe to call on a heartbeat/cron.
@@ -675,7 +595,7 @@ mint checks on token accounts, PDA seeds).
   quote_vault --[user_account.unsettled_quote of quote_mint]--> user_quote_account
 ```
 
-Both transfers are CPIs to the SPL Token program, signed by the
+Both transfers are CPIs to the Token program, signed by the
 `Market` PDA using seeds `["market", base_mint, quote_mint, bump]`.
 
 **State changes:**
@@ -683,7 +603,7 @@ Both transfers are CPIs to the SPL Token program, signed by the
 - `user_account.unsettled_base = 0`
 - `user_account.unsettled_quote = 0`
 
-### 4.6 `withdraw_fees`
+### 3.6 `withdraw_fees`
 
 **Who calls it:** the market authority (whichever pubkey was set as
 `market.authority` at initialisation).
@@ -718,7 +638,7 @@ zero as a side effect of the transfer).
 
 ---
 
-## 5. The matching engine — step by step
+## 4. The matching engine — step by step
 
 This is the heart of the program. Everything in `place_order` after
 the initial fund lock is matching-engine work. Follow along with
@@ -726,12 +646,12 @@ the initial fund lock is matching-engine work. Follow along with
 [`state/matching.rs`](programs/clob/src/state/matching.rs) — it'll
 read more easily once you've gone through this section.
 
-### 5.1 The plan
+### 4.1 The plan
 
 1. Caller passes `(side, price, quantity)` and, in remaining_accounts,
    the maker pairs to cross against.
 2. The handler locks the required funds into the vault (done up
-   front, before any matching — see §4.3).
+   front, before any matching — see §3.3).
 3. **Plan the fills** (pure logic, no mutations): walk the opposite
    side of the book in price order. For each entry whose price
    crosses the taker's limit, record a `Fill { resting_index,
@@ -753,7 +673,7 @@ read more easily once you've gone through this section.
    `order_id` to the taker's `open_orders`, set status to
    `PartiallyFilled` (if any fills) or `Open` (if none).
 
-### 5.2 Why bids spend quote, asks spend base — the full accounting
+### 4.2 Why bids spend quote, asks spend base — the full accounting
 
 Pick a taker **bid** at price `bp` and quantity `bq`, crossing a
 resting **ask** at `ap ≤ bp` with remaining quantity `aq`. Let
@@ -810,7 +730,7 @@ No rebate on this side: the maker's bid locked exactly `bp *
 bid_original_qty` of quote up front, and of that, `bp * fill_qty` is
 being spent right now at exactly that price — no leftover.
 
-### 5.3 Worked example — taker bid crosses two resting asks
+### 4.3 Worked example — taker bid crosses two resting asks
 
 Start with an empty book. Fees 10 bps (0.1%). Tick size 1.
 
@@ -892,7 +812,7 @@ Start with an empty book. Fees 10 bps (0.1%). Tick size 1.
   3 (Erin's remainder). ✓
 - `quote_vault.balance` should equal sum of resting bids = 0. ✓
 
-### 5.4 Partial fill with a remainder
+### 4.4 Partial fill with a remainder
 
 Same scenario, but Faye bids at 920 (not 1000) and quantity 8.
 
@@ -913,7 +833,7 @@ asks  [(2, 950)]        ← Erin, original 5 left
 bids  [(3, 920)]        ← Faye, remaining 3
 ```
 
-### 5.5 Cancel + settle round trip
+### 4.5 Cancel + settle round trip
 
 Taker Gael places a bid at 910 for quantity 4 on an empty book (no
 maker pairs passed). The bid rests.
@@ -943,7 +863,7 @@ program earned nothing (no fill means no fee).
 
 ---
 
-## 6. Full-lifecycle worked examples
+## 5. Full-lifecycle worked examples
 
 Three scenarios with end-to-end numbers. Both mints are 6-decimal SPL
 tokens. 1 BASE = 1 000 000 base units; 1 QUOTE = 1 000 000 quote
@@ -957,7 +877,7 @@ Market configuration:
 - `min_order_size = 1`
 - `base_vault`, `quote_vault`, `fee_vault` all start empty.
 
-### 6.1 A clean match: taker bid consumes a resting ask
+### 5.1 A clean match: taker bid consumes a resting ask
 
 Cast: **Maria** (market authority + Alice/Bob's broker), **Alice**
 (seller), **Bob** (buyer).
@@ -1022,7 +942,7 @@ Cast: **Maria** (market authority + Alice/Bob's broker), **Alice**
   accounts).
 - All three vaults empty.
 
-### 6.2 Partial fill with remainder on the book
+### 5.2 Partial fill with remainder on the book
 
 Cast: Alice (ask maker), Bob (bid maker, then remainder rests), Carol
 (new taker).
@@ -1086,7 +1006,7 @@ Cast: Alice (ask maker), Bob (bid maker, then remainder rests), Carol
    unsettled. So `base_vault.balance = 3 + 4 = 7`. `bob.unsettled_base
    = 3 + 4 = 7`.
 
-### 6.3 Cancel round-trip
+### 5.3 Cancel round-trip
 
 Cast: Alice (bid maker), nobody else.
 
@@ -1106,14 +1026,14 @@ Cast: Alice (bid maker), nobody else.
    `alice.unsettled_quote = 0`.
 
 Net delta: Alice is exactly where she started. The vaults are empty.
-The Order account is still on chain in `Cancelled` state (one could
-imagine a future instruction to reclaim its rent — see §9).
+The Order account is still onchain in `Cancelled` state (one could
+imagine a future instruction handler to reclaim its rent — see §8).
 
 ---
 
-## 7. Safety and edge cases
+## 6. Safety and edge cases
 
-### 7.1 What the program refuses to do
+### 6.1 What the program refuses to do
 
 From [`errors.rs`](programs/clob/src/errors.rs):
 
@@ -1122,7 +1042,7 @@ From [`errors.rs`](programs/clob/src/errors.rs):
 | `InvalidPrice` | `place_order` called with `price == 0` |
 | `InvalidQuantity` | Reserved (not currently triggered by the handlers) |
 | `OrderNotFound` | `cancel_order` failed to locate the order in the book (sanity path) |
-| `MarketPaused` | `place_order` on a market with `is_active = false` (no instruction flips this today, but the field is there) |
+| `MarketPaused` | `place_order` on a market with `is_active = false` (no handler flips this today, but the field is there) |
 | `Unauthorized` | `cancel_order` by someone other than the order owner |
 | `OrderBookFull` | `place_order` remainder would push the book past `200` total entries |
 | `TooManyOpenOrders` | User already has 20 open orders on this market |
@@ -1137,7 +1057,7 @@ From [`errors.rs`](programs/clob/src/errors.rs):
 | `MakerOwnerMismatch` | Maker Order and UserAccount have different owners |
 | `NotMarketAuthority` | `withdraw_fees` called by wrong signer |
 
-### 7.2 Guarded design choices worth knowing
+### 6.2 Guarded design choices worth knowing
 
 - **Full lock on place.** The handler always moves the full locked
   amount into the vault before matching. This keeps the
@@ -1201,7 +1121,7 @@ From [`errors.rs`](programs/clob/src/errors.rs):
   previously-full book — matching the "liquidity-positive" spirit
   of a CLOB.
 
-### 7.3 Things this example does *not* do
+### 6.3 Things this example does *not* do
 
 A production CLOB would add:
 
@@ -1214,8 +1134,8 @@ A production CLOB would add:
 - **Self-trade protection.** Nothing stops a single user from
   crossing their own resting order.
 - **Rent reclamation for closed orders.** `Order` accounts persist
-  on chain in `Filled` or `Cancelled` state forever; a real program
-  would either close them in the same instruction or provide a
+  onchain in `Filled` or `Cancelled` state forever; a real program
+  would either close them in the same handler or provide a
   `close_order` to reclaim rent later.
 - **Partial taker-funded fees.** The fee comes out of the maker's
   gross today (see `place_order.rs` comment). If you want
@@ -1223,14 +1143,14 @@ A production CLOB would add:
   ATA at match time.
 - **Minimum-tick for quantities.** `min_order_size` is a floor, but
   there's no "round lot" constraint.
-- **Pause / admin / upgrade.** `is_active` exists but no instruction
+- **Pause / admin / upgrade.** `is_active` exists but no handler
   flips it.
 - **Oracle-aware price bands.** A taker bid 10 000× higher than the
   best ask will happily sweep the book.
 
 ---
 
-## 8. Running the tests
+## 7. Running the tests
 
 All tests are LiteSVM Rust integration tests under
 [`programs/clob/tests/test_clob.rs`](programs/clob/tests/test_clob.rs).
@@ -1343,16 +1263,16 @@ covered.
 
 ---
 
-## 9. Extending the program
+## 8. Extending the program
 
 Ordered by difficulty.
 
 ### Easy
 
 - **Close-on-terminal `Order`.** After a `place_order` fully fills a
-  maker, close its `Order` account in the same instruction and
-  refund rent to the owner. Same for `cancel_order` on an `Open`
-  order. Saves on-chain storage.
+  maker, close its `Order` account in the same handler and refund
+  rent to the owner. Same for `cancel_order` on an `Open` order.
+  Saves onchain storage.
 
 - **IOC flag.** Add `post_only: bool` and `ioc: bool` parameters.
   `ioc` means "match what you can and discard the remainder instead
@@ -1392,7 +1312,7 @@ Ordered by difficulty.
 
 - **Market-makers as CPI users.** Formalise the `remaining_accounts`
   protocol so a market-making program can call `place_order` on
-  behalf of its users, pre-computing the crossings off-chain and
+  behalf of its users, pre-computing the crossings offchain and
   rewriting the book in one transaction.
 
 - **Cross-market swaps.** Chain two `place_order` calls (e.g.

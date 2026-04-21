@@ -4,7 +4,7 @@ use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 use crate::errors::ErrorCode;
 use crate::state::{Market, OrderBook, MARKET_SEED, ORDER_BOOK_SEED};
 
-// Basis-points are hundredths of a percent; 10000 bps == 100%. Fees above 100%
+// Basis points are hundredths of a percent; 10000 bps == 100%. Fees above 100%
 // would be nonsensical, so we cap here.
 const MAX_FEE_BASIS_POINTS: u16 = 10_000;
 

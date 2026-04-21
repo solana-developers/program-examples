@@ -14,7 +14,8 @@ use crate::state::{
 // PlaceOrder check reads clearly and the limit is documented in one place.
 const MAX_OPEN_ORDERS_PER_USER: usize = 20;
 
-// Basis-points denominator. 10_000 bps == 100% — standard in TradFi and CEXes.
+// Basis-points denominator. 10_000 bps == 100% — the universal rate convention
+// on every major exchange (NYSE, CME, Binance, Coinbase, ...).
 const BASIS_POINTS_DENOMINATOR: u128 = 10_000;
 
 // Remaining accounts are passed in groups of 2 per resting order we intend
