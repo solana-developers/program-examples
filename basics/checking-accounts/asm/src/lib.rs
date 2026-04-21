@@ -94,7 +94,10 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(1)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(1))
+        );
     }
 
     #[test]
@@ -129,7 +132,10 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(2)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(2))
+        );
     }
 
     #[test]
@@ -165,7 +171,10 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(3)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(3))
+        );
     }
 
     #[test]
@@ -197,7 +206,10 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(4)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(4))
+        );
     }
 
     #[test]
@@ -230,7 +242,10 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(6)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(6))
+        );
     }
 
     #[test]
@@ -264,6 +279,9 @@ mod tests {
         );
 
         let err = svm.send_transaction(tx).unwrap_err();
-        assert_eq!(err.err, TransactionError::InstructionError(0, InstructionError::Custom(5)));
+        assert_eq!(
+            err.err,
+            TransactionError::InstructionError(0, InstructionError::Custom(5))
+        );
     }
 }
