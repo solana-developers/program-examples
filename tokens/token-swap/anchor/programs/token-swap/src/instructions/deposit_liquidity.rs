@@ -38,13 +38,13 @@ pub fn deposit_liquidity(
         (amount_a, amount_b)
     } else {
         let ratio = I64F64::from_num(pool_a.amount)
-            .checked_mul(I64F64::from_num(pool_b.amount))
-            .unwrap();
+            .checked_div(I64F64::from_num(pool_b.amount))
+            .ok_or(TutorialError::DepositTooSmall)?;
         if pool_a.amount > pool_b.amount {
             (
                 I64F64::from_num(amount_b)
                     .checked_mul(ratio)
-                    .unwrap()
+                    .ok_or(TutorialError::DepositTooSmall)?
                     .to_num::<u64>(),
                 amount_b,
             )

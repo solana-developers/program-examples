@@ -43,9 +43,9 @@ describe("Deposit liquidity", () => {
       .rpc();
   });
 
-  it("Deposit equal amounts", async () => {
+  it("Deposit liquidity", async () => {
     await program.methods
-      .depositLiquidity(values.depositAmountA, values.depositAmountA)
+      .depositLiquidity(values.depositAmountA, values.depositAmountB)
       .accounts({
         pool: values.poolKey,
         poolAuthority: values.poolAuthority,
@@ -62,13 +62,19 @@ describe("Deposit liquidity", () => {
       .signers([values.admin])
       .rpc({ skipPreflight: true });
 
+    // liquidity = sqrt(amount_a * amount_b) - minimumLiquidity
+    const expectedLiquidity =
+      Math.floor(Math.sqrt(values.depositAmountA.toNumber() * values.depositAmountB.toNumber())) -
+      values.minimumLiquidity.toNumber();
+
     const depositTokenAccountLiquditiy = await connection.getTokenAccountBalance(values.liquidityAccount);
-    expect(depositTokenAccountLiquditiy.value.amount).to.equal(
-      values.depositAmountA.sub(values.minimumLiquidity).toString(),
-    );
+    expect(depositTokenAccountLiquditiy.value.amount).to.equal(expectedLiquidity.toString());
+
     const depositTokenAccountA = await connection.getTokenAccountBalance(values.holderAccountA);
     expect(depositTokenAccountA.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountA).toString());
+
     const depositTokenAccountB = await connection.getTokenAccountBalance(values.holderAccountB);
-    expect(depositTokenAccountB.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountA).toString());
+    // Token B deducted = depositAmountB, not depositAmountA
+    expect(depositTokenAccountB.value.amount).to.equal(values.defaultSupply.sub(values.depositAmountB).toString());
   });
 });
