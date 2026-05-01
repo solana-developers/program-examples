@@ -14,7 +14,7 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-borsh = "0.9"
+borsh = "1.6"
 shank = "0.4.8"
 solana-program = "4.0"
 
