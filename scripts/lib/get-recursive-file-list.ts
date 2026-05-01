@@ -1,8 +1,8 @@
 // Point method at path and return a list of all the files in the directory recursively
-import { readdirSync, statSync } from 'node:fs';
+import { readdirSync, statSync } from "node:fs";
 
 export function getRecursiveFileList(path: string): string[] {
-  const ignore = ['.git', '.github', '.idea', '.next', '.vercel', '.vscode', 'coverage', 'dist', 'node_modules'];
+  const ignore = [".git", ".github", ".idea", ".next", ".vercel", ".vscode", "coverage", "dist", "node_modules"];
   const files: string[] = [];
 
   const items = readdirSync(path);
@@ -23,6 +23,6 @@ export function getRecursiveFileList(path: string): string[] {
 
   return files.filter((file) => {
     // Remove package.json from the root directory
-    return path === '.' ? file !== './package.json' : true;
+    return path === "." ? file !== "./package.json" : true;
   });
 }

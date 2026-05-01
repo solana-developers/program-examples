@@ -1,7 +1,7 @@
-import Image from "next/image"
-import { useWallet } from "@solana/wallet-adapter-react"
-import { useNftState } from "@/contexts/NftProvider"
+import { useWallet } from "@solana/wallet-adapter-react";
+import Image from "next/image";
 import { useState } from "react";
+import { useNftState } from "@/contexts/NftProvider";
 
 export class Nft {
   name: string;
@@ -14,26 +14,25 @@ export class Nft {
 }
 
 const DisplayNfts = () => {
-  const { publicKey } = useWallet()
-  const { nftState: nftState } = useNftState()
+  const { publicKey } = useWallet();
+  const { nftState } = useNftState();
   const [showItems, setShowItems] = useState(false);
 
   const handleButtonClick = () => {
     setShowItems(!showItems);
   };
 
-  var myNfts = new Array<Nft>();
+  const myNfts: Nft[] = [];
 
   if (nftState != null) {
-    for (var i = 0; i < nftState.items.length; i++) {
+    for (let i = 0; i < nftState.items.length; i++) {
       try {
-  
         const nftData = nftState.items[i];
-        let nft = new Nft();
-  
+        const nft = new Nft();
+
         nft.name = nftData.content.metadata.name;
         nft.url = nftData.content.links.image;
-  
+
         myNfts.push(nft);
       } catch (error) {
         console.log(error);
@@ -42,14 +41,16 @@ const DisplayNfts = () => {
   }
 
   function onNftClickedCallback(nft: Nft): void {
-    window.alert("Nft clicked: " + nft.name);
+    window.alert(`Nft clicked: ${nft.name}`);
   }
 
   return (
     <>
       {nftState && publicKey && (
         <div>
-          <button onClick={handleButtonClick}>Show NFTs</button>
+          <button type="button" onClick={handleButtonClick}>
+            Show NFTs
+          </button>
           {showItems && (
             <div className="flex flex-row space-x-5 overflow-x-auto self-end place-items-center justify-center ... ">
               {myNfts.map((nft) => (
@@ -67,7 +68,6 @@ const DisplayNfts = () => {
                     ) : (
                       <div>Error loading image</div>
                     )}
-                  
                   </div>
                 </div>
               ))}
@@ -77,6 +77,6 @@ const DisplayNfts = () => {
       )}
     </>
   );
-}
+};
 
-export default DisplayNfts
+export default DisplayNfts;

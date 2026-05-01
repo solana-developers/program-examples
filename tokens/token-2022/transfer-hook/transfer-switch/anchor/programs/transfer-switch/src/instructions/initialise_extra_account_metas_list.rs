@@ -34,6 +34,8 @@ impl<'info> InitializeExtraAccountMetas<'info> {
         &self,
         bumps: InitializeExtraAccountMetasBumps,
     ) -> Result<()> {
+        // .map_err() needed because spl-tlv-account-resolution uses solana-program-error 2.x
+        // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
         let account_metas = vec![
             // 5 - wallet (sender) config account
             ExtraAccountMeta::new_with_seeds(
@@ -42,11 +44,12 @@ impl<'info> InitializeExtraAccountMetas<'info> {
                 ],
                 false, // is_signer
                 false, // is_writable
-            )?,
+            ).map_err(|_| ProgramError::InvalidArgument)?,
         ];
 
         // calculate account size
-        let account_size = ExtraAccountMetaList::size_of(account_metas.len())? as u64;
+        // unwrap is safe for known-good input (count of metas we just created)
+        let account_size = ExtraAccountMetaList::size_of(account_metas.len()).unwrap() as u64;
 
         // calculate minimum required lamports
         let lamports = Rent::get()?.minimum_balance(account_size as usize);
@@ -60,7 +63,7 @@ impl<'info> InitializeExtraAccountMetas<'info> {
 
         create_account(
             CpiContext::new(
-                self.system_program.to_account_info(),
+                self.system_program.key(),
                 CreateAccount {
                     from: self.payer.to_account_info(),
                     to: self.extra_account_metas_list.to_account_info(),
@@ -76,7 +79,7 @@ impl<'info> InitializeExtraAccountMetas<'info> {
         ExtraAccountMetaList::init::<ExecuteInstruction>(
             &mut self.extra_account_metas_list.try_borrow_mut_data()?,
             &account_metas,
-        )?;
+        ).map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }

@@ -1,18 +1,21 @@
-'use client'
+"use client";
 
-import { useConnection } from '@solana/wallet-adapter-react'
+import { useConnection } from "@solana/wallet-adapter-react";
 
-import { useQuery } from '@tanstack/react-query'
-import * as React from 'react'
-import { ReactNode } from 'react'
-
-import { useCluster } from './cluster-data-access'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { AppAlert } from '@/components/app-alert'
+import { useQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
+import { AppAlert } from "@/components/app-alert";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useCluster } from "./cluster-data-access";
 
 export function ExplorerLink({ path, label, className }: { path: string; label: string; className?: string }) {
-  const { getExplorerUrl } = useCluster()
+  const { getExplorerUrl } = useCluster();
   return (
     <a
       href={getExplorerUrl(path)}
@@ -22,20 +25,20 @@ export function ExplorerLink({ path, label, className }: { path: string; label: 
     >
       {label}
     </a>
-  )
+  );
 }
 
 export function ClusterChecker({ children }: { children: ReactNode }) {
-  const { cluster } = useCluster()
-  const { connection } = useConnection()
+  const { cluster } = useCluster();
+  const { connection } = useConnection();
 
   const query = useQuery({
-    queryKey: ['version', { cluster, endpoint: connection.rpcEndpoint }],
+    queryKey: ["version", { cluster, endpoint: connection.rpcEndpoint }],
     queryFn: () => connection.getVersion(),
     retry: 1,
-  })
+  });
   if (query.isLoading) {
-    return null
+    return null;
   }
   if (query.isError || !query.data) {
     return (
@@ -48,13 +51,13 @@ export function ClusterChecker({ children }: { children: ReactNode }) {
       >
         Error connecting to cluster <span className="font-bold">{cluster.name}</span>.
       </AppAlert>
-    )
+    );
   }
-  return children
+  return children;
 }
 
 export function ClusterUiSelect() {
-  const { clusters, setCluster, cluster } = useCluster()
+  const { clusters, setCluster, cluster } = useCluster();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -68,5 +71,5 @@ export function ClusterUiSelect() {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -43,7 +43,7 @@ impl AttachToMint<'_> {
             authority: self.payer.to_account_info(),
         };
 
-        let ctx = CpiContext::new(self.token_program.to_account_info(), tx_hook_accs);
+        let ctx = CpiContext::new(self.token_program.key(), tx_hook_accs);
 
         transfer_hook_update(ctx, Some(crate::ID_CONST))?;
 
@@ -51,7 +51,8 @@ impl AttachToMint<'_> {
         let extra_metas_account = &self.extra_metas_account;
         let metas = get_extra_account_metas()?;
         let mut data = extra_metas_account.try_borrow_mut_data()?;
-        ExtraAccountMetaList::init::<ExecuteInstruction>(&mut data, &metas)?;
+        ExtraAccountMetaList::init::<ExecuteInstruction>(&mut data, &metas)
+            .map_err(|_| ProgramError::InvalidAccountData)?;
 
         Ok(())
     }

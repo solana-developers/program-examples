@@ -1,18 +1,18 @@
-import { execSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
-import { basename } from 'node:path';
-import * as p from 'picocolors';
-import { changePackageVersion } from './change-package-version';
+import { execSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import { basename } from "node:path";
+import * as p from "picocolors";
+import { changePackageVersion } from "./change-package-version";
 
-import { getDepsCount } from './get-deps-count';
-import { getRecursiveFileList } from './get-recursive-file-list';
+import { getDepsCount } from "./get-deps-count";
+import { getRecursiveFileList } from "./get-recursive-file-list";
 
-export function commandUpdate(path = '.', packageNames: string[] = []) {
-  const files = getRecursiveFileList(path).filter((file) => basename(file) === 'package.json');
+export function commandUpdate(path = ".", packageNames: string[] = []) {
+  const files = getRecursiveFileList(path).filter((file) => basename(file) === "package.json");
   const depsCounter = getDepsCount(files);
   const pkgNames = Object.keys(depsCounter).sort();
   if (packageNames.length > 0) {
-    console.log(`Updating ${packageNames.join(', ')} in ${files.length} files`);
+    console.log(`Updating ${packageNames.join(", ")} in ${files.length} files`);
   }
 
   let total = 0;
@@ -38,7 +38,7 @@ export function commandUpdate(path = '.', packageNames: string[] = []) {
   }
 
   if (total === 0) {
-    console.log('No files updated');
+    console.log("No files updated");
   } else {
     console.log(`Updated ${total} files`);
   }

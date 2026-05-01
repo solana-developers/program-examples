@@ -1,5 +1,5 @@
-import type { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import type { Program } from "@anchor-lang/core";
+import * as anchor from "@anchor-lang/core";
 import {
   createEnableCpiGuardInstruction,
   createInitializeAccountInstruction,
@@ -9,11 +9,11 @@ import {
   getAccountLen,
   mintTo,
   TOKEN_2022_PROGRAM_ID,
-} from '@solana/spl-token';
-import { SystemProgram, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
-import type { CpiGuard } from '../target/types/cpi_guard';
+} from "@solana/spl-token";
+import { SystemProgram, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
+import type { CpiGuard } from "../target/types/cpi_guard";
 
-describe('cpi-guard', () => {
+describe("cpi-guard", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   const connection = provider.connection;
@@ -25,7 +25,7 @@ describe('cpi-guard', () => {
   const mintKeypair = new anchor.web3.Keypair();
   const tokenKeypair = new anchor.web3.Keypair();
 
-  it('Create Token Account with CpiGuard extension', async () => {
+  it("Create Token Account with CpiGuard extension", async () => {
     await createMint(
       connection,
       wallet.payer, // Payer of the transaction and initialization fees
@@ -60,9 +60,18 @@ describe('cpi-guard', () => {
     );
 
     // Instruction to initialize the CpiGuard Extension
-    const enableCpiGuiardInstruction = createEnableCpiGuardInstruction(tokenKeypair.publicKey, wallet.publicKey, [], TOKEN_2022_PROGRAM_ID);
+    const enableCpiGuiardInstruction = createEnableCpiGuardInstruction(
+      tokenKeypair.publicKey,
+      wallet.publicKey,
+      [],
+      TOKEN_2022_PROGRAM_ID,
+    );
 
-    const transaction = new Transaction().add(createAccountInstruction, initializeAccountInstruction, enableCpiGuiardInstruction);
+    const transaction = new Transaction().add(
+      createAccountInstruction,
+      initializeAccountInstruction,
+      enableCpiGuiardInstruction,
+    );
 
     const transactionSignature = await sendAndConfirmTransaction(
       connection,
@@ -70,12 +79,22 @@ describe('cpi-guard', () => {
       [wallet.payer, tokenKeypair], // Signers
     );
 
-    await mintTo(connection, wallet.payer, mintKeypair.publicKey, tokenKeypair.publicKey, wallet.payer, 1, [], null, TOKEN_2022_PROGRAM_ID);
+    await mintTo(
+      connection,
+      wallet.payer,
+      mintKeypair.publicKey,
+      tokenKeypair.publicKey,
+      wallet.payer,
+      1,
+      [],
+      null,
+      TOKEN_2022_PROGRAM_ID,
+    );
 
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 
-  it('Transfer, expect fail', async () => {
+  it("Transfer, expect fail", async () => {
     try {
       await program.methods
         .cpiTransfer()
@@ -86,16 +105,21 @@ describe('cpi-guard', () => {
         })
         .rpc({ skipPreflight: true });
     } catch (error) {
-      console.log('\nExpect Error:', error.message);
+      console.log("\nExpect Error:", error.message);
     }
   });
 
-  it('Disable CpiGuard', async () => {
-    const transactionSignature = await disableCpiGuard(connection, wallet.payer, tokenKeypair.publicKey, wallet.publicKey);
-    console.log('Your transaction signature', transactionSignature);
+  it("Disable CpiGuard", async () => {
+    const transactionSignature = await disableCpiGuard(
+      connection,
+      wallet.payer,
+      tokenKeypair.publicKey,
+      wallet.publicKey,
+    );
+    console.log("Your transaction signature", transactionSignature);
   });
 
-  it('Transfer, expect success', async () => {
+  it("Transfer, expect success", async () => {
     const transactionSignature = await program.methods
       .cpiTransfer()
       .accounts({
@@ -104,6 +128,6 @@ describe('cpi-guard', () => {
         mintAccount: mintKeypair.publicKey,
       })
       .rpc({ skipPreflight: true });
-    console.log('Your transaction signature', transactionSignature);
+    console.log("Your transaction signature", transactionSignature);
   });
 });

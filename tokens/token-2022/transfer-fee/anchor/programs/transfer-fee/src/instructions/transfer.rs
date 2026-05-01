@@ -59,7 +59,7 @@ pub fn process_transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
 
     transfer_checked_with_fee(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             TransferCheckedWithFee {
                 token_program_id: ctx.accounts.token_program.to_account_info(),
                 source: ctx.accounts.sender_token_account.to_account_info(),

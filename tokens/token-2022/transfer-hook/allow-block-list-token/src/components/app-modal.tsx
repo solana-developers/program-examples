@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { ReactNode } from 'react'
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export function AppModal({
   children,
@@ -9,11 +9,11 @@ export function AppModal({
   submitDisabled,
   submitLabel,
 }: {
-  children: ReactNode
-  title: string
-  submit?: () => void
-  submitDisabled?: boolean
-  submitLabel?: string
+  children: ReactNode;
+  title: string;
+  submit?: () => void;
+  submitDisabled?: boolean;
+  submitLabel?: string;
 }) {
   return (
     <Dialog>
@@ -28,11 +28,11 @@ export function AppModal({
         <DialogFooter>
           {submit ? (
             <Button type="submit" onClick={submit} disabled={submitDisabled}>
-              {submitLabel || 'Save'}
+              {submitLabel || "Save"}
             </Button>
           ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

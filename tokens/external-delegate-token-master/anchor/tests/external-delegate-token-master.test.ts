@@ -1,12 +1,13 @@
-import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
-import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
-import { expect } from 'chai';
-import { start } from 'solana-bankrun';
+import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from "@solana/spl-token";
+import { Connection, Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { expect } from "chai";
+import { start } from "solana-bankrun";
 
 jest.setTimeout(30000); // Set timeout to 30 seconds
 
 const ACCOUNT_SIZE = 8 + 32 + 20; // Define your account size here
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
 async function retryWithBackoff(fn: () => Promise<any>, retries = 5, delay = 500): Promise<any> {
   try {
     return await fn();
@@ -17,8 +18,10 @@ async function retryWithBackoff(fn: () => Promise<any>, retries = 5, delay = 500
   }
 }
 
-describe('External Delegate Token Master Tests', () => {
+describe("External Delegate Token Master Tests", () => {
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
   let context: any;
+  // biome-ignore lint/suspicious/noExplicitAny: TODO: we should fix this, but we also will move these test to LiteSVM for Anchor 1.0
   let _program: any;
   let authority: Keypair;
   let userAccount: Keypair;
@@ -34,15 +37,15 @@ describe('External Delegate Token Master Tests', () => {
 
     const programs = [
       {
-        name: 'external_delegate_token_master',
-        programId: new PublicKey('FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD'),
-        program: 'target/deploy/external_delegate_token_master.so',
+        name: "external_delegate_token_master",
+        programId: new PublicKey("FYPkt5VWMvtyWZDMGCwoKFkE3wXTzphicTpnNGuHWVbD"),
+        program: "target/deploy/external_delegate_token_master.so",
       },
     ];
 
     context = await retryWithBackoff(async () => await start(programs, []));
 
-    const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
     context.connection = connection;
 
     // Airdrop SOL to authority with retry logic
@@ -64,7 +67,9 @@ describe('External Delegate Token Master Tests', () => {
     _recipientTokenAccount = recipientTokenAccountInfo.address;
 
     // Mint tokens to the user's account
-    await retryWithBackoff(async () => await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000));
+    await retryWithBackoff(
+      async () => await mintTo(connection, authority, mint, userTokenAccount, authority, 1000000000),
+    );
 
     // Find program-derived address (PDA)
     [_userPda, _bumpSeed] = await retryWithBackoff(
@@ -72,7 +77,7 @@ describe('External Delegate Token Master Tests', () => {
     );
   });
 
-  it('should initialize user account', async () => {
+  it("should initialize user account", async () => {
     const space = ACCOUNT_SIZE;
     const rentExempt = await retryWithBackoff(async () => {
       return await context.connection.getMinimumBalanceForRentExemption(space);
@@ -102,8 +107,8 @@ describe('External Delegate Token Master Tests', () => {
     expect(account.ethereumAddress).to.deep.equal(new Array(20).fill(0));
   });
 
-  it('should set ethereum address', async () => {
-    const ethereumAddress = Buffer.from('1C8cd0c38F8DE35d6056c7C7aBFa7e65D260E816', 'hex');
+  it("should set ethereum address", async () => {
+    const ethereumAddress = Buffer.from("1C8cd0c38F8DE35d6056c7C7aBFa7e65D260E816", "hex");
 
     await context.program.methods
       .setEthereumAddress(ethereumAddress)
@@ -118,7 +123,7 @@ describe('External Delegate Token Master Tests', () => {
     expect(account.ethereumAddress).to.deep.equal(Array.from(ethereumAddress));
   });
 
-  it('should perform authority transfer', async () => {
+  it("should perform authority transfer", async () => {
     const newAuthority = Keypair.generate();
 
     await context.program.methods
@@ -135,7 +140,7 @@ describe('External Delegate Token Master Tests', () => {
   });
 
   afterEach(async () => {
-    if (context && typeof context.terminate === 'function') {
+    if (context && typeof context.terminate === "function") {
       await context.terminate();
     }
   });

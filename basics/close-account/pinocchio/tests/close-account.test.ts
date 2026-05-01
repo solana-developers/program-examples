@@ -1,6 +1,4 @@
-import { describe, test } from "node:test";
-import { PublicKey, Transaction } from "@solana/web3.js";
-import { start } from "solana-bankrun";
+import { describe } from "node:test";
 
 describe("Close Account!", async () => {
   console.log("Close Account");

@@ -8,6 +8,8 @@ node_modules/
 **/*/node_modules
 **/*/package-lock.json
 **/*/Cargo.lock
+# Exception: escrow native needs Cargo.lock to pin blake3 (see tokens/escrow/native/Cargo.toml)
+!tokens/escrow/native/Cargo.lock
 
 **/*/.anchor
 **/*/.DS_Store
@@ -18,3 +20,4 @@ node_modules/
 **/*/yarn.lock
 
 /target
+deploy

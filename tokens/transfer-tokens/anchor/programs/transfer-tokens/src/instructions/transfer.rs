@@ -51,7 +51,7 @@ pub fn transfer_tokens(ctx: Context<TransferTokens>, amount: u64) -> Result<()> 
     // Invoke the transfer instruction on the token program
     transfer(
         CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
+            ctx.accounts.token_program.key(),
             Transfer {
                 from: ctx.accounts.sender_token_account.to_account_info(),
                 to: ctx.accounts.recipient_token_account.to_account_info(),

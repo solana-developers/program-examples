@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletButton } from '../solana/solana-provider'
-import { AppHero } from '../app-hero'
-import ManageTokenInput from './abl-token-manage-token-input'
+import { useWallet } from "@solana/wallet-adapter-react";
+import { AppHero } from "../app-hero";
+import { WalletButton } from "../solana/solana-provider";
+import ManageTokenInput from "./abl-token-manage-token-input";
 export default function AblTokenFeature() {
-  const { publicKey } = useWallet()
+  const { publicKey } = useWallet();
 
   return publicKey ? (
     <div>
@@ -21,5 +21,5 @@ export default function AblTokenFeature() {
         </div>
       </div>
     </div>
-  )
+  );
 }
