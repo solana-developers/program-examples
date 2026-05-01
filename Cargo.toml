@@ -7,6 +7,7 @@ members = [
     "basics/checking-accounts/native/program",
     "basics/checking-accounts/pinocchio/program",
     "basics/checking-accounts/anchor/programs/anchor-program-example",
+    "basics/checking-accounts/asm",
     "basics/close-account/native/program",
     "basics/close-account/pinocchio/program",
     "basics/close-account/anchor/programs/close-account",
@@ -17,10 +18,12 @@ members = [
     "basics/create-account/native/program",
     "basics/create-account/pinocchio/program",
     "basics/create-account/anchor/programs/create-system-account",
+    "basics/create-account/asm",
     "basics/cross-program-invocation/anchor/programs/*",
     "basics/hello-solana/native/program",
     "basics/hello-solana/anchor/programs/*",
     "basics/hello-solana/pinocchio/program",
+    "basics/hello-solana/asm",
     "basics/pda-rent-payer/native/program",
     "basics/pda-rent-payer/pinocchio/program",
     "basics/pda-rent-payer/anchor/programs/*",
@@ -43,6 +46,7 @@ members = [
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/pinocchio/program",
     "basics/transfer-sol/anchor/programs/*",
+    "basics/transfer-sol/asm",
 
     # tokens
     "tokens/token-2022/mint-close-authority/native/program",
@@ -65,7 +69,7 @@ mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
 
 
 # spl
-solana-program = "3.0"
+solana-program = "4.0"
 spl-token = { version = "8.0.0", features = [ "no-entrypoint" ] }
 spl-token-2022 = {version = "9.0.0" , features = [ "no-entrypoint" ] }
 spl-associated-token-account = { version = "7.0.0", features = [ "no-entrypoint" ] }
@@ -89,3 +93,4 @@ solana-keypair = "3.0.1"
 solana-pubkey = "3.0.0"
 solana-transaction = "3.0.1"
 solana-native-token = "3.0.0"
+solana-address = "2.1.0"
