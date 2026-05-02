@@ -29,6 +29,20 @@ tokens/escrow/anchor
 
 # not live
 tokens/token-2022/group/anchor
+tokens/token-2022/group/quasar
+
+# CPI quasar project uses subdirectories (hand/ and lever/) instead of a root Quasar.toml
+basics/cross-program-invocation/quasar
+
+# has Cargo.toml but no Quasar.toml
+tokens/spl-token-minter/quasar
+tokens/external-delegate-token-master/quasar
+tokens/nft-minter/quasar
+tokens/nft-operations/quasar
+tokens/token-swap/quasar
+
+# build failed - outdated quasar-lang API (no AccountView.data, no log_64)
+oracles/pyth/quasar
 
 # error in tests
 tokens/external-delegate-token-master/anchor

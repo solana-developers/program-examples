@@ -11,40 +11,40 @@ pub mod anchor {
 
     use super::*;
 
-    pub fn create_token(_ctx: Context<CreateToken>, _token_name: String) -> Result<()> {
+    pub fn create_token(_context: Context<CreateToken>, _token_name: String) -> Result<()> {
         msg!("Create Token");
         Ok(())
     }
-    pub fn create_token_account(_ctx: Context<CreateTokenAccount>) -> Result<()> {
+    pub fn create_token_account(_context: Context<CreateTokenAccount>) -> Result<()> {
         msg!("Create Token Account");
         Ok(())
     }
     pub fn create_associated_token_account(
-        _ctx: Context<CreateAssociatedTokenAccount>,
+        _context: Context<CreateAssociatedTokenAccount>,
     ) -> Result<()> {
         msg!("Create Associated Token Account");
         Ok(())
     }
-    pub fn transfer_token(ctx: Context<TransferToken>, amount: u64) -> Result<()> {
+    pub fn transfer_token(context: Context<TransferToken>, amount: u64) -> Result<()> {
         let cpi_accounts = TransferChecked {
-            from: ctx.accounts.from.to_account_info().clone(),
-            mint: ctx.accounts.mint.to_account_info().clone(),
-            to: ctx.accounts.to_ata.to_account_info().clone(),
-            authority: ctx.accounts.signer.to_account_info(),
+            from: context.accounts.from.to_account_info().clone(),
+            mint: context.accounts.mint.to_account_info().clone(),
+            to: context.accounts.to_ata.to_account_info().clone(),
+            authority: context.accounts.signer.to_account_info(),
         };
-        let cpi_program = ctx.accounts.token_program.key();
+        let cpi_program = context.accounts.token_program.key();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-        token_interface::transfer_checked(cpi_context, amount, ctx.accounts.mint.decimals)?;
+        token_interface::transfer_checked(cpi_context, amount, context.accounts.mint.decimals)?;
         msg!("Transfer Token");
         Ok(())
     }
-    pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+    pub fn mint_token(context: Context<MintToken>, amount: u64) -> Result<()> {
         let cpi_accounts = MintTo {
-            mint: ctx.accounts.mint.to_account_info().clone(),
-            to: ctx.accounts.receiver.to_account_info().clone(),
-            authority: ctx.accounts.signer.to_account_info(),
+            mint: context.accounts.mint.to_account_info().clone(),
+            to: context.accounts.receiver.to_account_info().clone(),
+            authority: context.accounts.signer.to_account_info(),
         };
-        let cpi_program = ctx.accounts.token_program.key();
+        let cpi_program = context.accounts.token_program.key();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
         token_interface::mint_to(cpi_context, amount)?;
         msg!("Mint Token");

@@ -39,13 +39,13 @@ pub mod transfer_hook {
 
     #[instruction(discriminator = InitializeExtraAccountMetaListInstruction::SPL_DISCRIMINATOR_SLICE)]
     pub fn initialize_extra_account_meta_list(
-        ctx: Context<InitializeExtraAccountMetaList>,
+        mut context: Context<InitializeExtraAccountMetaList>,
     ) -> Result<()> {
-        let extra_account_metas = InitializeExtraAccountMetaList::extra_account_metas()?;
+        let extra_account_metas = handle_extra_account_metas()?;
 
         // initialize ExtraAccountMetaList account with extra accounts
         ExtraAccountMetaList::init::<ExecuteInstruction>(
-            &mut ctx.accounts.extra_account_meta_list.try_borrow_mut_data()?,
+            &mut context.accounts.extra_account_meta_list.try_borrow_mut_data()?,
             &extra_account_metas,
         )
         .map_err(|_| ProgramError::InvalidAccountData)?;
@@ -54,58 +54,58 @@ pub mod transfer_hook {
     }
 
     #[instruction(discriminator = ExecuteInstruction::SPL_DISCRIMINATOR_SLICE)]
-    pub fn transfer_hook(ctx: Context<TransferHook>, amount: u64) -> Result<()> {
+    pub fn transfer_hook(context: Context<TransferHook>, amount: u64) -> Result<()> {
         // Fail this instruction if it is not called from within a transfer hook
-        check_is_transferring(&ctx)?;
+        check_is_transferring(&context)?;
 
         if amount > 50 {
             msg!("The amount is too big {0}", amount);
         }
 
-        ctx.accounts.counter_account.counter += 1;
+        context.accounts.counter_account.counter += 1;
 
         msg!(
             "This token has been transferred {0} times",
-            ctx.accounts.counter_account.counter
+            context.accounts.counter_account.counter
         );
 
         msg!(
             "Is writable mint {0}",
-            ctx.accounts.mint.to_account_info().is_writable
+            context.accounts.mint.to_account_info().is_writable
         );
         msg!(
             "Is destination mint {0}",
-            ctx.accounts.destination_token.to_account_info().is_writable
+            context.accounts.destination_token.to_account_info().is_writable
         );
         msg!(
             "Is source mint {0}",
-            ctx.accounts.source_token.to_account_info().is_writable
+            context.accounts.source_token.to_account_info().is_writable
         );
 
-        let signer_seeds: &[&[&[u8]]] = &[&[b"delegate", &[ctx.bumps.delegate]]];
+        let signer_seeds: &[&[&[u8]]] = &[&[b"delegate", &[context.bumps.delegate]]];
 
         // Transfer WSOL from sender to delegate token account using delegate PDA
         // transfer lamports amount equal to token transfer amount
         transfer_checked(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 TransferChecked {
-                    from: ctx.accounts.sender_wsol_token_account.to_account_info(),
-                    mint: ctx.accounts.wsol_mint.to_account_info(),
-                    to: ctx.accounts.delegate_wsol_token_account.to_account_info(),
-                    authority: ctx.accounts.delegate.to_account_info(),
+                    from: context.accounts.sender_wsol_token_account.to_account_info(),
+                    mint: context.accounts.wsol_mint.to_account_info(),
+                    to: context.accounts.delegate_wsol_token_account.to_account_info(),
+                    authority: context.accounts.delegate.to_account_info(),
                 },
             )
             .with_signer(signer_seeds),
             amount,
-            ctx.accounts.wsol_mint.decimals,
+            context.accounts.wsol_mint.decimals,
         )?;
         Ok(())
     }
 }
 
-fn check_is_transferring(ctx: &Context<TransferHook>) -> Result<()> {
-    let source_token_info = ctx.accounts.source_token.to_account_info();
+fn check_is_transferring(context: &Context<TransferHook>) -> Result<()> {
+    let source_token_info = context.accounts.source_token.to_account_info();
     let mut account_data_ref: RefMut<&mut [u8]> = source_token_info.try_borrow_mut_data()?;
     let mut account = PodStateWithExtensionsMut::<PodAccount>::unpack(*account_data_ref)
         .map_err(|_| ProgramError::InvalidAccountData)?;
@@ -132,20 +132,19 @@ pub struct InitializeExtraAccountMetaList<'info> {
         bump,
         // size_of returns Result with spl's ProgramError — unwrap is safe for known-good input
         space = ExtraAccountMetaList::size_of(
-            InitializeExtraAccountMetaList::extra_account_metas_count()
+            handle_extra_account_metas_count()
         ).unwrap(),
         payer = payer
     )]
     pub extra_account_meta_list: UncheckedAccount<'info>,
     pub mint: InterfaceAccount<'info, Mint>,
-    #[account(init, seeds = [b"counter"], bump, payer = payer, space = 9)]
+    #[account(init, seeds = [b"counter"], bump, payer = payer, space = CounterAccount::DISCRIMINATOR.len() + CounterAccount::INIT_SPACE)]
     pub counter_account: Account<'info, CounterAccount>,
     pub system_program: Program<'info, System>,
 }
 
 // Define extra account metas to store on extra_account_meta_list account
-impl<'info> InitializeExtraAccountMetaList<'info> {
-    pub fn extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
+pub fn handle_extra_account_metas() -> Result<Vec<ExtraAccountMeta>> {
         // When the token2022 program CPIs to the transfer_hook instruction on this program,
         // the accounts are provided in order defined specified the list:
 
@@ -210,11 +209,13 @@ impl<'info> InitializeExtraAccountMetaList<'info> {
         ])
     }
 
+
+
     /// Returns the count of extra account metas (avoids the error conversion issue in #[account] attributes)
-    pub fn extra_account_metas_count() -> usize {
+pub fn handle_extra_account_metas_count() -> usize {
         7 // wsol_mint, token_program, ata_program, delegate, delegate_wsol, sender_wsol, counter
     }
-}
+
 
 // Order of accounts matters for this struct.
 // The first 4 accounts are the accounts required for token transfer (source, mint, destination, owner)
@@ -263,6 +264,7 @@ pub struct TransferHook<'info> {
 }
 
 #[account]
+#[derive(InitSpace)]
 pub struct CounterAccount {
     counter: u8,
 }

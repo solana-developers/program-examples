@@ -16,7 +16,7 @@ pub mod create_token {
     use super::*;
 
     pub fn create_token_mint(
-        ctx: Context<CreateTokenMint>,
+        context: Context<CreateTokenMint>,
         _token_decimals: u8,
         token_name: String,
         token_symbol: String,
@@ -25,22 +25,22 @@ pub mod create_token {
         msg!("Creating metadata account...");
         msg!(
             "Metadata account address: {}",
-            &ctx.accounts.metadata_account.key()
+            &context.accounts.metadata_account.key()
         );
 
         // Cross Program Invocation (CPI)
         // Invoking the create_metadata_account_v3 instruction on the token metadata program
         create_metadata_accounts_v3(
             CpiContext::new(
-                ctx.accounts.token_metadata_program.key(),
+                context.accounts.token_metadata_program.key(),
                 CreateMetadataAccountsV3 {
-                    metadata: ctx.accounts.metadata_account.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    mint_authority: ctx.accounts.payer.to_account_info(),
-                    update_authority: ctx.accounts.payer.to_account_info(),
-                    payer: ctx.accounts.payer.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
+                    metadata: context.accounts.metadata_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    mint_authority: context.accounts.payer.to_account_info(),
+                    update_authority: context.accounts.payer.to_account_info(),
+                    payer: context.accounts.payer.to_account_info(),
+                    system_program: context.accounts.system_program.to_account_info(),
+                    rent: context.accounts.rent.to_account_info(),
                 },
             ),
             DataV2 {

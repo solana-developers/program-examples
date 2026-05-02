@@ -9,11 +9,11 @@ use crate::{
     state::{Amm, Pool},
 };
 
-pub fn create_pool(ctx: Context<CreatePool>) -> Result<()> {
-    let pool = &mut ctx.accounts.pool;
-    pool.amm = ctx.accounts.amm.key();
-    pool.mint_a = ctx.accounts.mint_a.key();
-    pool.mint_b = ctx.accounts.mint_b.key();
+pub fn handle_create_pool(mut context: Context<CreatePool>) -> Result<()> {
+    let pool = &mut context.accounts.pool;
+    pool.amm = context.accounts.amm.key();
+    pool.mint_a = context.accounts.mint_a.key();
+    pool.mint_b = context.accounts.mint_b.key();
 
     Ok(())
 }
@@ -31,7 +31,7 @@ pub struct CreatePool<'info> {
     #[account(
         init,
         payer = payer,
-        space = Pool::LEN,
+        space = Pool::DISCRIMINATOR.len() + Pool::INIT_SPACE,
         seeds = [
             amm.key().as_ref(),
             mint_a.key().as_ref(),

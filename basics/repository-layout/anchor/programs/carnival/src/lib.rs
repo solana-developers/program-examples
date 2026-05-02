@@ -15,7 +15,7 @@ pub mod carnival {
     use super::*;
 
     pub fn go_on_ride(
-        _ctx: Context<CarnivalContext>,
+        _context: Context<CarnivalContext>,
         name: String,
         height: u32,
         ticket_count: u32,
@@ -30,7 +30,7 @@ pub mod carnival {
     }
 
     pub fn play_game(
-        _ctx: Context<CarnivalContext>,
+        _context: Context<CarnivalContext>,
         name: String,
         ticket_count: u32,
         game_name: String,
@@ -43,7 +43,7 @@ pub mod carnival {
     }
 
     pub fn eat_food(
-        _ctx: Context<CarnivalContext>,
+        _context: Context<CarnivalContext>,
         name: String,
         ticket_count: u32,
         food_stand_name: String,

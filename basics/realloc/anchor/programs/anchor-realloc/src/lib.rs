@@ -6,13 +6,13 @@ declare_id!("Fod47xKXjdHVQDzkFPBvfdWLm8gEAV4iMSXkfUzCHiSD");
 pub mod anchor_realloc {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, input: String) -> Result<()> {
-        ctx.accounts.message_account.message = input;
+    pub fn initialize(context: Context<Initialize>, input: String) -> Result<()> {
+        context.accounts.message_account.message = input;
         Ok(())
     }
 
-    pub fn update(ctx: Context<Update>, input: String) -> Result<()> {
-        ctx.accounts.message_account.message = input;
+    pub fn update(context: Context<Update>, input: String) -> Result<()> {
+        context.accounts.message_account.message = input;
         Ok(())
     }
 }

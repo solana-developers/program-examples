@@ -32,8 +32,8 @@ pub struct Initialize<'info> {
 
 // There is currently not an anchor constraint to automatically initialize the TransferFeeConfig extension
 // We can manually create and initialize the mint account via CPIs in the instruction handler
-pub fn process_initialize(
-    ctx: Context<Initialize>,
+pub fn handle_process_initialize(
+    context: Context<Initialize>,
     transfer_fee_basis_points: u16,
     maximum_fee: u64,
 ) -> Result<()> {
@@ -47,29 +47,29 @@ pub fn process_initialize(
     // Invoke System Program to create new account with space for mint and extension data
     create_account(
         CpiContext::new(
-            ctx.accounts.system_program.key(),
+            context.accounts.system_program.key(),
             CreateAccount {
-                from: ctx.accounts.payer.to_account_info(),
-                to: ctx.accounts.mint_account.to_account_info(),
+                from: context.accounts.payer.to_account_info(),
+                to: context.accounts.mint_account.to_account_info(),
             },
         ),
         lamports,                          // Lamports
         mint_size as u64,                  // Space
-        &ctx.accounts.token_program.key(), // Owner Program
+        &context.accounts.token_program.key(), // Owner Program
     )?;
 
     // Initialize the transfer fee extension data
     // This instruction must come before the instruction to initialize the mint data
     transfer_fee_initialize(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             TransferFeeInitialize {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
             },
         ),
-        Some(&ctx.accounts.payer.key()), // transfer fee config authority (update fee)
-        Some(&ctx.accounts.payer.key()), // withdraw authority (withdraw fees)
+        Some(&context.accounts.payer.key()), // transfer fee config authority (update fee)
+        Some(&context.accounts.payer.key()), // withdraw authority (withdraw fees)
         transfer_fee_basis_points,       // transfer fee basis points (% fee per transfer)
         maximum_fee,                     // maximum fee (maximum units of token per transfer)
     )?;
@@ -77,39 +77,38 @@ pub fn process_initialize(
     // Initialize the standard mint account data
     initialize_mint2(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             InitializeMint2 {
-                mint: ctx.accounts.mint_account.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
             },
         ),
         2,                               // decimals
-        &ctx.accounts.payer.key(),       // mint authority
-        Some(&ctx.accounts.payer.key()), // freeze authority
+        &context.accounts.payer.key(),       // mint authority
+        Some(&context.accounts.payer.key()), // freeze authority
     )?;
 
-    ctx.accounts.check_mint_data()?;
+    handle_check_mint_data(&context.accounts)?;
     Ok(())
 }
 
 // helper to demonstrate how to read mint extension data within a program
-impl<'info> Initialize<'info> {
-    pub fn check_mint_data(&self) -> Result<()> {
-        let mint = &self.mint_account.to_account_info();
-        let mint_data = mint.data.borrow();
-        let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
-        let extension_data = mint_with_extension.get_extension::<TransferFeeConfig>()?;
+pub fn handle_check_mint_data(accounts: &Initialize) -> Result<()> {
+    let mint = &accounts.mint_account.to_account_info();
+    let mint_data = mint.data.borrow();
+    let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
+    let extension_data = mint_with_extension.get_extension::<TransferFeeConfig>()?;
 
-        assert_eq!(
-            extension_data.transfer_fee_config_authority,
-            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
-        );
+    assert_eq!(
+        extension_data.transfer_fee_config_authority,
+        OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
+    );
 
-        assert_eq!(
-            extension_data.withdraw_withheld_authority,
-            OptionalNonZeroPubkey::try_from(Some(self.payer.key()))?
-        );
+    assert_eq!(
+        extension_data.withdraw_withheld_authority,
+        OptionalNonZeroPubkey::try_from(Some(accounts.payer.key()))?
+    );
 
-        msg!("{:?}", extension_data);
-        Ok(())
-    }
+    msg!("{:?}", extension_data);
+    Ok(())
 }
+

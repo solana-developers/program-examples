@@ -46,16 +46,15 @@ pub struct TransferHook<'info> {
     pub wallet_switch: Account<'info, TransferSwitch>,
 }
 
-impl<'info> TransferHook<'info> {
-    pub fn assert_switch_is_on(&mut self) -> Result<()> {
-        if !self.wallet_switch.on {
+pub fn handle_assert_switch_is_on(accounts: &mut TransferHook) -> Result<()> {
+        if !accounts.wallet_switch.on {
             return err!(TransferError::SwitchNotOn);
         }
         Ok(())
     }
 
-    pub fn assert_is_transferring(&self) -> Result<()> {
-        let source_token_info = self.source_token_account.to_account_info();
+pub fn handle_assert_is_transferring(accounts: &mut TransferHook) -> Result<()> {
+        let source_token_info = accounts.source_token_account.to_account_info();
         let mut account_data_ref = source_token_info.try_borrow_mut_data()?;
         // .map_err() needed because spl-token-2022 uses solana-program-error 2.x
         // while anchor-lang 1.0 uses 3.x — structurally identical but different semver types
@@ -70,4 +69,4 @@ impl<'info> TransferHook<'info> {
 
         Ok(())
     }
-}
+

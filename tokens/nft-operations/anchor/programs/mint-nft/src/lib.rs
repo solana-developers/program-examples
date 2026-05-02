@@ -10,15 +10,15 @@ pub use contexts::*;
 pub mod mint_nft {
 
     use super::*;
-    pub fn create_collection(ctx: Context<CreateCollection>) -> Result<()> {
-        ctx.accounts.create_collection(&ctx.bumps)
+    pub fn create_collection(mut context: Context<CreateCollection>) -> Result<()> {
+        handle_create_collection(&mut context.accounts, &context.bumps)
     }
 
-    pub fn mint_nft(ctx: Context<MintNFT>) -> Result<()> {
-        ctx.accounts.mint_nft(&ctx.bumps)
+    pub fn mint_nft(mut context: Context<MintNFT>) -> Result<()> {
+        handle_mint_nft(&mut context.accounts, &context.bumps)
     }
 
-    pub fn verify_collection(ctx: Context<VerifyCollectionMint>) -> Result<()> {
-        ctx.accounts.verify_collection(&ctx.bumps)
+    pub fn verify_collection(mut context: Context<VerifyCollectionMint>) -> Result<()> {
+        handle_verify_collection(&mut context.accounts, &context.bumps)
     }
 }

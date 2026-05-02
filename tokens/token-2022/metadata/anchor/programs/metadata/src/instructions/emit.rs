@@ -11,17 +11,17 @@ pub struct Emit<'info> {
 
 // Invoke the emit instruction from spl_token_metadata_interface directly
 // There is not an anchor CpiContext for this instruction
-pub fn process_emit(ctx: Context<Emit>) -> Result<()> {
+pub fn handle_process_emit(context: Context<Emit>) -> Result<()> {
     invoke(
         &emit(
-            &ctx.accounts.token_program.key(), // token program id
-            &ctx.accounts.mint_account.key(),  // "metadata" account
+            &context.accounts.token_program.key(), // token program id
+            &context.accounts.mint_account.key(),  // "metadata" account
             None,
             None,
         ),
         &[
-            ctx.accounts.token_program.to_account_info(),
-            ctx.accounts.mint_account.to_account_info(),
+            context.accounts.token_program.to_account_info(),
+            context.accounts.mint_account.to_account_info(),
         ],
     )?;
     Ok(())

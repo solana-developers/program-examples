@@ -45,8 +45,8 @@ pub struct CreateToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn create_token(
-    ctx: Context<CreateToken>,
+pub fn handle_create_token(
+    context: Context<CreateToken>,
     token_name: String,
     token_symbol: String,
     token_uri: String,
@@ -54,21 +54,21 @@ pub fn create_token(
     msg!("Creating metadata account");
 
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[ctx.bumps.mint_account]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"mint", &[context.bumps.mint_account]]];
 
     // Cross Program Invocation (CPI) signed by PDA
     // Invoking the create_metadata_account_v3 instruction on the token metadata program
     create_metadata_accounts_v3(
         CpiContext::new(
-            ctx.accounts.token_metadata_program.key(),
+            context.accounts.token_metadata_program.key(),
             CreateMetadataAccountsV3 {
-                metadata: ctx.accounts.metadata_account.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
-                mint_authority: ctx.accounts.mint_account.to_account_info(), // PDA is mint authority
-                update_authority: ctx.accounts.mint_account.to_account_info(), // PDA is update authority
-                payer: ctx.accounts.payer.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
+                metadata: context.accounts.metadata_account.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
+                mint_authority: context.accounts.mint_account.to_account_info(), // PDA is mint authority
+                update_authority: context.accounts.mint_account.to_account_info(), // PDA is update authority
+                payer: context.accounts.payer.to_account_info(),
+                system_program: context.accounts.system_program.to_account_info(),
+                rent: context.accounts.rent.to_account_info(),
             },
         )
         .with_signer(signer_seeds),

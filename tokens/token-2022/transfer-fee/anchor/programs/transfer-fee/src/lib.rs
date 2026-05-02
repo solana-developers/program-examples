@@ -10,30 +10,30 @@ pub mod transfer_fee {
     use super::*;
 
     pub fn initialize(
-        ctx: Context<Initialize>,
+        context: Context<Initialize>,
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {
-        process_initialize(ctx, transfer_fee_basis_points, maximum_fee)
+        handle_process_initialize(context, transfer_fee_basis_points, maximum_fee)
     }
 
-    pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
-        process_transfer(ctx, amount)
+    pub fn transfer(context: Context<Transfer>, amount: u64) -> Result<()> {
+        handle_process_transfer(context, amount)
     }
 
-    pub fn harvest<'info>(ctx: Context<'info, Harvest<'info>>) -> Result<()> {
-        process_harvest(ctx)
+    pub fn harvest<'info>(context: Context<'info, Harvest<'info>>) -> Result<()> {
+        process_harvest(context)
     }
 
-    pub fn withdraw(ctx: Context<Withdraw>) -> Result<()> {
-        process_withdraw(ctx)
+    pub fn withdraw(context: Context<Withdraw>) -> Result<()> {
+        handle_process_withdraw(context)
     }
 
     pub fn update_fee(
-        ctx: Context<UpdateFee>,
+        context: Context<UpdateFee>,
         transfer_fee_basis_points: u16,
         maximum_fee: u64,
     ) -> Result<()> {
-        process_update_fee(ctx, transfer_fee_basis_points, maximum_fee)
+        handle_process_update_fee(context, transfer_fee_basis_points, maximum_fee)
     }
 }

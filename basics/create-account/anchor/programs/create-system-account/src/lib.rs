@@ -7,11 +7,11 @@ declare_id!("ARVNCsYKDQsCLHbwUTJLpFXVrJdjhWZStyzvxmKe2xHi");
 pub mod create_system_account {
     use super::*;
 
-    pub fn create_system_account(ctx: Context<CreateSystemAccount>) -> Result<()> {
+    pub fn create_system_account(context: Context<CreateSystemAccount>) -> Result<()> {
         msg!("Program invoked. Creating a system account...");
         msg!(
             "  New public key will be: {}",
-            &ctx.accounts.new_account.key().to_string()
+            &context.accounts.new_account.key().to_string()
         );
 
         // The minimum lamports for rent exemption
@@ -19,15 +19,15 @@ pub mod create_system_account {
 
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(), // From pubkey
-                    to: ctx.accounts.new_account.to_account_info(), // To pubkey
+                    from: context.accounts.payer.to_account_info(), // From pubkey
+                    to: context.accounts.new_account.to_account_info(), // To pubkey
                 },
             ),
-            lamports,                           // Lamports
-            0,                                  // Space
-            &ctx.accounts.system_program.key(), // Owner Program
+            lamports,                               // Lamports
+            0,                                      // Space
+            &context.accounts.system_program.key(), // Owner Program
         )?;
 
         msg!("Account created succesfully.");
