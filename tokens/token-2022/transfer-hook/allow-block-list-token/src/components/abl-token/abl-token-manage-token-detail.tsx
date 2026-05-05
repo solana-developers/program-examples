@@ -100,10 +100,11 @@ function TokenManagement({ tokenInfo }: { tokenInfo: TokenInfo }) {
     if (!publicKey || !tokenInfo) return;
 
     try {
+      const recipient = destinationWallet.trim() ? new PublicKey(destinationWallet.trim()) : publicKey;
       await mintTo.mutateAsync({
         mint: new PublicKey(tokenInfo.address),
         amount: new BN(mintAmount),
-        recipient: publicKey,
+        recipient,
       });
       console.log("Minted successfully");
     } catch (err) {
