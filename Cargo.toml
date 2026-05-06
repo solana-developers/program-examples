@@ -64,7 +64,7 @@ overflow-checks = true
 
 # misc
 borsh = "1.6.1"
-borsh-derive = "1.5.7"
+borsh-derive = "1.6.1"
 mpl-token-metadata = { version = "5.1.1", features = [ "no-entrypoint" ] }
 
 
