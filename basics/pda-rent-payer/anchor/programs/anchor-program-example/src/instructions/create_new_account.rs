@@ -17,9 +17,9 @@ pub struct CreateNewAccount<'info> {
     system_program: Program<'info, System>,
 }
 
-pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
+pub fn handle_create_new_account(context: Context<CreateNewAccount>) -> Result<()> {
     // PDA signer seeds
-    let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[ctx.bumps.rent_vault]]];
+    let signer_seeds: &[&[&[u8]]] = &[&[b"rent_vault", &[context.bumps.rent_vault]]];
 
     // The minimum lamports for rent exemption
     let lamports = (Rent::get()?).minimum_balance(0);
@@ -27,16 +27,16 @@ pub fn create_new_account(ctx: Context<CreateNewAccount>) -> Result<()> {
     // Create the new account, transferring lamports from the rent vault to the new account
     create_account(
         CpiContext::new(
-            ctx.accounts.system_program.key(),
+            context.accounts.system_program.key(),
             CreateAccount {
-                from: ctx.accounts.rent_vault.to_account_info(), // From pubkey
-                to: ctx.accounts.new_account.to_account_info(),  // To pubkey
+                from: context.accounts.rent_vault.to_account_info(), // From pubkey
+                to: context.accounts.new_account.to_account_info(),  // To pubkey
             },
         )
         .with_signer(signer_seeds),
-        lamports,                           // Lamports
-        0,                                  // Space
-        &ctx.accounts.system_program.key(), // Owner Program
+        lamports,                               // Lamports
+        0,                                      // Space
+        &context.accounts.system_program.key(), // Owner Program
     )?;
     Ok(())
 }

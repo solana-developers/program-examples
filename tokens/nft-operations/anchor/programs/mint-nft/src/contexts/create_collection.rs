@@ -63,17 +63,16 @@ pub struct CreateCollection<'info> {
     token_metadata_program: Program<'info, Metadata>,
 }
 
-impl<'info> CreateCollection<'info> {
-    pub fn create_collection(&mut self, bumps: &CreateCollectionBumps) -> Result<()> {
+pub fn handle_create_collection(accounts: &mut CreateCollection, bumps: &CreateCollectionBumps) -> Result<()> {
 
-        let metadata = &self.metadata.to_account_info();
-        let master_edition = &self.master_edition.to_account_info();
-        let mint = &self.mint.to_account_info();
-        let authority = &self.mint_authority.to_account_info();
-        let payer = &self.user.to_account_info();
-        let system_program = &self.system_program.to_account_info();
-        let spl_token_program = &self.token_program.to_account_info();
-        let spl_metadata_program = &self.token_metadata_program.to_account_info();
+        let metadata = &accounts.metadata.to_account_info();
+        let master_edition = &accounts.master_edition.to_account_info();
+        let mint = &accounts.mint.to_account_info();
+        let authority = &accounts.mint_authority.to_account_info();
+        let payer = &accounts.user.to_account_info();
+        let system_program = &accounts.system_program.to_account_info();
+        let spl_token_program = &accounts.token_program.to_account_info();
+        let spl_metadata_program = &accounts.token_metadata_program.to_account_info();
 
         let seeds = &[
             &b"authority"[..], 
@@ -82,17 +81,17 @@ impl<'info> CreateCollection<'info> {
         let signer_seeds = &[&seeds[..]];
 
         let cpi_accounts = MintTo {
-            mint: self.mint.to_account_info(),
-            to: self.destination.to_account_info(),
-            authority: self.mint_authority.to_account_info(),
+            mint: accounts.mint.to_account_info(),
+            to: accounts.destination.to_account_info(),
+            authority: accounts.mint_authority.to_account_info(),
         };
-        let cpi_ctx = CpiContext::new_with_signer(self.token_program.key(), cpi_accounts, signer_seeds);
+        let cpi_ctx = CpiContext::new_with_signer(accounts.token_program.key(), cpi_accounts, signer_seeds);
         mint_to(cpi_ctx, 1)?;
         msg!("Collection NFT minted!");
 
         let creator = vec![
             Creator {
-                address: self.mint_authority.key().clone(),
+                address: accounts.mint_authority.key().clone(),
                 verified: true,
                 share: 100,
             },
@@ -152,4 +151,3 @@ impl<'info> CreateCollection<'info> {
         
         Ok(())
     }
-}

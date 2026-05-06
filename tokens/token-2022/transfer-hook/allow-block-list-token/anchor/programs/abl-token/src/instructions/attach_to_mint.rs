@@ -43,9 +43,9 @@ impl AttachToMint<'_> {
             authority: self.payer.to_account_info(),
         };
 
-        let ctx = CpiContext::new(self.token_program.key(), tx_hook_accs);
+        let context = CpiContext::new(self.token_program.key(), tx_hook_accs);
 
-        transfer_hook_update(ctx, Some(crate::ID_CONST))?;
+        transfer_hook_update(context, Some(crate::ID_CONST))?;
 
         // initialize the extra metas account
         let extra_metas_account = &self.extra_metas_account;

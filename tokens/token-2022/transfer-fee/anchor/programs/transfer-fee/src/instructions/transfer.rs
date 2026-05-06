@@ -43,9 +43,9 @@ pub struct Transfer<'info> {
 // transfer fees are automatically deducted from the transfer amount
 // recipients receives (transfer amount - fees)
 // transfer fees are stored directly on the recipient token account and must be "harvested"
-pub fn process_transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
+pub fn handle_process_transfer(context: Context<Transfer>, amount: u64) -> Result<()> {
     // read mint account extension data
-    let mint = &ctx.accounts.mint_account.to_account_info();
+    let mint = &context.accounts.mint_account.to_account_info();
     let mint_data = mint.data.borrow();
     let mint_with_extension = StateWithExtensions::<MintState>::unpack(&mint_data)?;
     let extension_data = mint_with_extension.get_extension::<TransferFeeConfig>()?;
@@ -55,17 +55,17 @@ pub fn process_transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
     let fee = extension_data.calculate_epoch_fee(epoch, amount).unwrap();
 
     // mint account decimals
-    let decimals = ctx.accounts.mint_account.decimals;
+    let decimals = context.accounts.mint_account.decimals;
 
     transfer_checked_with_fee(
         CpiContext::new(
-            ctx.accounts.token_program.key(),
+            context.accounts.token_program.key(),
             TransferCheckedWithFee {
-                token_program_id: ctx.accounts.token_program.to_account_info(),
-                source: ctx.accounts.sender_token_account.to_account_info(),
-                mint: ctx.accounts.mint_account.to_account_info(),
-                destination: ctx.accounts.recipient_token_account.to_account_info(),
-                authority: ctx.accounts.sender.to_account_info(),
+                token_program_id: context.accounts.token_program.to_account_info(),
+                source: context.accounts.sender_token_account.to_account_info(),
+                mint: context.accounts.mint_account.to_account_info(),
+                destination: context.accounts.recipient_token_account.to_account_info(),
+                authority: context.accounts.sender.to_account_info(),
             },
         ),
         amount,   // transfer amount

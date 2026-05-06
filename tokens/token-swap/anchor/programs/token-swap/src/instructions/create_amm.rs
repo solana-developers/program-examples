@@ -2,10 +2,10 @@ use anchor_lang::prelude::*;
 
 use crate::{errors::*, state::Amm};
 
-pub fn create_amm(ctx: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {
-    let amm = &mut ctx.accounts.amm;
+pub fn handle_create_amm(mut context: Context<CreateAmm>, id: Pubkey, fee: u16) -> Result<()> {
+    let amm = &mut context.accounts.amm;
     amm.id = id;
-    amm.admin = ctx.accounts.admin.key();
+    amm.admin = context.accounts.admin.key();
     amm.fee = fee;
 
     Ok(())
@@ -17,7 +17,7 @@ pub struct CreateAmm<'info> {
     #[account(
         init,
         payer = payer,
-        space = Amm::LEN,
+        space = Amm::DISCRIMINATOR.len() + Amm::INIT_SPACE,
         seeds = [
             id.as_ref()
         ],

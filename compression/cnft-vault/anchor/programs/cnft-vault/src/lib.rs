@@ -85,7 +85,7 @@ pub mod cnft_vault {
     use super::*;
 
     pub fn withdraw_cnft<'info>(
-        ctx: Context<'info, Withdraw<'info>>,
+        context: Context<'info, Withdraw<'info>>,
         root: [u8; 32],
         data_hash: [u8; 32],
         creator_hash: [u8; 32],
@@ -95,24 +95,24 @@ pub mod cnft_vault {
         msg!(
             "attempting to send nft {} from tree {}",
             index,
-            ctx.accounts.merkle_tree.key()
+            context.accounts.merkle_tree.key()
         );
 
-        let proof_metas: Vec<AccountMeta> = ctx
+        let proof_metas: Vec<AccountMeta> = context
             .remaining_accounts
             .iter()
             .map(|acc| AccountMeta::new_readonly(acc.key(), false))
             .collect();
 
         let instruction = build_transfer_instruction(
-            ctx.accounts.tree_authority.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.new_leaf_owner.key(),
-            ctx.accounts.merkle_tree.key(),
-            ctx.accounts.log_wrapper.key(),
-            ctx.accounts.compression_program.key(),
-            ctx.accounts.system_program.key(),
+            context.accounts.tree_authority.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.new_leaf_owner.key(),
+            context.accounts.merkle_tree.key(),
+            context.accounts.log_wrapper.key(),
+            context.accounts.compression_program.key(),
+            context.accounts.system_program.key(),
             &proof_metas,
             TransferArgs {
                 root,
@@ -125,23 +125,23 @@ pub mod cnft_vault {
 
         // Gather all account infos for the CPI
         let mut account_infos = vec![
-            ctx.accounts.bubblegum_program.to_account_info(),
-            ctx.accounts.tree_authority.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner.to_account_info(),
-            ctx.accounts.merkle_tree.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
+            context.accounts.bubblegum_program.to_account_info(),
+            context.accounts.tree_authority.to_account_info(),
+            context.accounts.leaf_owner.to_account_info(),
+            context.accounts.new_leaf_owner.to_account_info(),
+            context.accounts.merkle_tree.to_account_info(),
+            context.accounts.log_wrapper.to_account_info(),
+            context.accounts.compression_program.to_account_info(),
+            context.accounts.system_program.to_account_info(),
         ];
-        for acc in ctx.remaining_accounts.iter() {
+        for acc in context.remaining_accounts.iter() {
             account_infos.push(acc.to_account_info());
         }
 
         invoke_signed(
             &instruction,
             &account_infos,
-            &[&[b"cNFT-vault", &[ctx.bumps.leaf_owner]]],
+            &[&[b"cNFT-vault", &[context.bumps.leaf_owner]]],
         )?;
 
         Ok(())
@@ -149,7 +149,7 @@ pub mod cnft_vault {
 
     #[allow(clippy::too_many_arguments)]
     pub fn withdraw_two_cnfts<'info>(
-        ctx: Context<'info, WithdrawTwo<'info>>,
+        context: Context<'info, WithdrawTwo<'info>>,
         root1: [u8; 32],
         data_hash1: [u8; 32],
         creator_hash1: [u8; 32],
@@ -163,19 +163,19 @@ pub mod cnft_vault {
         index2: u32,
         _proof_2_length: u8,
     ) -> Result<()> {
-        let merkle_tree1 = ctx.accounts.merkle_tree1.key();
-        let merkle_tree2 = ctx.accounts.merkle_tree2.key();
+        let merkle_tree1 = context.accounts.merkle_tree1.key();
+        let merkle_tree2 = context.accounts.merkle_tree2.key();
         msg!(
             "attempting to send nfts from trees {} and {}",
             merkle_tree1,
             merkle_tree2
         );
 
-        let signer_seeds: &[&[u8]] = &[b"cNFT-vault", &[ctx.bumps.leaf_owner]];
+        let signer_seeds: &[&[u8]] = &[b"cNFT-vault", &[context.bumps.leaf_owner]];
 
         // Split remaining accounts into proof1 and proof2
         let (proof1_accounts, proof2_accounts) =
-            ctx.remaining_accounts.split_at(proof_1_length as usize);
+            context.remaining_accounts.split_at(proof_1_length as usize);
 
         let proof1_metas: Vec<AccountMeta> = proof1_accounts
             .iter()
@@ -190,14 +190,14 @@ pub mod cnft_vault {
         // Withdraw cNFT#1
         msg!("withdrawing cNFT#1");
         let instruction1 = build_transfer_instruction(
-            ctx.accounts.tree_authority1.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.new_leaf_owner1.key(),
-            ctx.accounts.merkle_tree1.key(),
-            ctx.accounts.log_wrapper.key(),
-            ctx.accounts.compression_program.key(),
-            ctx.accounts.system_program.key(),
+            context.accounts.tree_authority1.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.new_leaf_owner1.key(),
+            context.accounts.merkle_tree1.key(),
+            context.accounts.log_wrapper.key(),
+            context.accounts.compression_program.key(),
+            context.accounts.system_program.key(),
             &proof1_metas,
             TransferArgs {
                 root: root1,
@@ -209,14 +209,14 @@ pub mod cnft_vault {
         )?;
 
         let mut account_infos1 = vec![
-            ctx.accounts.bubblegum_program.to_account_info(),
-            ctx.accounts.tree_authority1.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner1.to_account_info(),
-            ctx.accounts.merkle_tree1.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
+            context.accounts.bubblegum_program.to_account_info(),
+            context.accounts.tree_authority1.to_account_info(),
+            context.accounts.leaf_owner.to_account_info(),
+            context.accounts.new_leaf_owner1.to_account_info(),
+            context.accounts.merkle_tree1.to_account_info(),
+            context.accounts.log_wrapper.to_account_info(),
+            context.accounts.compression_program.to_account_info(),
+            context.accounts.system_program.to_account_info(),
         ];
         for acc in proof1_accounts.iter() {
             account_infos1.push(acc.to_account_info());
@@ -227,14 +227,14 @@ pub mod cnft_vault {
         // Withdraw cNFT#2
         msg!("withdrawing cNFT#2");
         let instruction2 = build_transfer_instruction(
-            ctx.accounts.tree_authority2.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.leaf_owner.key(),
-            ctx.accounts.new_leaf_owner2.key(),
-            ctx.accounts.merkle_tree2.key(),
-            ctx.accounts.log_wrapper.key(),
-            ctx.accounts.compression_program.key(),
-            ctx.accounts.system_program.key(),
+            context.accounts.tree_authority2.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.leaf_owner.key(),
+            context.accounts.new_leaf_owner2.key(),
+            context.accounts.merkle_tree2.key(),
+            context.accounts.log_wrapper.key(),
+            context.accounts.compression_program.key(),
+            context.accounts.system_program.key(),
             &proof2_metas,
             TransferArgs {
                 root: root2,
@@ -246,14 +246,14 @@ pub mod cnft_vault {
         )?;
 
         let mut account_infos2 = vec![
-            ctx.accounts.bubblegum_program.to_account_info(),
-            ctx.accounts.tree_authority2.to_account_info(),
-            ctx.accounts.leaf_owner.to_account_info(),
-            ctx.accounts.new_leaf_owner2.to_account_info(),
-            ctx.accounts.merkle_tree2.to_account_info(),
-            ctx.accounts.log_wrapper.to_account_info(),
-            ctx.accounts.compression_program.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
+            context.accounts.bubblegum_program.to_account_info(),
+            context.accounts.tree_authority2.to_account_info(),
+            context.accounts.leaf_owner.to_account_info(),
+            context.accounts.new_leaf_owner2.to_account_info(),
+            context.accounts.merkle_tree2.to_account_info(),
+            context.accounts.log_wrapper.to_account_info(),
+            context.accounts.compression_program.to_account_info(),
+            context.accounts.system_program.to_account_info(),
         ];
         for acc in proof2_accounts.iter() {
             account_infos2.push(acc.to_account_info());

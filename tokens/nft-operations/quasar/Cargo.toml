@@ -1,0 +1,32 @@
+[package]
+name = "quasar-nft-operations"
+version = "0.1.0"
+edition = "2021"
+
+# Standalone workspace — not part of the root program-examples workspace.
+# Quasar uses a different resolver and dependency tree.
+[workspace]
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(target_os, values("solana"))',
+]
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+alloc = []
+client = []
+debug = []
+
+[dependencies]
+quasar-lang = "0.0"
+quasar-spl = { version = "0.0", features = ["metadata"] }
+solana-instruction = { version = "3.2.0" }
+
+[dev-dependencies]
+quasar-svm = { version = "0.1" }
+spl-token-interface = { version = "2.0.0" }
+solana-program-pack = { version = "3.1.0" }

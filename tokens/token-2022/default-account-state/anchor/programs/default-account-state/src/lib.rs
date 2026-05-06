@@ -20,7 +20,7 @@ pub mod default_account_state {
 
     // There is currently not an anchor constraint to automatically initialize the DefaultAccountState extension
     // We can manually create and initialize the mint account via CPIs in the instruction handler
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn initialize(context: Context<Initialize>) -> Result<()> {
         // Calculate space required for mint and extension data
         let mint_size = ExtensionType::try_calculate_account_len::<PodMint>(&[
             ExtensionType::DefaultAccountState,
@@ -32,25 +32,25 @@ pub mod default_account_state {
         // Invoke System Program to create new account with space for mint and extension data
         create_account(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.mint_account.to_account_info(),
+                    from: context.accounts.payer.to_account_info(),
+                    to: context.accounts.mint_account.to_account_info(),
                 },
             ),
             lamports,                          // Lamports
             mint_size as u64,                  // Space
-            &ctx.accounts.token_program.key(), // Owner Program
+            &context.accounts.token_program.key(), // Owner Program
         )?;
 
         // Initialize the NonTransferable extension
         // This instruction must come before the instruction to initialize the mint data
         default_account_state_initialize(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 DefaultAccountStateInitialize {
-                    token_program_id: ctx.accounts.token_program.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
+                    token_program_id: context.accounts.token_program.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
                 },
             ),
             &AccountState::Frozen, // default frozen token accounts
@@ -59,20 +59,20 @@ pub mod default_account_state {
         // Initialize the standard mint account data
         initialize_mint2(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 InitializeMint2 {
-                    mint: ctx.accounts.mint_account.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
                 },
             ),
             2,                               // decimals
-            &ctx.accounts.payer.key(),       // mint authority
-            Some(&ctx.accounts.payer.key()), // freeze authority
+            &context.accounts.payer.key(),       // mint authority
+            Some(&context.accounts.payer.key()), // freeze authority
         )?;
         Ok(())
     }
 
     pub fn update_default_state(
-        ctx: Context<UpdateDefaultState>,
+        context: Context<UpdateDefaultState>,
         account_state: AnchorAccountState,
     ) -> Result<()> {
         // Convert AnchorAccountState to spl_token_2022::state::AccountState
@@ -80,11 +80,11 @@ pub mod default_account_state {
 
         default_account_state_update(
             CpiContext::new(
-                ctx.accounts.token_program.key(),
+                context.accounts.token_program.key(),
                 DefaultAccountStateUpdate {
-                    token_program_id: ctx.accounts.token_program.to_account_info(),
-                    mint: ctx.accounts.mint_account.to_account_info(),
-                    freeze_authority: ctx.accounts.freeze_authority.to_account_info(),
+                    token_program_id: context.accounts.token_program.to_account_info(),
+                    mint: context.accounts.mint_account.to_account_info(),
+                    freeze_authority: context.accounts.freeze_authority.to_account_info(),
                 },
             ),
             &account_state,

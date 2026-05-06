@@ -3,10 +3,10 @@ use crate::state::player_data::PlayerData;
 use crate::{constants::MAX_ENERGY, GameData};
 use anchor_lang::prelude::*;
 
-pub fn init_player(ctx: Context<InitPlayer>) -> Result<()> {
-    ctx.accounts.player.energy = MAX_ENERGY;
-    ctx.accounts.player.last_login = Clock::get()?.unix_timestamp;
-    ctx.accounts.player.authority = ctx.accounts.signer.key();
+pub fn handle_init_player(context: Context<InitPlayer>) -> Result<()> {
+    context.accounts.player.energy = MAX_ENERGY;
+    context.accounts.player.last_login = Clock::get()?.unix_timestamp;
+    context.accounts.player.authority = context.accounts.signer.key();
     Ok(())
 }
 

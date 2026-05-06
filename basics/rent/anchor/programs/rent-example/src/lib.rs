@@ -8,13 +8,13 @@ pub mod rent_example {
     use super::*;
 
     pub fn create_system_account(
-        ctx: Context<CreateSystemAccount>,
+        context: Context<CreateSystemAccount>,
         address_data: AddressData,
     ) -> Result<()> {
         msg!("Program invoked. Creating a system account...");
         msg!(
             "  New public key will be: {}",
-            &ctx.accounts.new_account.key().to_string()
+            &context.accounts.new_account.key().to_string()
         );
 
         // Determine the necessary minimum rent by calculating the account's size
@@ -28,15 +28,15 @@ pub mod rent_example {
 
         system_program::create_account(
             CpiContext::new(
-                ctx.accounts.system_program.key(),
+                context.accounts.system_program.key(),
                 system_program::CreateAccount {
-                    from: ctx.accounts.payer.to_account_info(),
-                    to: ctx.accounts.new_account.to_account_info(),
+                    from: context.accounts.payer.to_account_info(),
+                    to: context.accounts.new_account.to_account_info(),
                 },
             ),
             lamports_required,
             account_span as u64,
-            &ctx.accounts.system_program.key(),
+            &context.accounts.system_program.key(),
         )?;
 
         msg!("Account created succesfully.");

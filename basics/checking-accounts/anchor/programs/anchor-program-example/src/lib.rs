@@ -6,7 +6,7 @@ declare_id!("ECWPhR3rJbaPfyNFgphnjxSEexbTArc7vxD8fnW6tgKw");
 pub mod checking_account_program {
     use super::*;
 
-    pub fn check_accounts(_ctx: Context<CheckingAccounts>) -> Result<()> {
+    pub fn check_accounts(_context: Context<CheckingAccounts>) -> Result<()> {
         Ok(())
     }
 }

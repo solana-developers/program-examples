@@ -17,8 +17,8 @@ export function commandHelp() {
   console.log("  yarn sync-package-json list");
   console.log("  yarn sync-package-json list basics");
   console.log("  yarn sync-package-json help");
-  console.log("  yarn sync-package-json set @coral-xyz/anchor@0.29.0");
-  console.log("  yarn sync-package-json set @coral-xyz/anchor@0.29.0 basics");
+  console.log("  yarn sync-package-json set @anchor-lang/core@0.29.0");
+  console.log("  yarn sync-package-json set @anchor-lang/core@0.29.0 basics");
   console.log("  yarn sync-package-json update");
   console.log("  yarn sync-package-json update basics");
   console.log("  yarn sync-package-json update . @solana/web3.js @solana/spl-token");
