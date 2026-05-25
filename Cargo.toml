@@ -42,6 +42,7 @@ members = [
     "basics/favorites/native/program",
     "basics/favorites/pinocchio/program",
     "basics/repository-layout/native/program",
+    "basics/repository-layout/pinocchio/program",
     "basics/repository-layout/anchor/programs/*",
     "basics/transfer-sol/native/program",
     "basics/transfer-sol/pinocchio/program",

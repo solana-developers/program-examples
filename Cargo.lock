@@ -2722,6 +2722,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "repository-layout-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "litesvm",
+ "pinocchio 0.10.2",
+ "pinocchio-log",
+ "solana-instruction",
+ "solana-keypair",
+ "solana-native-token",
+ "solana-pubkey 3.0.0",
+ "solana-transaction 3.1.0",
+]
+
+[[package]]
 name = "repository-layout-program"
 version = "0.1.0"
 dependencies = [
