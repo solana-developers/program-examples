@@ -1,0 +1,18 @@
+[package]
+name = "cross-program-invocation-pinocchio-hand"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pinocchio.workspace = true
+
+[lib]
+name = "cross_program_invocation_pinocchio_hand"
+crate-type = ["cdylib", "lib"]
+
+[features]
+custom-heap = []
+custom-panic = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

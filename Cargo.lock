@@ -1164,6 +1164,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "cross-program-invocation-pinocchio-hand"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+]
+
+[[package]]
+name = "cross-program-invocation-pinocchio-lever"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-log",
+ "pinocchio-system",
+]
+
+[[package]]
 name = "crunchy"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
