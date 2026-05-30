@@ -1,8 +1,8 @@
 # Program Examples
 
-## Onchain program examples for ⚓ Anchor, 🦀 Native Rust, and 🤥 Pinocchio.
+## Onchain program examples for ⚓ Anchor, 🤥 Pinocchio, and 🦀 Native Rust.
 
-[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml)
+[![Anchor](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/anchor.yml) [![Pinocchio](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-pinocchio.yml) [![Native](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml/badge.svg?event=schedule)](https://github.com/solana-developers/program-examples/actions/workflows/solana-native.yml)
 
 This repo contains Solana onchain programs (referred to as 'Smart Contracts' in other blockchains).
 
@@ -12,70 +12,66 @@ This repo contains Solana onchain programs (referred to as 'Smart Contracts' in 
 > ⚠️ This repository uses **pnpm** as the default package manager.  
 > Ensure pnpm is installed before running any examples.
 
-
 Each folder includes examples for one or more of the following:
 
 - `anchor` - Written using [Anchor](https://www.anchor-lang.com/), the most popular framework for Solana development, which uses Rust.
   Use `anchor build` and `anchor deploy` to build and deploy the program.
   Tests should be executed using `pnpm test` as defined in the `Anchor.toml` scripts section.
 
-- `native` - Written using Solana's native Rust crates and vanilla Rust.
-  Build and test commands are defined via pnpm scripts and use `litesvm` for testing.
-  Run `pnpm test` to execute tests.
-
 - `pinocchio` - Written using [Pinocchio](https://github.com/febo/pinocchio), a zero-copy, zero-allocation library for Solana programs.
   Build and test commands are the same as native examples.
+  Run `pnpm test` to execute tests.
+
+- `native` - Written using Solana's native Rust crates and vanilla Rust.
+  Build and test commands are defined via pnpm scripts and use `litesvm` for testing.
   Run `pnpm test` to execute tests.
 
 
 **If a given example is missing, please send us a PR to add it!** Our aim is to have every example available in every option. We'd also love to see more programs involving staking, wrapped tokens, oracles, compression and VRF. Follow the [contributing guidelines](./CONTRIBUTING.md) to keep things consistent.
 
 ## The example programs
-
-<details>
-  <summary>Basics</summary>
-
+## Basics
 ### Hello world
 
 [Hello World on Solana! A minimal program that logs a greeting.](./basics/hello-solana/README.md)
 
-[anchor](./basics/hello-solana/anchor) [native](./basics/hello-solana/native) [pinocchio](./basics/hello-solana/pinocchio)
+[anchor](./basics/hello-solana/anchor) [pinocchio](./basics/hello-solana/pinocchio) [native](./basics/hello-solana/native)
 
 ### Account-data
 
 Store and retrieve data using Solana accounts.
 
-[anchor](./basics/account-data/anchor) [native](./basics/account-data/native) [pinocchio](./basics/account-data/pinocchio)
+[anchor](./basics/account-data/anchor) [pinocchio](./basics/account-data/pinocchio) [native](./basics/account-data/native)
 
 ### Storing global state - Counter
 
 [Use a PDA to store global state, making a counter that increments when called.](./basics/counter/README.md)
 
-[anchor](./basics/counter/anchor) [native](./basics/counter/native) [pinocchio](./basics/counter/pinocchio)
+[anchor](./basics/counter/anchor) [pinocchio](./basics/counter/pinocchio) [native](./basics/counter/native)
 
 ### Saving per-user state - Favorites
 
 Save and update per-user state on the blockchain, ensuring users can only update their own information.
 
-[anchor](./basics/favorites/anchor) [native](./basics/favorites/native) [pinocchio](./basics/favorites/pinocchio)
+[anchor](./basics/favorites/anchor) [pinocchio](./basics/favorites/pinocchio) [native](./basics/favorites/native)
 
 ### Checking Instruction Accounts
 
 [Check that the accounts provided in incoming instructions meet particular criteria.](./basics/checking-accounts/README.md)
 
-[anchor](./basics/checking-accounts/anchor) [native](./basics/checking-accounts/native) [pinocchio](./basics/checking-accounts/pinocchio)
+[anchor](./basics/checking-accounts/anchor) [pinocchio](./basics/checking-accounts/pinocchio) [native](./basics/checking-accounts/native)
 
 ### Closing Accounts
 
 Close an account and get the Lamports back.
 
-[anchor](./basics/close-account/anchor) [native](./basics/close-account/native) [pinocchio](./basics/close-account/pinocchio)
+[anchor](./basics/close-account/anchor) [pinocchio](./basics/close-account/pinocchio) [native](./basics/close-account/native)
 
 ### Creating Accounts
 
 [Make new accounts on the blockchain.](./basics/create-account/README.md)
 
-[anchor](./basics/create-account/anchor) [native](./basics/create-account/native) [pinocchio](./basics/create-account/pinocchio)
+[anchor](./basics/create-account/anchor) [pinocchio](./basics/create-account/pinocchio) [native](./basics/create-account/native)
 
 ### Cross program invocations
 
@@ -87,31 +83,31 @@ Close an account and get the Lamports back.
 
 [Use a PDA to pay the rent for the creation of a new account.](./basics/pda-rent-payer/README.md)
 
-[anchor](./basics/pda-rent-payer/anchor) [native](./basics/pda-rent-payer/native) [pinocchio](./basics/pda-rent-payer/pinocchio)
+[anchor](./basics/pda-rent-payer/anchor) [pinocchio](./basics/pda-rent-payer/pinocchio) [native](./basics/pda-rent-payer/native)
 
 ### Processing instructions
 
 [Add parameters to an instruction handler and use them.](./basics/processing-instructions/README.md)
 
-[anchor](./basics/processing-instructions/anchor) [native](./basics/processing-instructions/native) [pinocchio](./basics/processing-instructions/pinocchio)
+[anchor](./basics/processing-instructions/anchor) [pinocchio](./basics/processing-instructions/pinocchio) [native](./basics/processing-instructions/native)
 
 ### Storing date in program derived addresses
 
 Store and retrieve state in Solana.
 
-[anchor](./basics/program-derived-addresses/anchor) [native](./basics/program-derived-addresses/native) [pinocchio](./basics/program-derived-addresses/pinocchio)
+[anchor](./basics/program-derived-addresses/anchor) [pinocchio](./basics/program-derived-addresses/pinocchio) [native](./basics/program-derived-addresses/native)
 
 ### Handling accounts that expand in size
 
 How to store state that changes size in Solana.
 
-[anchor](./basics/realloc/anchor) [native](./basics/realloc/native) [pinocchio](./basics/realloc/pinocchio)
+[anchor](./basics/realloc/anchor) [pinocchio](./basics/realloc/pinocchio) [native](./basics/realloc/native)
 
 ### Calculating account size to determine rent
 
 [Determine the necessary minimum rent by calculating an account's size.](./basics/rent/README.md)
 
-[anchor](./basics/rent/anchor) [native](./basics/rent/native) [pinocchio](./basics/rent/pinocchio)
+[anchor](./basics/rent/anchor) [pinocchio](./basics/rent/pinocchio) [native](./basics/rent/native)
 
 ### Laying out larger programs
 
@@ -123,12 +119,8 @@ How to store state that changes size in Solana.
 
 [Send SOL between two accounts.](./basics/transfer-sol/README.md)
 
-[anchor](./basics/transfer-sol/anchor) [native](./basics/transfer-sol/native) [pinocchio](./basics/transfer-sol/pinocchio)
-
-</details>
-<details>
-  <summary>Tokens</summary>
-
+[anchor](./basics/transfer-sol/anchor) [pinocchio](./basics/transfer-sol/pinocchio) [native](./basics/transfer-sol/native)
+## Tokens
 ### Creating tokens
 
 [Create a token on Solana with a token symbol and icon.](./tokens/create-token/README.md)
@@ -140,6 +132,12 @@ How to store state that changes size in Solana.
 [Mint an NFT from inside your own onchain program using the Token and Metaplex Token Metadata programs.](./tokens/nft-minter/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
 
 [anchor](./tokens/nft-minter/anchor) [native](./tokens/nft-minter/native)
+
+### NFT operations
+
+Create an NFT collection, mint NFTs, and verify NFTs as part of a collection using Metaplex Token Metadata.
+
+[anchor](./tokens/nft-operations/anchor)
 
 ### Minting a token from inside a program
 
@@ -159,6 +157,12 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 [anchor](./tokens/escrow/anchor) [native](./tokens/escrow/native)
 
+### Fundraising with SPL Tokens
+
+Create a fundraiser account specifying a target mint and amount, allowing contributors to deposit tokens until the goal is reached.
+
+[anchor](./tokens/token-fundraiser/anchor)
+
 ### Minting a token from inside a program with a PDA as the mint authority
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/pda-mint-authority/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
@@ -171,12 +175,12 @@ Allow two users to swap digital assets with each other, each getting 100% of wha
 
 [anchor](./tokens/token-swap/anchor)
 
-</details>
+### External delegate token master
 
-<details>
+Control token transfers using an external secp256k1 delegate signature.
 
-  <summary>Token Extensions</summary>
-
+[anchor](./tokens/external-delegate-token-master/anchor)
+## Token Extensions
 ### Basics - create token mints, mint tokens, and transfer tokens with Token Extensions
 
 Create token mints, mint tokens, and transfer tokens using Token Extensions.
@@ -225,6 +229,12 @@ Create tokens that store their onchain metadata inside the token mint, without n
 
 [anchor](./tokens/token-2022/metadata/anchor)
 
+### Storing NFT metadata using the metadata pointer extension
+
+Create an NFT using the Token Extensions metadata pointer, storing onchain metadata (including custom fields) inside the mint account itself.
+
+[anchor](./tokens/token-2022/nft-meta-data-pointer/anchor-example/anchor)
+
 ### Allow a designated account to close a mint
 
 Allow a designated account to close a Mint.
@@ -255,11 +265,48 @@ Create tokens with an inbuilt transfer fee.
 
 [anchor](./tokens/token-2022/transfer-fee/anchor) [native](./tokens/token-2022/transfer-fee/native)
 
-</details>
-<details>
+### Transfer hook - hello world
 
-<summary>Compression</summary>
+A minimal transfer hook program that executes custom logic on every token transfer.
 
+[anchor](./tokens/token-2022/transfer-hook/hello-world/anchor)
+
+### Transfer hook - counter
+
+Count how many times tokens have been transferred using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/counter/anchor)
+
+### Transfer hook - using account data as seed
+
+Use token account owner data as seeds to derive extra accounts in a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/account-data-as-seed/anchor)
+
+### Transfer hook - allow/block list
+
+Restrict or allow token transfers using an on-chain allow/block list managed by a list authority.
+
+[anchor](./tokens/token-2022/transfer-hook/allow-block-list-token/anchor)
+
+### Transfer hook - transfer cost
+
+Charge an additional cost or fee on every token transfer using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/transfer-cost/anchor)
+
+### Transfer hook - transfer switch
+
+Enable or disable token transfers with an on-chain switch using a transfer hook.
+
+[anchor](./tokens/token-2022/transfer-hook/transfer-switch/anchor)
+
+### Transfer hook - whitelist
+
+Restrict token transfers so only whitelisted accounts can receive tokens.
+
+[anchor](./tokens/token-2022/transfer-hook/whitelist/anchor)
+## Compression
 ### Cnft-burn
 
 Burn compressed NFTs.
@@ -277,19 +324,17 @@ Store Metaplex compressed NFTs inside a PDA.
 Work with Metaplex compressed NFTs.
 
 [anchor](./compression/cutils/anchor)
-
-</details>
-
-<details>
-
-<summary>Oracles</summary>
-
+## Oracles
 ### pyth
 
 Use a data source for offchain data (called an Oracle) to perform activities onchain.
 
 [anchor](./oracles/pyth/anchor)
+## Tools
+### Shank and Solita
 
-</details>
+Use Shank and Solita to generate IDLs and TypeScript clients for native Solana programs, the same way Anchor does for Anchor programs.
+
+[native](./tools/shank-and-solita/native)
 
 ---

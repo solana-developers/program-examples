@@ -1,7 +1,7 @@
 {
   "name": "program-examples",
   "version": "1.0.0",
-  "description": "Solana program (smart contract) examples for Anchor, Native Rust, and Pinocchio.",
+  "description": "Solana program (smart contract) examples for Anchor, Pinocchio, and Native Rust.",
   "scripts": {
     "sync-package-json": "ts-node scripts/sync-package-json.ts",
     "format:fix": "pnpx @biomejs/biome format --write ./",
@@ -16,7 +16,7 @@
       "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
     ]
   },
-  "packageManager": "pnpm@9.13.2",
+  "packageManager": "pnpm@10.33.0",
   "keywords": [],
   "author": "Solana Foundation",
   "license": "MIT",
