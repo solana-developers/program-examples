@@ -14,7 +14,7 @@ name = "account-data-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-keypair",
  "solana-message 4.0.0",
@@ -265,7 +265,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0e80ff4e3ddb8c85aafd37926335c28f820516311e7106e5b7482b42e798aaa"
 dependencies = [
  "anchor-syn",
- "proc-macro-crate 3.5.0",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
@@ -755,22 +755,9 @@ version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cfd1e3f8955a5d7de9fab72fc8373fade9fb8a703968cb200ae3dc6cf08e185a"
 dependencies = [
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "bytes",
  "cfg_aliases",
-]
-
-[[package]]
-name = "borsh-derive"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6441c552f230375d18e3cc377677914d2ca2b0d36e52129fe15450a2dce46775"
-dependencies = [
- "borsh-derive-internal",
- "borsh-schema-derive-internal",
- "proc-macro-crate 0.1.5",
- "proc-macro2",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -780,32 +767,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfcfdc083699101d5a7965e49925975f2f55060f94f9a05e7187be95d530ca59"
 dependencies = [
  "once_cell",
- "proc-macro-crate 3.5.0",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
  "syn 2.0.117",
-]
-
-[[package]]
-name = "borsh-derive-internal"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5449c28a7b352f2d1e592a8a28bf139bc71afb0764a14f3c02500935d8c44065"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "borsh-schema-derive-internal"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cdbd5696d8bfa21d53d9fe39a714a18538bad11492a42d066dbbc395fb1951c0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -872,7 +837,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a98356df42a2eb1bd8f1793ae4ee4de48e384dd974ce5eac8eee802edb7492be"
 dependencies = [
  "serde",
- "toml 0.8.23",
+ "toml",
 ]
 
 [[package]]
@@ -981,7 +946,7 @@ name = "close-account-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -1067,7 +1032,7 @@ name = "counter-solana-native"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -1492,7 +1457,7 @@ name = "favorites-native"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2164,7 +2129,7 @@ version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "680998035259dcfcafe653688bf2aa6d3e2dc05e98be6ab46afb089dc84f1df8"
 dependencies = [
- "proc-macro-crate 3.5.0",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
  "syn 2.0.117",
@@ -2255,7 +2220,7 @@ name = "pda-rent-payer-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2374,15 +2339,6 @@ dependencies = [
 
 [[package]]
 name = "proc-macro-crate"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d6ea3c4595b96363c13943497db34af4460fb474a95c43f4446ad341b8c9785"
-dependencies = [
- "toml 0.5.11",
-]
-
-[[package]]
-name = "proc-macro-crate"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
@@ -2425,7 +2381,7 @@ name = "processing-instructions-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2440,7 +2396,7 @@ name = "program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2457,7 +2413,7 @@ name = "program-derived-addresses-native-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2648,7 +2604,7 @@ name = "realloc-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -2726,7 +2682,7 @@ name = "repository-layout-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 0.9.3",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
@@ -5042,7 +4998,7 @@ name = "token-2022-default-account-state-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "solana-program",
  "solana-system-interface 2.0.0",
  "spl-associated-token-account-interface",
@@ -5055,7 +5011,7 @@ name = "token-2022-mint-close-authority-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "solana-program",
  "solana-system-interface 2.0.0",
  "spl-token-2022-interface",
@@ -5066,7 +5022,7 @@ name = "token-2022-multiple-extensions-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "solana-program",
  "solana-system-interface 2.0.0",
  "spl-token-2022-interface",
@@ -5077,7 +5033,7 @@ name = "token-2022-non-transferable-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "solana-program",
  "solana-system-interface 2.0.0",
  "spl-token-2022-interface",
@@ -5088,19 +5044,10 @@ name = "token-2022-transfer-fees-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "solana-program",
  "solana-system-interface 2.0.0",
  "spl-token-2022-interface",
-]
-
-[[package]]
-name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -5201,7 +5148,7 @@ name = "transfer-sol-program"
 version = "0.1.0"
 dependencies = [
  "borsh",
- "borsh-derive 1.6.1",
+ "borsh-derive",
  "litesvm",
  "solana-instruction",
  "solana-keypair",
