@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "test": "pnpm ts-mocha -p ./tsconfig.json -t 1000000 ./tests/test.ts",
-    "build-and-test": "cargo build-sbf --sbf-out-dir=./tests/fixtures && pnpm test",
+    "build-and-test": "cargo build-sbf --sbf-out-dir=./tests/fixtures --manifest-path=programs/lever/Cargo.toml && cargo build-sbf --sbf-out-dir=./tests/fixtures --manifest-path=programs/hand/Cargo.toml && pnpm test",
     "build": "cargo build-sbf --sbf-out-dir=./program/target/so",
     "deploy": "solana program deploy ./program/target/so/program.so"
   },
@@ -10,7 +10,8 @@
     "@solana/web3.js": "^1.98.4",
     "borsh": "^2.0.0",
     "buffer": "^6.0.3",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "litesvm": "0.8.0"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
