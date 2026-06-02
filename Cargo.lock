@@ -1928,9 +1928,9 @@ dependencies = [
 
 [[package]]
 name = "litesvm"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "347d8c652d592c618ac996f2ab21f8c0b0f2da3fbbca227a6887ee61bb75f2de"
+checksum = "236efc1fc49db2af581f221faea4bbc1088dd72d9aa381461eeefef14d48ea1b"
 dependencies = [
  "agave-feature-set",
  "agave-reserved-account-keys",
@@ -1980,7 +1980,7 @@ dependencies = [
  "solana-svm-log-collector",
  "solana-svm-timings",
  "solana-svm-transaction",
- "solana-system-interface 2.0.0",
+ "solana-system-interface 3.2.0",
  "solana-system-program",
  "solana-sysvar 3.1.1",
  "solana-sysvar-id",
@@ -3422,7 +3422,7 @@ dependencies = [
  "solana-nonce",
  "solana-pubkey 4.1.0",
  "solana-sdk-ids",
- "solana-system-interface 3.1.0",
+ "solana-system-interface 3.2.0",
  "thiserror 2.0.18",
 ]
 
@@ -3442,7 +3442,7 @@ dependencies = [
  "solana-pubkey 4.1.0",
  "solana-rent 4.1.0",
  "solana-sdk-ids",
- "solana-system-interface 3.1.0",
+ "solana-system-interface 3.2.0",
 ]
 
 [[package]]
@@ -3521,9 +3521,9 @@ dependencies = [
 
 [[package]]
 name = "solana-instruction"
-version = "3.3.0"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a97881335fc698deb46c6571945969aae6d93a14e2fff792a368b4fac872f116"
+checksum = "37ebb0ffd19263051bc3f683fcc086134b8ff23af894dcb63f7563c7137b42f1"
 dependencies = [
  "bincode",
  "borsh",
@@ -4194,9 +4194,9 @@ dependencies = [
 
 [[package]]
 name = "solana-signature"
-version = "3.3.0"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "132a93134f1262aa832f1849b83bec6c9945669b866da18661a427943b9e801e"
+checksum = "e7a73c6e97cc2108be0adf6a6ea326434f8398df9d7eed81da2a4548b69e971c"
 dependencies = [
  "ed25519-dalek",
  "five8",
@@ -4205,7 +4205,7 @@ dependencies = [
  "serde-big-array",
  "serde_derive",
  "solana-sanitize",
- "wincode 0.4.8",
+ "wincode 0.5.3",
 ]
 
 [[package]]
@@ -4358,9 +4358,9 @@ dependencies = [
 
 [[package]]
 name = "solana-system-interface"
-version = "3.1.0"
+version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a95a6f2e23ed861d6444ad4a6d6896c418d7d101b960787e65a8e33157cee81b"
+checksum = "55b54965bf0b76fa8e2b35376583efddd4d916618cfe595bf48c7d7b55a9e628"
 dependencies = [
  "num-traits",
  "serde",
