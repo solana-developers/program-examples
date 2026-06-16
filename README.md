@@ -149,7 +149,7 @@ Create an NFT collection, mint NFTs, and verify NFTs as part of a collection usi
 
 [Transfer tokens between accounts](./tokens/transfer-tokens/README.md)
 
-[anchor](./tokens/transfer-tokens/anchor) [native](./tokens/transfer-tokens/native)
+[anchor](./tokens/transfer-tokens/anchor) [pinocchio](./tokens/transfer-tokens/pinocchio) [native](./tokens/transfer-tokens/native)
 
 ### Allowing users to swap digital assets - Escrow
 
