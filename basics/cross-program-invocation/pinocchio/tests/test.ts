@@ -17,9 +17,8 @@ describe("Pinocchio: CPI", async () => {
   const client = context.banksClient;
   const payer = context.payer;
 
-  // Lever instruction discriminators
+  // Lever instruction discriminator
   const IX_INITIALIZE = 0;
-  const IX_SWITCH_POWER = 1;
 
   const powerAccount = Keypair.generate();
 
@@ -43,8 +42,8 @@ describe("Pinocchio: CPI", async () => {
     await sendTx(ix, [powerAccount]);
 
     const acct = await client.getAccount(powerAccount.publicKey);
-    assert.isNotNull(acct);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([0])); // is_on = false
+    if (acct === null) throw new Error("power account not found");
+    assert.deepEqual(Buffer.from(acct.data), Buffer.from([0])); // is_on = false
   });
 
   it("Pull the lever!", async () => {
@@ -60,7 +59,8 @@ describe("Pinocchio: CPI", async () => {
     await sendTx(ix, []);
 
     const acct = await client.getAccount(powerAccount.publicKey);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([1])); // is_on = true
+    if (acct === null) throw new Error("power account not found");
+    assert.deepEqual(Buffer.from(acct.data), Buffer.from([1])); // is_on = true
   });
 
   it("Pull it again!", async () => {
@@ -76,7 +76,8 @@ describe("Pinocchio: CPI", async () => {
     await sendTx(ix, []);
 
     const acct = await client.getAccount(powerAccount.publicKey);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([0])); // is_on = false (flipped back)
+    if (acct === null) throw new Error("power account not found");
+    assert.deepEqual(Buffer.from(acct.data), Buffer.from([0])); // is_on = false (flipped back)
   });
 
   it("Lever rejects switch_power directly with no name", async () => {
