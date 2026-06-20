@@ -155,7 +155,7 @@ Create an NFT collection, mint NFTs, and verify NFTs as part of a collection usi
 
 Allow two users to swap digital assets with each other, each getting 100% of what the other has offered due to the power of decentralization!
 
-[anchor](./tokens/escrow/anchor) [native](./tokens/escrow/native)
+[anchor](./tokens/escrow/anchor) [pinocchio](./tokens/escrow/pinocchio) [native](./tokens/escrow/native)
 
 ### Fundraising with SPL Tokens
 
