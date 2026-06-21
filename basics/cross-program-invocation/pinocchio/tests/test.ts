@@ -19,7 +19,6 @@ describe("Pinocchio: CPI", async () => {
 
   // Lever instruction discriminators
   const IX_INITIALIZE = 0;
-  const IX_SWITCH_POWER = 1;
 
   const powerAccount = Keypair.generate();
 
@@ -28,6 +27,14 @@ describe("Pinocchio: CPI", async () => {
     tx.recentBlockhash = context.lastBlockhash;
     tx.add(ix).sign(payer, ...signers);
     await client.processTransaction(tx);
+  }
+
+  async function getPowerData() {
+    const acct = await client.getAccount(powerAccount.publicKey);
+    if (acct == null) {
+      assert.fail("expected power account to exist");
+    }
+    return Buffer.from(acct.data);
   }
 
   it("Initialize the lever!", async () => {
@@ -42,9 +49,7 @@ describe("Pinocchio: CPI", async () => {
     });
     await sendTx(ix, [powerAccount]);
 
-    const acct = await client.getAccount(powerAccount.publicKey);
-    assert.isNotNull(acct);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([0])); // is_on = false
+    assert.deepEqual(await getPowerData(), Buffer.from([0])); // is_on = false
   });
 
   it("Pull the lever!", async () => {
@@ -59,8 +64,7 @@ describe("Pinocchio: CPI", async () => {
     });
     await sendTx(ix, []);
 
-    const acct = await client.getAccount(powerAccount.publicKey);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([1])); // is_on = true
+    assert.deepEqual(await getPowerData(), Buffer.from([1])); // is_on = true
   });
 
   it("Pull it again!", async () => {
@@ -75,13 +79,10 @@ describe("Pinocchio: CPI", async () => {
     });
     await sendTx(ix, []);
 
-    const acct = await client.getAccount(powerAccount.publicKey);
-    assert.deepEqual(Buffer.from(acct!.data), Buffer.from([0])); // is_on = false (flipped back)
+    assert.deepEqual(await getPowerData(), Buffer.from([0])); // is_on = false (flipped back)
   });
 
-  it("Lever rejects switch_power directly with no name", async () => {
-    // Sending only the discriminator (no name bytes) is fine because UTF-8 of empty is empty,
-    // but invoking the lever directly with an unknown discriminator should fail.
+  it("Lever rejects an unknown discriminator", async () => {
     const ix = new TransactionInstruction({
       keys: [{ pubkey: powerAccount.publicKey, isSigner: false, isWritable: true }],
       programId: LEVER_PROGRAM_ID,
