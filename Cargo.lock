@@ -5226,6 +5226,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "transfer-tokens-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-associated-token-account",
+ "pinocchio-log",
+ "pinocchio-system",
+ "pinocchio-token",
+]
+
+[[package]]
 name = "typenum"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
