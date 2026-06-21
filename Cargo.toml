@@ -51,6 +51,7 @@ members = [
     "basics/transfer-sol/asm",
 
     # tokens
+    "tokens/escrow/pinocchio/program",
     "tokens/transfer-tokens/pinocchio/program",
     "tokens/token-2022/mint-close-authority/native/program",
     "tokens/token-2022/non-transferable/native/program",
