@@ -6,6 +6,42 @@ We believe that a welcoming and inclusive environment fosters collaboration and 
 
 To ensure a smooth and effective contribution process, please take a moment to review and follow the guidelines outlined below.
 
+
+## Environment Setup
+
+To run the examples in this repository consistently across machines, use the version files at the repo root:
+
+| File | Purpose | Tool |
+|------|---------|------|
+| `.nvmrc` | Node.js version (20) | nvm / fnm / volta |
+| `.tool-versions` | Node.js + pnpm versions | asdf |
+
+**Quick setup:**
+
+```bash
+# Using nvm (Node Version Manager)
+nvm install    # reads .nvmrc
+nvm use
+
+# Or using fnm
+fnm install
+fnm use
+
+# Or using asdf
+asdf install
+
+# Install pnpm (required version pinned in package.json)
+corepack enable
+corepack prepare pnpm@10.33.0 --activate
+pnpm install
+```
+
+**Why these versions?**
+
+- **Node 20** — matches `@types/node: ^20.9.0` devDependency and avoids Node 23 issues reported in #579
+- **pnpm 10.33.0** — pinned via `packageManager` field in root `package.json`; consistent installs across machines
+
+**Solana / Anchor versions** vary per example. Check each example's `Cargo.toml` for the exact `anchor-lang` version required. Common versions in this repo: Anchor 0.30+, Solana 1.18+.
 ## How to Contribute
 
 We welcome contributions in the form of code, documentation, bug reports, feature requests, and other forms of feedback. Here are some ways you can contribute:
