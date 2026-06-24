@@ -3,7 +3,6 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token::{self, Mint, MintTo, Token, TokenAccount, Transfer},
 };
-use fixed::types::I64F64;
 
 use crate::{
     constants::{AUTHORITY_SEED, LIQUIDITY_SEED, MINIMUM_LIQUIDITY},
@@ -64,12 +63,12 @@ pub fn deposit_liquidity(
         }
     };
 
-    // Computing the amount of liquidity about to be deposited
-    let mut liquidity = I64F64::from_num(amount_a)
-        .checked_mul(I64F64::from_num(amount_b))
+    // Computing the amount of liquidity about to be deposited.
+    // Multiply in u128 so the product of two u64 amounts cannot overflow.
+    let mut liquidity = (amount_a as u128)
+        .checked_mul(amount_b as u128)
         .unwrap()
-        .sqrt()
-        .to_num::<u64>();
+        .isqrt() as u64;
 
     // Lock some minimum liquidity on the first deposit
     if pool_creation {

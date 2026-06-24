@@ -3,7 +3,6 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token::{self, Mint, Token, TokenAccount, Transfer},
 };
-use fixed::types::I64F64;
 
 use crate::{
     constants::AUTHORITY_SEED,
@@ -32,28 +31,21 @@ pub fn swap_exact_tokens_for_tokens(
 
     let pool_a = &ctx.accounts.pool_account_a;
     let pool_b = &ctx.accounts.pool_account_b;
+    // Constant-product output, computed in u128 so taxed_input * pool amount
+    // cannot overflow.
     let output = if swap_a {
-        I64F64::from_num(taxed_input)
-            .checked_mul(I64F64::from_num(pool_b.amount))
+        (taxed_input as u128)
+            .checked_mul(pool_b.amount as u128)
             .unwrap()
-            .checked_div(
-                I64F64::from_num(pool_a.amount)
-                    .checked_add(I64F64::from_num(taxed_input))
-                    .unwrap(),
-            )
+            .checked_div((pool_a.amount as u128).checked_add(taxed_input as u128).unwrap())
             .unwrap()
     } else {
-        I64F64::from_num(taxed_input)
-            .checked_mul(I64F64::from_num(pool_a.amount))
+        (taxed_input as u128)
+            .checked_mul(pool_a.amount as u128)
             .unwrap()
-            .checked_div(
-                I64F64::from_num(pool_b.amount)
-                    .checked_add(I64F64::from_num(taxed_input))
-                    .unwrap(),
-            )
+            .checked_div((pool_b.amount as u128).checked_add(taxed_input as u128).unwrap())
             .unwrap()
-    }
-    .to_num::<u64>();
+    } as u64;
 
     if output < min_output_amount {
         return err!(TutorialError::OutputTooSmall);
