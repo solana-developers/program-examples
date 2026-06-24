@@ -5,6 +5,10 @@ solana_version = "3.1.8"
 resolution = true
 skip-lint = false
 
+[hooks]
+# program keypairs are committed under keypairs/ so ids stay stable (declare_program! bakes the lever id); stage them before each build
+pre_build = "mkdir -p target/deploy && cp keypairs/*.json target/deploy/"
+
 [programs.localnet]
 hand = "59c3ER1YrnnnezUVH7ix4WDUw9TQ9k7xH6wQyAmWvc52"
 lever = "A6GUsa5Ej8iWzMMP3B6otFVB5aaUckVm8a31Y5TMLYRV"
