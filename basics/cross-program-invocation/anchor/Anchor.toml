@@ -6,8 +6,8 @@ resolution = true
 skip-lint = false
 
 [hooks]
-# program keypairs are committed under keypairs/ so ids stay stable (declare_program! bakes the lever id); stage them before each build
-pre_build = "mkdir -p target/deploy && cp keypairs/*.json target/deploy/"
+# program keypairs are committed under keypairs/ so ids stay stable (declare_program! bakes the lever id); stage them and fail loudly if one no longer matches Anchor.toml (the global anchor build --ignore-keys would otherwise hide drift until test time)
+pre_build = "mkdir -p target/deploy && cp keypairs/*.json target/deploy/ && for k in keypairs/*-keypair.json; do grep -q \"$(solana-keygen pubkey \"$k\")\" Anchor.toml || { echo \"keypair drift: $k does not match Anchor.toml\"; exit 1; }; done"
 
 [programs.localnet]
 hand = "59c3ER1YrnnnezUVH7ix4WDUw9TQ9k7xH6wQyAmWvc52"
