@@ -6,8 +6,8 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-hand = "Bi5N7SUQhpGknVcqPTzdFFVueQoxoUu8YTLz75J6fT8A"
-lever = "E64FVeubGC4NPNF2UBJYX4AkrVowf74fRJD9q6YhwstN"
+hand = "59c3ER1YrnnnezUVH7ix4WDUw9TQ9k7xH6wQyAmWvc52"
+lever = "A6GUsa5Ej8iWzMMP3B6otFVB5aaUckVm8a31Y5TMLYRV"
 
 # [registry] section removed — no longer used in Anchor 1.0
 

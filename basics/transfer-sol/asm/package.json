@@ -20,5 +20,11 @@
     "solana-bankrun": "^0.3.0",
     "ts-mocha": "^10.0.0",
     "typescript": "^4.3.5"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "bufferutil",
+      "utf-8-validate"
+    ]
   }
 }

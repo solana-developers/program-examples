@@ -15,6 +15,10 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
+  # Harden cargo against transient crates.io index fetch failures that flake
+  # cargo build-sbf ("failed to get <crate> as a dependency").
+  CARGO_NET_RETRY: "10"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
   # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -39,6 +43,8 @@ jobs:
               - added|modified: '**/pinocchio/**'
             workflow:
               - added|modified: '.github/workflows/solana-pinocchio.yml'
+              - added|modified: 'Cargo.lock'
+              - added|modified: 'Cargo.toml'
       - name: Analyze Changes
         id: analyze
         run: |

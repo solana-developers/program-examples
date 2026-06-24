@@ -17,6 +17,10 @@ env:
   MIN_PROJECTS_FOR_MATRIX: 4
   # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # Harden cargo against transient crates.io index fetch failures that flake
+  # cargo build-sbf ("failed to get <crate> as a dependency").
+  CARGO_NET_RETRY: "10"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 
 jobs:
   changes:
@@ -109,7 +113,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: heyAyushh/setup-anchor@v4.999
         with:
-          anchor-version: 0.32.1
+          anchor-version: 1.0.2
           solana-cli-version: stable
       - name: Display Versions
         run: |
@@ -137,7 +141,18 @@ jobs:
             fi
 
             # Run anchor build
-            if ! anchor build; then
+            # --ignore-keys: most examples don't commit program keypairs, so CI
+            # generates ephemeral ones that won't match the source declare_id!
+            # Retry to ride out transient crates.io index fetch failures.
+            build_ok=false
+            for attempt in 1 2 3; do
+              if anchor build --ignore-keys; then
+                build_ok=true
+                break
+              fi
+              echo "anchor build attempt $attempt failed for $project; retrying"
+            done
+            if [ "$build_ok" != "true" ]; then
               echo "::error::anchor build failed for $project"
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target
@@ -145,8 +160,12 @@ jobs:
               return 1
             fi
 
+            # Align declare_id! and Anchor.toml with the ephemeral keypair
+            anchor keys sync
+
             # Run anchor test
-            if ! anchor test; then
+            # --validator legacy: surfpool (the Anchor 1.0 default) isn't installed in CI
+            if ! anchor test --validator legacy; then
               echo "::error::anchor test failed for $project"
               echo "$project: anchor test failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target node_modules

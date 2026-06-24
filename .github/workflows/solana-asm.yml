@@ -15,6 +15,10 @@ env:
   MAX_JOBS: 64
   MIN_PROJECTS_PER_JOB: 4
   MIN_PROJECTS_FOR_MATRIX: 4
+  # Harden cargo against transient crates.io index fetch failures that flake
+  # cargo build-sbf ("failed to get <crate> as a dependency").
+  CARGO_NET_RETRY: "10"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 
 jobs:
   changes:
@@ -37,6 +41,8 @@ jobs:
               - added|modified: '**/asm/**'
             workflow:
               - added|modified: '.github/workflows/solana-asm.yml'
+              - added|modified: 'Cargo.lock'
+              - added|modified: 'Cargo.toml'
       - name: Analyze Changes
         id: analyze
         run: |
@@ -180,8 +186,9 @@ jobs:
           # Make the script executable
           chmod +x build_and_test.sh
 
-          # Install pnpm
-          npm install --global pnpm
+          # Install pnpm (pin to the repo's packageManager version; unpinned
+          # latest pnpm fails CI with ERR_PNPM_IGNORED_BUILDS)
+          npm install --global pnpm@10.33.0
 
           # Install sbpf assembler
           cargo install --git https://github.com/blueshift-gg/sbpf.git
