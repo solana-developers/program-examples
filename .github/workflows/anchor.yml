@@ -143,16 +143,7 @@ jobs:
             # Run anchor build
             # --ignore-keys: most examples don't commit program keypairs, so CI
             # generates ephemeral ones that won't match the source declare_id!
-            # Retry to ride out transient crates.io index fetch failures.
-            build_ok=false
-            for attempt in 1 2 3; do
-              if anchor build --ignore-keys; then
-                build_ok=true
-                break
-              fi
-              echo "anchor build attempt $attempt failed for $project; retrying"
-            done
-            if [ "$build_ok" != "true" ]; then
+            if ! anchor build --ignore-keys; then
               echo "::error::anchor build failed for $project"
               echo "$project: anchor build failed" >> $GITHUB_WORKSPACE/failed_projects.txt
               rm -rf target
