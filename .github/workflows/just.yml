@@ -1,0 +1,108 @@
+name: Just
+
+# Self-contained examples that drive their own build and test through a `justfile`
+# (standalone Cargo/pnpm workspace, pinned toolchain, Codama clients, LiteSVM tests).
+# Discovery key: any directory containing a `justfile`. Each must expose `setup`,
+# `build`, and `test` recipes. Exclusions live in `.github/.justignore`.
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  # See https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      projects: ${{ steps.find.outputs.projects }}
+      any: ${{ steps.find.outputs.any }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Discover justfile examples
+        id: find
+        run: |
+          # Strip comments/blanks from the ignore list into a regex (matches nothing if absent).
+          ignore_pattern=$(grep -v '^#' .github/.justignore 2>/dev/null | grep -v '^$' | tr '\n' '|' | sed 's/|$//')
+          [ -z "$ignore_pattern" ] && ignore_pattern='^$'
+
+          all=$(find . -name justfile -not -path '*/node_modules/*' -printf '%h\n' \
+            | sed 's#^\./##' | sort -u | grep -vE "$ignore_pattern" || true)
+
+          # On push/schedule run everything; on PR keep only examples with changed files.
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            changed=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD)
+            # A workflow change re-runs every example.
+            if echo "$changed" | grep -q '^.github/workflows/just.yml$'; then
+              projects="$all"
+            else
+              projects=""
+              for p in $all; do
+                if echo "$changed" | grep -q "^$p/"; then
+                  projects+="$p"$'\n'
+                fi
+              done
+              projects=$(echo "$projects" | grep -v '^$' || true)
+            fi
+          else
+            projects="$all"
+          fi
+
+          if [[ -n "$projects" ]]; then
+            echo "Examples to build and test:"
+            echo "$projects"
+            echo "any=true" >> "$GITHUB_OUTPUT"
+            echo "projects=$(echo "$projects" | jq -R -s -c 'split("\n") | map(select(length > 0))')" >> "$GITHUB_OUTPUT"
+          else
+            echo "No examples to build and test."
+            echo "any=false" >> "$GITHUB_OUTPUT"
+            echo "projects=[]" >> "$GITHUB_OUTPUT"
+          fi
+
+  build-and-test:
+    needs: discover
+    if: needs.discover.outputs.any == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJson(needs.discover.outputs.projects) }}
+    name: ${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: ${{ matrix.project }}/.nvmrc
+          check-latest: true
+      - name: Install just
+        uses: extractions/setup-just@v3
+      - name: Setup Solana
+        uses: heyAyushh/setup-solana@v5.9
+        with:
+          solana-cli-version: stable
+      - name: Build and test
+        working-directory: ${{ matrix.project }}
+        run: |
+          solana -V
+          rustc -V
+          just setup
+          just check-generated
+          just build
+          just test

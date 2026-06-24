@@ -1,0 +1,2 @@
+# Justfile-driven, self-contained example workspaces to skip in just.yml.
+# One directory path per line; comments and blank lines are ignored.

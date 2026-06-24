@@ -1,0 +1,1799 @@
+{
+  "additionalPrograms": [],
+  "kind": "rootNode",
+  "program": {
+    "accounts": [
+      {
+        "data": {
+          "fields": [],
+          "kind": "structTypeNode"
+        },
+        "kind": "accountNode",
+        "name": "eventAuthority",
+        "pda": {
+          "kind": "pdaLinkNode",
+          "name": "eventAuthority"
+        }
+      },
+      {
+        "data": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "discriminator",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bump",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "owner",
+              "type": {
+                "kind": "publicKeyTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "picks",
+              "type": {
+                "count": {
+                  "kind": "fixedCountNode",
+                  "value": 32
+                },
+                "item": {
+                  "endian": "le",
+                  "format": "u8",
+                  "kind": "numberTypeNode"
+                },
+                "kind": "arrayTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "tiebreakerGuess",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "score",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "tallyMask",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "entryIndex",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        },
+        "kind": "accountNode",
+        "name": "bracket",
+        "pda": {
+          "kind": "pdaLinkNode",
+          "name": "bracket"
+        }
+      },
+      {
+        "data": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "discriminator",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bump",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "state",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "admin",
+              "type": {
+                "kind": "publicKeyTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "lockTs",
+              "type": {
+                "endian": "le",
+                "format": "i64",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "entryFee",
+              "type": {
+                "endian": "le",
+                "format": "u64",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "entrantCount",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "refreshedCount",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "tallyMask",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bestScore",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bestCloseness",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bestIndex",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "winner",
+              "type": {
+                "kind": "publicKeyTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        },
+        "kind": "accountNode",
+        "name": "config",
+        "pda": {
+          "kind": "pdaLinkNode",
+          "name": "config"
+        }
+      },
+      {
+        "data": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "discriminator",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "bump",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "goalsPosted",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "results",
+              "type": {
+                "count": {
+                  "kind": "fixedCountNode",
+                  "value": 32
+                },
+                "item": {
+                  "endian": "le",
+                  "format": "u8",
+                  "kind": "numberTypeNode"
+                },
+                "kind": "arrayTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "decidedMask",
+              "type": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "totalGoalsR32",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        },
+        "kind": "accountNode",
+        "name": "oracle",
+        "pda": {
+          "kind": "pdaLinkNode",
+          "name": "oracle"
+        }
+      },
+      {
+        "data": {
+          "fields": [],
+          "kind": "structTypeNode"
+        },
+        "kind": "accountNode",
+        "name": "vault",
+        "pda": {
+          "kind": "pdaLinkNode",
+          "name": "vault"
+        }
+      }
+    ],
+    "definedTypes": [
+      {
+        "kind": "definedTypeNode",
+        "name": "initConfigData",
+        "type": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "lockTs",
+              "type": {
+                "endian": "le",
+                "format": "i64",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        }
+      },
+      {
+        "kind": "definedTypeNode",
+        "name": "postGoalsData",
+        "type": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "totalGoalsR32",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        }
+      },
+      {
+        "kind": "definedTypeNode",
+        "name": "postResultData",
+        "type": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "game",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "winner",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        }
+      },
+      {
+        "kind": "definedTypeNode",
+        "name": "submitBracketData",
+        "type": {
+          "fields": [
+            {
+              "kind": "structFieldTypeNode",
+              "name": "picks",
+              "type": {
+                "count": {
+                  "kind": "fixedCountNode",
+                  "value": 32
+                },
+                "item": {
+                  "endian": "le",
+                  "format": "u8",
+                  "kind": "numberTypeNode"
+                },
+                "kind": "arrayTypeNode"
+              }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "tiebreakerGuess",
+              "type": {
+                "endian": "le",
+                "format": "u16",
+                "kind": "numberTypeNode"
+              }
+            }
+          ],
+          "kind": "structTypeNode"
+        }
+      },
+      {
+        "kind": "definedTypeNode",
+        "name": "accountDiscriminator",
+        "type": {
+          "kind": "enumTypeNode",
+          "size": {
+            "endian": "le",
+            "format": "u8",
+            "kind": "numberTypeNode"
+          },
+          "variants": [
+            {
+              "discriminator": 0,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "config"
+            },
+            {
+              "discriminator": 1,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "oracle"
+            },
+            {
+              "discriminator": 2,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "bracket"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "definedTypeNode",
+        "name": "tournamentState",
+        "type": {
+          "kind": "enumTypeNode",
+          "size": {
+            "endian": "le",
+            "format": "u8",
+            "kind": "numberTypeNode"
+          },
+          "variants": [
+            {
+              "discriminator": 0,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "registration"
+            },
+            {
+              "discriminator": 1,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "locked"
+            },
+            {
+              "discriminator": 2,
+              "kind": "enumEmptyVariantTypeNode",
+              "name": "finalized"
+            }
+          ]
+        }
+      }
+    ],
+    "errors": [
+      {
+        "code": 100,
+        "kind": "errorNode",
+        "message": "Account must be a signer",
+        "name": "notSigner"
+      },
+      {
+        "code": 101,
+        "kind": "errorNode",
+        "message": "Account must be writable",
+        "name": "accountNotWritable"
+      },
+      {
+        "code": 102,
+        "kind": "errorNode",
+        "message": "Expected system program",
+        "name": "notSystemProgram"
+      },
+      {
+        "code": 103,
+        "kind": "errorNode",
+        "message": "Not enough account keys provided",
+        "name": "notEnoughAccountKeys"
+      },
+      {
+        "code": 104,
+        "kind": "errorNode",
+        "message": "Invalid instruction",
+        "name": "invalidInstruction"
+      },
+      {
+        "code": 105,
+        "kind": "errorNode",
+        "message": "Invalid account data",
+        "name": "invalidAccountData"
+      },
+      {
+        "code": 106,
+        "kind": "errorNode",
+        "message": "Invalid account discriminator",
+        "name": "invalidAccountDiscriminator"
+      },
+      {
+        "code": 107,
+        "kind": "errorNode",
+        "message": "Arithmetic overflow",
+        "name": "arithmeticOverflow"
+      },
+      {
+        "code": 108,
+        "kind": "errorNode",
+        "message": "Account is not owned by this program",
+        "name": "notProgramOwned"
+      },
+      {
+        "code": 200,
+        "kind": "errorNode",
+        "message": "Invalid config PDA derivation",
+        "name": "invalidConfigPda"
+      },
+      {
+        "code": 201,
+        "kind": "errorNode",
+        "message": "Config account already exists",
+        "name": "configAlreadyExists"
+      },
+      {
+        "code": 202,
+        "kind": "errorNode",
+        "message": "Signer is not the tournament admin",
+        "name": "unauthorized"
+      },
+      {
+        "code": 203,
+        "kind": "errorNode",
+        "message": "Instruction not allowed in the current tournament state",
+        "name": "invalidState"
+      },
+      {
+        "code": 204,
+        "kind": "errorNode",
+        "message": "Registration has closed (kickoff reached)",
+        "name": "registrationClosed"
+      },
+      {
+        "code": 205,
+        "kind": "errorNode",
+        "message": "Lock time has not been reached yet",
+        "name": "notYetLocked"
+      },
+      {
+        "code": 206,
+        "kind": "errorNode",
+        "message": "Lock timestamp must be in the future",
+        "name": "invalidLockTs"
+      },
+      {
+        "code": 300,
+        "kind": "errorNode",
+        "message": "Invalid bracket PDA derivation",
+        "name": "invalidBracketPda"
+      },
+      {
+        "code": 301,
+        "kind": "errorNode",
+        "message": "Bracket already exists for this wallet",
+        "name": "bracketAlreadyExists"
+      },
+      {
+        "code": 302,
+        "kind": "errorNode",
+        "message": "Bracket pick is out of range or inconsistent",
+        "name": "invalidPick"
+      },
+      {
+        "code": 303,
+        "kind": "errorNode",
+        "message": "Bracket has already been folded into the final tally",
+        "name": "alreadyFolded"
+      },
+      {
+        "code": 400,
+        "kind": "errorNode",
+        "message": "Invalid oracle PDA derivation",
+        "name": "invalidOraclePda"
+      },
+      {
+        "code": 401,
+        "kind": "errorNode",
+        "message": "Game index is out of range",
+        "name": "invalidGame"
+      },
+      {
+        "code": 402,
+        "kind": "errorNode",
+        "message": "Result is inconsistent with feeder games",
+        "name": "invalidResult"
+      },
+      {
+        "code": 403,
+        "kind": "errorNode",
+        "message": "A feeder game has not been decided yet",
+        "name": "feederNotDecided"
+      },
+      {
+        "code": 404,
+        "kind": "errorNode",
+        "message": "Result for this game has already been posted",
+        "name": "resultAlreadyPosted"
+      },
+      {
+        "code": 405,
+        "kind": "errorNode",
+        "message": "Round-of-32 goal total has already been posted",
+        "name": "goalsAlreadyPosted"
+      },
+      {
+        "code": 500,
+        "kind": "errorNode",
+        "message": "Invalid pot vault PDA derivation",
+        "name": "invalidVaultPda"
+      },
+      {
+        "code": 501,
+        "kind": "errorNode",
+        "message": "Oracle is not complete (all games + goals required)",
+        "name": "oracleNotComplete"
+      },
+      {
+        "code": 502,
+        "kind": "errorNode",
+        "message": "Not every bracket has been refreshed at the final state",
+        "name": "notFullyRefreshed"
+      },
+      {
+        "code": 503,
+        "kind": "errorNode",
+        "message": "Provided bracket does not match the winning key",
+        "name": "bracketNotBest"
+      },
+      {
+        "code": 504,
+        "kind": "errorNode",
+        "message": "Signer is not the recorded winner",
+        "name": "notWinner"
+      },
+      {
+        "code": 505,
+        "kind": "errorNode",
+        "message": "Pot has already been claimed or released",
+        "name": "alreadyClaimed"
+      },
+      {
+        "code": 600,
+        "kind": "errorNode",
+        "message": "Invalid event authority PDA",
+        "name": "invalidEventAuthority"
+      },
+      {
+        "code": 601,
+        "kind": "errorNode",
+        "message": "Invalid event data",
+        "name": "invalidEventData"
+      }
+    ],
+    "events": [],
+    "instructions": [
+      {
+        "accounts": [
+          {
+            "docs": [
+              "Tournament admin; funds and owns the config"
+            ],
+            "isSigner": true,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "admin"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "oracle"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton oracle PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "oracle"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "vault"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Pot vault PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "vault"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "11111111111111111111111111111111"
+            },
+            "docs": [
+              "The system program"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "systemProgram"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 0
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          },
+          {
+            "kind": "instructionArgumentNode",
+            "name": "initConfigData",
+            "type": {
+              "kind": "definedTypeLinkNode",
+              "name": "initConfigData"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "initConfig"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "The entrant submitting and paying for a bracket"
+            ],
+            "isSigner": true,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "entrant"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "bracket"
+              },
+              "seeds": [
+                {
+                  "kind": "pdaSeedValueNode",
+                  "name": "owner",
+                  "value": {
+                    "kind": "accountValueNode",
+                    "name": "entrant"
+                  }
+                }
+              ]
+            },
+            "docs": [
+              "The bracket PDA being created"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "bracket"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "vault"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Pot vault PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "vault"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "11111111111111111111111111111111"
+            },
+            "docs": [
+              "The system program"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "systemProgram"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 1
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          },
+          {
+            "kind": "instructionArgumentNode",
+            "name": "submitBracketData",
+            "type": {
+              "kind": "definedTypeLinkNode",
+              "name": "submitBracketData"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "submitBracket"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "Tournament admin"
+            ],
+            "isSigner": true,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "admin"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 2
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "lock"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "Tournament admin (oracle)"
+            ],
+            "isSigner": true,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "admin"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "oracle"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton oracle PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "oracle"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 3
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          },
+          {
+            "kind": "instructionArgumentNode",
+            "name": "postResultData",
+            "type": {
+              "kind": "definedTypeLinkNode",
+              "name": "postResultData"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "postResult"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "Tournament admin (oracle)"
+            ],
+            "isSigner": true,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "admin"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "oracle"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton oracle PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "oracle"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 4
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          },
+          {
+            "kind": "instructionArgumentNode",
+            "name": "postGoalsData",
+            "type": {
+              "kind": "definedTypeLinkNode",
+              "name": "postGoalsData"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "postGoals"
+      },
+      {
+        "accounts": [
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "oracle"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton oracle PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "oracle"
+          },
+          {
+            "docs": [
+              "The bracket PDA being scored"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "bracket"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 5
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "refreshScore"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "Tournament admin"
+            ],
+            "isSigner": true,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "admin"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "oracle"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton oracle PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "oracle"
+          },
+          {
+            "docs": [
+              "The bracket claimed to be the unique winner"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "bracket"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 6
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "finalize"
+      },
+      {
+        "accounts": [
+          {
+            "docs": [
+              "The recorded winner claiming the pot"
+            ],
+            "isSigner": true,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "winner"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "vault"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Pot vault PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "vault"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 7
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "claim"
+      },
+      {
+        "accounts": [
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "config"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Singleton config PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "config"
+          },
+          {
+            "docs": [
+              "The bracket PDA being closed"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "bracket"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "vault"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "Pot vault PDA"
+            ],
+            "isSigner": false,
+            "isWritable": true,
+            "kind": "instructionAccountNode",
+            "name": "vault"
+          },
+          {
+            "defaultValue": {
+              "kind": "pdaValueNode",
+              "pda": {
+                "kind": "pdaLinkNode",
+                "name": "eventAuthority"
+              },
+              "seeds": []
+            },
+            "docs": [
+              "The event authority PDA"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "eventAuthority"
+          },
+          {
+            "defaultValue": {
+              "kind": "publicKeyValueNode",
+              "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA"
+            },
+            "docs": [
+              "This program (for self-CPI event emission)"
+            ],
+            "isSigner": false,
+            "isWritable": false,
+            "kind": "instructionAccountNode",
+            "name": "selfProgram"
+          }
+        ],
+        "arguments": [
+          {
+            "defaultValue": {
+              "kind": "numberValueNode",
+              "number": 8
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
+            }
+          }
+        ],
+        "discriminators": [
+          {
+            "kind": "fieldDiscriminatorNode",
+            "name": "discriminator",
+            "offset": 0
+          }
+        ],
+        "kind": "instructionNode",
+        "name": "closeBracket"
+      }
+    ],
+    "kind": "programNode",
+    "name": "worldCup",
+    "pdas": [
+      {
+        "kind": "pdaNode",
+        "name": "eventAuthority",
+        "seeds": [
+          {
+            "kind": "constantPdaSeedNode",
+            "type": {
+              "encoding": "utf8",
+              "kind": "stringTypeNode"
+            },
+            "value": {
+              "kind": "stringValueNode",
+              "string": "event_authority"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "pdaNode",
+        "name": "bracket",
+        "seeds": [
+          {
+            "kind": "constantPdaSeedNode",
+            "type": {
+              "encoding": "utf8",
+              "kind": "stringTypeNode"
+            },
+            "value": {
+              "kind": "stringValueNode",
+              "string": "bracket"
+            }
+          },
+          {
+            "kind": "variablePdaSeedNode",
+            "name": "owner",
+            "type": {
+              "kind": "publicKeyTypeNode"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "pdaNode",
+        "name": "config",
+        "seeds": [
+          {
+            "kind": "constantPdaSeedNode",
+            "type": {
+              "encoding": "utf8",
+              "kind": "stringTypeNode"
+            },
+            "value": {
+              "kind": "stringValueNode",
+              "string": "config"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "pdaNode",
+        "name": "oracle",
+        "seeds": [
+          {
+            "kind": "constantPdaSeedNode",
+            "type": {
+              "encoding": "utf8",
+              "kind": "stringTypeNode"
+            },
+            "value": {
+              "kind": "stringValueNode",
+              "string": "oracle"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "pdaNode",
+        "name": "vault",
+        "seeds": [
+          {
+            "kind": "constantPdaSeedNode",
+            "type": {
+              "encoding": "utf8",
+              "kind": "stringTypeNode"
+            },
+            "value": {
+              "kind": "stringValueNode",
+              "string": "vault"
+            }
+          }
+        ]
+      }
+    ],
+    "publicKey": "wCupoZtR1g1NXRRVELe5KqFgayyEteVKKxEerxugvxA",
+    "version": "0.1.0"
+  },
+  "standard": "codama",
+  "version": "1.0.0"
+}
