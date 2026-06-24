@@ -32,7 +32,7 @@ jobs:
       total_projects: ${{ steps.analyze.outputs.total_projects }}
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
         id: changes
         if: github.event_name == 'pull_request'
@@ -110,7 +110,7 @@ jobs:
     outputs:
       failed_projects: ${{ steps.set-failed.outputs.failed_projects }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
       - name: Use Node.js
         uses: actions/setup-node@v5
@@ -239,7 +239,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Create job summary
         run: |
           echo "## Pinocchio Workflow Summary" >> $GITHUB_STEP_SUMMARY
