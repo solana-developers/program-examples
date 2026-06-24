@@ -47,10 +47,11 @@ function getAssociatedTokenAddress(mint: PublicKey, owner: PublicKey): PublicKey
   )[0];
 }
 
-// Read the `amount` field (u64 at offset 64) of an SPL token account.
-function readTokenAmount(data: Uint8Array): number {
-  const buffer = Buffer.from(data);
-  return buffer.readUInt32LE(64) + buffer.readUInt32LE(68) * 4294967296; // 2^32
+// Read the `amount` field (u64 at offset 64) of an SPL token account. Returns a
+// BigInt so the full u64 range is represented exactly (a plain Number would lose
+// precision above 2^53).
+function readTokenAmount(data: Uint8Array): bigint {
+  return Buffer.from(data).readBigUInt64LE(64);
 }
 
 describe("NFT Minter (Pinocchio)", async () => {
@@ -142,7 +143,7 @@ describe("NFT Minter (Pinocchio)", async () => {
     // The NFT (a single token) landed in the payer's associated token account.
     const ataAccount = await client.getAccount(ata);
     if (ataAccount === null) throw new Error("Associated token account not found");
-    assert.equal(readTokenAmount(ataAccount.data), 1);
+    assert.equal(readTokenAmount(ataAccount.data), 1n);
 
     // The master edition account exists and is owned by the Token Metadata
     // program — proof the CreateMasterEditionV3 CPI succeeded.
