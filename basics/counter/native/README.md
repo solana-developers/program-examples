@@ -2,13 +2,18 @@
 
 This example program is written in Solana using only the Solana toolsuite.
 
-## Setup
+## Build and test
 
-1. Build the program with `cargo build-sbf`
-2. Run tests + local validator with `yarn test`
+```shell
+pnpm build-and-test
+```
 
-## Debugging
+This builds the program with `cargo build-sbf` and runs the tests against an
+in-process `solana-bankrun` runtime — no local validator required.
 
-1. Start test validator with `yarn start-validator`
-2. Start listening to program logs with `solana config set -ul && solana logs`
-3. Run tests with `yarn run-tests`
+## Deploy
+
+```shell
+pnpm build
+pnpm deploy
+```
