@@ -1,0 +1,16 @@
+{
+  "name": "world-cup-api",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx --watch server.ts",
+    "start": "tsx server.ts"
+  },
+  "dependencies": {
+    "@solana-program/system": "^0.12.0",
+    "@solana/kit": "^6.9.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.22.0"
+  }
+}

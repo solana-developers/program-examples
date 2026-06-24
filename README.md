@@ -336,5 +336,11 @@ Use a data source for offchain data (called an Oracle) to perform activities onc
 Use Shank and Solita to generate IDLs and TypeScript clients for native Solana programs, the same way Anchor does for Anchor programs.
 
 [native](./tools/shank-and-solita/native)
+## Games
+### World Cup bracket prediction
+
+A bracket-prediction game: entrants pay a fee to submit a 32-game bracket, an oracle posts results, scores are tallied on-chain, and the unique winner sweeps the pot. A full Pinocchio + Codama project with a TypeScript client and a webapp.
+
+[pinocchio](./games/world-cup/pinocchio)
 
 ---
