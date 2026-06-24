@@ -3,7 +3,6 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token::{self, Burn, Mint, Token, TokenAccount, Transfer},
 };
-use fixed::types::I64F64;
 
 use crate::{
     constants::{AUTHORITY_SEED, LIQUIDITY_SEED, MINIMUM_LIQUIDITY},
@@ -21,16 +20,13 @@ pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Resul
     ];
     let signer_seeds = &[&authority_seeds[..]];
 
-    // Transfer tokens from the pool
-    let amount_a = I64F64::from_num(amount)
-        .checked_mul(I64F64::from_num(ctx.accounts.pool_account_a.amount))
+    // Transfer tokens from the pool. Compute in u128 so amount * pool balance
+    // cannot overflow.
+    let amount_a = (amount as u128)
+        .checked_mul(ctx.accounts.pool_account_a.amount as u128)
         .unwrap()
-        .checked_div(I64F64::from_num(
-            ctx.accounts.mint_liquidity.supply + MINIMUM_LIQUIDITY,
-        ))
-        .unwrap()
-        .floor()
-        .to_num::<u64>();
+        .checked_div(ctx.accounts.mint_liquidity.supply as u128 + MINIMUM_LIQUIDITY as u128)
+        .unwrap() as u64;
     token::transfer(
         CpiContext::new_with_signer(
             ctx.accounts.token_program.key(),
@@ -44,15 +40,11 @@ pub fn withdraw_liquidity(ctx: Context<WithdrawLiquidity>, amount: u64) -> Resul
         amount_a,
     )?;
 
-    let amount_b = I64F64::from_num(amount)
-        .checked_mul(I64F64::from_num(ctx.accounts.pool_account_b.amount))
+    let amount_b = (amount as u128)
+        .checked_mul(ctx.accounts.pool_account_b.amount as u128)
         .unwrap()
-        .checked_div(I64F64::from_num(
-            ctx.accounts.mint_liquidity.supply + MINIMUM_LIQUIDITY,
-        ))
-        .unwrap()
-        .floor()
-        .to_num::<u64>();
+        .checked_div(ctx.accounts.mint_liquidity.supply as u128 + MINIMUM_LIQUIDITY as u128)
+        .unwrap() as u64;
     token::transfer(
         CpiContext::new_with_signer(
             ctx.accounts.token_program.key(),
