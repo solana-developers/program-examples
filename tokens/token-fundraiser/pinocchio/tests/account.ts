@@ -5,6 +5,7 @@ export const FundraiserSchema = {
   struct: {
     maker: { array: { type: "u8", len: 32 } },
     mint_to_raise: { array: { type: "u8", len: 32 } },
+    vault: { array: { type: "u8", len: 32 } },
     amount_to_raise: "u64",
     current_amount: "u64",
     time_started: "i64",
@@ -16,6 +17,7 @@ export const FundraiserSchema = {
 export type FundraiserRaw = {
   maker: Uint8Array;
   mint_to_raise: Uint8Array;
+  vault: Uint8Array;
   amount_to_raise: bigint;
   current_amount: bigint;
   time_started: bigint;

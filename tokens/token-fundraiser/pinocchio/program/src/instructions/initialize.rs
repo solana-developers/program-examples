@@ -106,6 +106,10 @@ pub fn initialize(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
     let fundraiser_state = Fundraiser {
         maker: *maker.address().as_array(),
         mint_to_raise: *mint_to_raise.address().as_array(),
+        // The associated token program guaranteed this is the canonical ATA when
+        // it was created above, so recording it lets later instructions reject
+        // any substitute vault.
+        vault: *vault.address().as_array(),
         amount_to_raise: amount,
         current_amount: 0,
         time_started: Clock::get()?.unix_timestamp,

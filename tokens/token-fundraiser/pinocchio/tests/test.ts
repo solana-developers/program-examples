@@ -1,12 +1,14 @@
 import {
+  ACCOUNT_SIZE,
   AccountLayout,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountIdempotentInstruction,
+  createInitializeAccount3Instruction,
   createMintToInstruction,
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Keypair, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import BN from "bn.js";
 import * as borsh from "borsh";
 import { assert } from "chai";
@@ -166,6 +168,45 @@ describe("Token Fundraiser (Pinocchio)", async () => {
       mint: mintKeypair.publicKey,
       fundraiser,
       vault,
+      makerAta,
+      programId,
+    });
+
+    await expectRevert(sendInstruction(ix, [payer, maker]));
+  });
+
+  it("Rejects settling against a non-canonical fundraiser-owned vault", async () => {
+    // A malicious maker could create a token account they pre-fund and assign to
+    // the fundraiser PDA as its owner. It must not be accepted in place of the
+    // canonical vault recorded at initialization — otherwise the maker could
+    // settle with the fake vault, close the fundraiser, and strand the real
+    // contributions.
+    const fakeVault = Keypair.generate();
+    const rent = await client.getRent();
+    const lamports = Number(rent.minimumBalance(BigInt(ACCOUNT_SIZE)));
+
+    const setupTx = new Transaction();
+    setupTx.recentBlockhash = context.lastBlockhash;
+    setupTx
+      .add(
+        SystemProgram.createAccount({
+          fromPubkey: payer.publicKey,
+          newAccountPubkey: fakeVault.publicKey,
+          space: ACCOUNT_SIZE,
+          lamports,
+          programId: TOKEN_PROGRAM_ID,
+        }),
+        createInitializeAccount3Instruction(fakeVault.publicKey, mintKeypair.publicKey, fundraiser, TOKEN_PROGRAM_ID),
+        createMintToInstruction(mintKeypair.publicKey, fakeVault.publicKey, payer.publicKey, 30_000_000, [], TOKEN_PROGRAM_ID),
+      )
+      .sign(payer, fakeVault);
+    await client.processTransaction(setupTx);
+
+    const ix = buildCheckContributions({
+      maker: maker.publicKey,
+      mint: mintKeypair.publicKey,
+      fundraiser,
+      vault: fakeVault.publicKey,
       makerAta,
       programId,
     });

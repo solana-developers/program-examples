@@ -8,13 +8,18 @@ use pinocchio::error::ProgramError;
 ///
 /// Serialized byte layout (little-endian), matching the field order below so a
 /// Borsh client can deserialize it directly:
-/// `[maker: 32][mint_to_raise: 32][amount_to_raise: u64][current_amount: u64]
-///  [time_started: i64][duration: u16][bump: u8]`
+/// `[maker: 32][mint_to_raise: 32][vault: 32][amount_to_raise: u64]
+///  [current_amount: u64][time_started: i64][duration: u16][bump: u8]`
 pub struct Fundraiser {
     /// The wallet that created the fundraiser and receives the funds on success.
     pub maker: [u8; 32],
     /// Mint of the token being raised.
     pub mint_to_raise: [u8; 32],
+    /// The vault (the fundraiser PDA's associated token account) that holds the
+    /// raised funds. Recorded at initialization — where the associated token
+    /// program guarantees it is the canonical ATA — so later instructions can
+    /// reject any other token account passed in its place.
+    pub vault: [u8; 32],
     /// Target amount (in base units) the campaign wants to raise.
     pub amount_to_raise: u64,
     /// Amount contributed so far.
@@ -32,7 +37,7 @@ impl Fundraiser {
     pub const SEED_PREFIX: &'static [u8] = b"fundraiser";
 
     /// Serialized size of a `Fundraiser` in bytes.
-    pub const LEN: usize = 32 + 32 + 8 + 8 + 8 + 2 + 1;
+    pub const LEN: usize = 32 + 32 + 32 + 8 + 8 + 8 + 2 + 1;
 
     /// Writes the fundraiser into `dst` using the layout documented above.
     pub fn serialize(&self, dst: &mut [u8]) -> Result<(), ProgramError> {
@@ -41,11 +46,12 @@ impl Fundraiser {
             .ok_or(ProgramError::AccountDataTooSmall)?;
         dst[0..32].copy_from_slice(&self.maker);
         dst[32..64].copy_from_slice(&self.mint_to_raise);
-        dst[64..72].copy_from_slice(&self.amount_to_raise.to_le_bytes());
-        dst[72..80].copy_from_slice(&self.current_amount.to_le_bytes());
-        dst[80..88].copy_from_slice(&self.time_started.to_le_bytes());
-        dst[88..90].copy_from_slice(&self.duration.to_le_bytes());
-        dst[90] = self.bump;
+        dst[64..96].copy_from_slice(&self.vault);
+        dst[96..104].copy_from_slice(&self.amount_to_raise.to_le_bytes());
+        dst[104..112].copy_from_slice(&self.current_amount.to_le_bytes());
+        dst[112..120].copy_from_slice(&self.time_started.to_le_bytes());
+        dst[120..122].copy_from_slice(&self.duration.to_le_bytes());
+        dst[122] = self.bump;
         Ok(())
     }
 
@@ -58,11 +64,12 @@ impl Fundraiser {
         Ok(Self {
             maker: src[0..32].try_into().unwrap(),
             mint_to_raise: src[32..64].try_into().unwrap(),
-            amount_to_raise: u64::from_le_bytes(src[64..72].try_into().unwrap()),
-            current_amount: u64::from_le_bytes(src[72..80].try_into().unwrap()),
-            time_started: i64::from_le_bytes(src[80..88].try_into().unwrap()),
-            duration: u16::from_le_bytes(src[88..90].try_into().unwrap()),
-            bump: src[90],
+            vault: src[64..96].try_into().unwrap(),
+            amount_to_raise: u64::from_le_bytes(src[96..104].try_into().unwrap()),
+            current_amount: u64::from_le_bytes(src[104..112].try_into().unwrap()),
+            time_started: i64::from_le_bytes(src[112..120].try_into().unwrap()),
+            duration: u16::from_le_bytes(src[120..122].try_into().unwrap()),
+            bump: src[122],
         })
     }
 }
