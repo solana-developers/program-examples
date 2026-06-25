@@ -83,10 +83,11 @@ pub fn contribute(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
         return Err(FundraiserError::ContributionTooBig.into());
     }
 
-    // Contributions are only accepted within the campaign window.
+    // Contributions are only accepted while the campaign is still open, i.e.
+    // before `duration` days have elapsed since it started.
     let elapsed_days =
         ((Clock::get()?.unix_timestamp - fundraiser_state.time_started) / SECONDS_TO_DAYS) as u16;
-    if fundraiser_state.duration > elapsed_days {
+    if elapsed_days >= fundraiser_state.duration {
         return Err(FundraiserError::FundraiserEnded.into());
     }
 

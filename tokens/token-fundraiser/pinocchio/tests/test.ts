@@ -34,7 +34,7 @@ describe("Token Fundraiser (Pinocchio)", async () => {
 
   const decimals = 6;
   const amountToRaise = new BN(30_000_000); // 30 tokens
-  const duration = 0; // a fundraiser with no minimum waiting period
+  const duration = 5; // an open, 5-day campaign
 
   // Fund the maker so it can pay for the fundraiser + vault, and mint tokens to
   // the contributor.
@@ -87,7 +87,7 @@ describe("Token Fundraiser (Pinocchio)", async () => {
     assert.equal((await readTokenAmount(vault)).toString(), "0", "vault should start empty");
   });
 
-  it("Accepts contributions", async () => {
+  it("Accepts contributions while the campaign is open", async () => {
     for (let i = 0; i < 2; i++) {
       const ix = buildContribute({
         amount: new BN(1_000_000),
@@ -166,9 +166,8 @@ describe("Token Fundraiser (Pinocchio)", async () => {
     await expectRevert(sendInstruction(ix, [payer, maker]));
   });
 
-  it("Refunds the contributor when the target is not met", async () => {
-    const balanceBefore = await readTokenAmount(contributorAta);
-
+  it("Rejects a refund while the campaign is still open", async () => {
+    // The 5-day campaign has just started, so a refund must be rejected.
     const ix = buildRefund({
       contributor_bump: contributorBump,
       contributor: contributor.publicKey,
@@ -181,20 +180,51 @@ describe("Token Fundraiser (Pinocchio)", async () => {
       programId,
     });
 
-    await sendInstruction(ix, [payer]);
+    await expectRevert(sendInstruction(ix, [payer]));
+  });
 
-    // The vault is emptied and the contributor account is closed.
-    assert.equal((await readTokenAmount(vault)).toString(), "0", "vault should be empty after refund");
-    assert.equal(await client.getAccount(contributorAccount), null, "contributor account should be closed");
+  it("Rejects a contribution after the campaign has ended", async () => {
+    // A second fundraiser created with duration = 0 is already over the moment
+    // it is initialized, so any contribution must be rejected.
+    const maker2 = Keypair.generate();
+    await fundAccount(context, maker2.publicKey, 5 * LAMPORTS_PER_SOL);
 
-    // The contributor got their tokens back.
-    const balanceAfter = await readTokenAmount(contributorAta);
-    assert.equal((balanceAfter - balanceBefore).toString(), "2000000", "contributor should be fully refunded");
+    const [endedFundraiser, endedBump] = PublicKey.findProgramAddressSync(
+      [Buffer.from("fundraiser"), maker2.publicKey.toBuffer()],
+      programId,
+    );
+    const endedVault = getAssociatedTokenAddressSync(mintKeypair.publicKey, endedFundraiser, true);
+    const [endedContributor, endedContributorBump] = PublicKey.findProgramAddressSync(
+      [Buffer.from("contributor"), endedFundraiser.toBuffer(), contributor.publicKey.toBuffer()],
+      programId,
+    );
 
-    // The fundraiser's recorded total is back to zero.
-    const fundraiserInfo = await client.getAccount(fundraiser);
-    if (fundraiserInfo === null) throw new Error("Fundraiser account not found");
-    const fundraiserState = borsh.deserialize(FundraiserSchema, Buffer.from(fundraiserInfo.data)) as FundraiserRaw;
-    assert.equal(fundraiserState.current_amount.toString(), "0", "fundraiser total should be back to zero");
+    await sendInstruction(
+      buildInitialize({
+        amount: amountToRaise,
+        duration: 0,
+        bump: endedBump,
+        maker: maker2.publicKey,
+        mint: mintKeypair.publicKey,
+        fundraiser: endedFundraiser,
+        vault: endedVault,
+        programId,
+      }),
+      [payer, maker2],
+    );
+
+    const ix = buildContribute({
+      amount: new BN(1_000_000),
+      contributor_bump: endedContributorBump,
+      contributor: contributor.publicKey,
+      mint: mintKeypair.publicKey,
+      fundraiser: endedFundraiser,
+      contributorAccount: endedContributor,
+      contributorAta,
+      vault: endedVault,
+      programId,
+    });
+
+    await expectRevert(sendInstruction(ix, [payer]));
   });
 });

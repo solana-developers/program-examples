@@ -76,10 +76,11 @@ pub fn refund(program_id: &Address, accounts: &[AccountView], data: &[u8]) -> Pr
         return Err(FundraiserError::InvalidSeeds.into());
     }
 
-    // Refunds are only allowed once the campaign has ended.
+    // Refunds are only allowed once the campaign has ended, i.e. after
+    // `duration` days have elapsed since it started.
     let elapsed_days =
         ((Clock::get()?.unix_timestamp - fundraiser_state.time_started) / SECONDS_TO_DAYS) as u16;
-    if fundraiser_state.duration < elapsed_days {
+    if elapsed_days < fundraiser_state.duration {
         return Err(FundraiserError::FundraiserNotEnded.into());
     }
 
