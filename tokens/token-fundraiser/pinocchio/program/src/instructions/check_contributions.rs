@@ -6,21 +6,24 @@ use pinocchio::{
 use pinocchio_associated_token_account::instructions::CreateIdempotent;
 use pinocchio_log::log;
 use pinocchio_pubkey::derive_address;
-use pinocchio_token::{instructions::Transfer, state::TokenAccount};
+use pinocchio_token::{
+    instructions::{CloseAccount, Transfer},
+    state::TokenAccount,
+};
 
 use crate::{error::FundraiserError, state::Fundraiser};
 
 /// Settles a successful fundraiser.
 ///
 /// If the vault holds at least the target amount, all funds are transferred to
-/// the maker and the fundraiser account is closed (its rent returned to the
-/// maker).
+/// the maker, and both the vault and the fundraiser account are closed (their
+/// rent returned to the maker).
 ///
 /// Accounts:
 ///   0. `[signer, writable]` maker (receives the funds and the reclaimed rent)
 ///   1. `[]`                 mint to raise
 ///   2. `[writable]`         fundraiser account (PDA, closed here)
-///   3. `[writable]`         vault (fundraiser's token account, drained here)
+///   3. `[writable]`         vault (fundraiser's token account, drained and closed here)
 ///   4. `[writable]`         maker's token account (created if needed)
 ///   5. `[]`                 token program
 ///   6. `[]`                 associated token program
@@ -102,6 +105,15 @@ pub fn check_contributions(
         to: maker_ata,
         authority: fundraiser,
         amount: vault_amount,
+    }
+    .invoke_signed(&signers)?;
+
+    // Close the now-empty vault, returning its rent to the maker.
+    log!("Closing vault");
+    CloseAccount {
+        account: vault,
+        destination: maker,
+        authority: fundraiser,
     }
     .invoke_signed(&signers)?;
 

@@ -1,4 +1,11 @@
-import { AccountLayout, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import {
+  AccountLayout,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountIdempotentInstruction,
+  createMintToInstruction,
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import BN from "bn.js";
 import * as borsh from "borsh";
@@ -226,5 +233,96 @@ describe("Token Fundraiser (Pinocchio)", async () => {
     });
 
     await expectRevert(sendInstruction(ix, [payer]));
+  });
+
+  it("Settles a fully-funded campaign and reclaims rent", async () => {
+    // A fresh campaign funded to its target by 10 contributors (each capped at
+    // 10% of the target). Settling transfers everything to the maker and closes
+    // both the vault and the fundraiser account.
+    const settleMaker = Keypair.generate();
+    await fundAccount(context, settleMaker.publicKey, 5 * LAMPORTS_PER_SOL);
+
+    const [settleFundraiser, settleBump] = PublicKey.findProgramAddressSync(
+      [Buffer.from("fundraiser"), settleMaker.publicKey.toBuffer()],
+      programId,
+    );
+    const settleVault = getAssociatedTokenAddressSync(mintKeypair.publicKey, settleFundraiser, true);
+    const settleMakerAta = getAssociatedTokenAddressSync(mintKeypair.publicKey, settleMaker.publicKey);
+
+    await sendInstruction(
+      buildInitialize({
+        amount: amountToRaise, // 30_000_000
+        duration: 5,
+        bump: settleBump,
+        maker: settleMaker.publicKey,
+        mint: mintKeypair.publicKey,
+        fundraiser: settleFundraiser,
+        vault: settleVault,
+        programId,
+      }),
+      [payer, settleMaker],
+    );
+
+    // 10 contributors x 3_000_000 (the per-contributor cap) == the 30_000_000 target.
+    for (let i = 0; i < 10; i++) {
+      const c = Keypair.generate();
+      await fundAccount(context, c.publicKey, 1 * LAMPORTS_PER_SOL);
+      const cAta = getAssociatedTokenAddressSync(mintKeypair.publicKey, c.publicKey);
+
+      const fundTx = new Transaction();
+      fundTx.recentBlockhash = context.lastBlockhash;
+      fundTx
+        .add(
+          createAssociatedTokenAccountIdempotentInstruction(
+            payer.publicKey,
+            cAta,
+            c.publicKey,
+            mintKeypair.publicKey,
+            TOKEN_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+          ),
+          createMintToInstruction(mintKeypair.publicKey, cAta, payer.publicKey, 3_000_000, [], TOKEN_PROGRAM_ID),
+        )
+        .sign(payer);
+      await client.processTransaction(fundTx);
+
+      const [cAccount, cBump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("contributor"), settleFundraiser.toBuffer(), c.publicKey.toBuffer()],
+        programId,
+      );
+      await sendInstruction(
+        buildContribute({
+          amount: new BN(3_000_000),
+          contributor_bump: cBump,
+          contributor: c.publicKey,
+          mint: mintKeypair.publicKey,
+          fundraiser: settleFundraiser,
+          contributorAccount: cAccount,
+          contributorAta: cAta,
+          vault: settleVault,
+          programId,
+        }),
+        [payer, c],
+      );
+    }
+
+    assert.equal((await readTokenAmount(settleVault)).toString(), "30000000", "vault should hold the full target");
+
+    await sendInstruction(
+      buildCheckContributions({
+        maker: settleMaker.publicKey,
+        mint: mintKeypair.publicKey,
+        fundraiser: settleFundraiser,
+        vault: settleVault,
+        makerAta: settleMakerAta,
+        programId,
+      }),
+      [payer, settleMaker],
+    );
+
+    // The maker received the full raised amount, and the vault + fundraiser are closed.
+    assert.equal((await readTokenAmount(settleMakerAta)).toString(), "30000000", "maker should receive the raised funds");
+    assert.equal(await client.getAccount(settleVault), null, "vault should be closed after settlement");
+    assert.equal(await client.getAccount(settleFundraiser), null, "fundraiser should be closed after settlement");
   });
 });
