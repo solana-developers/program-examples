@@ -21,13 +21,13 @@ const outputDir = "tests/fixtures";
 
 try {
   mkdirSync(outputDir, { recursive: true });
-  // Point the Solana CLI at mainnet, where the canonical program lives.
-  execSync("solana config set -um", { stdio: "inherit" });
 
   for (const { id, name } of programs) {
     const outputFile = join(outputDir, name);
     rmSync(outputFile, { force: true });
-    execSync(`solana program dump ${id} ${outputFile}`, { stdio: "inherit" });
+    // `-um` points this dump at mainnet without mutating the developer's
+    // global Solana CLI cluster config.
+    execSync(`solana program dump -um ${id} ${outputFile}`, { stdio: "inherit" });
     console.log(`Dumped ${id} -> ${outputFile}`);
   }
 } catch (error) {
