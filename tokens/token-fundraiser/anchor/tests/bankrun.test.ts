@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { describe, it } from "node:test";
 import * as anchor from "@anchor-lang/core";
 import {
@@ -11,7 +12,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import { BankrunProvider } from "anchor-bankrun";
 import BN from "bn.js";
-import { startAnchor } from "solana-bankrun";
+import { Clock, startAnchor } from "solana-bankrun";
 import IDL from "../target/idl/fundraiser.json";
 import type { Fundraiser } from "../target/types/fundraiser";
 
@@ -82,7 +83,7 @@ describe("fundraiser bankrun", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program.methods
-      .initialize(new BN(30000000), 0)
+      .initialize(new BN(30000000), 5)
       .accountsPartial({
         maker: maker.publicKey,
         fundraiser,
@@ -200,11 +201,59 @@ describe("fundraiser bankrun", async () => {
     }
   });
 
-  it("Refund Contributions", async () => {
+  it("Refund is rejected while the campaign is still open", async () => {
+    // The campaign was created with a 5-day duration and has only just started,
+    // so a refund must be rejected until the campaign has ended. (A successful
+    // refund requires advancing the validator clock past `duration`, e.g. with
+    // bankrun's `setClock`.)
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const contributorAccount = await program.account.contributor.fetch(contributor);
-    console.log("\nContributor balance", contributorAccount.amount.toString());
+    let rejected = false;
+    try {
+      await program.methods
+        .refund()
+        .accountsPartial({
+          contributor: provider.publicKey,
+          maker: maker.publicKey,
+          mintToRaise: mint,
+          fundraiser,
+          contributorAccount: contributor,
+          contributorAta: contributorATA,
+          vault,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .rpc()
+        .then(confirm);
+    } catch (error) {
+      rejected = true;
+      assert.ok(
+        String(error).includes("FundraiserNotEnded"),
+        `expected a FundraiserNotEnded error, got: ${error}`,
+      );
+    }
+
+    assert.ok(rejected, "refund should be rejected while the campaign is still open");
+  });
+
+  it("Refunds the contributor after the campaign ends", async () => {
+    const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
+
+    // Advance the clock past the 5-day campaign window so refunds are allowed.
+    const clock = await context.banksClient.getClock();
+    context.setClock(
+      new Clock(
+        clock.slot,
+        clock.epochStartTimestamp,
+        clock.epoch,
+        clock.leaderScheduleEpoch,
+        clock.unixTimestamp + BigInt(6 * 24 * 60 * 60),
+      ),
+    );
+
+    const before = BigInt(
+      (await provider.connection.getTokenAccountBalance(contributorATA)).value.amount,
+    );
 
     const tx = await program.methods
       .refund()
@@ -223,7 +272,25 @@ describe("fundraiser bankrun", async () => {
       .then(confirm);
 
     console.log("\nRefunded contributions", tx);
-    console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+
+    // The 2_000_000 contributed is returned to the contributor.
+    const after = BigInt(
+      (await provider.connection.getTokenAccountBalance(contributorATA)).value.amount,
+    );
+    assert.equal(after - before, BigInt(2_000_000), "contributor should be refunded their contribution");
+
+    // The vault is emptied and the contributor account is closed.
+    assert.equal(
+      (await provider.connection.getTokenAccountBalance(vault)).value.amount,
+      "0",
+      "vault should be empty after the refund",
+    );
+    let closed = false;
+    try {
+      await program.account.contributor.fetch(contributor);
+    } catch {
+      closed = true;
+    }
+    assert.ok(closed, "contributor account should be closed after the refund");
   });
 });
