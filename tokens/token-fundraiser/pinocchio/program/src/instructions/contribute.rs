@@ -7,7 +7,7 @@ use pinocchio::{
 use pinocchio_log::log;
 use pinocchio_pubkey::derive_address;
 use pinocchio_system::instructions::CreateAccount;
-use pinocchio_token::instructions::Transfer;
+use pinocchio_token::{instructions::Transfer, state::TokenAccount};
 
 use crate::{
     error::FundraiserError,
@@ -58,6 +58,18 @@ pub fn contribute(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
     );
     if fundraiser.address().as_array() != &fundraiser_pda {
         return Err(FundraiserError::InvalidSeeds.into());
+    }
+
+    // The vault must be a token account owned by the fundraiser for the raised
+    // mint. Without this check a contributor could pass an account they control
+    // as the vault, keep their tokens, and still inflate the recorded total.
+    {
+        let vault_account = TokenAccount::from_account_view(vault)?;
+        if vault_account.owner() != fundraiser.address()
+            || vault_account.mint() != mint_to_raise.address()
+        {
+            return Err(FundraiserError::InvalidVault.into());
+        }
     }
 
     // A contribution must be non-zero (mirrors `1.pow(decimals) == 1`).

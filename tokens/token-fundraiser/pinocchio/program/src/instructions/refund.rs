@@ -83,8 +83,18 @@ pub fn refund(program_id: &Address, accounts: &[AccountView], data: &[u8]) -> Pr
         return Err(FundraiserError::FundraiserNotEnded.into());
     }
 
-    // ...and only if the target was not met.
-    let vault_amount = TokenAccount::from_account_view(vault)?.amount();
+    // The vault must be the fundraiser's token account for the raised mint.
+    let vault_amount = {
+        let vault_account = TokenAccount::from_account_view(vault)?;
+        if vault_account.owner() != fundraiser.address()
+            || vault_account.mint() != mint_to_raise.address()
+        {
+            return Err(FundraiserError::InvalidVault.into());
+        }
+        vault_account.amount()
+    };
+
+    // ...and only refund if the target was not met.
     if vault_amount >= fundraiser_state.amount_to_raise {
         return Err(FundraiserError::TargetMet.into());
     }

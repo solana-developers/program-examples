@@ -116,6 +116,25 @@ describe("Token Fundraiser (Pinocchio)", async () => {
     assert.equal(fundraiserState.current_amount.toString(), "2000000", "fundraiser total should be tracked");
   });
 
+  it("Rejects a contribution whose vault is not owned by the fundraiser", async () => {
+    // Passing the contributor's own token account as the vault must be rejected;
+    // otherwise the contributor could keep their tokens while still inflating the
+    // recorded total and later drain the real vault via a refund.
+    const ix = buildContribute({
+      amount: new BN(1_000_000),
+      contributor_bump: contributorBump,
+      contributor: contributor.publicKey,
+      mint: mintKeypair.publicKey,
+      fundraiser,
+      contributorAccount,
+      contributorAta,
+      vault: contributorAta, // not the fundraiser's vault
+      programId,
+    });
+
+    await expectRevert(sendInstruction(ix, [payer]));
+  });
+
   it("Rejects a contribution above the per-contributor maximum", async () => {
     // The contributor is already at 2_000_000; the cap is 10% of 30_000_000 =
     // 3_000_000, so another 2_000_000 must be rejected.

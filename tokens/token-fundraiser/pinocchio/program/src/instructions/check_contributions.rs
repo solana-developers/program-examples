@@ -59,8 +59,18 @@ pub fn check_contributions(
         return Err(FundraiserError::InvalidSeeds.into());
     }
 
+    // The vault must be the fundraiser's token account for the raised mint.
+    let vault_amount = {
+        let vault_account = TokenAccount::from_account_view(vault)?;
+        if vault_account.owner() != fundraiser.address()
+            || vault_account.mint() != mint_to_raise.address()
+        {
+            return Err(FundraiserError::InvalidVault.into());
+        }
+        vault_account.amount()
+    };
+
     // The campaign must have reached its target.
-    let vault_amount = TokenAccount::from_account_view(vault)?.amount();
     if vault_amount < fundraiser_state.amount_to_raise {
         return Err(FundraiserError::TargetNotMet.into());
     }

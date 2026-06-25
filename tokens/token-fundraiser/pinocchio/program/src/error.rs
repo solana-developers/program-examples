@@ -27,6 +27,9 @@ pub enum FundraiserError {
     InvalidSeeds,
     /// A provided mint does not match the one the fundraiser is raising.
     InvalidMint,
+    /// The provided vault is not a token account owned by the fundraiser for
+    /// the raised mint.
+    InvalidVault,
 }
 
 impl From<FundraiserError> for ProgramError {

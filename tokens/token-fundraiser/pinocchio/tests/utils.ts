@@ -12,11 +12,14 @@ import BN from "bn.js";
 import type { ProgramTestContext } from "solana-bankrun";
 
 export const expectRevert = async (promise: Promise<unknown>) => {
+  let reverted = false;
   try {
     await promise;
-    throw new Error("Expected a revert");
   } catch {
-    return;
+    reverted = true;
+  }
+  if (!reverted) {
+    throw new Error("Expected a revert, but the transaction succeeded");
   }
 };
 
