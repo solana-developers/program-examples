@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { describe, it } from "node:test";
 import * as anchor from "@anchor-lang/core";
 import {
@@ -82,7 +83,7 @@ describe("fundraiser bankrun", async () => {
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
     const tx = await program.methods
-      .initialize(new BN(30000000), 0)
+      .initialize(new BN(30000000), 5)
       .accountsPartial({
         maker: maker.publicKey,
         fundraiser,
@@ -200,30 +201,34 @@ describe("fundraiser bankrun", async () => {
     }
   });
 
-  it("Refund Contributions", async () => {
+  it("Refund is rejected while the campaign is still open", async () => {
+    // The campaign was created with a 5-day duration and has only just started,
+    // so a refund must be rejected until the campaign has ended. (A successful
+    // refund requires advancing the validator clock past `duration`, e.g. with
+    // bankrun's `setClock`.)
     const vault = getAssociatedTokenAddressSync(mint, fundraiser, true);
 
-    const contributorAccount = await program.account.contributor.fetch(contributor);
-    console.log("\nContributor balance", contributorAccount.amount.toString());
+    let rejected = false;
+    try {
+      await program.methods
+        .refund()
+        .accountsPartial({
+          contributor: provider.publicKey,
+          maker: maker.publicKey,
+          mintToRaise: mint,
+          fundraiser,
+          contributorAccount: contributor,
+          contributorAta: contributorATA,
+          vault,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .rpc()
+        .then(confirm);
+    } catch {
+      rejected = true;
+    }
 
-    const tx = await program.methods
-      .refund()
-      .accountsPartial({
-        contributor: provider.publicKey,
-        maker: maker.publicKey,
-        mintToRaise: mint,
-        fundraiser,
-        contributorAccount: contributor,
-        contributorAta: contributorATA,
-        vault,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: anchor.web3.SystemProgram.programId,
-      })
-      .rpc()
-      .then(confirm);
-
-    console.log("\nRefunded contributions", tx);
-    console.log("Your transaction signature", tx);
-    console.log("Vault balance", (await provider.connection.getTokenAccountBalance(vault)).value.amount);
+    assert.ok(rejected, "refund should be rejected while the campaign is still open");
   });
 });

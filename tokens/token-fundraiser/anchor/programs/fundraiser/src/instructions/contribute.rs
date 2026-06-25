@@ -68,10 +68,11 @@ impl<'info> Contribute<'info> {
             FundraiserError::ContributionTooBig
         );
 
-        // Check if the fundraising duration has been reached
+        // Contributions are only accepted while the campaign is still open,
+        // i.e. before `duration` days have elapsed since it started.
         let current_time = Clock::get()?.unix_timestamp;
         require!(
-            self.fundraiser.duration <= ((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16,
+            (((current_time - self.fundraiser.time_started) / SECONDS_TO_DAYS) as u16) < self.fundraiser.duration,
             crate::FundraiserError::FundraiserEnded
         );
 
