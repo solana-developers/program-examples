@@ -91,14 +91,15 @@ export const MATCH_KICKOFFS: readonly string[] = [
 ];
 
 /**
- * Team slot `0..31` → seeded label. Already-qualified teams (Germany, USA,
- * Mexico) are concrete; the rest are group-position placeholders (`1C` = winner
- * of Group C, `2F` = runner-up of Group F, `3ABCDF` = third place from one of
- * those groups) until the draw fills them. Slot order is bracket order: this is
- * what makes the internal tree reproduce FIFA's matchups, so do not reorder.
+ * Team slot `0..31` → group-position seed label: `1C` = winner of Group C,
+ * `2F` = runner-up of Group F, `3ABCDF` = best third place from one of those
+ * groups. Every entry is a positional seed and stays fixed across draws — the
+ * real nation that lands in each slot lives in `TEAM_NAMES` (teams.ts). Slot
+ * order is bracket order: this is what makes the internal tree reproduce FIFA's
+ * matchups, so do not reorder.
  */
 export const SLOT_LABELS: readonly string[] = [
-    'Germany',
+    '1E',
     '3ABCDF',
     '1I',
     '3CDFGH',
@@ -110,7 +111,7 @@ export const SLOT_LABELS: readonly string[] = [
     '2L',
     '1H',
     '2J',
-    'USA',
+    '1D',
     '3BEFIJ',
     '1G',
     '3AEHIJ', // slots 8..15
@@ -118,11 +119,11 @@ export const SLOT_LABELS: readonly string[] = [
     '2F',
     '2E',
     '2I',
-    'Mexico',
+    '1A',
     '3CEFHI',
     '1L',
     '3EHIJK', // slots 16..23
-    'Argentina',
+    '1J',
     '2H',
     '2D',
     '2G',
@@ -223,6 +224,9 @@ export function assertFifaScheduleConsistent(): void {
         if (!unique.has(m)) throw new Error(`missing match M${m}`);
     }
     if (new Set(SLOT_LABELS).size !== TEAM_COUNT) throw new Error('slot labels are not unique');
+    for (const label of SLOT_LABELS) {
+        if (!/^[123][A-L]+$/.test(label)) throw new Error(`slot label ${label} is not a group-position seed`);
+    }
 
     for (const [label, feeders] of FIFA_FEEDERS) {
         const game = gameIndexOf(label);

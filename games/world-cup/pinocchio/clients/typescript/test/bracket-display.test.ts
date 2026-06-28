@@ -6,10 +6,10 @@ import { bracketRows, champion } from '../src/bracket-display.ts';
 import { teamName, TEAM_NAMES } from '../src/teams.ts';
 
 describe('teams', () => {
-    test('TEAM_NAMES has 32 entries defaulting to the FIFA seeding', () => {
+    test('TEAM_NAMES has 32 entries resolved to the final bracket teams', () => {
         assert.equal(TEAM_NAMES.length, 32);
         assert.equal(TEAM_NAMES[0], 'Germany');
-        assert.equal(TEAM_NAMES[31], '3DEIJL');
+        assert.equal(TEAM_NAMES[31], 'Ghana');
     });
 
     test('teamName resolves a slot and honors a custom names override', () => {
