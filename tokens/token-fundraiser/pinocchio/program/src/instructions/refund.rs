@@ -55,11 +55,16 @@ pub fn refund(program_id: &Address, accounts: &[AccountView], _data: &[u8]) -> P
     {
         return Err(ProgramError::InvalidAccountData);
     }
+    // The vault must be the fundraiser's recorded vault, otherwise refund
+    // eligibility could be judged from an unrelated token account.
+    if &fundraiser_state.vault != vault.address().as_array() {
+        return Err(ProgramError::InvalidAccountData);
+    }
 
     // The fundraiser must have ended.
     let current_time = Clock::get()?.unix_timestamp;
     let elapsed_days = ((current_time - fundraiser_state.time_started) / SECONDS_TO_DAYS) as u16;
-    if fundraiser_state.duration < elapsed_days {
+    if elapsed_days < fundraiser_state.duration {
         return Err(FundraiserError::FundraiserNotEnded.into());
     }
 

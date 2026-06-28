@@ -58,6 +58,11 @@ pub fn contribute(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
     if &fundraiser_state.mint_to_raise != mint_to_raise.address().as_array() {
         return Err(ProgramError::InvalidAccountData);
     }
+    // The vault must be the fundraiser's recorded vault, otherwise a caller
+    // could record a contribution against an account they control.
+    if &fundraiser_state.vault != vault.address().as_array() {
+        return Err(ProgramError::InvalidAccountData);
+    }
 
     // A contribution must be at least one base unit.
     if amount < 1 {
@@ -77,7 +82,7 @@ pub fn contribute(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
     // The fundraiser must still be within its active window.
     let current_time = Clock::get()?.unix_timestamp;
     let elapsed_days = ((current_time - fundraiser_state.time_started) / SECONDS_TO_DAYS) as u16;
-    if fundraiser_state.duration > elapsed_days {
+    if elapsed_days > fundraiser_state.duration {
         return Err(FundraiserError::FundraiserEnded.into());
     }
 

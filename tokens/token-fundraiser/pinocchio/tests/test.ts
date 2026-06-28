@@ -74,6 +74,7 @@ describe("Fundraiser (Pinocchio)", async () => {
     assert(fundraiser.current_amount.toString() === "0", "current amount should start at 0");
     assert(fundraiser.duration === values.duration, "wrong duration");
     assert(fundraiser.bump === values.fundraiserBump, "wrong bump");
+    assert(new PublicKey(fundraiser.vault).toBase58() === values.vault.toBase58(), "wrong vault recorded");
 
     const vaultInfo = await client.getAccount(values.vault);
     if (vaultInfo === null) throw new Error("Vault account not found");

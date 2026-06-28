@@ -10,7 +10,7 @@ use pinocchio::error::ProgramError;
 /// Serialized byte layout (little-endian), matching the field order below so a
 /// Borsh client can deserialize it directly:
 /// `[maker: 32][mint_to_raise: 32][amount_to_raise: u64][current_amount: u64]
-///  [time_started: i64][duration: u16][bump: u8]`
+///  [time_started: i64][duration: u16][bump: u8][vault: 32]`
 pub struct Fundraiser {
     /// The wallet that created the fundraiser; part of the PDA seeds.
     pub maker: [u8; 32],
@@ -26,6 +26,10 @@ pub struct Fundraiser {
     pub duration: u16,
     /// Canonical bump for the fundraiser PDA.
     pub bump: u8,
+    /// The fundraiser's vault token account (the PDA's associated token account
+    /// for `mint_to_raise`), recorded at creation. Later instructions check the
+    /// caller-supplied vault against this to reject a substituted account.
+    pub vault: [u8; 32],
 }
 
 impl Fundraiser {
@@ -33,7 +37,7 @@ impl Fundraiser {
     pub const SEED_PREFIX: &'static [u8] = b"fundraiser";
 
     /// Serialized size of a `Fundraiser` in bytes.
-    pub const LEN: usize = 32 + 32 + 8 + 8 + 8 + 2 + 1;
+    pub const LEN: usize = 32 + 32 + 8 + 8 + 8 + 2 + 1 + 32;
 
     /// Writes the fundraiser into `dst` using the layout documented above.
     pub fn serialize(&self, dst: &mut [u8]) -> Result<(), ProgramError> {
@@ -47,6 +51,7 @@ impl Fundraiser {
         dst[80..88].copy_from_slice(&self.time_started.to_le_bytes());
         dst[88..90].copy_from_slice(&self.duration.to_le_bytes());
         dst[90] = self.bump;
+        dst[91..123].copy_from_slice(&self.vault);
         Ok(())
     }
 
@@ -65,6 +70,7 @@ impl Fundraiser {
             time_started: i64::from_le_bytes(src[80..88].try_into().unwrap()),
             duration: u16::from_le_bytes(src[88..90].try_into().unwrap()),
             bump: src[90],
+            vault: src[91..123].try_into().unwrap(),
         })
     }
 }

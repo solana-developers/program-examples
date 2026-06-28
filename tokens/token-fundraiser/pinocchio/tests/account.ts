@@ -8,6 +8,7 @@ export const FundraiserSchema = {
     time_started: "i64",
     duration: "u16",
     bump: "u8",
+    vault: { array: { type: "u8", len: 32 } },
   },
 };
 
@@ -19,6 +20,7 @@ export type FundraiserRaw = {
   time_started: bigint;
   duration: number;
   bump: number;
+  vault: Uint8Array;
 };
 
 // Mirrors the on-chain `Contributor` layout in `program/src/state.rs`.

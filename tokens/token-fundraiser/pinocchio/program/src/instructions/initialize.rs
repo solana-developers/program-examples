@@ -106,6 +106,7 @@ pub fn initialize(program_id: &Address, accounts: &[AccountView], data: &[u8]) -
         time_started: Clock::get()?.unix_timestamp,
         duration,
         bump,
+        vault: *vault.address().as_array(),
     };
     fundraiser_state.serialize(&mut fundraiser.try_borrow_mut()?)?;
 

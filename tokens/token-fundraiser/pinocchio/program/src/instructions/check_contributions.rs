@@ -54,6 +54,11 @@ pub fn check_contributions(
     {
         return Err(ProgramError::InvalidAccountData);
     }
+    // The vault must be the fundraiser's recorded vault before we read its
+    // balance to decide the target has been met.
+    if &fundraiser_state.vault != vault.address().as_array() {
+        return Err(ProgramError::InvalidAccountData);
+    }
 
     // The target amount must have been reached.
     let vault_amount = TokenAccount::from_account_view(vault)?.amount();
