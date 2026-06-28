@@ -2045,6 +2045,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nft-operations-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-associated-token-account",
+ "pinocchio-log",
+ "pinocchio-pubkey",
+ "pinocchio-system",
+ "pinocchio-token",
+]
+
+[[package]]
 name = "num"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
