@@ -92,7 +92,7 @@ jobs:
           node-version-file: ${{ matrix.project }}/.nvmrc
           check-latest: true
       - name: Install just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
       - name: Setup Solana
         uses: heyAyushh/setup-solana@v5.9
         with:
