@@ -61,14 +61,72 @@ describe('slot labels', () => {
         assert.equal(new Set(SLOT_LABELS).size, TEAM_COUNT);
     });
 
-    test('place the already-qualified teams', () => {
-        assert.equal(SLOT_LABELS[0], 'Germany');
-        assert.equal(SLOT_LABELS[12], 'USA');
-        assert.equal(SLOT_LABELS[20], 'Mexico');
+    test('are all group-position seeds (1=winner, 2=runner-up, 3=best third)', () => {
+        for (const label of SLOT_LABELS) {
+            assert.match(label, /^[123][A-L]+$/, `${label} is not a group-position seed`);
+        }
+        // group winners the example bracket fills with host/seed nations
+        assert.equal(SLOT_LABELS[0], '1E'); // Germany
+        assert.equal(SLOT_LABELS[12], '1D'); // USA (FIFA host position D1)
+        assert.equal(SLOT_LABELS[20], '1A'); // Mexico (FIFA host position A1)
+        assert.equal(SLOT_LABELS[24], '1J'); // Argentina
     });
 
-    test('TEAM_NAMES defaults to the FIFA seeding', () => {
-        assert.deepEqual(TEAM_NAMES, SLOT_LABELS);
+    test('TEAM_NAMES resolves every slot to a distinct real team', () => {
+        assert.equal(TEAM_NAMES.length, TEAM_COUNT);
+        assert.equal(new Set(TEAM_NAMES).size, TEAM_COUNT);
+    });
+});
+
+describe('final-bracket seeding', () => {
+    // Each slot's nation and the FIFA group-position seed it occupies, transcribed
+    // from the final bracket / FIFA regulations Annex (e.g. USA won Group D, so it
+    // is the `1D` seed). Kept independent of TEAM_NAMES and SLOT_LABELS so a
+    // mis-edit of either array is caught here.
+    const EXPECTED: ReadonlyArray<readonly [team: string, seed: string]> = [
+        ['Germany', '1E'],
+        ['Paraguay', '3ABCDF'],
+        ['France', '1I'],
+        ['Sweden', '3CDFGH'],
+        ['South Africa', '2A'],
+        ['Canada', '2B'],
+        ['Netherlands', '1F'],
+        ['Morocco', '2C'],
+        ['Portugal', '2K'],
+        ['Croatia', '2L'],
+        ['Spain', '1H'],
+        ['Austria', '2J'],
+        ['USA', '1D'],
+        ['Bosnia & Herzegovina', '3BEFIJ'],
+        ['Belgium', '1G'],
+        ['Senegal', '3AEHIJ'],
+        ['Brazil', '1C'],
+        ['Japan', '2F'],
+        ["Côte d'Ivoire", '2E'],
+        ['Norway', '2I'],
+        ['Mexico', '1A'],
+        ['Ecuador', '3CEFHI'],
+        ['England', '1L'],
+        ['DR Congo', '3EHIJK'],
+        ['Argentina', '1J'],
+        ['Cape Verde', '2H'],
+        ['Australia', '2D'],
+        ['Egypt', '2G'],
+        ['Switzerland', '1B'],
+        ['Algeria', '3EFGIJ'],
+        ['Colombia', '1K'],
+        ['Ghana', '3DEIJL'],
+    ];
+
+    test('the expected table covers all 32 slots', () => {
+        assert.equal(EXPECTED.length, TEAM_COUNT);
+    });
+
+    test('each slot places the right nation in its FIFA seed', () => {
+        EXPECTED.forEach(([team, seed], slot) => {
+            assert.equal(TEAM_NAMES[slot], team, `nation at slot ${slot}`);
+            assert.equal(SLOT_LABELS[slot], seed, `seed at slot ${slot}`);
+        });
     });
 });
 
@@ -76,7 +134,7 @@ describe('contestantsOf', () => {
     test('Round-of-32 games show their two team slots', () => {
         const [a, b] = r32Slots(0);
         assert.deepEqual(contestantsOf(0), [SLOT_LABELS[a], SLOT_LABELS[b]]);
-        assert.deepEqual(contestantsOf(0), ['Germany', '3ABCDF']);
+        assert.deepEqual(contestantsOf(0), ['1E', '3ABCDF']);
     });
 
     test('later rounds show feeder-match winners', () => {
