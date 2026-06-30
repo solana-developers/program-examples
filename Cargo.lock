@@ -1129,6 +1129,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "create-token-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-log",
+ "pinocchio-system",
+ "pinocchio-token",
+]
+
+[[package]]
 name = "cross-program-invocation-pinocchio-hand"
 version = "0.1.0"
 dependencies = [
