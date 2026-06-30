@@ -143,7 +143,7 @@ Create an NFT collection, mint NFTs, and verify NFTs as part of a collection usi
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/spl-token-minter/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
 
-[anchor](./tokens/spl-token-minter/anchor) [native](./tokens/spl-token-minter/native)
+[anchor](./tokens/spl-token-minter/anchor) [pinocchio](./tokens/spl-token-minter/pinocchio) [native](./tokens/spl-token-minter/native)
 
 ### Transferring Tokens
 
