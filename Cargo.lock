@@ -5117,6 +5117,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "token-fundraiser-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-associated-token-account",
+ "pinocchio-log",
+ "pinocchio-pubkey",
+ "pinocchio-system",
+ "pinocchio-token",
+]
+
+[[package]]
 name = "toml"
 version = "0.8.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
