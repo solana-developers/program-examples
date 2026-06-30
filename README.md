@@ -167,7 +167,7 @@ Create a fundraiser account specifying a target mint and amount, allowing contri
 
 [Mint a Token from inside your own onchain program using the Token program.](./tokens/pda-mint-authority/README.md) Reminder: you don't need your own program just to mint an NFT, see the note at the top of this README.
 
-[anchor](./tokens/pda-mint-authority/anchor) [native](./tokens/pda-mint-authority/native)
+[anchor](./tokens/pda-mint-authority/anchor) [native](./tokens/pda-mint-authority/native) [pinocchio](./tokens/pda-mint-authority/pinocchio)
 
 ### Creating an Automated Market Maker
 

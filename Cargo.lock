@@ -2220,6 +2220,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "pda-mint-authority-pinocchio-program"
+version = "0.1.0"
+dependencies = [
+ "pinocchio 0.10.2",
+ "pinocchio-associated-token-account",
+ "pinocchio-log",
+ "pinocchio-pubkey",
+ "pinocchio-system",
+ "pinocchio-token",
+]
+
+[[package]]
 name = "pda-rent-payer"
 version = "0.1.0"
 dependencies = [
