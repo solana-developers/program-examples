@@ -239,7 +239,7 @@ Create an NFT using the Token Extensions metadata pointer, storing onchain metad
 
 Allow a designated account to close a Mint.
 
-[anchor](./tokens/token-2022/mint-close-authority/anchor) [native](./tokens/token-2022/mint-close-authority/native)
+[anchor](./tokens/token-2022/mint-close-authority/anchor) [native](./tokens/token-2022/mint-close-authority/native) [pinocchio](./tokens/token-2022/mint-close-authority/pinocchio)
 
 ### Using multiple token extensions
 
