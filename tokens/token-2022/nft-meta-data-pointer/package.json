@@ -9,6 +9,6 @@
   },
   "devDependencies": {
     "@nx/workspace": "16.10.0",
-    "nx": "16.10.0"
+    "nx": "22.7.10"
   }
 }
